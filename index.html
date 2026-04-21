@@ -2,963 +2,757 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Lume Care — Illuminate Your Path</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,500&display=swap" rel="stylesheet" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lume Live — Light Your Path Forward</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,500&display=swap" rel="stylesheet"/>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --teal: #0D6B56;
-    --teal-dark: #084D3E;
-    --teal-light: #E1F5EE;
-    --teal-mid: #1D9E75;
-    --gold: #C8860A;
-    --gold-light: #F5C96A;
-    --gold-bg: #FEF9EE;
-    --warm-white: #FAFAF8;
-    --soft-gray: #F4F4F2;
-    --text-dark: #1A1A1A;
-    --text-mid: #444;
-    --text-muted: #777;
-    --border: #E4E4E0;
+    --teal:       #1A6B6B;
+    --teal-dark:  #124E4E;
+    --teal-light: #E6F4F4;
+    --teal-mid:   #2D8E8E;
+    --gold:       #C9980A;
+    --gold-light: #FDF6E3;
+    --gold-mid:   #E8B420;
+    --soft-gray:  #F5F5F2;
+    --text-dark:  #1C2B2B;
+    --text-mid:   #4A6060;
+    --text-light: #7A9090;
+    --white:      #FFFFFF;
+    --border:     rgba(26,107,107,0.15);
   }
-
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
-
   body {
     font-family: 'Montserrat', sans-serif;
     color: var(--text-dark);
-    background: var(--warm-white);
+    background: var(--white);
     overflow-x: hidden;
+    line-height: 1.7;
   }
 
-  /* ─── NAV ─── */
+  /* ── NAV ── */
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 0 5%; height: 68px;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(12px);
+    padding: 1rem 5vw;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--border);
   }
   .logo {
-    display: flex; align-items: center; gap: 10px;
-    font-size: 1.4rem; font-weight: 800; color: var(--teal);
-    text-decoration: none; letter-spacing: -0.5px;
+    font-size: 1.5rem; font-weight: 800;
+    color: var(--teal-dark); letter-spacing: -0.5px;
   }
-  .logo-icon {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: var(--teal);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .logo-icon svg { width: 18px; height: 18px; }
   .logo span { color: var(--gold); }
-  nav ul { display: flex; gap: 32px; list-style: none; }
-  nav a { text-decoration: none; font-size: 0.82rem; font-weight: 600;
-    letter-spacing: 0.04em; color: var(--text-mid); text-transform: uppercase;
-    transition: color 0.2s; }
-  nav a:hover { color: var(--teal); }
+  nav ul { list-style: none; display: flex; gap: 2rem; }
+  nav ul a { text-decoration: none; color: var(--text-mid); font-size: 0.85rem; font-weight: 600; letter-spacing: 0.3px; transition: color 0.2s; }
+  nav ul a:hover { color: var(--teal); }
   .nav-cta {
-    background: var(--teal); color: #fff !important;
-    padding: 9px 20px; border-radius: 6px;
+    background: var(--teal); color: #fff;
+    padding: 0.55rem 1.4rem; border-radius: 50px;
+    font-size: 0.82rem; font-weight: 700;
+    text-decoration: none; letter-spacing: 0.3px;
+    transition: background 0.2s, transform 0.15s;
   }
-  .nav-cta:hover { background: var(--teal-dark); color: #fff !important; }
+  .nav-cta:hover { background: var(--teal-dark); transform: translateY(-1px); }
 
-  /* ─── HERO ─── */
+  /* ── HERO ── */
   .hero {
     min-height: 100vh;
     display: grid; grid-template-columns: 1fr 1fr;
-    align-items: center; gap: 0;
-    padding: 100px 5% 60px;
+    align-items: center;
+    padding: 7rem 5vw 4rem;
+    background: linear-gradient(135deg, #E6F4F4 0%, #F5F5F2 50%, #FDF6E3 100%);
     position: relative; overflow: hidden;
   }
   .hero::before {
     content: '';
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse 60% 60% at 80% 50%, var(--teal-light) 0%, transparent 70%),
-      radial-gradient(ellipse 30% 40% at 10% 80%, var(--gold-bg) 0%, transparent 60%);
-    z-index: 0;
+    position: absolute; top: -100px; right: -80px;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,152,10,0.12) 0%, transparent 70%);
+    pointer-events: none;
   }
-  .hero-left { position: relative; z-index: 1; }
-  .hero-tag {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: var(--gold-bg); border: 1px solid var(--gold-light);
-    color: var(--gold); font-size: 0.72rem; font-weight: 700;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    padding: 5px 14px; border-radius: 30px; margin-bottom: 24px;
+  .hero::after {
+    content: '';
+    position: absolute; bottom: -60px; left: -60px;
+    width: 350px; height: 350px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(26,107,107,0.1) 0%, transparent 70%);
+    pointer-events: none;
   }
-  .hero-tag::before {
-    content: ''; width: 6px; height: 6px;
-    border-radius: 50%; background: var(--gold);
+  .hero-text { position: relative; z-index: 2; animation: fadeUp 0.8s ease both; }
+  .hero-eyebrow {
     display: inline-block;
+    background: var(--gold-light); color: var(--gold);
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; padding: 0.35rem 0.9rem; border-radius: 50px;
+    border: 1px solid rgba(201,152,10,0.3); margin-bottom: 1.2rem;
   }
   .hero h1 {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(2.4rem, 4vw, 3.6rem);
-    font-weight: 600; line-height: 1.15;
-    color: var(--text-dark); margin-bottom: 22px;
-    letter-spacing: -0.5px;
+    font-size: clamp(2.2rem, 4vw, 3.4rem); line-height: 1.2;
+    color: var(--teal-dark); margin-bottom: 1.2rem;
   }
-  .hero h1 em {
-    font-style: italic; color: var(--teal);
+  .hero h1 em { font-style: italic; color: var(--gold); }
+  .hero-sub {
+    font-size: 1.05rem; color: var(--text-mid);
+    max-width: 480px; margin-bottom: 2rem; font-weight: 400;
   }
-  .hero p {
-    font-size: 1.05rem; line-height: 1.75;
-    color: var(--text-mid); max-width: 480px;
-    margin-bottom: 36px; font-weight: 400;
-  }
-  .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
   .btn-primary {
-    display: inline-block; text-decoration: none;
     background: var(--teal); color: #fff;
-    padding: 14px 28px; border-radius: 7px;
-    font-size: 0.88rem; font-weight: 700;
-    letter-spacing: 0.02em;
-    transition: background 0.2s, transform 0.15s;
-    border: none; cursor: pointer;
+    padding: 0.85rem 2rem; border-radius: 50px;
+    font-size: 0.9rem; font-weight: 700; text-decoration: none;
+    letter-spacing: 0.3px; display: inline-block;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
   }
-  .btn-primary:hover { background: var(--teal-dark); transform: translateY(-1px); }
-  .btn-gold {
-    display: inline-block; text-decoration: none;
-    background: var(--gold); color: #fff;
-    padding: 14px 28px; border-radius: 7px;
-    font-size: 0.88rem; font-weight: 700;
-    letter-spacing: 0.02em;
-    transition: background 0.2s, transform 0.15s;
-    border: none; cursor: pointer;
-  }
-  .btn-gold:hover { background: #a56e08; transform: translateY(-1px); }
-  .btn-outline {
-    display: inline-block; text-decoration: none;
+  .btn-primary:hover { background: var(--teal-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,107,107,0.25); }
+  .btn-secondary {
     background: transparent; color: var(--teal);
-    padding: 13px 28px; border-radius: 7px;
-    font-size: 0.88rem; font-weight: 700;
-    letter-spacing: 0.02em; border: 2px solid var(--teal);
+    padding: 0.85rem 2rem; border-radius: 50px;
+    font-size: 0.9rem; font-weight: 700; text-decoration: none;
+    border: 2px solid var(--teal); display: inline-block;
     transition: all 0.2s;
   }
-  .btn-outline:hover { background: var(--teal); color: #fff; transform: translateY(-1px); }
-
-  .hero-trust {
-    display: flex; gap: 28px; margin-top: 36px; flex-wrap: wrap;
+  .btn-secondary:hover { background: var(--teal); color: #fff; }
+  .btn-gold {
+    background: var(--gold); color: #fff;
+    padding: 0.85rem 2rem; border-radius: 50px;
+    font-size: 0.9rem; font-weight: 700; text-decoration: none;
+    display: inline-block; transition: all 0.2s;
   }
-  .trust-item {
-    display: flex; align-items: center; gap: 7px;
-    font-size: 0.78rem; font-weight: 600; color: var(--text-muted);
-    letter-spacing: 0.02em;
+  .btn-gold:hover { background: #a87d06; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,152,10,0.3); }
+  .hero-stats {
+    display: flex; gap: 2rem; margin-top: 2.5rem; padding-top: 2rem;
+    border-top: 1px solid var(--border);
   }
-  .trust-icon {
-    width: 22px; height: 22px; border-radius: 50%;
-    background: var(--teal-light);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px;
+  .hero-stat span {
+    display: block; font-size: 1.6rem; font-weight: 800; color: var(--teal);
   }
-
-  .hero-right {
-    position: relative; z-index: 1;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .hero-card-group {
-    position: relative; width: 360px; height: 420px;
+  .hero-stat p { font-size: 0.78rem; color: var(--text-light); font-weight: 500; }
+  .hero-visual {
+    position: relative; z-index: 2;
+    display: flex; justify-content: center; align-items: center;
+    animation: fadeUp 0.9s 0.15s ease both;
   }
   .hero-card {
-    position: absolute;
-    background: #fff; border-radius: 16px;
+    background: #fff; border-radius: 20px;
+    padding: 2rem; width: 320px;
+    box-shadow: 0 20px 60px rgba(26,107,107,0.15);
     border: 1px solid var(--border);
-    padding: 22px 24px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.07);
   }
-  .hero-card.main {
-    width: 300px; top: 30px; left: 20px;
+  .hero-card-header {
+    display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.5rem;
   }
-  .hero-card.floating {
-    width: 220px; bottom: 20px; right: 0;
-    background: var(--teal);
-    border-color: var(--teal);
+  .avatar {
+    width: 50px; height: 50px; border-radius: 50%;
+    background: var(--teal-light); display: flex; align-items: center;
+    justify-content: center; font-size: 1.4rem;
   }
-  .card-icon-wrap {
-    width: 44px; height: 44px; border-radius: 10px;
-    background: var(--teal-light);
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 12px; font-size: 20px;
+  .hero-card-header h4 { font-size: 0.9rem; font-weight: 700; color: var(--teal-dark); }
+  .hero-card-header p { font-size: 0.75rem; color: var(--text-light); }
+  .session-item {
+    display: flex; align-items: center; gap: 0.8rem;
+    padding: 0.7rem 0; border-bottom: 1px solid #f0f0f0;
   }
-  .hero-card .card-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
-  .hero-card .card-title { font-size: 1rem; font-weight: 700; color: var(--text-dark); line-height: 1.3; }
-  .hero-card .card-sub { font-size: 0.76rem; color: var(--text-muted); margin-top: 6px; line-height: 1.5; }
-  .hero-card.floating .card-label { color: rgba(255,255,255,0.7); }
-  .hero-card.floating .card-title { color: #fff; font-size: 0.92rem; }
-  .hero-card.floating .card-sub { color: rgba(255,255,255,0.8); }
+  .session-item:last-child { border-bottom: none; }
+  .session-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot-green { background: #22c55e; }
+  .dot-gold { background: var(--gold); }
+  .dot-teal { background: var(--teal); }
+  .session-item span { font-size: 0.82rem; color: var(--text-mid); font-weight: 500; }
+  .session-item strong { font-size: 0.75rem; color: var(--text-light); font-weight: 400; display: block; }
   .card-badge {
-    display: inline-block; background: var(--gold-bg);
-    color: var(--gold); font-size: 0.7rem; font-weight: 700;
-    padding: 3px 10px; border-radius: 20px; margin-bottom: 10px;
-    border: 1px solid var(--gold-light);
+    margin-top: 1rem; background: var(--gold-light);
+    border: 1px solid rgba(201,152,10,0.3); border-radius: 10px;
+    padding: 0.6rem 0.8rem; display: flex; align-items: center; gap: 0.5rem;
   }
-  .stat-row { display: flex; gap: 20px; margin-top: 14px; }
-  .stat { text-align: center; }
-  .stat .n { font-size: 1.4rem; font-weight: 800; color: var(--teal); }
-  .stat .l { font-size: 0.65rem; font-weight: 600; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; }
+  .card-badge p { font-size: 0.75rem; color: var(--gold); font-weight: 600; }
 
-  /* ─── SECTION BASE ─── */
-  section { padding: 90px 5%; }
-  .section-tag {
-    display: inline-block;
-    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--teal); border-bottom: 2px solid var(--gold);
-    padding-bottom: 3px; margin-bottom: 14px;
+  /* ── TRUST BAR ── */
+  .trust-bar {
+    background: var(--teal-dark); color: #fff;
+    padding: 1.2rem 5vw;
+    display: flex; align-items: center; justify-content: center;
+    gap: 3rem; flex-wrap: wrap;
   }
-  .section-h2 {
+  .trust-item { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.3px; opacity: 0.9; }
+  .trust-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold-mid); }
+
+  /* ── SECTION COMMONS ── */
+  section { padding: 6rem 5vw; }
+  .section-label {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 0.8rem;
+  }
+  .section-title {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(1.9rem, 3vw, 2.8rem);
-    font-weight: 600; color: var(--text-dark);
-    line-height: 1.2; margin-bottom: 14px;
-    letter-spacing: -0.3px;
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    color: var(--teal-dark); line-height: 1.25; margin-bottom: 1rem;
   }
-  .section-h2 em { font-style: italic; color: var(--teal); }
-  .section-sub {
-    font-size: 1rem; color: var(--text-mid); line-height: 1.7;
-    max-width: 540px; font-weight: 400;
-  }
+  .section-sub { font-size: 1rem; color: var(--text-mid); max-width: 560px; line-height: 1.8; }
 
-  /* ─── SERVICES ─── */
-  #services { background: var(--soft-gray); }
-  .services-header { text-align: center; margin-bottom: 56px; }
-  .services-header .section-sub { margin: 0 auto; }
+  /* ── SERVICE BUCKETS ── */
+  .services { background: var(--soft-gray); }
+  .services-intro { text-align: center; margin-bottom: 3.5rem; }
+  .services-intro .section-sub { margin: 0 auto; }
   .services-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
-    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem; margin-top: 1rem;
   }
   .service-card {
-    background: #fff; border-radius: 16px;
-    border: 1px solid var(--border);
-    padding: 36px 30px 32px;
-    display: flex; flex-direction: column;
-    transition: transform 0.25s, box-shadow 0.25s;
+    background: #fff; border-radius: 20px;
+    padding: 2.5rem; border: 1px solid var(--border);
     position: relative; overflow: hidden;
+    transition: transform 0.25s, box-shadow 0.25s;
   }
+  .service-card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(26,107,107,0.12); }
   .service-card::before {
-    content: ''; position: absolute;
-    top: 0; left: 0; right: 0; height: 4px;
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 4px;
   }
-  .service-card.s1::before { background: var(--teal); }
-  .service-card.s2::before { background: var(--gold); }
-  .service-card.s3::before { background: #D85A30; }
-  .service-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 16px 48px rgba(0,0,0,0.09);
+  .card-teal::before { background: var(--teal); }
+  .card-gold::before { background: var(--gold); }
+  .card-warm::before { background: linear-gradient(90deg, var(--teal), var(--gold)); }
+  .service-icon {
+    width: 58px; height: 58px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem; margin-bottom: 1.5rem;
   }
-  .service-emoji { font-size: 2rem; margin-bottom: 16px; }
-  .service-for {
-    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em;
-    text-transform: uppercase; margin-bottom: 6px;
+  .icon-teal { background: var(--teal-light); }
+  .icon-gold { background: var(--gold-light); }
+  .icon-warm { background: linear-gradient(135deg, var(--teal-light), var(--gold-light)); }
+  .service-card h3 { font-size: 1.2rem; font-weight: 800; color: var(--teal-dark); margin-bottom: 0.4rem; }
+  .service-card .tagline { font-size: 0.82rem; color: var(--gold); font-weight: 600; margin-bottom: 1rem; }
+  .service-card p { font-size: 0.9rem; color: var(--text-mid); margin-bottom: 1.2rem; }
+  .service-card ul { list-style: none; margin-bottom: 1.8rem; }
+  .service-card ul li {
+    font-size: 0.86rem; color: var(--text-mid); padding: 0.35rem 0;
+    display: flex; align-items: flex-start; gap: 0.6rem;
   }
-  .s1 .service-for { color: var(--teal); }
-  .s2 .service-for { color: var(--gold); }
-  .s3 .service-for { color: #D85A30; }
-  .service-card h3 { font-size: 1.25rem; font-weight: 700; color: var(--text-dark);
-    line-height: 1.3; margin-bottom: 10px; }
-  .service-card p { font-size: 0.87rem; color: var(--text-muted); line-height: 1.7;
-    margin-bottom: 20px; }
-  .service-list { list-style: none; margin-bottom: 28px; flex: 1; }
-  .service-list li {
-    font-size: 0.84rem; color: var(--text-mid); line-height: 1.5;
-    padding: 6px 0; border-bottom: 1px dashed var(--border);
-    display: flex; align-items: flex-start; gap: 8px;
-  }
-  .service-list li:last-child { border-bottom: none; }
-  .check { color: var(--teal-mid); font-size: 0.8rem; margin-top: 2px; flex-shrink: 0; }
-  .s2 .check { color: var(--gold); }
-  .s3 .check { color: #D85A30; }
-  .btn-s1 { background: var(--teal); color: #fff; }
-  .btn-s1:hover { background: var(--teal-dark); }
-  .btn-s2 { background: var(--gold); color: #fff; }
-  .btn-s2:hover { background: #a56e08; }
-  .btn-s3 { background: #D85A30; color: #fff; }
-  .btn-s3:hover { background: #993C1D; }
-  .svc-btn {
-    display: block; text-align: center; text-decoration: none;
-    padding: 13px 22px; border-radius: 7px;
-    font-size: 0.84rem; font-weight: 700; letter-spacing: 0.02em;
-    transition: all 0.2s;
+  .service-card ul li::before {
+    content: '✓'; color: var(--teal); font-weight: 700;
+    flex-shrink: 0; margin-top: 1px;
   }
 
-  /* ─── APPROACH ─── */
-  #approach { background: var(--warm-white); }
-  .approach-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
-    align-items: center; max-width: 1100px; margin: 0 auto; }
+  /* ── APPROACH ── */
+  .approach { background: var(--white); }
+  .approach-wrap { display: grid; grid-template-columns: 1fr 2fr; gap: 5rem; align-items: start; }
   .approach-steps { display: flex; flex-direction: column; gap: 0; }
   .step {
-    display: flex; gap: 24px;
-    padding: 28px 0; border-bottom: 1px solid var(--border);
-    position: relative;
+    display: flex; gap: 1.5rem;
+    padding: 2rem 0; border-bottom: 1px solid var(--border);
   }
   .step:last-child { border-bottom: none; }
-  .step-num {
-    width: 48px; height: 48px; border-radius: 50%;
-    background: var(--teal); color: #fff;
+  .step-number {
+    width: 52px; height: 52px; flex-shrink: 0;
+    border-radius: 14px; background: var(--teal-light);
     display: flex; align-items: center; justify-content: center;
-    font-size: 1rem; font-weight: 800; flex-shrink: 0;
-    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem; font-weight: 800; color: var(--teal);
   }
-  .step-body { }
-  .step-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--gold); margin-bottom: 5px; }
-  .step-title { font-size: 1.05rem; font-weight: 700; color: var(--text-dark); margin-bottom: 8px; }
-  .step-text { font-size: 0.87rem; color: var(--text-mid); line-height: 1.75; }
+  .step-active .step-number { background: var(--teal); color: #fff; }
+  .step-content h4 { font-size: 1rem; font-weight: 700; color: var(--teal-dark); margin-bottom: 0.3rem; }
+  .step-content .step-sub { font-size: 0.75rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.6rem; }
+  .step-content p { font-size: 0.88rem; color: var(--text-mid); line-height: 1.75; }
 
-  .approach-visual {
-    background: var(--teal);
-    border-radius: 20px; padding: 48px 36px;
-    color: #fff; position: relative; overflow: hidden;
-  }
-  .approach-visual::before {
+  /* ── FOUNDER ── */
+  .founder { background: var(--teal-dark); color: #fff; position: relative; overflow: hidden; }
+  .founder::before {
     content: '';
-    position: absolute; top: -60px; right: -60px;
-    width: 200px; height: 200px; border-radius: 50%;
-    background: rgba(255,255,255,0.06);
+    position: absolute; top: -80px; right: -60px;
+    width: 400px; height: 400px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,152,10,0.15) 0%, transparent 70%);
   }
-  .approach-visual::after {
+  .founder-wrap { display: grid; grid-template-columns: 1fr 1.5fr; gap: 5rem; align-items: center; position: relative; z-index: 1; }
+  .founder-photo-wrap { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
+  .founder-photo {
+    width: 240px; height: 280px; border-radius: 20px;
+    background: rgba(255,255,255,0.1); border: 2px solid rgba(201,152,10,0.4);
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(255,255,255,0.4); font-size: 0.9rem; text-align: center;
+    padding: 1rem; overflow: hidden;
+  }
+  .founder-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 18px; }
+  .founder-badges { display: flex; flex-direction: column; gap: 0.7rem; width: 100%; }
+  .founder-badge {
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px; padding: 0.6rem 1rem;
+    font-size: 0.78rem; font-weight: 600; color: rgba(255,255,255,0.85);
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .founder-badge-icon { font-size: 1rem; }
+  .founder-text .section-label { color: var(--gold-mid); }
+  .founder-text .section-title { color: #fff; }
+  .founder-text p { color: rgba(255,255,255,0.75); font-size: 0.92rem; margin-bottom: 1.2rem; line-height: 1.8; }
+  .founder-quote {
+    border-left: 3px solid var(--gold); padding-left: 1.2rem;
+    margin: 1.5rem 0; font-family: 'Playfair Display', serif;
+    font-style: italic; font-size: 1.1rem; color: rgba(255,255,255,0.9); line-height: 1.6;
+  }
+
+  /* ── TESTIMONIALS ── */
+  .testimonials { background: var(--soft-gray); }
+  .testi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+  .testi-card {
+    background: #fff; border-radius: 16px; padding: 2rem;
+    border: 1px solid var(--border);
+    transition: transform 0.2s;
+  }
+  .testi-card:hover { transform: translateY(-3px); }
+  .stars { color: var(--gold); font-size: 0.9rem; margin-bottom: 1rem; letter-spacing: 2px; }
+  .testi-card p { font-size: 0.88rem; color: var(--text-mid); line-height: 1.8; margin-bottom: 1.2rem; font-style: italic; }
+  .testi-author { display: flex; align-items: center; gap: 0.8rem; }
+  .testi-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: var(--teal-light); display: flex; align-items: center;
+    justify-content: center; font-size: 0.75rem; font-weight: 700; color: var(--teal);
+  }
+  .testi-author span { font-size: 0.82rem; font-weight: 700; color: var(--teal-dark); display: block; }
+  .testi-author small { font-size: 0.72rem; color: var(--text-light); }
+
+  /* ── LEAD MAGNET ── */
+  .lead-magnet {
+    background: linear-gradient(135deg, var(--teal-dark) 0%, #0E4545 100%);
+    padding: 5rem; text-align: center; position: relative; overflow: hidden;
+  }
+  .lead-magnet::before {
     content: '';
-    position: absolute; bottom: -40px; left: -40px;
-    width: 160px; height: 160px; border-radius: 50%;
-    background: rgba(255,255,255,0.04);
+    position: absolute; top: -60px; left: 50%;
+    transform: translateX(-50%);
+    width: 300px; height: 300px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,152,10,0.2) 0%, transparent 70%);
   }
-  .approach-visual h3 {
+  .lead-magnet-inner { position: relative; z-index: 1; max-width: 620px; margin: 0 auto; }
+  .lead-magnet .pdf-preview {
+    display: inline-block;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(201,152,10,0.5);
+    border-radius: 12px; padding: 0.6rem 1.2rem;
+    font-size: 0.78rem; color: var(--gold-mid); font-weight: 700;
+    letter-spacing: 0.5px; margin-bottom: 1.5rem;
+  }
+  .lead-magnet h2 {
     font-family: 'Playfair Display', serif;
-    font-size: 1.7rem; font-weight: 600; margin-bottom: 12px; line-height: 1.25;
-    position: relative; z-index: 1;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    color: #fff; line-height: 1.3; margin-bottom: 0.8rem;
   }
-  .approach-visual p { font-size: 0.9rem; line-height: 1.75; opacity: 0.85;
-    margin-bottom: 28px; position: relative; z-index: 1; }
-  .outcome-list { list-style: none; position: relative; z-index: 1; }
-  .outcome-list li {
-    font-size: 0.86rem; padding: 8px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.15);
-    display: flex; align-items: center; gap: 10px; opacity: 0.9;
+  .lead-magnet h2 em { color: var(--gold-mid); font-style: italic; }
+  .lead-magnet p { color: rgba(255,255,255,0.7); font-size: 0.92rem; margin-bottom: 2rem; line-height: 1.7; }
+  .lead-form { display: flex; flex-direction: column; gap: 0.8rem; max-width: 420px; margin: 0 auto 1.5rem; }
+  .lead-form input {
+    padding: 0.9rem 1.2rem; border-radius: 50px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.1); color: #fff;
+    font-family: 'Montserrat', sans-serif; font-size: 0.88rem;
+    outline: none; transition: border 0.2s;
   }
-  .outcome-list li:last-child { border-bottom: none; }
-  .outcome-list .dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: var(--gold-light); flex-shrink: 0;
-  }
-  .approach-visual .av-btn {
-    display: inline-block; text-decoration: none;
-    background: #fff; color: var(--teal);
-    padding: 13px 26px; border-radius: 7px;
-    font-size: 0.85rem; font-weight: 700;
-    margin-top: 28px; position: relative; z-index: 1;
-    transition: all 0.2s;
-  }
-  .approach-visual .av-btn:hover { background: var(--gold); color: #fff; }
+  .lead-form input::placeholder { color: rgba(255,255,255,0.45); }
+  .lead-form input:focus { border-color: var(--gold-mid); background: rgba(255,255,255,0.15); }
+  .lead-form .btn-gold { width: 100%; border: none; cursor: pointer; font-family: 'Montserrat', sans-serif; font-size: 0.92rem; }
+  .lead-fine { font-size: 0.72rem; color: rgba(255,255,255,0.4); }
 
-  /* ─── ABOUT ─── */
-  #about { background: var(--soft-gray); }
-  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
-    align-items: center; max-width: 1100px; margin: 0 auto; }
-  .about-img-wrap { position: relative; }
-  .about-img-placeholder {
-    width: 100%; aspect-ratio: 4/5;
-    background: linear-gradient(135deg, var(--teal-light) 0%, var(--teal) 100%);
-    border-radius: 20px; display: flex; align-items: center; justify-content: center;
-    position: relative; overflow: hidden;
-  }
-  .about-img-placeholder::before {
-    content: 'Founder Photo';
-    font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.6);
-    letter-spacing: 0.05em;
-  }
-  .about-badge {
-    position: absolute; bottom: -18px; right: -18px;
-    background: var(--gold); color: #fff;
-    padding: 16px 20px; border-radius: 14px;
-    text-align: center;
-    box-shadow: 0 8px 24px rgba(200,134,10,0.3);
-  }
-  .about-badge .n { font-size: 1.8rem; font-weight: 800; display: block; line-height: 1; }
-  .about-badge .l { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.08em;
-    text-transform: uppercase; opacity: 0.9; }
-  .about-content { }
-  .about-content blockquote {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem; font-style: italic; color: var(--teal);
-    border-left: 3px solid var(--gold); padding-left: 18px;
-    margin: 20px 0 24px; line-height: 1.6;
-  }
-  .about-content p { font-size: 0.92rem; color: var(--text-mid); line-height: 1.8; margin-bottom: 16px; }
-  .credential-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 24px 0; }
-  .cred-pill {
-    display: flex; align-items: center; gap: 6px;
-    background: var(--teal-light); color: var(--teal-dark);
-    font-size: 0.74rem; font-weight: 700; letter-spacing: 0.04em;
-    padding: 6px 14px; border-radius: 30px;
-    border: 1px solid rgba(13,107,86,0.2);
-  }
-
-  /* ─── STATS BAR ─── */
-  .stats-bar {
-    background: var(--teal-dark);
-    padding: 48px 5%;
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 24px; max-width: 100%;
-  }
-  .stat-item { text-align: center; }
-  .stat-item .num {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.6rem; font-weight: 600; color: var(--gold-light);
-    line-height: 1; margin-bottom: 6px;
-  }
-  .stat-item .label {
-    font-size: 0.76rem; font-weight: 600; letter-spacing: 0.08em;
-    text-transform: uppercase; color: rgba(255,255,255,0.65);
-  }
-
-  /* ─── LEAD MAGNET ─── */
-  .lead-banner {
-    background: var(--gold-bg); border-top: 1px solid var(--gold-light);
-    border-bottom: 1px solid var(--gold-light);
-    padding: 56px 5%;
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 60px; align-items: center;
-    max-width: 100%;
-  }
-  .lead-content .badge {
-    display: inline-block; background: var(--gold); color: #fff;
-    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em;
-    text-transform: uppercase; padding: 4px 14px; border-radius: 30px;
-    margin-bottom: 14px;
-  }
-  .lead-content h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.6rem, 2.5vw, 2.2rem);
-    font-weight: 600; color: var(--text-dark); line-height: 1.2; margin-bottom: 14px;
-  }
-  .lead-content h2 span { color: var(--teal); font-style: italic; }
-  .lead-content p { font-size: 0.9rem; color: var(--text-mid); line-height: 1.75; margin-bottom: 6px; }
-  .urgency-line {
-    display: flex; align-items: center; gap: 6px;
-    font-size: 0.78rem; font-weight: 700; color: #D85A30;
-    margin-top: 10px;
-  }
-  .urgency-line::before { content: '⚠'; font-size: 0.9rem; }
-
-  .lead-form-box {
-    background: #fff; border-radius: 16px;
-    border: 1px solid var(--border);
-    padding: 36px 32px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.06);
-  }
-  .lead-form-box h3 {
-    font-size: 1.1rem; font-weight: 700; color: var(--text-dark);
-    margin-bottom: 6px;
-  }
-  .lead-form-box p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 20px; }
-  .form-group { margin-bottom: 14px; }
-  .form-group label { display: block; font-size: 0.74rem; font-weight: 700;
-    letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px; }
-  .form-group input {
-    width: 100%; padding: 11px 14px; border-radius: 7px;
-    border: 1.5px solid var(--border); font-family: 'Montserrat', sans-serif;
-    font-size: 0.88rem; color: var(--text-dark); outline: none;
-    transition: border-color 0.2s;
-  }
-  .form-group input:focus { border-color: var(--teal); }
-  .form-privacy { font-size: 0.72rem; color: var(--text-muted); margin: 12px 0 18px;
-    line-height: 1.5; }
-  .pdf-preview {
-    display: flex; align-items: center; gap: 12px;
-    background: var(--soft-gray); border-radius: 10px;
-    padding: 12px 16px; margin-bottom: 20px;
-    border: 1px solid var(--border);
-  }
-  .pdf-icon {
-    width: 38px; height: 44px; background: var(--teal);
-    border-radius: 6px; display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .pdf-icon span { color: #fff; font-size: 0.6rem; font-weight: 800; letter-spacing: 0.05em; }
-  .pdf-info { }
-  .pdf-info .ptitle { font-size: 0.76rem; font-weight: 700; color: var(--text-dark); line-height: 1.3; }
-  .pdf-info .psub { font-size: 0.68rem; color: var(--text-muted); margin-top: 3px; }
-
-  /* ─── FOOTER ─── */
+  /* ── FOOTER ── */
   footer {
-    background: #0D1F1A; color: rgba(255,255,255,0.75);
-    padding: 56px 5% 28px;
+    background: var(--text-dark); color: rgba(255,255,255,0.6);
+    padding: 3rem 5vw; display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr; gap: 3rem;
   }
-  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 60px; margin-bottom: 40px; }
-  .footer-brand .logo { color: #fff; margin-bottom: 14px; display: flex; }
-  .footer-brand p { font-size: 0.84rem; line-height: 1.75; max-width: 300px; }
-  .footer-col h4 { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--gold-light); margin-bottom: 16px; }
-  .footer-col ul { list-style: none; }
-  .footer-col li { margin-bottom: 10px; }
-  .footer-col a { text-decoration: none; color: rgba(255,255,255,0.65); font-size: 0.86rem;
-    transition: color 0.2s; }
-  .footer-col a:hover { color: #fff; }
+  footer .logo { font-size: 1.3rem; color: #fff; margin-bottom: 0.6rem; }
+  footer p { font-size: 0.82rem; line-height: 1.7; }
+  footer h5 { font-size: 0.82rem; font-weight: 700; color: #fff; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+  footer ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+  footer ul li a { text-decoration: none; color: rgba(255,255,255,0.5); font-size: 0.82rem; transition: color 0.2s; }
+  footer ul li a:hover { color: var(--gold-mid); }
   .footer-bottom {
-    border-top: 1px solid rgba(255,255,255,0.1);
-    padding-top: 24px;
-    display: flex; justify-content: space-between; align-items: center;
-    font-size: 0.75rem; color: rgba(255,255,255,0.4); flex-wrap: wrap; gap: 10px;
+    background: #111; color: rgba(255,255,255,0.3);
+    text-align: center; padding: 1.2rem 5vw; font-size: 0.75rem;
   }
-  .footer-bottom a { color: rgba(255,255,255,0.4); text-decoration: none; }
-  .footer-bottom a:hover { color: rgba(255,255,255,0.7); }
 
-  /* ─── POPUP OVERLAY ─── */
+  /* ── POPUP OVERLAY ── */
   .popup-overlay {
-    position: fixed; inset: 0; z-index: 999;
-    background: rgba(0,0,0,0.55);
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(12,40,40,0.75); backdrop-filter: blur(4px);
     display: flex; align-items: center; justify-content: center;
-    padding: 20px;
     animation: fadeIn 0.3s ease;
   }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  .popup-box {
-    background: #fff; border-radius: 20px;
-    width: 100%; max-width: 480px;
-    overflow: hidden; position: relative;
-    box-shadow: 0 24px 80px rgba(0,0,0,0.2);
-    animation: slideUp 0.35s ease;
+  .popup {
+    background: #fff; border-radius: 24px;
+    max-width: 480px; width: 92%; padding: 2.5rem;
+    position: relative; animation: slideUp 0.35s ease;
   }
-  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
-  .popup-top {
-    background: var(--teal); padding: 32px 32px 28px;
-    position: relative; overflow: hidden;
-  }
-  .popup-top::before {
-    content: ''; position: absolute; top: -40px; right: -40px;
-    width: 140px; height: 140px; border-radius: 50%;
-    background: rgba(255,255,255,0.07);
-  }
-  .popup-top .urgent-badge {
-    display: inline-block; background: var(--gold); color: #fff;
-    font-size: 0.65rem; font-weight: 800; letter-spacing: 0.1em;
-    text-transform: uppercase; padding: 4px 12px; border-radius: 20px;
-    margin-bottom: 12px; position: relative; z-index: 1;
-  }
-  .popup-top h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.55rem; font-weight: 600; color: #fff;
-    line-height: 1.3; margin-bottom: 8px; position: relative; z-index: 1;
-  }
-  .popup-top p { font-size: 0.84rem; color: rgba(255,255,255,0.82); line-height: 1.6;
-    position: relative; z-index: 1; }
-  .popup-body { padding: 28px 32px; }
-  .popup-pdf-row {
-    display: flex; align-items: center; gap: 12px;
-    background: var(--soft-gray); border-radius: 10px;
-    padding: 12px 14px; margin-bottom: 20px;
-    border: 1px solid var(--border);
-  }
-  .popup-pdf-icon {
-    width: 40px; height: 48px; background: var(--teal);
-    border-radius: 6px; display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .popup-pdf-icon span { color: #fff; font-size: 0.55rem; font-weight: 800; letter-spacing: 0.06em; }
-  .popup-pdf-text .pt { font-size: 0.78rem; font-weight: 700; color: var(--text-dark); line-height: 1.35; }
-  .popup-pdf-text .ps { font-size: 0.68rem; color: var(--text-muted); margin-top: 3px; }
-  .popup-points { list-style: none; margin-bottom: 20px; }
-  .popup-points li {
-    font-size: 0.82rem; color: var(--text-mid); padding: 5px 0;
-    display: flex; align-items: flex-start; gap: 8px; line-height: 1.5;
-  }
-  .popup-points .ck { color: var(--teal-mid); font-size: 0.8rem; flex-shrink: 0; }
-  .popup-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-  .popup-field { display: flex; flex-direction: column; gap: 4px; }
-  .popup-field label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em;
-    text-transform: uppercase; color: var(--text-muted); }
-  .popup-field input {
-    padding: 10px 12px; border-radius: 6px;
-    border: 1.5px solid var(--border); font-family: 'Montserrat', sans-serif;
-    font-size: 0.84rem; color: var(--text-dark); outline: none;
-    transition: border-color 0.2s;
-  }
-  .popup-field input:focus { border-color: var(--teal); }
-  .popup-privacy { font-size: 0.68rem; color: var(--text-muted); margin: 8px 0 16px; line-height: 1.5; }
   .popup-close {
-    position: absolute; top: 14px; right: 16px;
-    background: rgba(255,255,255,0.18); color: #fff;
-    border: none; cursor: pointer; width: 28px; height: 28px;
-    border-radius: 50%; font-size: 1rem; line-height: 28px; text-align: center;
-    transition: background 0.2s;
+    position: absolute; top: 1rem; right: 1rem;
+    background: var(--soft-gray); border: none; cursor: pointer;
+    width: 32px; height: 32px; border-radius: 50%;
+    font-size: 1.1rem; display: flex; align-items: center; justify-content: center;
+    color: var(--text-mid); transition: background 0.2s;
   }
-  .popup-close:hover { background: rgba(255,255,255,0.3); }
+  .popup-close:hover { background: #e0e0e0; }
+  .popup-badge {
+    display: inline-block; background: var(--gold-light);
+    color: var(--gold); font-size: 0.72rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    padding: 0.3rem 0.8rem; border-radius: 50px;
+    border: 1px solid rgba(201,152,10,0.3); margin-bottom: 1rem;
+  }
+  .popup h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; color: var(--teal-dark); line-height: 1.35; margin-bottom: 0.5rem;
+  }
+  .popup h3 em { color: var(--gold); }
+  .popup p { font-size: 0.85rem; color: var(--text-mid); margin-bottom: 1.5rem; line-height: 1.7; }
+  .popup-checks { list-style: none; margin-bottom: 1.5rem; }
+  .popup-checks li {
+    font-size: 0.82rem; color: var(--text-mid); padding: 0.3rem 0;
+    display: flex; align-items: flex-start; gap: 0.5rem;
+  }
+  .popup-checks li::before { content: '✓'; color: var(--teal); font-weight: 700; flex-shrink: 0; }
+  .popup-form { display: flex; flex-direction: column; gap: 0.7rem; }
+  .popup-form input {
+    padding: 0.75rem 1rem; border-radius: 50px;
+    border: 1.5px solid var(--border); outline: none;
+    font-family: 'Montserrat', sans-serif; font-size: 0.85rem; color: var(--text-dark);
+    transition: border 0.2s;
+  }
+  .popup-form input:focus { border-color: var(--teal); }
+  .popup-form .btn-primary { border: none; cursor: pointer; font-family: 'Montserrat', sans-serif; font-size: 0.9rem; width: 100%; }
+  .popup-fine { font-size: 0.7rem; color: var(--text-light); text-align: center; }
 
-  /* ─── RESPONSIVE ─── */
-  @media (max-width: 900px) {
-    .hero { grid-template-columns: 1fr; padding-top: 120px; }
-    .hero-right { display: none; }
-    .services-grid { grid-template-columns: 1fr; }
-    .approach-grid, .about-grid { grid-template-columns: 1fr; gap: 40px; }
-    .stats-bar { grid-template-columns: repeat(2, 1fr); }
-    .lead-banner { grid-template-columns: 1fr; gap: 32px; }
-    .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; } to { opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; padding-top: 6rem; }
+    .hero-visual { display: none; }
+    .approach-wrap { grid-template-columns: 1fr; gap: 2rem; }
+    .founder-wrap { grid-template-columns: 1fr; gap: 2.5rem; }
+    .founder-photo-wrap { flex-direction: row; align-items: flex-start; }
+    footer { grid-template-columns: 1fr; gap: 2rem; }
     nav ul { display: none; }
-    .popup-fields { grid-template-columns: 1fr; }
+    .trust-bar { gap: 1.2rem; }
+    .lead-magnet { padding: 4rem 5vw; }
   }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════ POPUP ═══════════════ -->
+<!-- ═══ POPUP (Lead Magnet) ═══ -->
 <div class="popup-overlay" id="popup">
-  <div class="popup-box">
-    <div class="popup-top">
-      <button class="popup-close" onclick="document.getElementById('popup').style.display='none'">✕</button>
-      <div class="urgent-badge">Free Download — Limited Time</div>
-      <h2>Confused After 10th Grade? This Guide is for You.</h2>
-      <p>Parents, the stream you choose in the next 30 days will shape your child's career for the next 30 years. Don't leave it to guesswork.</p>
+  <div class="popup">
+    <button class="popup-close" onclick="document.getElementById('popup').style.display='none'">✕</button>
+    <span class="popup-badge">🎁 Free Download — Limited Time</span>
+    <h3>The Parents' Guide to <em>Stream Selection:</em> 5 Mistakes to Avoid After 10th Grade</h3>
+    <p>The wrong stream choice doesn't just affect marks — it shapes your child's confidence, career, and happiness for years. Get our expert guide and make the right call, the first time.</p>
+    <ul class="popup-checks">
+      <li>The #1 mistake parents make about "safe" streams</li>
+      <li>How to separate your child's strengths from their grades</li>
+      <li>When to trust aptitude tests vs. peer pressure</li>
+      <li>What colleges actually look for beyond stream marks</li>
+    </ul>
+    <div class="popup-form">
+      <input type="text" placeholder="Your Name" />
+      <input type="email" placeholder="Email Address" />
+      <input type="tel" placeholder="WhatsApp Number (for instant delivery)" />
+      <button class="btn-primary">Send Me the Free Guide →</button>
     </div>
-    <div class="popup-body">
-      <div class="popup-pdf-row">
-        <div class="popup-pdf-icon"><span>PDF</span></div>
-        <div class="popup-pdf-text">
-          <div class="pt">The Parents' Guide to Stream Selection:<br>5 Mistakes to Avoid After 10th Grade</div>
-          <div class="ps">12-page expert guide · Free Download</div>
-        </div>
-      </div>
-      <ul class="popup-points">
-        <li><span class="ck">✓</span> Why "follow your friend" is the most costly mistake</li>
-        <li><span class="ck">✓</span> The real difference between Science, Commerce &amp; Arts careers</li>
-        <li><span class="ck">✓</span> How to use psychometric data — not pressure — to decide</li>
-        <li><span class="ck">✓</span> A checklist parents can use right now, at home</li>
-      </ul>
-      <div class="popup-fields">
-        <div class="popup-field">
-          <label>Your Name</label>
-          <input type="text" placeholder="e.g. Priya Sharma" />
-        </div>
-        <div class="popup-field">
-          <label>WhatsApp Number</label>
-          <input type="tel" placeholder="+91 98765 43210" />
-        </div>
-        <div class="popup-field" style="grid-column: 1 / -1;">
-          <label>Email Address</label>
-          <input type="email" placeholder="you@email.com" />
-        </div>
-      </div>
-      <p class="popup-privacy">🔒 We respect your privacy. No spam, ever. Your details are used only to send you the guide and relevant updates from Lume Care.</p>
-      <a href="#" class="btn-primary" style="display:block; text-align:center; text-decoration:none;"
-        onclick="document.getElementById('popup').style.display='none'">
-        Send Me the Free Guide →
-      </a>
-    </div>
+    <p class="popup-fine" style="margin-top:0.6rem;">We respect your privacy. No spam, ever. Unsubscribe any time.</p>
   </div>
 </div>
 
-<!-- ═══════════════ NAV ═══════════════ -->
+<!-- ═══ NAV ═══ -->
 <nav>
-  <a href="#" class="logo">
-    <div class="logo-icon">
-      <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="9" cy="7" r="4" fill="white"/>
-        <path d="M9 11 L6 16 L9 14.5 L12 16 Z" fill="#F5C96A"/>
-      </svg>
-    </div>
-    Lume<span>Care</span>
-  </a>
+  <div class="logo">Lume<span>Live</span></div>
   <ul>
     <li><a href="#services">Services</a></li>
     <li><a href="#approach">Our Approach</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#contact" class="nav-cta">Book a Session</a></li>
+    <li><a href="#founder">About Us</a></li>
+    <li><a href="#contact">Contact</a></li>
   </ul>
+  <a href="#contact" class="nav-cta">Book a Free Demo</a>
 </nav>
 
-<!-- ═══════════════ HERO ═══════════════ -->
+<!-- ═══ HERO ═══ -->
 <section class="hero">
-  <div class="hero-left">
-    <div class="hero-tag">India's Science-Backed Guidance Platform</div>
-    <h1>
-      Your Child Deserves a Future<br>
-      Built on <em>Clarity,</em><br>
-      Not Guesswork.
-    </h1>
-    <p>
-      At Lume Care, we combine validated psychometric science with expert 1:1 counselling to help students, professionals, and families across India make confident, life-changing decisions — about careers, academics, and emotional wellbeing.
-    </p>
+  <div class="hero-text">
+    <span class="hero-eyebrow">✦ Scientific · Empathetic · Life-Changing</span>
+    <h1>When the Path Feels Unclear,<br>We Help You <em>Find Your Light.</em></h1>
+    <p class="hero-sub">India's most empathetic career & mental wellness counselling platform — built for students who deserve more than guesswork, and parents who deserve real answers.</p>
     <div class="hero-btns">
-      <a href="#services" class="btn-primary">Explore Our Services</a>
-      <a href="#" class="btn-outline" onclick="document.getElementById('popup').style.display='flex'">Get Free Guide</a>
+      <a href="#contact" class="btn-primary">Book a Free Session →</a>
+      <a href="#services" class="btn-secondary">Explore Services</a>
     </div>
-    <div class="hero-trust">
-      <div class="trust-item"><div class="trust-icon">✓</div> PGDCGC Qualified</div>
-      <div class="trust-item"><div class="trust-icon">✓</div> Psychometric Assessments</div>
-      <div class="trust-item"><div class="trust-icon">✓</div> PAN India Sessions</div>
+    <div class="hero-stats">
+      <div class="hero-stat"><span>500+</span><p>Students Guided</p></div>
+      <div class="hero-stat"><span>95%</span><p>Clarity Rate</p></div>
+      <div class="hero-stat"><span>PAN India</span><p>Online Sessions</p></div>
     </div>
   </div>
-  <div class="hero-right">
-    <div class="hero-card-group">
-      <div class="hero-card main">
-        <div class="card-badge">Student Success Story</div>
-        <div class="card-icon-wrap">🎯</div>
-        <div class="card-label">Career Clarity</div>
-        <div class="card-title">"I finally know exactly which path is right for me."</div>
-        <div class="card-sub">Riya, 17 — PCB student, now confident about her career in Psychology</div>
-        <div class="stat-row">
-          <div class="stat"><div class="n">3K+</div><div class="l">Guided</div></div>
-          <div class="stat"><div class="n">98%</div><div class="l">Satisfied</div></div>
-          <div class="stat"><div class="n">PAN</div><div class="l">India</div></div>
+  <div class="hero-visual">
+    <div class="hero-card">
+      <div class="hero-card-header">
+        <div class="avatar">🎓</div>
+        <div>
+          <h4>Lume Live Dashboard</h4>
+          <p>Your personalised roadmap</p>
         </div>
       </div>
-      <div class="hero-card floating">
-        <div class="card-label">Next Available Slot</div>
-        <div class="card-title">Free 20-Min Discovery Call</div>
-        <div class="card-sub">No commitment. Just clarity. Book your slot today.</div>
+      <div class="session-item">
+        <div class="session-dot dot-green"></div>
+        <div><span>Stream Selection Assessment</span><strong>Completed · Science matched 91%</strong></div>
+      </div>
+      <div class="session-item">
+        <div class="session-dot dot-gold"></div>
+        <div><span>1:1 Counselling Session</span><strong>Scheduled · Today, 4:00 PM</strong></div>
+      </div>
+      <div class="session-item">
+        <div class="session-dot dot-teal"></div>
+        <div><span>Career Roadmap Report</span><strong>Ready to Download</strong></div>
+      </div>
+      <div class="card-badge">
+        <span>✦</span>
+        <p>Your personalised career roadmap is ready!</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════ SERVICES ═══════════════ -->
-<section id="services">
-  <div class="services-header">
-    <div class="section-tag">What We Offer</div>
-    <h2 class="section-h2">One Platform. Three Life-Changing <em>Services.</em></h2>
-    <p class="section-sub">Whether you're a student choosing your stream, a graduate finding your career, or someone quietly carrying too much — we have a structured programme designed exactly for you.</p>
+<!-- ═══ TRUST BAR ═══ -->
+<div class="trust-bar">
+  <div class="trust-item">🎓 PG Diploma in Guidance & Counselling · Jamia Millia Islamia</div>
+  <div class="trust-dot"></div>
+  <div class="trust-item">📊 Scientifically Validated Psychometric Tools</div>
+  <div class="trust-dot"></div>
+  <div class="trust-item">🇮🇳 Serving Students PAN India</div>
+  <div class="trust-dot"></div>
+  <div class="trust-item">💬 Vernacular Sessions Available</div>
+</div>
+
+<!-- ═══ SERVICES ═══ -->
+<section class="services" id="services">
+  <div class="services-intro">
+    <p class="section-label">What We Do</p>
+    <h2 class="section-title">One Platform. Every Stage of Your Journey.</h2>
+    <p class="section-sub">Whether you're choosing subjects after 10th grade, figuring out your career, or simply need someone safe to talk to — Lume Live has a structured, science-backed path for you.</p>
   </div>
   <div class="services-grid">
 
-    <!-- S1: High School -->
-    <div class="service-card s1">
-      <div class="service-emoji">🎓</div>
-      <div class="service-for">For High School Students</div>
-      <h3>Stream & Subject Selection with Confidence</h3>
-      <p>The decision you make after 10th grade shapes the next decade of your life. Make it with data, not pressure.</p>
-      <ul class="service-list">
-        <li><span class="check">✓</span> Scientifically validated aptitude &amp; interest assessments</li>
-        <li><span class="check">✓</span> 1:1 session to decode your psychometric results</li>
-        <li><span class="check">✓</span> Expert guidance on Science, Commerce &amp; Arts career paths</li>
-        <li><span class="check">✓</span> Managing board exam anxiety and academic stress</li>
-        <li><span class="check">✓</span> A personalised written roadmap for parents</li>
+    <!-- Card 1: High School -->
+    <div class="service-card card-teal">
+      <div class="service-icon icon-teal">📚</div>
+      <h3>For High School Students</h3>
+      <p class="tagline">After 10th Grade · Stream & Subject Selection</p>
+      <p>The stream you choose after 10th doesn't just decide your subjects — it shapes your career, your confidence, and your future. Let science, not pressure, guide this decision.</p>
+      <ul>
+        <li>Psychometric assessment to identify your true aptitude & interests</li>
+        <li>Clear breakdown of Science, Commerce & Arts career paths</li>
+        <li>1:1 session to map your strengths to real opportunities</li>
+        <li>Reduce academic anxiety and make the choice with confidence</li>
+        <li>Personalised subject-selection report shared with parents</li>
       </ul>
-      <a href="#" class="svc-btn btn-s1">Book Free Demo Session →</a>
+      <a href="#contact" class="btn-primary">Take a Free Demo →</a>
     </div>
 
-    <!-- S2: College -->
-    <div class="service-card s2">
-      <div class="service-emoji">💼</div>
-      <div class="service-for">For College Students &amp; Graduates</div>
-      <h3>Career Clarity &amp; First-Job Readiness</h3>
-      <p>Your degree opened the door. We help you walk through it — with purpose, a polished profile, and real direction.</p>
-      <ul class="service-list">
-        <li><span class="check">✓</span> Career mapping aligned to your degree &amp; strengths</li>
-        <li><span class="check">✓</span> Higher studies vs. job — structured decision framework</li>
-        <li><span class="check">✓</span> Resume, interview prep &amp; LinkedIn optimisation guidance</li>
-        <li><span class="check">✓</span> Overcoming career confusion and comparison anxiety</li>
-        <li><span class="check">✓</span> Goal-setting with 90-day action plan</li>
+    <!-- Card 2: College -->
+    <div class="service-card card-gold">
+      <div class="service-icon icon-gold">🎯</div>
+      <h3>For College Students</h3>
+      <p class="tagline">Career Clarity · First Job Readiness</p>
+      <p>Your degree is a door, not a destiny. Many college students feel lost between passions, parental expectations, and a job market that never stops changing. We help you find your true north.</p>
+      <ul>
+        <li>In-depth career aptitude & personality profiling</li>
+        <li>Industry exploration: traditional careers vs. emerging roles</li>
+        <li>Resume, LinkedIn & interview readiness coaching</li>
+        <li>Roadmap from college to your first meaningful job</li>
+        <li>Guidance on higher studies, entrance exams & abroad options</li>
       </ul>
-      <a href="#" class="svc-btn btn-s2">Take the Career Clarity Quiz →</a>
+      <a href="#contact" class="btn-gold">Book a Session →</a>
     </div>
 
-    <!-- S3: Emotional Wellness -->
-    <div class="service-card s3">
-      <div class="service-emoji">🤝</div>
-      <div class="service-for">For Emotional Wellness</div>
-      <h3>Private 1:1 Counselling Sessions</h3>
-      <p>You don't have to keep pretending everything is fine. This is a safe, confidential space — built entirely for you.</p>
-      <ul class="service-list">
-        <li><span class="check">✓</span> Managing stress, overwhelm &amp; emotional exhaustion</li>
-        <li><span class="check">✓</span> Peer pressure, self-doubt &amp; low self-esteem</li>
-        <li><span class="check">✓</span> Family conflict and relationship challenges</li>
-        <li><span class="check">✓</span> Building resilience, confidence &amp; healthy boundaries</li>
-        <li><span class="check">✓</span> Online sessions — from anywhere in India</li>
+    <!-- Card 3: Emotional Wellness -->
+    <div class="service-card card-warm">
+      <div class="service-icon icon-warm">💚</div>
+      <h3>Emotional Wellness</h3>
+      <p class="tagline">1:1 Sessions · Stress · Anxiety · Self-Esteem</p>
+      <p>You don't have to be "in crisis" to deserve support. Peer pressure, exam stress, family expectations, and low self-worth are real — and they deserve real, professional attention.</p>
+      <ul>
+        <li>Safe, judgement-free space to speak your truth</li>
+        <li>Evidence-based techniques for stress and anxiety management</li>
+        <li>Building resilience against academic & social pressure</li>
+        <li>Restoring self-esteem and healthy self-image</li>
+        <li>Ongoing support — because healing isn't a one-session process</li>
       </ul>
-      <a href="#" class="svc-btn btn-s3">Start with a Private Consultation →</a>
+      <a href="#contact" class="btn-primary">Talk to a Counsellor →</a>
     </div>
 
   </div>
 </section>
 
-<!-- ═══════════════ APPROACH ═══════════════ -->
-<section id="approach">
-  <div class="approach-grid">
+<!-- ═══ APPROACH ═══ -->
+<section class="approach" id="approach">
+  <div class="approach-wrap">
     <div>
-      <div class="section-tag">Our Process</div>
-      <h2 class="section-h2">The Lume Care <em>Approach</em></h2>
-      <p class="section-sub" style="margin-bottom:40px;">A structured, three-step process that transforms anxiety into actionable direction. Built on science. Delivered with empathy.</p>
+      <p class="section-label">How We Work</p>
+      <h2 class="section-title">The Lume Care Approach</h2>
+      <p class="section-sub">A structured, three-step journey — built on science, delivered with warmth — so you never have to navigate the future alone.</p>
+      <br/>
+      <p style="font-size:0.88rem; color:var(--text-light); line-height:1.8;">Trusted by families across Haryana, Delhi NCR, and now PAN India — because good counselling changes everything.</p>
+    </div>
+    <div class="approach-steps">
 
-      <div class="approach-steps">
-        <div class="step">
-          <div class="step-num">1</div>
-          <div class="step-body">
-            <div class="step-label">Step One</div>
-            <div class="step-title">Scientific Discovery</div>
-            <p class="step-text">We begin with globally validated psychometric assessments that map your child's unique aptitudes, interests, personality type, and learning style. This isn't a quiz — it's a precision instrument used by career counsellors worldwide. The data tells us what no interview alone can: what your child is genuinely wired to do well, and what lights them up from the inside. Parents, for the first time, you'll have something concrete and scientific to anchor every conversation around careers.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">2</div>
-          <div class="step-body">
-            <div class="step-label">Step Two</div>
-            <div class="step-title">Expert 1:1 Counselling</div>
-            <p class="step-text">The numbers mean nothing without context. In a personalised one-on-one session, our counsellor connects the psychometric data to the real world — exploring career options, higher education pathways, market realities, and your family's unique situation. This is where anxiety turns into clarity. We address the fears you haven't said out loud: "What if my child chooses wrong?" "What if they don't get into a good college?" We answer these — calmly, expertly, with evidence.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">3</div>
-          <div class="step-body">
-            <div class="step-label">Step Three</div>
-            <div class="step-title">The Confident Future</div>
-            <p class="step-text">Every student leaves with a personalised written roadmap — a clear, step-by-step guide covering stream choice, career options, skill-building priorities, and a 12-month action plan. This isn't generic advice from the internet. It is a document built specifically for your child, by a qualified professional, grounded in their own data. Parents, this is the structured clarity you've been looking for. You'll walk away knowing the plan is in place — and in good hands.</p>
-          </div>
+      <div class="step step-active">
+        <div class="step-number">01</div>
+        <div class="step-content">
+          <p class="step-sub">Step One</p>
+          <h4>Scientific Discovery</h4>
+          <p>We begin not with assumptions, but with answers. Using internationally validated psychometric tools — aptitude tests, interest inventories, and personality assessments — we build a comprehensive, data-driven picture of your child's unique mind. This isn't guesswork; it's a scientific foundation. Every recommendation we make is rooted in this deep understanding of who your child truly is — not who the marks say they should be.</p>
         </div>
       </div>
-    </div>
 
-    <div class="approach-visual">
-      <h3>Why Lume Care?<br>Because guessing costs too much.</h3>
-      <p>Most career decisions in India are made based on peer influence, family tradition, or last-minute panic. We believe every student deserves better. Our approach is structured, evidence-based, and deeply human.</p>
-      <ul class="outcome-list">
-        <li><span class="dot"></span> Validated psychometric tools, not gut feel</li>
-        <li><span class="dot"></span> Qualified counsellor with PGDCGC from Jamia Millia Islamia</li>
-        <li><span class="dot"></span> Serving students across Haryana &amp; PAN India online</li>
-        <li><span class="dot"></span> Sessions in Hindi &amp; English — comfortable for every family</li>
-        <li><span class="dot"></span> Affordable, transparent pricing — no hidden fees</li>
-      </ul>
-      <a href="#" class="av-btn">Schedule a Free Discovery Call →</a>
+      <div class="step">
+        <div class="step-number">02</div>
+        <div class="step-content">
+          <p class="step-sub">Step Two</p>
+          <h4>Expert 1:1 Counselling</h4>
+          <p>Numbers alone don't tell a story — a trained counsellor does. In our personalised one-on-one sessions, we connect your child's psychometric data to real-world careers, industry realities, and honest conversations about aspirations and fears. We bridge the gap between what the data reveals and what the world offers, guiding both students and parents through every question, concern, and hesitation with patience and clinical expertise.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">03</div>
+        <div class="step-content">
+          <p class="step-sub">Step Three</p>
+          <h4>Your Confident Future</h4>
+          <p>Every student leaves Lume Live with something tangible: a personalised Career & Life Roadmap — a clear, actionable plan for the next 3 to 5 years. From stream selection to entrance exams, from first jobs to higher education, this document becomes your family's north star. No more second-guessing at 11 PM. No more "what if." Just a structured, hopeful path forward — chosen with clarity, not fear.</p>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
 
-<!-- ═══════════════ STATS ═══════════════ -->
-<div class="stats-bar">
-  <div class="stat-item">
-    <div class="num">3,000+</div>
-    <div class="label">Students Guided</div>
-  </div>
-  <div class="stat-item">
-    <div class="num">PAN India</div>
-    <div class="label">Online Reach</div>
-  </div>
-  <div class="stat-item">
-    <div class="num">98%</div>
-    <div class="label">Parent Satisfaction</div>
-  </div>
-  <div class="stat-item">
-    <div class="num">1 Assessment</div>
-    <div class="label">Changes Everything</div>
-  </div>
-</div>
-
-<!-- ═══════════════ ABOUT ═══════════════ -->
-<section id="about">
-  <div class="about-grid">
-    <div class="about-img-wrap">
-      <div class="about-img-placeholder"></div>
-      <div class="about-badge">
-        <span class="n">PGDCGC</span>
-        <span class="l">Jamia Millia Islamia</span>
+<!-- ═══ FOUNDER ═══ -->
+<section class="founder" id="founder">
+  <div class="founder-wrap">
+    <div class="founder-photo-wrap">
+      <div class="founder-photo">
+        <!-- Replace with actual photo: <img src="founder.jpg" alt="Founder" /> -->
+        <div style="text-align:center;">
+          <div style="font-size:3rem;margin-bottom:0.5rem;">👤</div>
+          <p style="font-size:0.8rem;color:rgba(255,255,255,0.4);">Add your photo here</p>
+        </div>
+      </div>
+      <div class="founder-badges">
+        <div class="founder-badge"><span class="founder-badge-icon">🎓</span> PGDCGC · Jamia Millia Islamia</div>
+        <div class="founder-badge"><span class="founder-badge-icon">🧠</span> Counselling Psychologist</div>
+        <div class="founder-badge"><span class="founder-badge-icon">📍</span> Based in Rohtak, Haryana</div>
+        <div class="founder-badge"><span class="founder-badge-icon">🇮🇳</span> Serving PAN India</div>
       </div>
     </div>
-    <div class="about-content">
-      <div class="section-tag">Meet the Founder</div>
-      <h2 class="section-h2">A Counsellor Who Understands <em>Both</em> the Science and the Heart.</h2>
-      <blockquote>"I started Lume Care because I saw too many brilliant students — right here in Haryana — making life-altering decisions in the dark. Science can light the way."</blockquote>
-      <p>The founder of Lume Care holds a Post Graduate Diploma in Guidance and Counselling (PGDCGC) from Jamia Millia Islamia — one of India's most respected central universities for the study of human psychology, behaviour, and counselling practice. This rigorous, academically intensive programme does something rare: it trains counsellors not just in the therapeutic dimensions of human emotion, but in the technical precision of psychometric assessment and vocational guidance.</p>
-      <p>What this means for your child is significant. When you sit across from our counsellor, you are working with someone who can simultaneously read a psychometric report with scientific accuracy and detect the quiet anxiety beneath a student's composed face. The emotional and the analytical are not separate disciplines here — they are seamlessly integrated.</p>
-      <p>Based in Rohtak, and deeply connected to the academic and social fabric of Haryana, the Lume Care founder is committed to a singular mission: bringing the kind of structured, world-class career guidance that major metro students take for granted — to every student across this region and beyond. Whether you are in Rohtak, Ambala, Panipat, or anywhere else in India, you deserve expert guidance — and that is exactly what we deliver.</p>
-      <div class="credential-row">
-        <div class="cred-pill">✓ PGDCGC — Jamia Millia Islamia</div>
-        <div class="cred-pill">✓ Counselling Psychologist</div>
-        <div class="cred-pill">✓ Psychometric Specialist</div>
-        <div class="cred-pill">✓ Rohtak-Based, India-Wide</div>
-      </div>
-      <a href="#" class="btn-primary">Book a Session with the Founder →</a>
+    <div class="founder-text">
+      <p class="section-label">About the Founder</p>
+      <h2 class="section-title" style="color:#fff;">Where Academic Rigour Meets Human Empathy</h2>
+      <p>Lume Live was born from a deeply personal conviction: that every student in India — regardless of their city, school, or family background — deserves access to world-class, science-backed counselling. Not advice pulled from the air. Not generational assumptions. Real guidance, grounded in psychology.</p>
+      <p>The founder holds a Post Graduate Diploma in Guidance and Counselling (PGDCGC) from Jamia Millia Islamia, New Delhi — one of India's most respected institutions for psychological sciences. This rigorous academic training in clinical assessment, psychometric methodology, and therapeutic counselling creates a rare dual competency: the technical precision to interpret aptitude data, and the emotional intelligence to meet a distressed student exactly where they are.</p>
+      <div class="founder-quote">"I've seen too many brilliant students go down the wrong path — not because they lacked potential, but because nobody gave them the right mirror at the right time. Lume Live is that mirror."</div>
+      <p>Proudly rooted in Rohtak, Haryana, and serving students across India online — because geography should never limit a young person's future.</p>
+      <a href="#contact" class="btn-gold" style="margin-top:0.5rem;">Meet Us in a Free Session →</a>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════ LEAD BANNER ═══════════════ -->
-<div class="lead-banner" id="contact">
-  <div class="lead-content">
-    <div class="badge">Free Resource for Parents</div>
-    <h2>Don't Let Your Child Make the <span>Most Expensive Mistake</span> of Their Life.</h2>
-    <p>Every year, thousands of students in India pick a stream based on peer pressure, parental expectation, or last-minute confusion — and spend years regretting it. The right choice made <em>now</em> saves years of frustration, wasted fees, and lost confidence later.</p>
-    <p>We've created a practical, expert-written guide to help parents navigate this critical decision with calm, clarity, and confidence.</p>
-    <div class="urgency-line">Stream selection season is here. The right guidance cannot wait.</div>
+<!-- ═══ TESTIMONIALS ═══ -->
+<section class="testimonials">
+  <div style="text-align:center; margin-bottom:0.5rem;">
+    <p class="section-label">Real Stories</p>
+    <h2 class="section-title">Clarity That Changed Everything</h2>
   </div>
-  <div class="lead-form-box">
-    <div class="pdf-preview">
-      <div class="pdf-icon"><span>FREE PDF</span></div>
-      <div class="pdf-info">
-        <div class="ptitle">The Parents' Guide to Stream Selection:<br>5 Mistakes to Avoid After 10th Grade</div>
-        <div class="psub">12 pages · Expert-written · Instant download</div>
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <p>"We had almost decided on Commerce under pressure from relatives. The psychometric report showed our daughter had exceptional analytical and visual skills — Science was the right call. She's now thriving in 11th. This one session saved years of regret."</p>
+      <div class="testi-author">
+        <div class="testi-avatar">PK</div>
+        <div><span>Priya K.</span><small>Parent · Rohtak</small></div>
       </div>
     </div>
-    <h3>Get Your Free Copy Now</h3>
-    <p>Enter your details below and we'll send it straight to your WhatsApp &amp; email.</p>
-    <div class="form-group">
-      <label>Your Name</label>
-      <input type="text" placeholder="e.g. Sunita Verma" />
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <p>"I was in my final year of B.Com with no idea what to do next. The counsellor didn't just list career options — she helped me understand why I kept running from decisions. I finally have a plan, and more importantly, the courage to follow it."</p>
+      <div class="testi-author">
+        <div class="testi-avatar">AV</div>
+        <div><span>Aditya V.</span><small>B.Com Final Year · Delhi</small></div>
+      </div>
     </div>
-    <div class="form-group">
-      <label>WhatsApp Number</label>
-      <input type="tel" placeholder="+91 98765 43210" />
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <p>"My son had severe exam anxiety and was shutting down completely. Within 3 sessions, he was opening up, sleeping better, and attending classes again. I can't put a price on that. Lume Live gave us our child back."</p>
+      <div class="testi-author">
+        <div class="testi-avatar">RM</div>
+        <div><span>Rekha M.</span><small>Parent · Chandigarh</small></div>
+      </div>
     </div>
-    <div class="form-group">
-      <label>Email Address</label>
-      <input type="email" placeholder="you@email.com" />
-    </div>
-    <p class="form-privacy">🔒 Your information is safe with us. We will never share your details or send you spam. Ever.</p>
-    <a href="#" class="btn-gold" style="display:block; text-align:center; text-decoration:none;">
-      Send Me the Free Guide →
-    </a>
   </div>
-</div>
+</section>
 
-<!-- ═══════════════ FOOTER ═══════════════ -->
+<!-- ═══ LEAD MAGNET SECTION ═══ -->
+<section class="lead-magnet" id="contact">
+  <div class="lead-magnet-inner">
+    <div class="pdf-preview">📄 FREE DOWNLOAD — PDF GUIDE</div>
+    <h2>Don't Let One Decision <em>Define the Next Decade.</em></h2>
+    <p>Most parents make stream-selection choices based on fear, relatives, and rank lists — not on their child's actual strengths. Our free guide reveals the 5 most common mistakes and how to avoid every single one. Enter your details below and we'll send it to your WhatsApp instantly.</p>
+    <div class="lead-form">
+      <input type="text" placeholder="Parent / Guardian Name" />
+      <input type="email" placeholder="Email Address" />
+      <input type="tel" placeholder="WhatsApp Number" />
+      <button class="btn-gold">Get the Free PDF Guide →</button>
+    </div>
+    <p class="lead-fine">🔒 Your data is 100% private. We never spam. By submitting, you agree to receive occasional helpful resources from Lume Live.</p>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
 <footer>
-  <div class="footer-grid">
-    <div class="footer-brand">
-      <div class="logo">
-        <div class="logo-icon" style="background:rgba(255,255,255,0.15);">
-          <svg viewBox="0 0 18 18" fill="none">
-            <circle cx="9" cy="7" r="4" fill="white"/>
-            <path d="M9 11 L6 16 L9 14.5 L12 16 Z" fill="#F5C96A"/>
-          </svg>
-        </div>
-        <span style="color:#fff;">Lume</span><span style="color:#F5C96A;">Care</span>
-      </div>
-      <p>Illuminating the path forward for students, professionals, and families across India — through science-backed counselling and genuine human care.</p>
-      <div style="margin-top:18px; font-size:0.8rem; color:rgba(255,255,255,0.5);">
-        📍 Rohtak, Haryana &nbsp;|&nbsp; 🌐 lumelive.co.in<br/>
-        📱 Available PAN India via Online Sessions
-      </div>
-    </div>
-    <div class="footer-col">
-      <h4>Services</h4>
-      <ul>
-        <li><a href="#">High School Counselling</a></li>
-        <li><a href="#">Career Clarity Programme</a></li>
-        <li><a href="#">Emotional Wellness Sessions</a></li>
-        <li><a href="#">Psychometric Assessments</a></li>
-        <li><a href="#">Parent Consultations</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>Quick Links</h4>
-      <ul>
-        <li><a href="#">About the Founder</a></li>
-        <li><a href="#">Our Approach</a></li>
-        <li><a href="#">Free Resources</a></li>
-        <li><a href="#">Blog</a></li>
-        <li><a href="#">Book a Session</a></li>
-      </ul>
-    </div>
+  <div>
+    <div class="logo">Lume<span style="color:var(--gold-mid)">Live</span></div>
+    <p style="margin-top:0.6rem;">Empathetic, scientific counselling for students and families across India. Based in Rohtak, Haryana.</p>
+    <p style="margin-top:1rem; font-size:0.78rem;">📧 hello@lumelive.co.in<br>📱 WhatsApp: +91 XXXXX XXXXX</p>
   </div>
-  <div class="footer-bottom">
-    <span>© 2025 Lume Care. All rights reserved. | lumelive.co.in</span>
-    <span>
-      <a href="#">Privacy Policy</a> &nbsp;·&nbsp;
-      <a href="#">Terms of Service</a> &nbsp;·&nbsp;
-      <a href="#">Refund Policy</a>
-    </span>
+  <div>
+    <h5>Services</h5>
+    <ul>
+      <li><a href="#">High School Career Counselling</a></li>
+      <li><a href="#">College Career Guidance</a></li>
+      <li><a href="#">Emotional Wellness Sessions</a></li>
+      <li><a href="#">Psychometric Assessments</a></li>
+      <li><a href="#">Parent Consultation</a></li>
+    </ul>
+  </div>
+  <div>
+    <h5>Resources</h5>
+    <ul>
+      <li><a href="#">Free Stream Selection Guide</a></li>
+      <li><a href="#">Career Blog</a></li>
+      <li><a href="#">About the Founder</a></li>
+      <li><a href="#">Privacy Policy</a></li>
+      <li><a href="#">Terms of Service</a></li>
+    </ul>
   </div>
 </footer>
+<div class="footer-bottom">
+  © 2025 Lume Live · lumelive.co.in · Built with purpose in Rohtak, Haryana
+</div>
 
 <script>
   setTimeout(() => {
