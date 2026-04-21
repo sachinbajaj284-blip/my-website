@@ -1,764 +1,1038 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Lume Live — Light Your Path Forward</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,500&display=swap" rel="stylesheet"/>
+<title>Lume Live — Illuminate Your Path</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet"/>
 <style>
-  :root {
-    --teal:       #1A6B6B;
-    --teal-dark:  #124E4E;
-    --teal-light: #E6F4F4;
-    --teal-mid:   #2D8E8E;
-    --gold:       #C9980A;
-    --gold-light: #FDF6E3;
-    --gold-mid:   #E8B420;
-    --soft-gray:  #F5F5F2;
-    --text-dark:  #1C2B2B;
-    --text-mid:   #4A6060;
-    --text-light: #7A9090;
-    --white:      #FFFFFF;
-    --border:     rgba(26,107,107,0.15);
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body {
-    font-family: 'Montserrat', sans-serif;
-    color: var(--text-dark);
-    background: var(--white);
-    overflow-x: hidden;
-    line-height: 1.7;
-  }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--teal:#1a7f7a;
+--teal-dark:#125e5a;
+--teal-light:#e6f5f4;
+--teal-mid:#2a9d97;
+--gold:#c9921a;
+--gold-light:#fdf3df;
+--gold-bright:#e8a820;
+--white:#ffffff;
+--soft-gray:#f5f5f3;
+--gray-200:#e8e8e4;
+--gray-400:#9a9a93;
+--gray-600:#5a5a52;
+--gray-800:#2c2c28;
+--text:#1e1e1a;
+--font:'Montserrat',sans-serif;
+--serif:'Playfair Display',serif;
+--radius:12px;
+--radius-lg:20px;
+--shadow:0 8px 40px rgba(26,127,122,0.10);
+--shadow-gold:0 8px 40px rgba(201,146,26,0.18);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);color:var(--text);background:var(--white);line-height:1.7;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+img{max-width:100%}
+.container{max-width:1160px;margin:0 auto;padding:0 24px}
 
-  /* ── NAV ── */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 1rem 5vw;
-    background: rgba(255,255,255,0.95);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--border);
-  }
-  .logo {
-    font-size: 1.5rem; font-weight: 800;
-    color: var(--teal-dark); letter-spacing: -0.5px;
-  }
-  .logo span { color: var(--gold); }
-  nav ul { list-style: none; display: flex; gap: 2rem; }
-  nav ul a { text-decoration: none; color: var(--text-mid); font-size: 0.85rem; font-weight: 600; letter-spacing: 0.3px; transition: color 0.2s; }
-  nav ul a:hover { color: var(--teal); }
-  .nav-cta {
-    background: var(--teal); color: #fff;
-    padding: 0.55rem 1.4rem; border-radius: 50px;
-    font-size: 0.82rem; font-weight: 700;
-    text-decoration: none; letter-spacing: 0.3px;
-    transition: background 0.2s, transform 0.15s;
-  }
-  .nav-cta:hover { background: var(--teal-dark); transform: translateY(-1px); }
+/* ── NAVBAR ── */
+#navbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255,0.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--gray-200);transition:box-shadow 0.3s}
+#navbar.scrolled{box-shadow:0 4px 24px rgba(0,0,0,0.08)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:72px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.4rem;letter-spacing:-0.5px}
+.logo-icon{width:36px;height:36px;background:var(--teal);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.logo-icon svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:2.5}
+.logo span{color:var(--teal)}
+.logo em{color:var(--gold);font-style:normal}
+.nav-links{display:flex;align-items:center;gap:32px;list-style:none}
+.nav-links a{font-size:0.9rem;font-weight:600;color:var(--gray-600);transition:color 0.2s;letter-spacing:0.3px}
+.nav-links a:hover{color:var(--teal)}
+.nav-cta{background:var(--teal);color:#fff!important;padding:10px 22px;border-radius:50px;font-size:0.85rem!important;font-weight:700!important;letter-spacing:0.5px;transition:background 0.2s,transform 0.2s!important}
+.nav-cta:hover{background:var(--teal-dark)!important;transform:translateY(-1px)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
+.hamburger span{display:block;width:24px;height:2px;background:var(--teal);border-radius:2px;transition:all 0.3s}
+.mobile-menu{display:none;position:fixed;top:72px;left:0;right:0;background:#fff;border-bottom:1px solid var(--gray-200);padding:24px;z-index:999;flex-direction:column;gap:20px}
+.mobile-menu.open{display:flex}
+.mobile-menu a{font-weight:600;color:var(--gray-600);font-size:1rem;padding:8px 0;border-bottom:1px solid var(--gray-200)}
+.mobile-menu .mob-cta{background:var(--teal);color:#fff!important;text-align:center;padding:14px;border-radius:50px;border:none;font-size:1rem;font-weight:700;cursor:pointer}
 
-  /* ── HERO ── */
-  .hero {
-    min-height: 100vh;
-    display: grid; grid-template-columns: 1fr 1fr;
-    align-items: center;
-    padding: 7rem 5vw 4rem;
-    background: linear-gradient(135deg, #E6F4F4 0%, #F5F5F2 50%, #FDF6E3 100%);
-    position: relative; overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute; top: -100px; right: -80px;
-    width: 500px; height: 500px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(201,152,10,0.12) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .hero::after {
-    content: '';
-    position: absolute; bottom: -60px; left: -60px;
-    width: 350px; height: 350px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(26,107,107,0.1) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .hero-text { position: relative; z-index: 2; animation: fadeUp 0.8s ease both; }
-  .hero-eyebrow {
-    display: inline-block;
-    background: var(--gold-light); color: var(--gold);
-    font-size: 0.72rem; font-weight: 700; letter-spacing: 2px;
-    text-transform: uppercase; padding: 0.35rem 0.9rem; border-radius: 50px;
-    border: 1px solid rgba(201,152,10,0.3); margin-bottom: 1.2rem;
-  }
-  .hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2.2rem, 4vw, 3.4rem); line-height: 1.2;
-    color: var(--teal-dark); margin-bottom: 1.2rem;
-  }
-  .hero h1 em { font-style: italic; color: var(--gold); }
-  .hero-sub {
-    font-size: 1.05rem; color: var(--text-mid);
-    max-width: 480px; margin-bottom: 2rem; font-weight: 400;
-  }
-  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
-  .btn-primary {
-    background: var(--teal); color: #fff;
-    padding: 0.85rem 2rem; border-radius: 50px;
-    font-size: 0.9rem; font-weight: 700; text-decoration: none;
-    letter-spacing: 0.3px; display: inline-block;
-    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-  }
-  .btn-primary:hover { background: var(--teal-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,107,107,0.25); }
-  .btn-secondary {
-    background: transparent; color: var(--teal);
-    padding: 0.85rem 2rem; border-radius: 50px;
-    font-size: 0.9rem; font-weight: 700; text-decoration: none;
-    border: 2px solid var(--teal); display: inline-block;
-    transition: all 0.2s;
-  }
-  .btn-secondary:hover { background: var(--teal); color: #fff; }
-  .btn-gold {
-    background: var(--gold); color: #fff;
-    padding: 0.85rem 2rem; border-radius: 50px;
-    font-size: 0.9rem; font-weight: 700; text-decoration: none;
-    display: inline-block; transition: all 0.2s;
-  }
-  .btn-gold:hover { background: #a87d06; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,152,10,0.3); }
-  .hero-stats {
-    display: flex; gap: 2rem; margin-top: 2.5rem; padding-top: 2rem;
-    border-top: 1px solid var(--border);
-  }
-  .hero-stat span {
-    display: block; font-size: 1.6rem; font-weight: 800; color: var(--teal);
-  }
-  .hero-stat p { font-size: 0.78rem; color: var(--text-light); font-weight: 500; }
-  .hero-visual {
-    position: relative; z-index: 2;
-    display: flex; justify-content: center; align-items: center;
-    animation: fadeUp 0.9s 0.15s ease both;
-  }
-  .hero-card {
-    background: #fff; border-radius: 20px;
-    padding: 2rem; width: 320px;
-    box-shadow: 0 20px 60px rgba(26,107,107,0.15);
-    border: 1px solid var(--border);
-  }
-  .hero-card-header {
-    display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.5rem;
-  }
-  .avatar {
-    width: 50px; height: 50px; border-radius: 50%;
-    background: var(--teal-light); display: flex; align-items: center;
-    justify-content: center; font-size: 1.4rem;
-  }
-  .hero-card-header h4 { font-size: 0.9rem; font-weight: 700; color: var(--teal-dark); }
-  .hero-card-header p { font-size: 0.75rem; color: var(--text-light); }
-  .session-item {
-    display: flex; align-items: center; gap: 0.8rem;
-    padding: 0.7rem 0; border-bottom: 1px solid #f0f0f0;
-  }
-  .session-item:last-child { border-bottom: none; }
-  .session-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .dot-green { background: #22c55e; }
-  .dot-gold { background: var(--gold); }
-  .dot-teal { background: var(--teal); }
-  .session-item span { font-size: 0.82rem; color: var(--text-mid); font-weight: 500; }
-  .session-item strong { font-size: 0.75rem; color: var(--text-light); font-weight: 400; display: block; }
-  .card-badge {
-    margin-top: 1rem; background: var(--gold-light);
-    border: 1px solid rgba(201,152,10,0.3); border-radius: 10px;
-    padding: 0.6rem 0.8rem; display: flex; align-items: center; gap: 0.5rem;
-  }
-  .card-badge p { font-size: 0.75rem; color: var(--gold); font-weight: 600; }
+/* ── HERO ── */
+#hero{padding:160px 0 100px;background:linear-gradient(135deg,#f0faf9 0%,#fdf8ee 100%);position:relative;overflow:hidden}
+.hero-bg-shape{position:absolute;right:-120px;top:-80px;width:600px;height:600px;background:radial-gradient(circle,rgba(26,127,122,0.07) 0%,transparent 70%);border-radius:50%;pointer-events:none}
+.hero-bg-shape2{position:absolute;left:-80px;bottom:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(201,146,26,0.07) 0%,transparent 70%);border-radius:50%;pointer-events:none}
+.hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--gold-light);border:1px solid #e8c97a;color:var(--gold);font-size:0.78rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:7px 16px;border-radius:50px;margin-bottom:20px}
+.hero-badge::before{content:'';width:6px;height:6px;background:var(--gold-bright);border-radius:50%;display:inline-block}
+h1.hero-title{font-size:3.1rem;font-weight:800;line-height:1.15;letter-spacing:-1.5px;color:var(--gray-800);margin-bottom:12px}
+h1.hero-title .accent{color:var(--teal)}
+h1.hero-title .gold{color:var(--gold)}
+.hero-sub{font-size:1.1rem;color:var(--gray-600);font-weight:400;line-height:1.75;margin-bottom:36px;max-width:480px}
+.hero-actions{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--teal);color:#fff;font-family:var(--font);font-size:0.95rem;font-weight:700;padding:15px 30px;border-radius:50px;border:none;cursor:pointer;transition:background 0.2s,transform 0.2s,box-shadow 0.2s;letter-spacing:0.3px}
+.btn-primary:hover{background:var(--teal-dark);transform:translateY(-2px);box-shadow:var(--shadow)}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--teal);font-family:var(--font);font-size:0.95rem;font-weight:700;padding:14px 28px;border-radius:50px;border:2px solid var(--teal);cursor:pointer;transition:all 0.2s;letter-spacing:0.3px}
+.btn-secondary:hover{background:var(--teal);color:#fff;transform:translateY(-2px)}
+.btn-gold{background:var(--gold);color:#fff}
+.btn-gold:hover{background:#b07f14!important}
+.hero-stats{display:flex;gap:32px;margin-top:48px}
+.stat-item{text-align:center}
+.stat-num{font-size:1.8rem;font-weight:800;color:var(--teal);letter-spacing:-1px;display:block}
+.stat-label{font-size:0.75rem;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.8px}
+.hero-card{background:#fff;border-radius:var(--radius-lg);padding:36px;box-shadow:0 20px 60px rgba(26,127,122,0.12);position:relative}
+.hero-card-tag{position:absolute;top:-14px;left:28px;background:var(--gold);color:#fff;font-size:0.75rem;font-weight:700;letter-spacing:0.8px;padding:6px 16px;border-radius:50px;text-transform:uppercase}
+.hc-title{font-size:1rem;font-weight:700;color:var(--gray-800);margin-bottom:16px}
+.hc-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--gray-200)}
+.hc-item:last-child{border-bottom:none;padding-bottom:0}
+.hc-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.9rem}
+.hc-dot.teal{background:var(--teal-light);color:var(--teal)}
+.hc-dot.gold{background:var(--gold-light);color:var(--gold)}
+.hc-text p{font-size:0.82rem;font-weight:700;color:var(--gray-800);margin-bottom:2px}
+.hc-text span{font-size:0.75rem;color:var(--gray-400)}
+.hero-trust{margin-top:20px;font-size:0.78rem;color:var(--gray-400);font-weight:600;text-align:center;letter-spacing:0.3px}
 
-  /* ── TRUST BAR ── */
-  .trust-bar {
-    background: var(--teal-dark); color: #fff;
-    padding: 1.2rem 5vw;
-    display: flex; align-items: center; justify-content: center;
-    gap: 3rem; flex-wrap: wrap;
-  }
-  .trust-item { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.3px; opacity: 0.9; }
-  .trust-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold-mid); }
+/* ── SECTION COMMONS ── */
+section{padding:90px 0}
+.section-eyebrow{font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+.section-title{font-size:2.4rem;font-weight:800;letter-spacing:-1px;color:var(--gray-800);line-height:1.2;margin-bottom:16px}
+.section-sub{font-size:1rem;color:var(--gray-600);max-width:560px;line-height:1.75}
 
-  /* ── SECTION COMMONS ── */
-  section { padding: 6rem 5vw; }
-  .section-label {
-    font-size: 0.72rem; font-weight: 700; letter-spacing: 2px;
-    text-transform: uppercase; color: var(--gold); margin-bottom: 0.8rem;
-  }
-  .section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.8rem, 3vw, 2.6rem);
-    color: var(--teal-dark); line-height: 1.25; margin-bottom: 1rem;
-  }
-  .section-sub { font-size: 1rem; color: var(--text-mid); max-width: 560px; line-height: 1.8; }
+/* ── SERVICES ── */
+#services{background:var(--soft-gray)}
+.services-header{text-align:center;margin-bottom:56px}
+.services-header .section-sub{margin:0 auto}
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.service-card{background:#fff;border-radius:var(--radius-lg);padding:36px;border:1px solid var(--gray-200);transition:transform 0.3s,box-shadow 0.3s;cursor:pointer;position:relative;overflow:hidden}
+.service-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;border-radius:var(--radius-lg) var(--radius-lg) 0 0}
+.service-card.hs::before{background:linear-gradient(90deg,var(--teal),var(--teal-mid))}
+.service-card.col::before{background:linear-gradient(90deg,var(--gold),var(--gold-bright))}
+.service-card.ew::before{background:linear-gradient(90deg,#7b5ea7,#a57ccb)}
+.service-card:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
+.sc-icon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:1.6rem}
+.sc-icon.teal{background:var(--teal-light)}
+.sc-icon.gold{background:var(--gold-light)}
+.sc-icon.purple{background:#f0ebfa}
+.sc-label{font-size:0.7rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.sc-label.teal{color:var(--teal)}
+.sc-label.gold{color:var(--gold)}
+.sc-label.purple{color:#7b5ea7}
+.sc-title{font-size:1.25rem;font-weight:800;color:var(--gray-800);margin-bottom:8px;letter-spacing:-0.3px}
+.sc-desc{font-size:0.87rem;color:var(--gray-600);line-height:1.7;margin-bottom:20px}
+.sc-points{list-style:none;margin-bottom:24px;display:flex;flex-direction:column;gap:8px}
+.sc-points li{display:flex;align-items:flex-start;gap:10px;font-size:0.83rem;color:var(--gray-600)}
+.sc-points li::before{content:'✓';font-weight:800;flex-shrink:0;margin-top:1px}
+.sc-points li.teal::before{color:var(--teal)}
+.sc-points li.gold::before{color:var(--gold)}
+.sc-points li.purple::before{color:#7b5ea7}
+.btn-outline-teal{display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--teal);font-family:var(--font);font-size:0.85rem;font-weight:700;padding:11px 22px;border-radius:50px;border:2px solid var(--teal);cursor:pointer;transition:all 0.2s;width:100%;justify-content:center}
+.btn-outline-teal:hover{background:var(--teal);color:#fff}
+.btn-outline-gold{display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--gold);font-family:var(--font);font-size:0.85rem;font-weight:700;padding:11px 22px;border-radius:50px;border:2px solid var(--gold);cursor:pointer;transition:all 0.2s;width:100%;justify-content:center}
+.btn-outline-gold:hover{background:var(--gold);color:#fff}
+.btn-outline-purple{display:inline-flex;align-items:center;gap:8px;background:transparent;color:#7b5ea7;font-family:var(--font);font-size:0.85rem;font-weight:700;padding:11px 22px;border-radius:50px;border:2px solid #7b5ea7;cursor:pointer;transition:all 0.2s;width:100%;justify-content:center}
+.btn-outline-purple:hover{background:#7b5ea7;color:#fff}
 
-  /* ── SERVICE BUCKETS ── */
-  .services { background: var(--soft-gray); }
-  .services-intro { text-align: center; margin-bottom: 3.5rem; }
-  .services-intro .section-sub { margin: 0 auto; }
-  .services-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem; margin-top: 1rem;
-  }
-  .service-card {
-    background: #fff; border-radius: 20px;
-    padding: 2.5rem; border: 1px solid var(--border);
-    position: relative; overflow: hidden;
-    transition: transform 0.25s, box-shadow 0.25s;
-  }
-  .service-card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(26,107,107,0.12); }
-  .service-card::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0;
-    height: 4px;
-  }
-  .card-teal::before { background: var(--teal); }
-  .card-gold::before { background: var(--gold); }
-  .card-warm::before { background: linear-gradient(90deg, var(--teal), var(--gold)); }
-  .service-icon {
-    width: 58px; height: 58px; border-radius: 14px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.6rem; margin-bottom: 1.5rem;
-  }
-  .icon-teal { background: var(--teal-light); }
-  .icon-gold { background: var(--gold-light); }
-  .icon-warm { background: linear-gradient(135deg, var(--teal-light), var(--gold-light)); }
-  .service-card h3 { font-size: 1.2rem; font-weight: 800; color: var(--teal-dark); margin-bottom: 0.4rem; }
-  .service-card .tagline { font-size: 0.82rem; color: var(--gold); font-weight: 600; margin-bottom: 1rem; }
-  .service-card p { font-size: 0.9rem; color: var(--text-mid); margin-bottom: 1.2rem; }
-  .service-card ul { list-style: none; margin-bottom: 1.8rem; }
-  .service-card ul li {
-    font-size: 0.86rem; color: var(--text-mid); padding: 0.35rem 0;
-    display: flex; align-items: flex-start; gap: 0.6rem;
-  }
-  .service-card ul li::before {
-    content: '✓'; color: var(--teal); font-weight: 700;
-    flex-shrink: 0; margin-top: 1px;
-  }
+/* ── APPROACH ── */
+#approach{background:#fff}
+.approach-inner{display:grid;grid-template-columns:1fr 1.6fr;gap:80px;align-items:center}
+.approach-left .section-title{font-size:2.2rem}
+.approach-left p{font-size:0.92rem;color:var(--gray-600);line-height:1.8;margin-top:16px}
+.steps-stack{display:flex;flex-direction:column;gap:0}
+.step-item{display:flex;gap:24px;padding:32px 0;position:relative}
+.step-item:not(:last-child)::after{content:'';position:absolute;left:23px;top:72px;bottom:-4px;width:2px;background:var(--gray-200);z-index:0}
+.step-num{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:800;flex-shrink:0;position:relative;z-index:1}
+.step-num.s1{background:var(--teal);color:#fff}
+.step-num.s2{background:var(--gold);color:#fff}
+.step-num.s3{background:#7b5ea7;color:#fff}
+.step-body h3{font-size:1.1rem;font-weight:800;color:var(--gray-800);margin-bottom:6px;letter-spacing:-0.2px}
+.step-tag{font-size:0.7rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 12px;border-radius:50px;display:inline-block;margin-bottom:10px}
+.step-tag.teal{background:var(--teal-light);color:var(--teal)}
+.step-tag.gold{background:var(--gold-light);color:var(--gold)}
+.step-tag.purple{background:#f0ebfa;color:#7b5ea7}
+.step-body p{font-size:0.87rem;color:var(--gray-600);line-height:1.75}
 
-  /* ── APPROACH ── */
-  .approach { background: var(--white); }
-  .approach-wrap { display: grid; grid-template-columns: 1fr 2fr; gap: 5rem; align-items: start; }
-  .approach-steps { display: flex; flex-direction: column; gap: 0; }
-  .step {
-    display: flex; gap: 1.5rem;
-    padding: 2rem 0; border-bottom: 1px solid var(--border);
-  }
-  .step:last-child { border-bottom: none; }
-  .step-number {
-    width: 52px; height: 52px; flex-shrink: 0;
-    border-radius: 14px; background: var(--teal-light);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.2rem; font-weight: 800; color: var(--teal);
-  }
-  .step-active .step-number { background: var(--teal); color: #fff; }
-  .step-content h4 { font-size: 1rem; font-weight: 700; color: var(--teal-dark); margin-bottom: 0.3rem; }
-  .step-content .step-sub { font-size: 0.75rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.6rem; }
-  .step-content p { font-size: 0.88rem; color: var(--text-mid); line-height: 1.75; }
+/* ── PSYCHOMETRIC ── */
+#psychometric{background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 100%);color:#fff;padding:80px 0}
+.psycho-inner{display:grid;grid-template-columns:1.2fr 1fr;gap:60px;align-items:center}
+.psycho-eyebrow{font-size:0.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:10px}
+.psycho-title{font-size:2.2rem;font-weight:800;letter-spacing:-1px;line-height:1.2;margin-bottom:16px}
+.psycho-sub{font-size:0.95rem;color:rgba(255,255,255,0.8);line-height:1.8;margin-bottom:32px}
+.test-cards{display:flex;flex-direction:column;gap:12px}
+.test-card{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:var(--radius);padding:18px 22px;display:flex;align-items:center;gap:16px;transition:background 0.2s,transform 0.2s;cursor:pointer}
+.test-card:hover{background:rgba(255,255,255,0.17);transform:translateX(4px)}
+.test-icon{width:44px;height:44px;background:rgba(255,255,255,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.test-info h4{font-size:0.9rem;font-weight:700;margin-bottom:2px}
+.test-info p{font-size:0.78rem;color:rgba(255,255,255,0.65)}
+.test-badge{margin-left:auto;background:var(--gold);color:#fff;font-size:0.7rem;font-weight:700;padding:4px 10px;border-radius:50px;white-space:nowrap}
+.btn-white{background:#fff;color:var(--teal);font-family:var(--font);font-size:0.95rem;font-weight:700;padding:15px 30px;border-radius:50px;border:none;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:8px}
+.btn-white:hover{background:var(--gold-light);color:var(--gold);transform:translateY(-2px)}
 
-  /* ── FOUNDER ── */
-  .founder { background: var(--teal-dark); color: #fff; position: relative; overflow: hidden; }
-  .founder::before {
-    content: '';
-    position: absolute; top: -80px; right: -60px;
-    width: 400px; height: 400px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(201,152,10,0.15) 0%, transparent 70%);
-  }
-  .founder-wrap { display: grid; grid-template-columns: 1fr 1.5fr; gap: 5rem; align-items: center; position: relative; z-index: 1; }
-  .founder-photo-wrap { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
-  .founder-photo {
-    width: 240px; height: 280px; border-radius: 20px;
-    background: rgba(255,255,255,0.1); border: 2px solid rgba(201,152,10,0.4);
-    display: flex; align-items: center; justify-content: center;
-    color: rgba(255,255,255,0.4); font-size: 0.9rem; text-align: center;
-    padding: 1rem; overflow: hidden;
-  }
-  .founder-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 18px; }
-  .founder-badges { display: flex; flex-direction: column; gap: 0.7rem; width: 100%; }
-  .founder-badge {
-    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 10px; padding: 0.6rem 1rem;
-    font-size: 0.78rem; font-weight: 600; color: rgba(255,255,255,0.85);
-    display: flex; align-items: center; gap: 0.6rem;
-  }
-  .founder-badge-icon { font-size: 1rem; }
-  .founder-text .section-label { color: var(--gold-mid); }
-  .founder-text .section-title { color: #fff; }
-  .founder-text p { color: rgba(255,255,255,0.75); font-size: 0.92rem; margin-bottom: 1.2rem; line-height: 1.8; }
-  .founder-quote {
-    border-left: 3px solid var(--gold); padding-left: 1.2rem;
-    margin: 1.5rem 0; font-family: 'Playfair Display', serif;
-    font-style: italic; font-size: 1.1rem; color: rgba(255,255,255,0.9); line-height: 1.6;
-  }
+/* ── ABOUT ── */
+#about{background:var(--soft-gray)}
+.about-inner{display:grid;grid-template-columns:1fr 1.5fr;gap:80px;align-items:center}
+.founder-card{background:#fff;border-radius:var(--radius-lg);padding:36px;box-shadow:var(--shadow);position:relative}
+.founder-img{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--teal-mid));display:flex;align-items:center;justify-content:center;font-size:2.2rem;font-weight:800;color:#fff;margin:0 auto 20px;border:4px solid #fff;box-shadow:0 4px 20px rgba(26,127,122,0.2)}
+.founder-name{text-align:center;font-size:1.2rem;font-weight:800;color:var(--gray-800);letter-spacing:-0.3px}
+.founder-title{text-align:center;font-size:0.8rem;color:var(--teal);font-weight:700;letter-spacing:0.5px;margin-top:4px;margin-bottom:20px}
+.founder-creds{display:flex;flex-direction:column;gap:8px}
+.cred-item{display:flex;align-items:flex-start;gap:10px;font-size:0.8rem;color:var(--gray-600);padding:8px 0;border-bottom:1px solid var(--gray-200)}
+.cred-item:last-child{border-bottom:none;padding-bottom:0}
+.cred-icon{color:var(--teal);font-weight:800;flex-shrink:0;margin-top:1px}
+.about-content .section-title{margin-bottom:20px}
+.about-content p{font-size:0.92rem;color:var(--gray-600);line-height:1.85;margin-bottom:16px}
+.about-tags{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0}
+.tag{background:#fff;border:1px solid var(--gray-200);color:var(--gray-600);font-size:0.75rem;font-weight:700;padding:6px 14px;border-radius:50px;letter-spacing:0.3px}
+.tag.t-teal{background:var(--teal-light);border-color:transparent;color:var(--teal)}
+.tag.t-gold{background:var(--gold-light);border-color:transparent;color:var(--gold)}
+.runner-badge{display:inline-flex;align-items:center;gap:8px;background:var(--gold-light);border:1px solid #e8c97a;color:var(--gold);font-size:0.8rem;font-weight:700;padding:10px 18px;border-radius:50px;margin-top:8px}
 
-  /* ── TESTIMONIALS ── */
-  .testimonials { background: var(--soft-gray); }
-  .testi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
-  .testi-card {
-    background: #fff; border-radius: 16px; padding: 2rem;
-    border: 1px solid var(--border);
-    transition: transform 0.2s;
-  }
-  .testi-card:hover { transform: translateY(-3px); }
-  .stars { color: var(--gold); font-size: 0.9rem; margin-bottom: 1rem; letter-spacing: 2px; }
-  .testi-card p { font-size: 0.88rem; color: var(--text-mid); line-height: 1.8; margin-bottom: 1.2rem; font-style: italic; }
-  .testi-author { display: flex; align-items: center; gap: 0.8rem; }
-  .testi-avatar {
-    width: 38px; height: 38px; border-radius: 50%;
-    background: var(--teal-light); display: flex; align-items: center;
-    justify-content: center; font-size: 0.75rem; font-weight: 700; color: var(--teal);
-  }
-  .testi-author span { font-size: 0.82rem; font-weight: 700; color: var(--teal-dark); display: block; }
-  .testi-author small { font-size: 0.72rem; color: var(--text-light); }
+/* ── TESTIMONIALS (placeholder) ── */
+#testimonials{background:#fff}
+.test-header{text-align:center;margin-bottom:48px}
+.test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.tcard{background:var(--soft-gray);border-radius:var(--radius-lg);padding:28px;border:1px solid var(--gray-200);transition:transform 0.3s,box-shadow 0.3s}
+.tcard:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.tcard-stars{color:var(--gold);font-size:1rem;letter-spacing:2px;margin-bottom:12px}
+.tcard-text{font-size:0.87rem;color:var(--gray-600);line-height:1.75;margin-bottom:18px;font-style:italic}
+.tcard-author{display:flex;align-items:center;gap:10px}
+.tcard-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.85rem;color:#fff}
+.tcard-info p{font-size:0.82rem;font-weight:700;color:var(--gray-800);margin-bottom:1px}
+.tcard-info span{font-size:0.75rem;color:var(--gray-400)}
 
-  /* ── LEAD MAGNET ── */
-  .lead-magnet {
-    background: linear-gradient(135deg, var(--teal-dark) 0%, #0E4545 100%);
-    padding: 5rem; text-align: center; position: relative; overflow: hidden;
-  }
-  .lead-magnet::before {
-    content: '';
-    position: absolute; top: -60px; left: 50%;
-    transform: translateX(-50%);
-    width: 300px; height: 300px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(201,152,10,0.2) 0%, transparent 70%);
-  }
-  .lead-magnet-inner { position: relative; z-index: 1; max-width: 620px; margin: 0 auto; }
-  .lead-magnet .pdf-preview {
-    display: inline-block;
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(201,152,10,0.5);
-    border-radius: 12px; padding: 0.6rem 1.2rem;
-    font-size: 0.78rem; color: var(--gold-mid); font-weight: 700;
-    letter-spacing: 0.5px; margin-bottom: 1.5rem;
-  }
-  .lead-magnet h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.6rem, 3vw, 2.2rem);
-    color: #fff; line-height: 1.3; margin-bottom: 0.8rem;
-  }
-  .lead-magnet h2 em { color: var(--gold-mid); font-style: italic; }
-  .lead-magnet p { color: rgba(255,255,255,0.7); font-size: 0.92rem; margin-bottom: 2rem; line-height: 1.7; }
-  .lead-form { display: flex; flex-direction: column; gap: 0.8rem; max-width: 420px; margin: 0 auto 1.5rem; }
-  .lead-form input {
-    padding: 0.9rem 1.2rem; border-radius: 50px;
-    border: 1px solid rgba(255,255,255,0.2);
-    background: rgba(255,255,255,0.1); color: #fff;
-    font-family: 'Montserrat', sans-serif; font-size: 0.88rem;
-    outline: none; transition: border 0.2s;
-  }
-  .lead-form input::placeholder { color: rgba(255,255,255,0.45); }
-  .lead-form input:focus { border-color: var(--gold-mid); background: rgba(255,255,255,0.15); }
-  .lead-form .btn-gold { width: 100%; border: none; cursor: pointer; font-family: 'Montserrat', sans-serif; font-size: 0.92rem; }
-  .lead-fine { font-size: 0.72rem; color: rgba(255,255,255,0.4); }
+/* ── CONTACT ── */
+#contact{background:var(--soft-gray)}
+.contact-inner{display:grid;grid-template-columns:1.2fr 1fr;gap:60px;align-items:start}
+.contact-form-wrap{background:#fff;border-radius:var(--radius-lg);padding:40px;box-shadow:var(--shadow)}
+.form-title{font-size:1.4rem;font-weight:800;color:var(--gray-800);margin-bottom:6px;letter-spacing:-0.3px}
+.form-sub{font-size:0.85rem;color:var(--gray-400);margin-bottom:28px}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:0.8rem;font-weight:700;color:var(--gray-600);margin-bottom:6px;letter-spacing:0.3px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px 16px;border:1.5px solid var(--gray-200);border-radius:var(--radius);font-family:var(--font);font-size:0.88rem;color:var(--text);background:#fff;outline:none;transition:border-color 0.2s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--teal)}
+.form-group textarea{resize:vertical;min-height:100px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.submit-btn{width:100%;background:var(--teal);color:#fff;font-family:var(--font);font-size:0.95rem;font-weight:700;padding:15px;border:none;border-radius:50px;cursor:pointer;transition:background 0.2s,transform 0.2s;letter-spacing:0.3px;margin-top:8px}
+.submit-btn:hover{background:var(--teal-dark);transform:translateY(-1px)}
+.contact-info{padding-top:16px}
+.ci-title{font-size:1.3rem;font-weight:800;color:var(--gray-800);margin-bottom:20px;letter-spacing:-0.3px}
+.ci-cards{display:flex;flex-direction:column;gap:16px;margin-bottom:32px}
+.ci-card{background:#fff;border-radius:var(--radius);padding:18px 20px;display:flex;align-items:center;gap:16px;border:1px solid var(--gray-200);transition:border-color 0.2s,box-shadow 0.2s;text-decoration:none;color:inherit}
+.ci-card:hover{border-color:var(--teal);box-shadow:0 4px 16px rgba(26,127,122,0.1)}
+.ci-card-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.ci-card-icon.teal{background:var(--teal-light)}
+.ci-card-icon.green{background:#eef7ee}
+.ci-card-icon.gold{background:var(--gold-light)}
+.ci-card h4{font-size:0.82rem;font-weight:700;color:var(--gray-800);margin-bottom:2px}
+.ci-card p{font-size:0.78rem;color:var(--gray-400)}
+.wa-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;font-family:var(--font);font-size:0.95rem;font-weight:700;padding:15px 28px;border-radius:50px;border:none;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px;text-decoration:none;width:100%}
+.wa-btn:hover{background:#1da851;transform:translateY(-2px);box-shadow:0 8px 24px rgba(37,211,102,0.3)}
+.wa-icon{font-size:1.2rem}
 
-  /* ── FOOTER ── */
-  footer {
-    background: var(--text-dark); color: rgba(255,255,255,0.6);
-    padding: 3rem 5vw; display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr; gap: 3rem;
-  }
-  footer .logo { font-size: 1.3rem; color: #fff; margin-bottom: 0.6rem; }
-  footer p { font-size: 0.82rem; line-height: 1.7; }
-  footer h5 { font-size: 0.82rem; font-weight: 700; color: #fff; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; }
-  footer ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
-  footer ul li a { text-decoration: none; color: rgba(255,255,255,0.5); font-size: 0.82rem; transition: color 0.2s; }
-  footer ul li a:hover { color: var(--gold-mid); }
-  .footer-bottom {
-    background: #111; color: rgba(255,255,255,0.3);
-    text-align: center; padding: 1.2rem 5vw; font-size: 0.75rem;
-  }
+/* ── FAQ ── */
+#faq{background:#fff}
+.faq-inner{max-width:740px;margin:0 auto}
+.faq-header{text-align:center;margin-bottom:48px}
+.faq-item{border-bottom:1px solid var(--gray-200);overflow:hidden}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:20px 0;cursor:pointer;font-size:0.95rem;font-weight:700;color:var(--gray-800);transition:color 0.2s;gap:16px}
+.faq-q:hover{color:var(--teal)}
+.faq-icon{width:28px;height:28px;border-radius:50%;background:var(--teal-light);color:var(--teal);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem;font-weight:400;transition:transform 0.3s,background 0.2s}
+.faq-item.open .faq-icon{transform:rotate(45deg);background:var(--teal);color:#fff}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.4s ease,padding 0.3s}
+.faq-a p{font-size:0.88rem;color:var(--gray-600);line-height:1.8;padding-bottom:18px}
+.faq-item.open .faq-a{max-height:300px}
 
-  /* ── POPUP OVERLAY ── */
-  .popup-overlay {
-    position: fixed; inset: 0; z-index: 1000;
-    background: rgba(12,40,40,0.75); backdrop-filter: blur(4px);
-    display: flex; align-items: center; justify-content: center;
-    animation: fadeIn 0.3s ease;
-  }
-  .popup {
-    background: #fff; border-radius: 24px;
-    max-width: 480px; width: 92%; padding: 2.5rem;
-    position: relative; animation: slideUp 0.35s ease;
-  }
-  .popup-close {
-    position: absolute; top: 1rem; right: 1rem;
-    background: var(--soft-gray); border: none; cursor: pointer;
-    width: 32px; height: 32px; border-radius: 50%;
-    font-size: 1.1rem; display: flex; align-items: center; justify-content: center;
-    color: var(--text-mid); transition: background 0.2s;
-  }
-  .popup-close:hover { background: #e0e0e0; }
-  .popup-badge {
-    display: inline-block; background: var(--gold-light);
-    color: var(--gold); font-size: 0.72rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 1.5px;
-    padding: 0.3rem 0.8rem; border-radius: 50px;
-    border: 1px solid rgba(201,152,10,0.3); margin-bottom: 1rem;
-  }
-  .popup h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.4rem; color: var(--teal-dark); line-height: 1.35; margin-bottom: 0.5rem;
-  }
-  .popup h3 em { color: var(--gold); }
-  .popup p { font-size: 0.85rem; color: var(--text-mid); margin-bottom: 1.5rem; line-height: 1.7; }
-  .popup-checks { list-style: none; margin-bottom: 1.5rem; }
-  .popup-checks li {
-    font-size: 0.82rem; color: var(--text-mid); padding: 0.3rem 0;
-    display: flex; align-items: flex-start; gap: 0.5rem;
-  }
-  .popup-checks li::before { content: '✓'; color: var(--teal); font-weight: 700; flex-shrink: 0; }
-  .popup-form { display: flex; flex-direction: column; gap: 0.7rem; }
-  .popup-form input {
-    padding: 0.75rem 1rem; border-radius: 50px;
-    border: 1.5px solid var(--border); outline: none;
-    font-family: 'Montserrat', sans-serif; font-size: 0.85rem; color: var(--text-dark);
-    transition: border 0.2s;
-  }
-  .popup-form input:focus { border-color: var(--teal); }
-  .popup-form .btn-primary { border: none; cursor: pointer; font-family: 'Montserrat', sans-serif; font-size: 0.9rem; width: 100%; }
-  .popup-fine { font-size: 0.7rem; color: var(--text-light); text-align: center; }
+/* ── FOOTER ── */
+footer{background:var(--gray-800);color:rgba(255,255,255,0.75);padding:60px 0 28px}
+.footer-inner{display:grid;grid-template-columns:2fr 1fr 1fr;gap:48px;margin-bottom:48px}
+.footer-brand .logo{color:#fff;margin-bottom:16px}
+.footer-brand p{font-size:0.83rem;line-height:1.8;max-width:280px}
+.footer-col h4{font-size:0.8rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#fff;margin-bottom:16px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.footer-col ul li a{font-size:0.83rem;color:rgba(255,255,255,0.6);transition:color 0.2s}
+.footer-col ul li a:hover{color:#fff}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.1);padding-top:24px;display:flex;align-items:center;justify-content:space-between;font-size:0.78rem;color:rgba(255,255,255,0.4)}
+.footer-bottom a{color:rgba(255,255,255,0.5);transition:color 0.2s}
+.footer-bottom a:hover{color:#fff}
 
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; } to { opacity: 1; }
-  }
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+/* ── POPUP ── */
+#popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+#popup-overlay.open{display:flex}
+.popup-card{background:#fff;border-radius:var(--radius-lg);max-width:520px;width:100%;padding:40px;position:relative;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes popIn{from{opacity:0;transform:scale(0.88) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.popup-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:var(--gray-200);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--gray-600);transition:background 0.2s}
+.popup-close:hover{background:var(--gray-400);color:#fff}
+.popup-badge{display:inline-flex;align-items:center;gap:8px;background:var(--gold-light);border:1px solid #e8c97a;color:var(--gold);font-size:0.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:6px 14px;border-radius:50px;margin-bottom:14px}
+.popup-title{font-size:1.5rem;font-weight:800;color:var(--gray-800);line-height:1.25;margin-bottom:10px;letter-spacing:-0.5px}
+.popup-title span{color:var(--teal)}
+.popup-sub{font-size:0.88rem;color:var(--gray-600);line-height:1.7;margin-bottom:22px}
+.popup-sub strong{color:var(--gray-800)}
+.popup-form{display:flex;flex-direction:column;gap:12px}
+.popup-form input{width:100%;padding:12px 16px;border:1.5px solid var(--gray-200);border-radius:var(--radius);font-family:var(--font);font-size:0.88rem;outline:none;transition:border-color 0.2s}
+.popup-form input:focus{border-color:var(--teal)}
+.popup-submit{background:var(--gold);color:#fff;font-family:var(--font);font-size:0.95rem;font-weight:700;padding:14px;border:none;border-radius:50px;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px}
+.popup-submit:hover{background:#b07f14;transform:translateY(-1px)}
+.popup-privacy{font-size:0.72rem;color:var(--gray-400);text-align:center;margin-top:8px}
 
-  /* ── RESPONSIVE ── */
-  @media (max-width: 768px) {
-    .hero { grid-template-columns: 1fr; padding-top: 6rem; }
-    .hero-visual { display: none; }
-    .approach-wrap { grid-template-columns: 1fr; gap: 2rem; }
-    .founder-wrap { grid-template-columns: 1fr; gap: 2.5rem; }
-    .founder-photo-wrap { flex-direction: row; align-items: flex-start; }
-    footer { grid-template-columns: 1fr; gap: 2rem; }
-    nav ul { display: none; }
-    .trust-bar { gap: 1.2rem; }
-    .lead-magnet { padding: 4rem 5vw; }
-  }
+/* ── BOOKING MODAL ── */
+#booking-modal{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9998;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+#booking-modal.open{display:flex}
+.bmodal-card{background:#fff;border-radius:var(--radius-lg);max-width:480px;width:100%;padding:36px;position:relative;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1)}
+.bmodal-title{font-size:1.3rem;font-weight:800;color:var(--gray-800);margin-bottom:6px;letter-spacing:-0.3px}
+.bmodal-sub{font-size:0.85rem;color:var(--gray-400);margin-bottom:24px}
+.slot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.slot-btn{background:var(--soft-gray);border:1.5px solid var(--gray-200);border-radius:var(--radius);padding:10px 6px;font-family:var(--font);font-size:0.8rem;font-weight:700;color:var(--gray-600);cursor:pointer;text-align:center;transition:all 0.2s}
+.slot-btn:hover,.slot-btn.selected{background:var(--teal);border-color:var(--teal);color:#fff}
+.bmodal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:var(--gray-200);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--gray-600);transition:background 0.2s}
+.bmodal-close:hover{background:var(--gray-400);color:#fff}
+.bmodal-label{font-size:0.78rem;font-weight:700;color:var(--gray-600);letter-spacing:0.3px;margin-bottom:8px}
+
+/* ── SUCCESS TOAST ── */
+#toast{position:fixed;bottom:32px;right:32px;background:var(--teal);color:#fff;padding:14px 24px;border-radius:50px;font-size:0.88rem;font-weight:700;z-index:10000;transform:translateY(80px);opacity:0;transition:all 0.4s;pointer-events:none;box-shadow:var(--shadow)}
+#toast.show{transform:translateY(0);opacity:1}
+
+/* ── SCROLL ANIMATIONS ── */
+.fade-up{opacity:0;transform:translateY(28px);transition:opacity 0.65s ease,transform 0.65s ease}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+.fade-up.d1{transition-delay:0.1s}
+.fade-up.d2{transition-delay:0.2s}
+.fade-up.d3{transition-delay:0.3s}
+
+/* ── FLOATING WA BUTTON ── */
+.wa-float{position:fixed;bottom:28px;left:28px;width:56px;height:56px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;cursor:pointer;z-index:990;box-shadow:0 4px 20px rgba(37,211,102,0.4);transition:transform 0.2s,box-shadow 0.2s;text-decoration:none;color:#fff}
+.wa-float:hover{transform:scale(1.1);box-shadow:0 8px 32px rgba(37,211,102,0.5)}
+.wa-float-pulse{position:absolute;width:100%;height:100%;border-radius:50%;background:rgba(37,211,102,0.3);animation:pulse 2s infinite}
+@keyframes pulse{0%{transform:scale(1);opacity:0.8}70%{transform:scale(1.5);opacity:0}100%{transform:scale(1.5);opacity:0}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:960px){
+.hero-inner{grid-template-columns:1fr;gap:40px}
+.hero-card{max-width:460px}
+.services-grid{grid-template-columns:1fr}
+.approach-inner{grid-template-columns:1fr;gap:40px}
+.psycho-inner{grid-template-columns:1fr;gap:40px}
+.about-inner{grid-template-columns:1fr;gap:40px}
+.contact-inner{grid-template-columns:1fr;gap:40px}
+.footer-inner{grid-template-columns:1fr;gap:32px}
+.test-grid{grid-template-columns:1fr}
+.hero-stats{gap:20px}
+h1.hero-title{font-size:2.3rem}
+.section-title{font-size:2rem}
+.nav-links{display:none}
+.hamburger{display:flex}
+}
+@media(max-width:600px){
+.form-row{grid-template-columns:1fr}
+.slot-grid{grid-template-columns:repeat(2,1fr)}
+h1.hero-title{font-size:1.9rem}
+.hero-stats{flex-wrap:wrap;gap:16px}
+}
 </style>
 </head>
 <body>
 
-<!-- ═══ POPUP (Lead Magnet) ═══ -->
-<div class="popup-overlay" id="popup">
-  <div class="popup">
-    <button class="popup-close" onclick="document.getElementById('popup').style.display='none'">✕</button>
-    <span class="popup-badge">🎁 Free Download — Limited Time</span>
-    <h3>The Parents' Guide to <em>Stream Selection:</em> 5 Mistakes to Avoid After 10th Grade</h3>
-    <p>The wrong stream choice doesn't just affect marks — it shapes your child's confidence, career, and happiness for years. Get our expert guide and make the right call, the first time.</p>
-    <ul class="popup-checks">
-      <li>The #1 mistake parents make about "safe" streams</li>
-      <li>How to separate your child's strengths from their grades</li>
-      <li>When to trust aptitude tests vs. peer pressure</li>
-      <li>What colleges actually look for beyond stream marks</li>
-    </ul>
-    <div class="popup-form">
-      <input type="text" placeholder="Your Name" />
-      <input type="email" placeholder="Email Address" />
-      <input type="tel" placeholder="WhatsApp Number (for instant delivery)" />
-      <button class="btn-primary">Send Me the Free Guide →</button>
+<!-- FLOATING WHATSAPP -->
+<a href="https://wa.me/917015671280" target="_blank" class="wa-float" aria-label="WhatsApp">
+  <span class="wa-float-pulse"></span>
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<!-- TOAST -->
+<div id="toast">✓ We'll be in touch soon!</div>
+
+<!-- LEAD MAGNET POPUP -->
+<div id="popup-overlay" role="dialog" aria-modal="true" aria-label="Free Resource Download">
+  <div class="popup-card">
+    <button class="popup-close" id="closePopup" aria-label="Close">✕</button>
+    <div class="popup-badge">🎁 Free Resource</div>
+    <h2 class="popup-title">The Parents' Guide to <span>Stream Selection</span></h2>
+    <p class="popup-sub"><strong>5 Costly Mistakes to Avoid After 10th Grade.</strong> One wrong decision at this fork in the road can cost 2–3 years of precious time. Our expert guide helps you navigate it — confidently and scientifically.</p>
+    <div class="popup-form" id="leadForm">
+      <input type="text" id="lead-name" placeholder="Parent's Name" required/>
+      <input type="email" id="lead-email" placeholder="Email Address" required/>
+      <input type="tel" id="lead-phone" placeholder="WhatsApp Number (+91...)" required/>
+      <button class="popup-submit" id="leadSubmit">Send My Free Guide →</button>
     </div>
-    <p class="popup-fine" style="margin-top:0.6rem;">We respect your privacy. No spam, ever. Unsubscribe any time.</p>
+    <p class="popup-privacy">🔒 100% Private. We never share your details. No spam, ever.</p>
   </div>
 </div>
 
-<!-- ═══ NAV ═══ -->
-<nav>
-  <div class="logo">Lume<span>Live</span></div>
-  <ul>
-    <li><a href="#services">Services</a></li>
-    <li><a href="#approach">Our Approach</a></li>
-    <li><a href="#founder">About Us</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-  <a href="#contact" class="nav-cta">Book a Free Demo</a>
+<!-- BOOKING MODAL -->
+<div id="booking-modal" role="dialog" aria-modal="true" aria-label="Book a Session">
+  <div class="bmodal-card">
+    <button class="bmodal-close" id="closeBooking" aria-label="Close">✕</button>
+    <h2 class="bmodal-title">Book Your Free Demo Session</h2>
+    <p class="bmodal-sub">Select a convenient time slot and we'll confirm via WhatsApp.</p>
+    <p class="bmodal-label">PICK A TIME SLOT</p>
+    <div class="slot-grid" id="slotGrid">
+      <button class="slot-btn">Mon 10 AM</button>
+      <button class="slot-btn">Mon 4 PM</button>
+      <button class="slot-btn">Tue 11 AM</button>
+      <button class="slot-btn">Wed 3 PM</button>
+      <button class="slot-btn">Thu 10 AM</button>
+      <button class="slot-btn">Fri 5 PM</button>
+    </div>
+    <div class="form-group">
+      <label>Your Name</label>
+      <input type="text" id="book-name" placeholder="Full Name"/>
+    </div>
+    <div class="form-group">
+      <label>WhatsApp Number</label>
+      <input type="tel" id="book-phone" placeholder="+91 98765 XXXXX"/>
+    </div>
+    <div class="form-group">
+      <label>Service Interested In</label>
+      <select id="book-service">
+        <option value="">-- Select Service --</option>
+        <option>Career Counselling — High School</option>
+        <option>Career Counselling — College</option>
+        <option>Emotional Wellness Session</option>
+        <option>Psychometric Assessment</option>
+      </select>
+    </div>
+    <button class="submit-btn" id="confirmBooking">Confirm via WhatsApp →</button>
+  </div>
+</div>
+
+<!-- ── NAVBAR ── -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#" class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><path d="M12 9 C8 9 5 12 5 16 L5 19 L19 19 L19 16 C19 12 16 9 12 9Z" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 14 L12 12 L15 14" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <span>Lume<em>Live</em></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#approach">Our Approach</a></li>
+        <li><a href="#psychometric">Assessments</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="#" class="nav-cta" id="navBookBtn">Book Free Session</a></li>
+      </ul>
+      <div class="hamburger" id="hamburger">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
 </nav>
 
-<!-- ═══ HERO ═══ -->
-<section class="hero">
-  <div class="hero-text">
-    <span class="hero-eyebrow">✦ Scientific · Empathetic · Life-Changing</span>
-    <h1>When the Path Feels Unclear,<br>We Help You <em>Find Your Light.</em></h1>
-    <p class="hero-sub">India's most empathetic career & mental wellness counselling platform — built for students who deserve more than guesswork, and parents who deserve real answers.</p>
-    <div class="hero-btns">
-      <a href="#contact" class="btn-primary">Book a Free Session →</a>
-      <a href="#services" class="btn-secondary">Explore Services</a>
-    </div>
-    <div class="hero-stats">
-      <div class="hero-stat"><span>500+</span><p>Students Guided</p></div>
-      <div class="hero-stat"><span>95%</span><p>Clarity Rate</p></div>
-      <div class="hero-stat"><span>PAN India</span><p>Online Sessions</p></div>
-    </div>
-  </div>
-  <div class="hero-visual">
-    <div class="hero-card">
-      <div class="hero-card-header">
-        <div class="avatar">🎓</div>
-        <div>
-          <h4>Lume Live Dashboard</h4>
-          <p>Your personalised roadmap</p>
-        </div>
-      </div>
-      <div class="session-item">
-        <div class="session-dot dot-green"></div>
-        <div><span>Stream Selection Assessment</span><strong>Completed · Science matched 91%</strong></div>
-      </div>
-      <div class="session-item">
-        <div class="session-dot dot-gold"></div>
-        <div><span>1:1 Counselling Session</span><strong>Scheduled · Today, 4:00 PM</strong></div>
-      </div>
-      <div class="session-item">
-        <div class="session-dot dot-teal"></div>
-        <div><span>Career Roadmap Report</span><strong>Ready to Download</strong></div>
-      </div>
-      <div class="card-badge">
-        <span>✦</span>
-        <p>Your personalised career roadmap is ready!</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ TRUST BAR ═══ -->
-<div class="trust-bar">
-  <div class="trust-item">🎓 PG Diploma in Guidance & Counselling · Jamia Millia Islamia</div>
-  <div class="trust-dot"></div>
-  <div class="trust-item">📊 Scientifically Validated Psychometric Tools</div>
-  <div class="trust-dot"></div>
-  <div class="trust-item">🇮🇳 Serving Students PAN India</div>
-  <div class="trust-dot"></div>
-  <div class="trust-item">💬 Vernacular Sessions Available</div>
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#services" class="mob-link">Services</a>
+  <a href="#approach" class="mob-link">Our Approach</a>
+  <a href="#psychometric" class="mob-link">Assessments</a>
+  <a href="#about" class="mob-link">About</a>
+  <a href="#contact" class="mob-link">Contact</a>
+  <button class="mob-cta" id="mobBookBtn">Book Free Session →</button>
 </div>
 
-<!-- ═══ SERVICES ═══ -->
-<section class="services" id="services">
-  <div class="services-intro">
-    <p class="section-label">What We Do</p>
-    <h2 class="section-title">One Platform. Every Stage of Your Journey.</h2>
-    <p class="section-sub">Whether you're choosing subjects after 10th grade, figuring out your career, or simply need someone safe to talk to — Lume Live has a structured, science-backed path for you.</p>
-  </div>
-  <div class="services-grid">
-
-    <!-- Card 1: High School -->
-    <div class="service-card card-teal">
-      <div class="service-icon icon-teal">📚</div>
-      <h3>For High School Students</h3>
-      <p class="tagline">After 10th Grade · Stream & Subject Selection</p>
-      <p>The stream you choose after 10th doesn't just decide your subjects — it shapes your career, your confidence, and your future. Let science, not pressure, guide this decision.</p>
-      <ul>
-        <li>Psychometric assessment to identify your true aptitude & interests</li>
-        <li>Clear breakdown of Science, Commerce & Arts career paths</li>
-        <li>1:1 session to map your strengths to real opportunities</li>
-        <li>Reduce academic anxiety and make the choice with confidence</li>
-        <li>Personalised subject-selection report shared with parents</li>
-      </ul>
-      <a href="#contact" class="btn-primary">Take a Free Demo →</a>
-    </div>
-
-    <!-- Card 2: College -->
-    <div class="service-card card-gold">
-      <div class="service-icon icon-gold">🎯</div>
-      <h3>For College Students</h3>
-      <p class="tagline">Career Clarity · First Job Readiness</p>
-      <p>Your degree is a door, not a destiny. Many college students feel lost between passions, parental expectations, and a job market that never stops changing. We help you find your true north.</p>
-      <ul>
-        <li>In-depth career aptitude & personality profiling</li>
-        <li>Industry exploration: traditional careers vs. emerging roles</li>
-        <li>Resume, LinkedIn & interview readiness coaching</li>
-        <li>Roadmap from college to your first meaningful job</li>
-        <li>Guidance on higher studies, entrance exams & abroad options</li>
-      </ul>
-      <a href="#contact" class="btn-gold">Book a Session →</a>
-    </div>
-
-    <!-- Card 3: Emotional Wellness -->
-    <div class="service-card card-warm">
-      <div class="service-icon icon-warm">💚</div>
-      <h3>Emotional Wellness</h3>
-      <p class="tagline">1:1 Sessions · Stress · Anxiety · Self-Esteem</p>
-      <p>You don't have to be "in crisis" to deserve support. Peer pressure, exam stress, family expectations, and low self-worth are real — and they deserve real, professional attention.</p>
-      <ul>
-        <li>Safe, judgement-free space to speak your truth</li>
-        <li>Evidence-based techniques for stress and anxiety management</li>
-        <li>Building resilience against academic & social pressure</li>
-        <li>Restoring self-esteem and healthy self-image</li>
-        <li>Ongoing support — because healing isn't a one-session process</li>
-      </ul>
-      <a href="#contact" class="btn-primary">Talk to a Counsellor →</a>
-    </div>
-
-  </div>
-</section>
-
-<!-- ═══ APPROACH ═══ -->
-<section class="approach" id="approach">
-  <div class="approach-wrap">
-    <div>
-      <p class="section-label">How We Work</p>
-      <h2 class="section-title">The Lume Care Approach</h2>
-      <p class="section-sub">A structured, three-step journey — built on science, delivered with warmth — so you never have to navigate the future alone.</p>
-      <br/>
-      <p style="font-size:0.88rem; color:var(--text-light); line-height:1.8;">Trusted by families across Haryana, Delhi NCR, and now PAN India — because good counselling changes everything.</p>
-    </div>
-    <div class="approach-steps">
-
-      <div class="step step-active">
-        <div class="step-number">01</div>
-        <div class="step-content">
-          <p class="step-sub">Step One</p>
-          <h4>Scientific Discovery</h4>
-          <p>We begin not with assumptions, but with answers. Using internationally validated psychometric tools — aptitude tests, interest inventories, and personality assessments — we build a comprehensive, data-driven picture of your child's unique mind. This isn't guesswork; it's a scientific foundation. Every recommendation we make is rooted in this deep understanding of who your child truly is — not who the marks say they should be.</p>
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="hero-bg-shape"></div>
+  <div class="hero-bg-shape2"></div>
+  <div class="container">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-badge">Rohtak's Leading Counselling Practice</div>
+        <h1 class="hero-title">You Deserve a <span class="accent">Clearer</span> Path to Your <span class="gold">Brightest</span> Future.</h1>
+        <p class="hero-sub">Expert-led career counselling and emotional wellness support — grounded in psychology, built for the Indian student and young professional. Science-backed. Human-first.</p>
+        <div class="hero-actions">
+          <button class="btn-primary" id="heroBookBtn">Take Free Demo Session →</button>
+          <button class="btn-secondary" onclick="document.getElementById('popup-overlay').classList.add('open')">Get Free Guide</button>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-num">500+</span>
+            <span class="stat-label">Students Guided</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num">6+</span>
+            <span class="stat-label">Years Experience</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num">3</span>
+            <span class="stat-label">Expert Credentials</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num">PAN 🇮🇳</span>
+            <span class="stat-label">India Online</span>
+          </div>
         </div>
       </div>
-
-      <div class="step">
-        <div class="step-number">02</div>
-        <div class="step-content">
-          <p class="step-sub">Step Two</p>
-          <h4>Expert 1:1 Counselling</h4>
-          <p>Numbers alone don't tell a story — a trained counsellor does. In our personalised one-on-one sessions, we connect your child's psychometric data to real-world careers, industry realities, and honest conversations about aspirations and fears. We bridge the gap between what the data reveals and what the world offers, guiding both students and parents through every question, concern, and hesitation with patience and clinical expertise.</p>
+      <div>
+        <div class="hero-card">
+          <div class="hero-card-tag">Next Available</div>
+          <p class="hc-title">What would you like to work on?</p>
+          <div class="hc-item">
+            <div class="hc-dot teal">🎓</div>
+            <div class="hc-text">
+              <p>Stream & Career Clarity</p>
+              <span>For Class 10–12 students & parents</span>
+            </div>
+          </div>
+          <div class="hc-item">
+            <div class="hc-dot gold">💼</div>
+            <div class="hc-text">
+              <p>College & First Job Readiness</p>
+              <span>For graduation & post-grad students</span>
+            </div>
+          </div>
+          <div class="hc-item">
+            <div class="hc-dot teal">💬</div>
+            <div class="hc-text">
+              <p>Emotional Wellness Support</p>
+              <span>Stress, anxiety & self-esteem sessions</span>
+            </div>
+          </div>
+          <div class="hc-item">
+            <div class="hc-dot gold">📊</div>
+            <div class="hc-text">
+              <p>Psychometric Assessment</p>
+              <span>Scientific aptitude & personality mapping</span>
+            </div>
+          </div>
+          <p class="hero-trust">🔒 Confidential · 100% Judgement-Free · Online & Offline</p>
         </div>
       </div>
+    </div>
+  </div>
+</section>
 
-      <div class="step">
-        <div class="step-number">03</div>
-        <div class="step-content">
-          <p class="step-sub">Step Three</p>
-          <h4>Your Confident Future</h4>
-          <p>Every student leaves Lume Live with something tangible: a personalised Career & Life Roadmap — a clear, actionable plan for the next 3 to 5 years. From stream selection to entrance exams, from first jobs to higher education, this document becomes your family's north star. No more second-guessing at 11 PM. No more "what if." Just a structured, hopeful path forward — chosen with clarity, not fear.</p>
+<!-- ── SERVICES ── -->
+<section id="services">
+  <div class="container">
+    <div class="services-header fade-up">
+      <div class="section-eyebrow">What We Offer</div>
+      <h2 class="section-title">Three Paths. One Trusted Guide.</h2>
+      <p class="section-sub">Whether you're choosing your stream, building your career, or simply trying to feel better — Lume Live has a structured, proven path for you.</p>
+    </div>
+    <div class="services-grid">
+      <!-- Service 1 -->
+      <div class="service-card hs fade-up d1">
+        <div class="sc-icon teal">🏫</div>
+        <div class="sc-label teal">For High School Students</div>
+        <h3 class="sc-title">Stream & Subject Clarity</h3>
+        <p class="sc-desc">Choosing Science, Commerce, or Arts is one of the most consequential decisions of your child's life. We make it scientific — not guesswork.</p>
+        <ul class="sc-points">
+          <li class="teal">Psychometric aptitude testing to identify natural strengths</li>
+          <li class="teal">1:1 sessions to reduce academic anxiety and exam pressure</li>
+          <li class="teal">Personalised subject-career mapping report</li>
+          <li class="teal">Parent consultation included in every package</li>
+          <li class="teal">Explores emerging careers beyond medicine & engineering</li>
+        </ul>
+        <button class="btn-outline-teal" onclick="openBooking('Career Counselling — High School')">Book Free Demo Session →</button>
+      </div>
+      <!-- Service 2 -->
+      <div class="service-card col fade-up d2">
+        <div class="sc-icon gold">🎯</div>
+        <div class="sc-label gold">For College Students</div>
+        <h3 class="sc-title">Career Clarity & Job Readiness</h3>
+        <p class="sc-desc">Finishing your degree but unsure what's next? We help you translate your skills, values, and interests into a clear, actionable career plan.</p>
+        <ul class="sc-points">
+          <li class="gold">In-depth career values and personality profiling</li>
+          <li class="gold">Industry-fit analysis and roadmap creation</li>
+          <li class="gold">Resume narrative and LinkedIn profile coaching</li>
+          <li class="gold">Interview confidence and personal branding sessions</li>
+          <li class="gold">Guidance on higher education vs. immediate employment</li>
+        </ul>
+        <button class="btn-outline-gold" onclick="openBooking('Career Counselling — College')">Book Free Demo Session →</button>
+      </div>
+      <!-- Service 3 -->
+      <div class="service-card ew fade-up d3">
+        <div class="sc-icon purple">🌿</div>
+        <div class="sc-label purple">Emotional Wellness</div>
+        <h3 class="sc-title">1:1 Mental Wellness Sessions</h3>
+        <p class="sc-desc">You don't have to be in crisis to seek support. Our private, confidential counselling sessions help you feel like yourself again — calmer, clearer, stronger.</p>
+        <ul class="sc-points">
+          <li class="purple">Structured support for stress, anxiety & burnout</li>
+          <li class="purple">Peer pressure, relationships & self-esteem coaching</li>
+          <li class="purple">Evidence-based CBT and mindfulness techniques</li>
+          <li class="purple">Strict confidentiality — a true safe space</li>
+          <li class="purple">Available online for students across India</li>
+        </ul>
+        <button class="btn-outline-purple" onclick="openBooking('Emotional Wellness Session')">Book Free Demo Session →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── APPROACH ── -->
+<section id="approach">
+  <div class="container">
+    <div class="approach-inner">
+      <div class="fade-up">
+        <div class="section-eyebrow">Our Method</div>
+        <h2 class="section-title">The Lume Care Approach</h2>
+        <p>Our three-step process isn't just a consultation — it's a scientific, structured journey from confusion to clarity. Every step is designed to give parents and students the certainty they deserve.</p>
+        <br/>
+        <button class="btn-primary" onclick="openBooking('')" style="margin-top:8px">Begin Your Journey →</button>
+      </div>
+      <div class="steps-stack fade-up d1">
+        <div class="step-item">
+          <div class="step-num s1">01</div>
+          <div class="step-body">
+            <span class="step-tag teal">Scientific Discovery</span>
+            <h3>Understanding Who You Truly Are</h3>
+            <p>Before any advice is given, we listen — deeply. Through validated psychometric assessments and structured discovery sessions, we build a precise picture of your child's aptitude, personality, interests, and values. This isn't a quiz from a website. It's the same scientific rigour used by career specialists in top institutions — now available right here in Rohtak and online across India.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num s2">02</div>
+          <div class="step-body">
+            <span class="step-tag gold">Expert 1:1 Counselling</span>
+            <h3>Connecting Data to Real Opportunity</h3>
+            <p>Numbers alone don't build futures — context does. In our expert one-to-one sessions, our counsellor maps your assessment results to real-world careers, sectors, and pathways. We ask the hard questions that school teachers and relatives can't: What drives you? What are you willing to work for? Where do you see yourself in a decade? The answers shape a strategy, not just a suggestion.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num s3">03</div>
+          <div class="step-body">
+            <span class="step-tag purple">Confident Future</span>
+            <h3>Your Personal Roadmap — In Writing</h3>
+            <p>You leave every Lume Live engagement with a tangible, written roadmap: specific career options ranked by fit, recommended subjects and colleges, next steps for the next 6–12 months, and a clear action plan. No more late-night worrying about 'what if'. Just a structured, confident path forward — crafted just for your child, by a qualified professional who genuinely cares.</p>
+          </div>
         </div>
       </div>
-
     </div>
   </div>
 </section>
 
-<!-- ═══ FOUNDER ═══ -->
-<section class="founder" id="founder">
-  <div class="founder-wrap">
-    <div class="founder-photo-wrap">
-      <div class="founder-photo">
-        <!-- Replace with actual photo: <img src="founder.jpg" alt="Founder" /> -->
-        <div style="text-align:center;">
-          <div style="font-size:3rem;margin-bottom:0.5rem;">👤</div>
-          <p style="font-size:0.8rem;color:rgba(255,255,255,0.4);">Add your photo here</p>
+<!-- ── PSYCHOMETRIC ── -->
+<section id="psychometric">
+  <div class="container">
+    <div class="psycho-inner">
+      <div class="fade-up">
+        <div class="psycho-eyebrow">Scientific Assessments</div>
+        <h2 class="psycho-title">Know Yourself Before You Choose Your Path.</h2>
+        <p class="psycho-sub">Our psychometric toolkit is the same scientific foundation used by counsellors and HR specialists worldwide — now accessible to every student in India. Stop guessing. Start knowing.</p>
+        <div style="display:flex;gap:14px;flex-wrap:wrap">
+          <button class="btn-white" onclick="openBooking('Psychometric Assessment')">Take an Assessment →</button>
+          <a href="https://wa.me/917015671280" target="_blank" class="btn-white" style="background:rgba(255,255,255,0.15);color:#fff;border:2px solid rgba(255,255,255,0.4)">Ask on WhatsApp</a>
         </div>
       </div>
-      <div class="founder-badges">
-        <div class="founder-badge"><span class="founder-badge-icon">🎓</span> PGDCGC · Jamia Millia Islamia</div>
-        <div class="founder-badge"><span class="founder-badge-icon">🧠</span> Counselling Psychologist</div>
-        <div class="founder-badge"><span class="founder-badge-icon">📍</span> Based in Rohtak, Haryana</div>
-        <div class="founder-badge"><span class="founder-badge-icon">🇮🇳</span> Serving PAN India</div>
-      </div>
-    </div>
-    <div class="founder-text">
-      <p class="section-label">About the Founder</p>
-      <h2 class="section-title" style="color:#fff;">Where Academic Rigour Meets Human Empathy</h2>
-      <p>Lume Live was born from a deeply personal conviction: that every student in India — regardless of their city, school, or family background — deserves access to world-class, science-backed counselling. Not advice pulled from the air. Not generational assumptions. Real guidance, grounded in psychology.</p>
-      <p>The founder holds a Post Graduate Diploma in Guidance and Counselling (PGDCGC) from Jamia Millia Islamia, New Delhi — one of India's most respected institutions for psychological sciences. This rigorous academic training in clinical assessment, psychometric methodology, and therapeutic counselling creates a rare dual competency: the technical precision to interpret aptitude data, and the emotional intelligence to meet a distressed student exactly where they are.</p>
-      <div class="founder-quote">"I've seen too many brilliant students go down the wrong path — not because they lacked potential, but because nobody gave them the right mirror at the right time. Lume Live is that mirror."</div>
-      <p>Proudly rooted in Rohtak, Haryana, and serving students across India online — because geography should never limit a young person's future.</p>
-      <a href="#contact" class="btn-gold" style="margin-top:0.5rem;">Meet Us in a Free Session →</a>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ TESTIMONIALS ═══ -->
-<section class="testimonials">
-  <div style="text-align:center; margin-bottom:0.5rem;">
-    <p class="section-label">Real Stories</p>
-    <h2 class="section-title">Clarity That Changed Everything</h2>
-  </div>
-  <div class="testi-grid">
-    <div class="testi-card">
-      <div class="stars">★★★★★</div>
-      <p>"We had almost decided on Commerce under pressure from relatives. The psychometric report showed our daughter had exceptional analytical and visual skills — Science was the right call. She's now thriving in 11th. This one session saved years of regret."</p>
-      <div class="testi-author">
-        <div class="testi-avatar">PK</div>
-        <div><span>Priya K.</span><small>Parent · Rohtak</small></div>
-      </div>
-    </div>
-    <div class="testi-card">
-      <div class="stars">★★★★★</div>
-      <p>"I was in my final year of B.Com with no idea what to do next. The counsellor didn't just list career options — she helped me understand why I kept running from decisions. I finally have a plan, and more importantly, the courage to follow it."</p>
-      <div class="testi-author">
-        <div class="testi-avatar">AV</div>
-        <div><span>Aditya V.</span><small>B.Com Final Year · Delhi</small></div>
-      </div>
-    </div>
-    <div class="testi-card">
-      <div class="stars">★★★★★</div>
-      <p>"My son had severe exam anxiety and was shutting down completely. Within 3 sessions, he was opening up, sleeping better, and attending classes again. I can't put a price on that. Lume Live gave us our child back."</p>
-      <div class="testi-author">
-        <div class="testi-avatar">RM</div>
-        <div><span>Rekha M.</span><small>Parent · Chandigarh</small></div>
+      <div class="test-cards fade-up d1">
+        <div class="test-card" onclick="openBooking('Psychometric Assessment')">
+          <div class="test-icon">🧠</div>
+          <div class="test-info">
+            <h4>Aptitude & IQ Assessment</h4>
+            <p>Verbal, numerical, logical reasoning profiling</p>
+          </div>
+          <div class="test-badge">Popular</div>
+        </div>
+        <div class="test-card" onclick="openBooking('Psychometric Assessment')">
+          <div class="test-icon">🌟</div>
+          <div class="test-info">
+            <h4>Personality Type Indicator</h4>
+            <p>Big Five & career-oriented personality mapping</p>
+          </div>
+        </div>
+        <div class="test-card" onclick="openBooking('Psychometric Assessment')">
+          <div class="test-icon">💡</div>
+          <div class="test-info">
+            <h4>Interest & Values Inventory</h4>
+            <p>RIASEC-based career interest profiling</p>
+          </div>
+        </div>
+        <div class="test-card" onclick="openBooking('Psychometric Assessment')">
+          <div class="test-icon">📈</div>
+          <div class="test-info">
+            <h4>Emotional Intelligence (EQ)</h4>
+            <p>Self-awareness, empathy & social skills mapping</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══ LEAD MAGNET SECTION ═══ -->
-<section class="lead-magnet" id="contact">
-  <div class="lead-magnet-inner">
-    <div class="pdf-preview">📄 FREE DOWNLOAD — PDF GUIDE</div>
-    <h2>Don't Let One Decision <em>Define the Next Decade.</em></h2>
-    <p>Most parents make stream-selection choices based on fear, relatives, and rank lists — not on their child's actual strengths. Our free guide reveals the 5 most common mistakes and how to avoid every single one. Enter your details below and we'll send it to your WhatsApp instantly.</p>
-    <div class="lead-form">
-      <input type="text" placeholder="Parent / Guardian Name" />
-      <input type="email" placeholder="Email Address" />
-      <input type="tel" placeholder="WhatsApp Number" />
-      <button class="btn-gold">Get the Free PDF Guide →</button>
+<!-- ── ABOUT ── -->
+<section id="about">
+  <div class="container">
+    <div class="about-inner">
+      <div class="fade-up">
+        <div class="founder-card">
+          <div class="founder-img">SB</div>
+          <div class="founder-name">Sachin Bajaj</div>
+          <div class="founder-title">MSc Clinical Psychology · PGDGC, Jamia Millia Islamia</div>
+          <div class="founder-creds">
+            <div class="cred-item">
+              <span class="cred-icon">🎓</span>
+              <span>M.Sc Clinical Psychology, Gurugram University</span>
+            </div>
+            <div class="cred-item">
+              <span class="cred-icon">🏛️</span>
+              <span>PG Diploma Guidance & Counselling, Jamia Millia Islamia, New Delhi</span>
+            </div>
+            <div class="cred-item">
+              <span class="cred-icon">📚</span>
+              <span>B.Ed, Maharshi Dayanand University</span>
+            </div>
+            <div class="cred-item">
+              <span class="cred-icon">🏫</span>
+              <span>PGT Psychology · 4+ years classroom & counselling experience</span>
+            </div>
+            <div class="cred-item">
+              <span class="cred-icon">🔬</span>
+              <span>Published researcher: Somatic Symptoms, Mental Health & COVID-19</span>
+            </div>
+            <div class="cred-item">
+              <span class="cred-icon">🤝</span>
+              <span>Mental Health Communicator, iHearYou Platform</span>
+            </div>
+          </div>
+          <div class="runner-badge" style="display:flex;margin-top:16px">
+            🏃 Vedanta Half Marathon Finisher 2025 · Chandigarh Half Marathon
+          </div>
+        </div>
+      </div>
+      <div class="about-content fade-up d1">
+        <div class="section-eyebrow">About the Founder</div>
+        <h2 class="section-title">Built by a Psychologist.<br/>Driven by Purpose.</h2>
+        <p>Sachin Bajaj is not just a counsellor — he is a rigorous academic, a classroom practitioner, and a deeply committed human being who has made it his life's work to ensure that no student in Haryana has to navigate the most important decisions of their life alone.</p>
+        <p>Armed with an M.Sc in Clinical Psychology and a prestigious Post Graduate Diploma in Guidance & Counselling from <strong>Jamia Millia Islamia, New Delhi</strong> — one of India's most respected central universities — Sachin brings a rare dual expertise: the technical precision of clinical assessment and the emotional intelligence of a trained counsellor.</p>
+        <p>His four-plus years as a PGT Psychology teacher at leading schools in Haryana, combined with hands-on experience in mental health communication and special needs research, means he doesn't just understand psychology academically — he sees it in real students, every single day.</p>
+        <p>His research on mental health during COVID-19, presented at national conferences, reflects a scholar who is always deepening his understanding of the human mind. At Lume Live, he has channelled all of this — the science, the empathy, the local knowledge — into a practice that is reshaping how Haryana's students discover their potential.</p>
+        <div class="about-tags">
+          <span class="tag t-teal">Clinical Psychology</span>
+          <span class="tag t-teal">Guidance & Counselling</span>
+          <span class="tag t-gold">Career Psychology</span>
+          <span class="tag t-gold">Psychometrics</span>
+          <span class="tag">CBT Techniques</span>
+          <span class="tag">Emotional Intelligence</span>
+          <span class="tag">Research & Assessment</span>
+        </div>
+        <button class="btn-primary" onclick="openBooking('')">Schedule a Session with Sachin →</button>
+      </div>
     </div>
-    <p class="lead-fine">🔒 Your data is 100% private. We never spam. By submitting, you agree to receive occasional helpful resources from Lume Live.</p>
   </div>
 </section>
 
-<!-- ═══ FOOTER ═══ -->
+<!-- ── TESTIMONIALS ── -->
+<section id="testimonials">
+  <div class="container">
+    <div class="test-header fade-up">
+      <div class="section-eyebrow">Student Stories</div>
+      <h2 class="section-title">Real Students. Real Clarity.</h2>
+      <p class="section-sub" style="margin:0 auto">Every session at Lume Live is a step toward a clearer, more confident life.</p>
+    </div>
+    <div class="test-grid">
+      <div class="tcard fade-up d1">
+        <div class="tcard-stars">★★★★★</div>
+        <p class="tcard-text">"I was completely lost after Class 10. After my session with Sachin Sir, I had a clear picture of my strengths. I chose Commerce with confidence — and I'm loving it."</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar" style="background:var(--teal)">AP</div>
+          <div class="tcard-info"><p>Ananya P.</p><span>Class 11 Student, Rohtak</span></div>
+        </div>
+      </div>
+      <div class="tcard fade-up d2">
+        <div class="tcard-stars">★★★★★</div>
+        <p class="tcard-text">"As a parent, I was more stressed than my child. The structured roadmap we received gave our whole family clarity. We finally stopped arguing about careers!"</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar" style="background:var(--gold)">RS</div>
+          <div class="tcard-info"><p>Rajiv S.</p><span>Parent, Hisar</span></div>
+        </div>
+      </div>
+      <div class="tcard fade-up d3">
+        <div class="tcard-stars">★★★★★</div>
+        <p class="tcard-text">"The wellness sessions helped me understand my anxiety for the first time. It was a safe, non-judgemental space. I feel so much more in control now."</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar" style="background:#7b5ea7">MK</div>
+          <div class="tcard-info"><p>Mehak K.</p><span>B.Tech Student, Chandigarh</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section id="faq">
+  <div class="container">
+    <div class="faq-inner">
+      <div class="faq-header fade-up">
+        <div class="section-eyebrow">Common Questions</div>
+        <h2 class="section-title">Questions Parents Ask Us</h2>
+      </div>
+      <div class="faq-list fade-up">
+        <div class="faq-item">
+          <div class="faq-q">Is the free demo session really free?<span class="faq-icon">+</span></div>
+          <div class="faq-a"><p>Yes, absolutely. The 30-minute demo session is completely free with no obligation. It's our way of letting you experience the Lume Care Approach before making any commitment. We believe you'll see the value — but the choice is entirely yours.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">My child is in Class 9. Is it too early?<span class="faq-icon">+</span></div>
+          <div class="faq-a"><p>Not at all — in fact, Class 9 is an ideal time to begin career exploration. Early awareness reduces the pressure of Class 10 decisions significantly. We tailor our sessions to the student's age and maturity, making the process comfortable and age-appropriate.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Do you offer online sessions for students outside Rohtak?<span class="faq-icon">+</span></div>
+          <div class="faq-a"><p>Yes! Lume Live is fully equipped for online sessions via video call. We work with students across Haryana and all of India. Our psychometric assessments are also conducted digitally, so geography is never a barrier to quality guidance.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">How is this different from a school counsellor?<span class="faq-icon">+</span></div>
+          <div class="faq-a"><p>School counsellors serve hundreds of students and often focus primarily on academic issues. At Lume Live, every student receives dedicated 1:1 attention, validated psychometric tools, a written personalised roadmap, and follow-up support — this is professional, structured counselling, not a 15-minute chat.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Are the emotional wellness sessions confidential?<span class="faq-icon">+</span></div>
+          <div class="faq-a"><p>Confidentiality is the foundation of all our wellness sessions. Everything shared remains strictly between the student and their counsellor. We follow professional ethical guidelines to ensure every client feels safe, heard, and respected.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">What is the fee structure?<span class="faq-icon">+</span></div>
+          <div class="faq-a"><p>We offer transparent, package-based pricing designed to be accessible. Please book a free demo session or WhatsApp us directly for current pricing. We also offer flexible payment options for comprehensive packages.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section id="contact">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:52px" class="fade-up">
+      <div class="section-eyebrow">Get In Touch</div>
+      <h2 class="section-title">Let's Start Your Journey Today.</h2>
+      <p class="section-sub" style="margin:0 auto">Fill in the form or reach out directly. We respond within a few hours — because your future can't wait.</p>
+    </div>
+    <div class="contact-inner">
+      <div class="contact-form-wrap fade-up">
+        <h3 class="form-title">Send Us a Message</h3>
+        <p class="form-sub">We'll get back to you within 24 hours.</p>
+        <form id="contactForm" onsubmit="handleContact(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Your Name</label>
+              <input type="text" placeholder="Full Name" required/>
+            </div>
+            <div class="form-group">
+              <label>Phone / WhatsApp</label>
+              <input type="tel" placeholder="+91 98765 XXXXX" required/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" placeholder="your@email.com" required/>
+          </div>
+          <div class="form-group">
+            <label>Service of Interest</label>
+            <select required>
+              <option value="">-- Please Select --</option>
+              <option>Career Counselling — High School</option>
+              <option>Career Counselling — College</option>
+              <option>Emotional Wellness Session</option>
+              <option>Psychometric Assessment</option>
+              <option>General Enquiry</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Message (Optional)</label>
+            <textarea placeholder="Tell us a little about what you're looking for..."></textarea>
+          </div>
+          <button type="submit" class="submit-btn">Send Message →</button>
+        </form>
+      </div>
+      <div class="contact-info fade-up d1">
+        <h3 class="ci-title">Or Reach Us Directly</h3>
+        <div class="ci-cards">
+          <a href="tel:+917015671280" class="ci-card">
+            <div class="ci-card-icon teal">📞</div>
+            <div>
+              <h4>Call / SMS</h4>
+              <p>+91 70156 71280</p>
+            </div>
+          </a>
+          <a href="https://wa.me/917015671280" target="_blank" class="ci-card">
+            <div class="ci-card-icon green">💬</div>
+            <div>
+              <h4>WhatsApp Us</h4>
+              <p>Chat with us instantly</p>
+            </div>
+          </a>
+          <div class="ci-card" style="cursor:default">
+            <div class="ci-card-icon gold">📍</div>
+            <div>
+              <h4>Base Location</h4>
+              <p>Rohtak, Haryana · Online PAN India</p>
+            </div>
+          </div>
+          <div class="ci-card" style="cursor:default">
+            <div class="ci-card-icon teal">⏰</div>
+            <div>
+              <h4>Session Hours</h4>
+              <p>Mon–Sat · 9 AM – 7 PM IST</p>
+            </div>
+          </div>
+        </div>
+        <a href="https://wa.me/917015671280?text=Hi%20Sachin%20Sir%2C%20I%20came%20across%20Lume%20Live%20and%20I%27d%20like%20to%20book%20a%20free%20demo%20session." target="_blank" class="wa-btn">
+          <span class="wa-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </span>
+          Chat on WhatsApp Now
+        </a>
+        <p style="font-size:0.78rem;color:var(--gray-400);margin-top:12px;text-align:center">Typically responds within 1–2 hours</p>
+        <div style="background:var(--teal-light);border-radius:var(--radius);padding:16px 20px;margin-top:20px">
+          <p style="font-size:0.82rem;color:var(--teal);font-weight:700;margin-bottom:4px">🎁 Free Resource for Parents</p>
+          <p style="font-size:0.8rem;color:var(--gray-600);line-height:1.65">Download our guide: <strong>"5 Mistakes to Avoid After 10th Grade"</strong></p>
+          <button onclick="document.getElementById('popup-overlay').classList.add('open')" style="background:var(--teal);color:#fff;border:none;font-family:var(--font);font-size:0.8rem;font-weight:700;padding:9px 18px;border-radius:50px;cursor:pointer;margin-top:10px;transition:background 0.2s" onmouseover="this.style.background='#125e5a'" onmouseout="this.style.background='#1a7f7a'">Get Free PDF →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
 <footer>
-  <div>
-    <div class="logo">Lume<span style="color:var(--gold-mid)">Live</span></div>
-    <p style="margin-top:0.6rem;">Empathetic, scientific counselling for students and families across India. Based in Rohtak, Haryana.</p>
-    <p style="margin-top:1rem; font-size:0.78rem;">📧 hello@lumelive.co.in<br>📱 WhatsApp: +91 XXXXX XXXXX</p>
-  </div>
-  <div>
-    <h5>Services</h5>
-    <ul>
-      <li><a href="#">High School Career Counselling</a></li>
-      <li><a href="#">College Career Guidance</a></li>
-      <li><a href="#">Emotional Wellness Sessions</a></li>
-      <li><a href="#">Psychometric Assessments</a></li>
-      <li><a href="#">Parent Consultation</a></li>
-    </ul>
-  </div>
-  <div>
-    <h5>Resources</h5>
-    <ul>
-      <li><a href="#">Free Stream Selection Guide</a></li>
-      <li><a href="#">Career Blog</a></li>
-      <li><a href="#">About the Founder</a></li>
-      <li><a href="#">Privacy Policy</a></li>
-      <li><a href="#">Terms of Service</a></li>
-    </ul>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="logo" style="margin-bottom:12px">
+          <div class="logo-icon"><svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:#fff;stroke-width:2.5"><circle cx="12" cy="5" r="2"/><path d="M12 9 C8 9 5 12 5 16 L5 19 L19 19 L19 16 C19 12 16 9 12 9Z" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 14 L12 12 L15 14" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span style="color:#fff">Lume<em style="color:var(--gold-bright);font-style:normal">Live</em></span>
+        </div>
+        <p>Science-backed career counselling and emotional wellness support for students and young professionals across India. Founded in Rohtak, Haryana. Serving PAN India online.</p>
+        <div style="display:flex;gap:12px;margin-top:20px">
+          <a href="https://wa.me/917015671280" target="_blank" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.85rem;transition:background 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">WA</a>
+          <a href="https://linkedin.com/in/sachin-bajaj9" target="_blank" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.85rem;transition:background 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">in</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#services">High School Counselling</a></li>
+          <li><a href="#services">College Career Clarity</a></li>
+          <li><a href="#services">Emotional Wellness</a></li>
+          <li><a href="#psychometric">Psychometric Tests</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#approach">Our Approach</a></li>
+          <li><a href="#about">About Sachin Bajaj</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#contact">Contact Us</a></li>
+          <li><a href="https://wa.me/917015671280" target="_blank">WhatsApp</a></li>
+          <li><a href="tel:+917015671280">+91 70156 71280</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Lume Live · lumelive.co.in · All rights reserved</span>
+      <span>Made with ❤️ in Rohtak, Haryana</span>
+    </div>
   </div>
 </footer>
-<div class="footer-bottom">
-  © 2025 Lume Live · lumelive.co.in · Built with purpose in Rohtak, Haryana
-</div>
 
 <script>
-  setTimeout(() => {
-    document.getElementById('popup').style.display = 'flex';
-  }, 4000);
-</script>
+// ── Navbar scroll effect ──
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>40)
+})
 
+// ── Hamburger ──
+const ham=document.getElementById('hamburger')
+const mob=document.getElementById('mobileMenu')
+ham.addEventListener('click',()=>{
+  mob.classList.toggle('open')
+  const spans=ham.querySelectorAll('span')
+  if(mob.classList.contains('open')){
+    spans[0].style.transform='rotate(45deg) translate(5px,5px)'
+    spans[1].style.opacity='0'
+    spans[2].style.transform='rotate(-45deg) translate(5px,-5px)'
+  }else{
+    spans[0].style.transform=''
+    spans[1].style.opacity=''
+    spans[2].style.transform=''
+  }
+})
+document.querySelectorAll('.mob-link').forEach(l=>l.addEventListener('click',()=>mob.classList.remove('open')))
+
+// ── Popup ──
+const popupOverlay=document.getElementById('popup-overlay')
+document.getElementById('closePopup').addEventListener('click',()=>popupOverlay.classList.remove('open'))
+popupOverlay.addEventListener('click',e=>{if(e.target===popupOverlay)popupOverlay.classList.remove('open')})
+
+// ── Lead form submit ──
+document.getElementById('leadSubmit').addEventListener('click',()=>{
+  const name=document.getElementById('lead-name').value.trim()
+  const email=document.getElementById('lead-email').value.trim()
+  const phone=document.getElementById('lead-phone').value.trim()
+  if(!name||!email||!phone){showToast('Please fill all fields!');return}
+  const msg=`Hi Sachin Sir! I'd like the free Parent's Guide to Stream Selection. Name: ${name}, Email: ${email}`
+  window.open(`https://wa.me/917015671280?text=${encodeURIComponent(msg)}`, '_blank')
+  popupOverlay.classList.remove('open')
+  showToast('✓ Redirecting to WhatsApp — we\'ll send your guide!')
+})
+
+// ── Booking Modal ──
+const bmodal=document.getElementById('booking-modal')
+function openBooking(service){
+  bmodal.classList.add('open')
+  if(service){const sel=document.getElementById('book-service');for(let i=0;i<sel.options.length;i++){if(sel.options[i].value===service||sel.options[i].text===service){sel.selectedIndex=i;break}}}
+}
+document.getElementById('closeBooking').addEventListener('click',()=>bmodal.classList.remove('open'))
+bmodal.addEventListener('click',e=>{if(e.target===bmodal)bmodal.classList.remove('open')})
+
+// ── Slot selection ──
+document.getElementById('slotGrid').addEventListener('click',e=>{
+  if(e.target.classList.contains('slot-btn')){
+    document.querySelectorAll('.slot-btn').forEach(b=>b.classList.remove('selected'))
+    e.target.classList.add('selected')
+  }
+})
+
+// ── Confirm booking via WhatsApp ──
+document.getElementById('confirmBooking').addEventListener('click',()=>{
+  const name=document.getElementById('book-name').value.trim()
+  const phone=document.getElementById('book-phone').value.trim()
+  const service=document.getElementById('book-service').value
+  const slot=document.querySelector('.slot-btn.selected')?.textContent||'to be confirmed'
+  if(!name||!phone){showToast('Please enter your name and phone!');return}
+  const msg=`Hello Sachin Sir! I'd like to book a session at Lume Live.%0AName: ${name}%0AService: ${service||'General Enquiry'}%0APreferred Slot: ${slot}%0APhone: ${phone}`
+  window.open(`https://wa.me/917015671280?text=${encodeURIComponent(msg.replace(/%0A/g,'\n'))}`, '_blank')
+  bmodal.classList.remove('open')
+  showToast('✓ Redirecting to WhatsApp to confirm your booking!')
+})
+
+// ── Nav & hero booking buttons ──
+document.getElementById('navBookBtn').addEventListener('click',e=>{e.preventDefault();openBooking('')})
+document.getElementById('heroBookBtn').addEventListener('click',()=>openBooking(''))
+document.getElementById('mobBookBtn').addEventListener('click',()=>{mob.classList.remove('open');openBooking('')})
+
+// ── Contact form ──
+function handleContact(e){
+  e.preventDefault()
+  showToast('✓ Message received! We\'ll be in touch soon.')
+  e.target.reset()
+}
+
+// ── Toast ──
+function showToast(msg){
+  const t=document.getElementById('toast')
+  t.textContent=msg
+  t.classList.add('show')
+  setTimeout(()=>t.classList.remove('show'),3500)
+}
+
+// ── FAQ ──
+document.querySelectorAll('.faq-q').forEach(q=>{
+  q.addEventListener('click',()=>{
+    const item=q.parentElement
+    const wasOpen=item.classList.contains('open')
+    document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'))
+    if(!wasOpen)item.classList.add('open')
+  })
+})
+
+// ── Scroll Animations ──
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')})
+},{threshold:0.12})
+document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el))
+
+// ── Auto popup after 8 seconds ──
+setTimeout(()=>{
+  if(!sessionStorage.getItem('popupShown')){
+    popupOverlay.classList.add('open')
+    sessionStorage.setItem('popupShown','1')
+  }
+},8000)
+</script>
 </body>
 </html>
