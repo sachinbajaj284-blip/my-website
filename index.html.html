@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lume Live - Premium Mental Health & Career Counselling</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --deep-teal:#006D77;
+  --deep-teal-dark:#004d55;
+  --warm-gold:#FFCB08;
+  --warm-gold-dark:#e6b800;
+  --soft-gray:#A8A8A8;
+  --white:#FFFFFF;
+  --light-bg:#F8F9FA;
+  --text:#2c2c2c;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Montserrat',sans-serif;line-height:1.6;color:var(--text);background:var(--light-bg);overflow-x:hidden;}
+.container{max-width:1200px;margin:0 auto;padding:0 20px;}
+
+/* Navbar */
+.navbar{position:fixed;top:0;left:0;width:100%;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);z-index:1000;padding:15px 0;box-shadow:0 2px 10px rgba(0,0,0,0.05);transition:all 0.3s;}
+.nav-content{display:flex;justify-content:space-between;align-items:center;}
+.logo{font-size:1.6rem;font-weight:800;color:var(--deep-teal);cursor:pointer;}
+.logo span{color:var(--warm-gold);}
+.nav-links{display:flex;gap:30px;list-style:none;align-items:center;}
+.nav-links a{color:var(--text);text-decoration:none;font-weight:500;transition:color 0.3s;cursor:pointer;}
+.nav-links a:hover{color:var(--deep-teal);}
+.nav-cta{background:var(--warm-gold);color:var(--deep-teal)!important;padding:10px 20px;border-radius:50px;font-weight:600;}
+.menu-toggle{display:none;background:none;border:none;font-size:1.8rem;color:var(--deep-teal);cursor:pointer;}
+
+/* Hero */
+.hero{background:linear-gradient(135deg,var(--deep-teal),var(--deep-teal-dark));color:var(--white);text-align:center;padding:160px 0 120px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-50%;right:-20%;width:600px;height:600px;background:radial-gradient(circle,rgba(255,203,8,0.15),transparent 70%);border-radius:50%;}
+.hero::after{content:'';position:absolute;bottom:-30%;left:-10%;width:400px;height:400px;background:radial-gradient(circle,rgba(255,203,8,0.1),transparent 70%);border-radius:50%;}
+.hero-content{position:relative;z-index:2;}
+.hero h1{font-size:3.8rem;font-weight:700;margin-bottom:20px;line-height:1.2;animation:fadeUp 0.8s ease;}
+.hero .subheadline{font-size:1.3rem;font-weight:300;margin-bottom:40px;max-width:750px;margin-left:auto;margin-right:auto;animation:fadeUp 1s ease;}
+.hero-ctas{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;animation:fadeUp 1.2s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+
+.btn{padding:16px 34px;font-size:1.05rem;font-weight:600;border:none;border-radius:50px;cursor:pointer;transition:all 0.3s;text-decoration:none;display:inline-flex;align-items:center;gap:10px;font-family:inherit;}
+.btn-primary{background:var(--warm-gold);color:var(--deep-teal);}
+.btn-primary:hover{background:var(--warm-gold-dark);transform:translateY(-3px);box-shadow:0 10px 25px rgba(255,203,8,0.4);}
+.btn-whatsapp{background:#25D366;color:var(--white);}
+.btn-whatsapp:hover{background:#1ebe57;transform:translateY(-3px);box-shadow:0 10px 25px rgba(37,211,102,0.4);}
+.btn-outline{background:transparent;color:var(--white);border:2px solid var(--white);}
+.btn-outline:hover{background:var(--white);color:var(--deep-teal);}
+
+/* Stats */
+.stats{background:var(--white);padding:60px 0;box-shadow:0 4px 20px rgba(0,0,0,0.04);}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:30px;text-align:center;}
+.stat-num{font-size:2.8rem;font-weight:800;color:var(--deep-teal);}
+.stat-num span{color:var(--warm-gold);}
+.stat-label{color:var(--soft-gray);font-weight:500;margin-top:5px;}
+
+/* Sections */
+section{padding:90px 0;}
+.section-title{text-align:center;font-size:2.6rem;font-weight:700;margin-bottom:15px;color:var(--deep-teal);}
+.section-sub{text-align:center;color:var(--soft-gray);max-width:650px;margin:0 auto 60px;font-size:1.1rem;}
+
+/* Services */
+.buckets{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:35px;}
+.bucket{background:var(--white);padding:45px 35px;border-radius:20px;box-shadow:0 10px 40px rgba(0,109,119,0.08);transition:all 0.4s;position:relative;overflow:hidden;border-top:4px solid var(--warm-gold);}
+.bucket::before{content:'';position:absolute;top:0;left:0;width:100%;height:0;background:linear-gradient(135deg,var(--deep-teal),var(--deep-teal-dark));transition:height 0.4s;z-index:0;}
+.bucket:hover{transform:translateY(-12px);box-shadow:0 20px 50px rgba(0,109,119,0.2);}
+.bucket:hover::before{height:100%;}
+.bucket:hover .bucket-icon,.bucket:hover h3,.bucket:hover li,.bucket:hover .bucket-desc{color:var(--white);}
+.bucket>*{position:relative;z-index:1;transition:color 0.4s;}
+.bucket-icon{font-size:3rem;margin-bottom:20px;color:var(--deep-teal);}
+.bucket h3{font-size:1.6rem;color:var(--deep-teal);margin-bottom:12px;font-weight:700;}
+.bucket-desc{color:var(--soft-gray);margin-bottom:25px;font-size:0.95rem;}
+.bucket ul{list-style:none;margin-bottom:30px;}
+.bucket li{padding:10px 0;padding-left:28px;position:relative;border-bottom:1px solid rgba(168,168,168,0.2);font-size:0.95rem;}
+.bucket li::before{content:'✓';position:absolute;left:0;color:var(--warm-gold);font-weight:700;font-size:1.1rem;}
+
+/* Approach */
+.approach{background:var(--white);}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:40px;position:relative;}
+.step{text-align:center;padding:35px 25px;background:var(--light-bg);border-radius:20px;transition:all 0.3s;cursor:pointer;}
+.step:hover{transform:translateY(-8px);background:var(--white);box-shadow:0 15px 40px rgba(0,109,119,0.15);}
+.step-number{background:linear-gradient(135deg,var(--warm-gold),var(--warm-gold-dark));color:var(--deep-teal);width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:800;margin:0 auto 25px;box-shadow:0 8px 20px rgba(255,203,8,0.3);}
+.step h3{color:var(--deep-teal);font-size:1.4rem;margin-bottom:15px;font-weight:700;}
+.step p{color:var(--soft-gray);font-size:0.95rem;}
+
+/* About */
+.about{background:var(--light-bg);}
+.founder-content{display:grid;grid-template-columns:1fr 1.3fr;gap:60px;align-items:center;}
+.founder-img{background:linear-gradient(135deg,var(--deep-teal),var(--deep-teal-dark));height:450px;border-radius:20px;display:flex;align-items:center;justify-content:center;color:var(--warm-gold);font-size:6rem;font-weight:800;position:relative;box-shadow:0 20px 50px rgba(0,109,119,0.25);}
+.founder-img::after{content:'Sachin Bajaj';position:absolute;bottom:30px;color:var(--white);font-size:1.3rem;font-weight:600;}
+.founder-text h2{text-align:left;margin-bottom:20px;}
+.credentials{display:flex;gap:15px;flex-wrap:wrap;margin:20px 0;}
+.cred-badge{background:var(--white);padding:10px 18px;border-radius:50px;font-size:0.85rem;font-weight:600;color:var(--deep-teal);box-shadow:0 4px 12px rgba(0,0,0,0.06);}
+.contact-box{background:var(--white);padding:25px;border-radius:15px;margin-top:25px;box-shadow:0 4px 15px rgba(0,0,0,0.05);}
+.contact-box a{color:var(--deep-teal);text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:8px;margin-right:20px;}
+.contact-box a:hover{color:var(--warm-gold-dark);}
+
+/* CTA Banner */
+.cta-banner{background:linear-gradient(135deg,var(--deep-teal),var(--deep-teal-dark));color:var(--white);text-align:center;padding:70px 20px;border-radius:20px;margin:60px 20px;max-width:1160px;margin-left:auto;margin-right:auto;}
+.cta-banner h2{color:var(--white);font-size:2.2rem;margin-bottom:15px;}
+.cta-banner p{margin-bottom:30px;font-size:1.1rem;opacity:0.9;}
+
+/* Contact Form Section */
+.contact-section{background:var(--white);}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:start;}
+.contact-info h3{color:var(--deep-teal);font-size:1.5rem;margin-bottom:20px;}
+.contact-item{display:flex;gap:15px;margin-bottom:20px;align-items:center;}
+.contact-icon{width:50px;height:50px;background:var(--warm-gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.contact-form{background:var(--light-bg);padding:40px;border-radius:20px;}
+.contact-form h3{color:var(--deep-teal);margin-bottom:20px;font-size:1.5rem;}
+.form-group{margin-bottom:18px;}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:14px;border:1px solid #ddd;border-radius:10px;font-family:inherit;font-size:0.95rem;transition:border 0.3s;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--deep-teal);}
+.form-group textarea{resize:vertical;min-height:100px;}
+
+/* Footer */
+.footer{background:var(--deep-teal-dark);color:var(--white);padding:50px 0 20px;}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:40px;margin-bottom:30px;}
+.footer h4{color:var(--warm-gold);margin-bottom:15px;font-size:1.1rem;}
+.footer a{color:var(--white);text-decoration:none;display:block;padding:5px 0;opacity:0.85;transition:opacity 0.3s;}
+.footer a:hover{opacity:1;color:var(--warm-gold);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.1);padding-top:20px;text-align:center;opacity:0.7;font-size:0.9rem;}
+
+/* Floating WhatsApp */
+.float-wa{position:fixed;bottom:30px;right:30px;background:#25D366;color:var(--white);width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;text-decoration:none;box-shadow:0 8px 25px rgba(37,211,102,0.4);z-index:998;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+
+/* Lead Magnet */
+.lead-btn{position:fixed;bottom:30px;left:30px;background:var(--warm-gold);color:var(--deep-teal);border:none;border-radius:50px;padding:15px 22px;font-weight:700;cursor:pointer;z-index:997;box-shadow:0 8px 25px rgba(255,203,8,0.5);font-family:inherit;font-size:0.9rem;animation:bounce 3s infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+
+.popup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:2000;animation:fadeIn 0.3s;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.popup.active{display:flex;align-items:center;justify-content:center;padding:20px;}
+.popup-content{background:var(--white);padding:40px;border-radius:20px;max-width:450px;width:100%;text-align:center;position:relative;animation:slideUp 0.4s;}
+@keyframes slideUp{from{transform:translateY(30px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.popup-badge{background:var(--warm-gold);color:var(--deep-teal);padding:6px 16px;border-radius:50px;font-size:0.8rem;font-weight:700;display:inline-block;margin-bottom:15px;}
+.popup h3{color:var(--deep-teal);margin-bottom:12px;font-size:1.5rem;}
+.popup p{color:var(--soft-gray);margin-bottom:20px;}
+.close{position:absolute;top:15px;right:20px;font-size:1.8rem;cursor:pointer;color:var(--soft-gray);background:none;border:none;}
+.close:hover{color:var(--deep-teal);}
+.popup form{display:flex;flex-direction:column;gap:12px;}
+
+.toast{position:fixed;top:90px;right:20px;background:#25D366;color:var(--white);padding:15px 25px;border-radius:10px;box-shadow:0 8px 25px rgba(0,0,0,0.2);z-index:3000;transform:translateX(400px);transition:transform 0.4s;}
+.toast.show{transform:translateX(0);}
+
+@media(max-width:768px){
+  .nav-links{display:none;position:absolute;top:100%;left:0;width:100%;background:var(--white);flex-direction:column;padding:20px;gap:15px;box-shadow:0 5px 15px rgba(0,0,0,0.1);}
+  .nav-links.active{display:flex;}
+  .menu-toggle{display:block;}
+  .hero h1{font-size:2.3rem;}
+  .hero .subheadline{font-size:1.05rem;}
+  .section-title{font-size:1.9rem;}
+  .founder-content,.contact-grid,.footer-grid{grid-template-columns:1fr;}
+  .founder-img{height:300px;font-size:4rem;}
+  .hero-ctas{flex-direction:column;align-items:center;}
+  .btn{width:100%;justify-content:center;max-width:300px;}
+  .lead-btn{bottom:100px;left:15px;font-size:0.8rem;padding:12px 18px;}
+  .float-wa{width:55px;height:55px;bottom:20px;right:20px;}
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="container nav-content">
+    <div class="logo" onclick="scrollTo('home')">Lume<span>Live</span></div>
+    <ul class="nav-links" id="navLinks">
+      <li><a onclick="scrollTo('home')">Home</a></li>
+      <li><a onclick="scrollTo('services')">Services</a></li>
+      <li><a onclick="scrollTo('approach')">Approach</a></li>
+      <li><a onclick="scrollTo('about')">About</a></li>
+      <li><a onclick="scrollTo('contact')">Contact</a></li>
+      <li><a class="nav-cta" onclick="scrollTo('contact')">Book Session</a></li>
+    </ul>
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="home">
+  <div class="container hero-content">
+    <h1>Unlock Your Child's Potential with Confidence</h1>
+    <p class="subheadline">Empathetic, science-backed guidance for mental wellness and career clarity—crafted for students and families across Rohtak and Haryana. We turn anxiety into direction, and confusion into confident futures.</p>
+    <div class="hero-ctas">
+      <a class="btn btn-primary" onclick="scrollTo('services')">Explore Services →</a>
+      <a href="https://wa.me/917015671280" target="_blank" class="btn btn-whatsapp">💬 Chat on WhatsApp</a>
+      <a class="btn btn-outline" onclick="openPopup()">Free Parents' Guide</a>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<section class="stats" style="padding:60px 0;">
+  <div class="container">
+    <div class="stats-grid">
+      <div><div class="stat-num" data-target="500">0<span>+</span></div><div class="stat-label">Students Guided</div></div>
+      <div><div class="stat-num" data-target="98">0<span>%</span></div><div class="stat-label">Parent Satisfaction</div></div>
+      <div><div class="stat-num" data-target="10">0<span>+</span></div><div class="stat-label">Years Experience</div></div>
+      <div><div class="stat-num" data-target="15">0<span>+</span></div><div class="stat-label">Psychometric Tools</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Services -->
+<section id="services">
+  <div class="container">
+    <h2 class="section-title">Tailored Pathways for Every Stage</h2>
+    <p class="section-sub">Whether your child is choosing a stream, stepping into college life, or simply navigating emotional turbulence—we have a dedicated pathway designed just for them.</p>
+    <div class="buckets">
+      <div class="bucket">
+        <div class="bucket-icon">🎓</div>
+        <h3>High School Students</h3>
+        <p class="bucket-desc">For Classes 9th to 12th navigating crucial decisions.</p>
+        <ul>
+          <li>Expert stream & subject selection</li>
+          <li>Psychometric aptitude assessments</li>
+          <li>Reduce exam & academic anxiety</li>
+          <li>Build stress-free study habits</li>
+        </ul>
+        <a href="https://wa.me/917015671280?text=Hi!%20I%27d%20like%20to%20book%20a%20consultation%20for%20my%20high%20school%20child." target="_blank" class="btn btn-primary">Book Free Consultation</a>
+      </div>
+      <div class="bucket">
+        <div class="bucket-icon">💼</div>
+        <h3>College Students</h3>
+        <p class="bucket-desc">For undergrads preparing to launch careers confidently.</p>
+        <ul>
+          <li>Crystal-clear career direction</li>
+          <li>First-job readiness coaching</li>
+          <li>Resume & interview preparation</li>
+          <li>Align passion with real opportunity</li>
+        </ul>
+        <a onclick="scrollTo('approach
