@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lume Live | Mental Health & Career Counselling</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
 <style>
@@ -162,7 +162,6 @@ section{padding:80px 20px;}
 #modal-about .about-name{font-size:1.15rem;}
 #modal-about .about-intro{font-size:.86rem;}
 #modal-about .creds li{font-size:.78rem;}
-#modal-about .anim{opacity:1 !important;transform:none !important;transition:none !important;}
 
 /* ── UPI DOWNLOAD ── */
 .upi-download{display:inline-flex;align-items:center;gap:6px;background:var(--navy);color:#fff;padding:8px 16px;border-radius:6px;font-size:.75rem;font-weight:600;text-decoration:none;margin-top:8px;transition:.25s;cursor:pointer;border:none;}
@@ -550,11 +549,12 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
 .toast.show{transform:translateX(0);}
 
 /* ── SCROLL ANIMATIONS ── */
-.anim{opacity:0;transform:translateY(32px);transition:opacity .75s cubic-bezier(.25,.46,.45,.94),transform .75s cubic-bezier(.25,.46,.45,.94);}
-.anim.left{transform:translateX(-32px);}
-.anim.right{transform:translateX(32px);}
-.anim.scale{transform:scale(.9);}
-.anim.visible{opacity:1;transform:translate(0) scale(1);}
+.anim{opacity:1;transform:none;transition:opacity .75s cubic-bezier(.25,.46,.45,.94),transform .75s cubic-bezier(.25,.46,.45,.94);}
+body.js-ready .anim{opacity:0;transform:translateY(32px);}
+body.js-ready .anim.left{transform:translateX(-32px);}
+body.js-ready .anim.right{transform:translateX(32px);}
+body.js-ready .anim.scale{transform:scale(.9);}
+.anim.visible,body.js-ready .anim.visible{opacity:1;transform:translate(0) scale(1);}
 
 /* ── STAGGER ANIMATION DELAYS ── */
 .stagger-1{transition-delay:.05s;}
@@ -608,6 +608,203 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
   .mob-menu{top:calc(70px + max(0px,env(safe-area-inset-top)));}
   footer{padding-bottom:max(22px,env(safe-area-inset-bottom));}
 }
+
+
+/* ── FAQ SECTION ── */
+#faq{background:linear-gradient(135deg,#F8FAFB 0%,#EFF4F7 50%,#F5F0E8 100%);padding:80px 20px;position:relative;overflow:hidden;}
+#faq::before{content:'';position:absolute;top:20%;right:-60px;width:180px;height:180px;background:rgba(10,110,110,.04);border-radius:50%;animation:softPulse 6s ease-in-out infinite;}
+.faq-inner{max-width:800px;margin:0 auto;position:relative;z-index:1;}
+.faq-header{text-align:center;max-width:640px;margin:0 auto 48px;}
+.faq-item{background:#fff;border-radius:12px;margin-bottom:12px;box-shadow:0 2px 12px rgba(0,0,0,.04);overflow:hidden;transition:all .3s;border-left:3px solid var(--teal);}
+.faq-item:hover{box-shadow:0 8px 24px rgba(10,110,110,.1);transform:translateX(4px);}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;cursor:pointer;font-size:.9rem;font-weight:700;color:var(--dark);transition:all .2s;}
+.faq-q:hover{color:var(--navy);}
+.faq-q::after{content:'+';font-size:1.3rem;color:var(--gold);font-weight:400;transition:transform .3s;}
+.faq-item.open .faq-q::after{transform:rotate(45deg);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.25,.46,.45,.94);}
+.faq-a-inner{padding:0 22px 18px;font-size:.85rem;color:var(--mid);line-height:1.75;}
+.faq-item.open .faq-a{max-height:300px;}
+
+/* ── FOR PARENTS SECTION ── */
+#for-parents{background:#fff;padding:80px 20px;position:relative;overflow:hidden;}
+#for-parents::before{content:'';position:absolute;bottom:-80px;left:-80px;width:220px;height:220px;background:rgba(201,147,58,.03);border-radius:50%;animation:softPulse 9s ease-in-out infinite;}
+.fp-inner{max-width:1200px;margin:0 auto;position:relative;z-index:1;}
+.fp-header{text-align:center;max-width:640px;margin:0 auto 48px;}
+.fp-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-bottom:40px;}
+.fp-card{background:var(--gray);border-radius:14px;padding:28px 24px;transition:all .4s cubic-bezier(.25,.46,.45,.94);position:relative;overflow:hidden;}
+.fp-card:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(10,110,110,.1);}
+.fp-card-icon{font-size:1.8rem;margin-bottom:12px;display:block;}
+.fp-card h4{font-size:.92rem;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.fp-card p{font-size:.82rem;color:var(--mid);line-height:1.7;}
+.fp-cta{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:18px;padding:40px 32px;text-align:center;color:#fff;position:relative;overflow:hidden;}
+.fp-cta::before{content:'';position:absolute;width:250px;height:250px;background:rgba(201,147,58,.06);border-radius:50%;top:-80px;right:-60px;animation:morphBlob 10s ease-in-out infinite;}
+.fp-cta h3{font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:10px;position:relative;z-index:1;}
+.fp-cta p{font-size:.88rem;color:rgba(255,255,255,.7);margin-bottom:20px;max-width:500px;margin-left:auto;margin-right:auto;position:relative;z-index:1;}
+@media(max-width:640px){.fp-grid{grid-template-columns:1fr;}}
+
+/* ── SCHOOL PARTNERSHIPS ── */
+#school-partnerships{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:80px 20px;position:relative;overflow:hidden;}
+#school-partnerships::before{content:'';position:absolute;top:-100px;right:-100px;width:300px;height:300px;background:rgba(201,147,58,.04);border-radius:50%;animation:morphBlob 14s ease-in-out infinite;}
+.sp-inner{max-width:1200px;margin:0 auto;position:relative;z-index:1;}
+.sp-header{text-align:center;max-width:640px;margin:0 auto 48px;}
+.sp-header .s-tag{color:var(--gold2);}
+.sp-header .s-title{color:#fff;}
+.sp-header .s-sub{color:rgba(255,255,255,.68);margin:0 auto;}
+.sp-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:48px;}
+.sp-stat{background:rgba(255,255,255,.06);border:1px solid rgba(201,147,58,.2);border-radius:14px;padding:24px;text-align:center;transition:all .3s;}
+.sp-stat:hover{background:rgba(255,255,255,.1);transform:translateY(-4px);border-color:rgba(201,147,58,.4);}
+.sp-stat .num{font-size:1.8rem;font-weight:800;color:var(--gold2);}
+.sp-stat .lbl{font-size:.72rem;color:rgba(255,255,255,.6);margin-top:4px;text-transform:uppercase;letter-spacing:.5px;}
+.sp-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center;}
+.sp-photo{border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+.sp-photo img{width:100%;height:320px;object-fit:cover;}
+.sp-feats{list-style:none;}
+.sp-feats li{display:flex;align-items:flex-start;gap:12px;padding:10px 0;font-size:.85rem;color:rgba(255,255,255,.78);line-height:1.65;border-bottom:1px solid rgba(255,255,255,.08);}
+.sp-feats li:last-child{border:none;}
+.sp-feats li span{font-size:1.1rem;flex-shrink:0;}
+.sp-form{background:rgba(255,255,255,.06);border:1px solid rgba(201,147,58,.2);border-radius:16px;padding:28px;margin-top:24px;}
+.sp-form h4{font-size:.9rem;font-weight:700;color:#fff;margin-bottom:12px;text-align:center;}
+@media(max-width:960px){.sp-stats{grid-template-columns:1fr 1fr;}.sp-grid{grid-template-columns:1fr;}}
+@media(max-width:640px){.sp-stats{grid-template-columns:1fr 1fr;}}
+
+/* ── EXIT INTENT POPUP ── */
+.exit-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:5000;display:none;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(6px);}
+.exit-overlay.open{display:flex;}
+.exit-popup{background:#fff;border-radius:20px;max-width:480px;width:100%;overflow:hidden;animation:fadeUp .35s ease;position:relative;box-shadow:0 24px 80px rgba(0,0,0,.3);}
+.exit-hdr{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:28px 28px 22px;text-align:center;position:relative;overflow:hidden;}
+.exit-hdr::before{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:rgba(201,147,58,.1);border-radius:50%;}
+.exit-logo{width:52px;height:52px;border-radius:50%;overflow:hidden;margin:0 auto 10px;box-shadow:0 4px 14px rgba(201,147,58,.3);}
+.exit-logo img{width:100%;height:100%;object-fit:cover;}
+.exit-hdr h2{font-family:'Playfair Display',serif;font-size:1.15rem;color:#fff;font-weight:700;line-height:1.35;margin-bottom:5px;}
+.exit-hdr p{font-size:.74rem;color:rgba(255,255,255,.62);}
+.exit-body{padding:22px 26px 26px;}
+.exit-body p{font-size:.84rem;color:var(--mid);margin-bottom:14px;line-height:1.7;text-align:center;}
+.exit-inp{width:100%;background:var(--gray);border:1px solid var(--grayM);border-radius:8px;padding:11px 13px;color:var(--dark);font-family:'Montserrat',sans-serif;font-size:.84rem;margin-bottom:10px;outline:none;transition:all .25s;}
+.exit-inp:focus{border-color:var(--navy);box-shadow:0 0 8px rgba(13,27,64,.1);}
+.exit-btn{background:var(--gold);color:#fff;padding:13px 16px;border-radius:8px;font-weight:700;font-size:.88rem;border:none;cursor:pointer;width:100%;transition:all .25s;position:relative;overflow:hidden;}
+.exit-btn:hover{background:var(--gold2);transform:translateY(-2px);box-shadow:0 6px 20px rgba(201,147,58,.3);}
+.exit-close{display:block;text-align:center;margin-top:10px;font-size:.73rem;color:var(--mid);cursor:pointer;transition:.2s;background:none;border:none;width:100%;}
+.exit-close:hover{color:var(--dark);}
+
+/* ── MOBILE QR FIX ── */
+@media(max-width:640px){
+  .upi-sec{padding:12px;}
+  .upi-qr{width:140px;height:140px;}
+  .upi-id{font-size:.78rem;padding:6px 10px;}
+  .date-grid{grid-template-columns:1fr;}
+  .time-slots{gap:5px;}
+  .time-slot{padding:5px 9px;font-size:.68rem;}
+  .modal-body{padding:18px 20px;}
+  .price-row{flex-direction:column;align-items:flex-start;gap:6px;}
+  .price-row .amt{font-size:1.3rem;}
+  .m-steps li{font-size:.76rem;}
+}
+
+/* ── QUIZ OPTIMIZATION ── */
+.q-opt{padding:14px 16px;font-size:.86rem;}
+.q-opt:hover{transform:translateY(-3px);}
+.q-step h3{font-size:1.05rem;}
+.q-done .check{font-size:4rem;}
+.q-form{padding:28px 24px;}
+@media(max-width:640px){
+  .q-form{padding:22px 18px;}
+  .q-step h3{font-size:.95rem;}
+  .q-opt{padding:12px 14px;font-size:.82rem;}
+}
+
+
+/* ── SESSION MODE SELECTOR ── */
+.mode-section{background:var(--gray);border-radius:12px;padding:16px;margin-bottom:16px;transition:all .3s;}
+.mode-section:hover{box-shadow:0 4px 16px rgba(0,0,0,.06);}
+.mode-section h4{font-size:.8rem;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.mode-options{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.mode-opt{background:#fff;border:2px solid var(--grayM);border-radius:10px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .25s;position:relative;overflow:hidden;}
+.mode-opt:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 4px 12px rgba(201,147,58,.1);}
+.mode-opt.sel{border-color:var(--navy);background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;transform:translateY(-2px);box-shadow:0 6px 18px rgba(13,27,64,.2);}
+.mode-opt .icon{font-size:1.4rem;margin-bottom:6px;display:block;transition:transform .3s;}
+.mode-opt:hover .icon{transform:scale(1.15);}
+.mode-opt.sel .icon{transform:scale(1.1);}
+.mode-opt .lbl{font-size:.72rem;font-weight:700;display:block;}
+.mode-opt .sub{font-size:.62rem;color:var(--mid);margin-top:2px;display:block;}
+.mode-opt.sel .sub{color:rgba(255,255,255,.7);}
+@media(max-width:640px){
+  .mode-options{grid-template-columns:1fr;}
+  .mode-opt{padding:12px 10px;display:flex;align-items:center;gap:12px;text-align:left;}
+  .mode-opt .icon{margin-bottom:0;font-size:1.2rem;}
+}
+
+
+
+/* ── ENHANCED ANIMATIONS & VISUAL CUES ── */
+
+/* Hero stat glow on hover */
+.hero-stat{position:relative;}
+.hero-stat::before{content:'';position:absolute;inset:-8px;background:radial-gradient(circle,rgba(201,147,58,.15) 0%,transparent 70%);border-radius:12px;opacity:0;transition:opacity .4s;pointer-events:none;}
+.hero-stat:hover::before{opacity:1;}
+
+/* Counter number glow when animating */
+.hero-stat .num.animating{color:var(--gold2);text-shadow:0 0 20px rgba(201,147,58,.4);transition:text-shadow .3s;}
+
+/* Hero badge enhanced glow */
+.hero-badge{animation:fadeUp .8s ease .3s both,glowPulse 3s ease-in-out infinite 1s;}
+
+/* Live badge stronger pulse */
+.hero-live .dot{animation:pulse 1.5s infinite;box-shadow:0 0 0 0 rgba(34,197,94,.4);}
+@keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,.4);}70%{box-shadow:0 0 0 10px rgba(34,197,94,0);}100%{box-shadow:0 0 0 0 rgba(34,197,94,0);}}
+.hero-live .dot{animation:livePulse 2s infinite;}
+
+/* CTA button enhanced hover glow */
+.btn-gold{position:relative;}
+.btn-gold::after{content:'';position:absolute;inset:-2px;background:linear-gradient(135deg,var(--gold),var(--gold2),var(--gold));border-radius:10px;z-index:-1;opacity:0;filter:blur(8px);transition:opacity .3s;}
+.btn-gold:hover::after{opacity:.5;}
+
+/* Service cards enhanced 3D lift */
+.svc-card{transition:all .5s cubic-bezier(.25,.46,.45,.94);}
+.svc-card:hover{transform:translateY(-14px) rotateX(4deg) scale(1.02);}
+
+/* Testimonial cards enhanced hover */
+.test-card{transition:all .5s cubic-bezier(.25,.46,.45,.94);}
+.test-card:hover{transform:translateY(-10px) rotateX(3deg) scale(1.02);}
+
+/* Gallery item enhanced zoom */
+.gallery-item{transition:all .5s cubic-bezier(.25,.46,.45,.94);}
+.gallery-item:hover{transform:scale(1.05) translateY(-8px);}
+.gallery-item:hover img{filter:brightness(1.15) saturate(1.15) contrast(1.05);}
+
+/* Approach step active glow */
+.approach-step.active .step-n{box-shadow:0 0 20px rgba(13,27,64,.3),0 4px 16px rgba(13,27,64,.2);}
+
+/* FAQ item open glow */
+.faq-item.open{border-left-color:var(--gold);box-shadow:0 8px 28px rgba(201,147,58,.1);}
+
+/* Contact item enhanced hover */
+.contact-item:hover .c-icon{background:var(--gold)!important;color:#fff!important;transform:scale(1.15) rotate(-5deg);}
+
+/* Scroll reveal smoother */
+.anim{transition:opacity 1s cubic-bezier(.25,.46,.45,.94),transform 1s cubic-bezier(.25,.46,.45,.94);}
+
+/* Navbar scroll enhanced shadow */
+nav.scrolled{box-shadow:0 4px 30px rgba(10,110,110,.15)!important;}
+
+/* Float WA enhanced */
+.float-wa{animation:glowGreen 2.5s ease-in-out infinite,float 3s ease-in-out infinite;}
+
+/* Side icons enhanced */
+.side-icon{transition:all .35s cubic-bezier(.25,.46,.45,.94);}
+.side-icon:hover{width:60px;transform:scale(1.12);}
+
+/* Modal backdrop blur enhancement */
+.modal-overlay{backdrop-filter:blur(8px);}
+.popup-overlay{backdrop-filter:blur(8px);}
+
+/* Toast slide-in smoother */
+.toast{transition:.5s cubic-bezier(.25,.46,.45,.94);}
+
+/* Section divider subtle line */
+section{position:relative;}
+section::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:60px;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);border-radius:2px;opacity:.3;}
+#hero::after,#gallery::after,#questionnaire::after,#school-partnerships::after{display:none;}
+
 </style>
 </head>
 <body>
@@ -628,8 +825,8 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
     <span class="tip">Call +91 7015671280</span>
     <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
   </a>
-  <a href="mailto:sachin@lumelive.co.in" class="side-icon mail" title="Email">
-    <span class="tip">sachin@lumelive.co.in</span>
+  <a href="mailto:hello@lumelive.co.in" class="side-icon mail" title="Email">
+    <span class="tip">hello@lumelive.co.in</span>
     <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
   </a>
 </div>
@@ -649,6 +846,9 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
       <li><a href="#services">Services</a></li>
       <li><a href="#emotional-wellbeing">Emotional Wellbeing</a></li>
       <li><a href="#" onclick="openModal('about');return false;">About</a></li>
+      <li><a href="#for-parents">For Parents</a></li>
+      <li><a href="#school-partnerships">Schools</a></li>
+      <li><a href="#faq">FAQ</a></li>
       <li><a href="#testimonials">Reviews</a></li>
       <li><a href="#questionnaire">Quiz</a></li>
       <li><a href="#contact">Contact</a></li>
@@ -665,6 +865,9 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
   <a href="#emotional-wellbeing" onclick="closeMob()">🧠 Emotional Wellbeing</a>
   <a href="#approach" onclick="closeMob()">🔬 Our Approach</a>
   <a href="#" onclick="openModal('about');closeMob();return false;">👤 About Founder</a>
+  <a href="#for-parents" onclick="closeMob()">👨‍👩‍👧 For Parents</a>
+  <a href="#school-partnerships" onclick="closeMob()">🏫 School Partnerships</a>
+  <a href="#faq" onclick="closeMob()">❓ FAQ</a>
   <a href="#testimonials" onclick="closeMob()">⭐ Client Reviews</a>
   <a href="#questionnaire" onclick="closeMob()">📋 Free Quiz</a>
   <a href="#contact" onclick="closeMob()">📍 Contact</a>
@@ -692,7 +895,7 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
         <a href="#questionnaire" class="btn-ghost">📋 Take Free Quiz</a>
       </div>
       <div class="hero-stats">
-        <div class="hero-stat"><div class="num" data-count="500">0</div><div class="lbl">Lives Guided</div></div>
+        <div class="hero-stat"><div class="num" data-count="500">0+</div><div class="lbl">Lives Guided</div></div>
         <div class="hero-stat"><div class="num">4.9★</div><div class="lbl">Parent Rating</div></div>
         <div class="hero-stat"><div class="num">PAN<br>India</div><div class="lbl">Online Sessions</div></div>
       </div>
@@ -979,7 +1182,7 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
 </section>
 
 <!-- RECOGNITION -->
-<section id="recognition">
+<section id="recognition" style="display:none;">
   <div class="rec-inner s-inner">
     <div class="rec-photo anim left">
       <img src="session5.jpg" alt="Recognition Ceremony">
@@ -994,6 +1197,58 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
         <div class="rec-card anim stagger-2"><div class="icon">📜</div><div class="title">PGDGC — Jamia Millia</div><div class="desc">Guidance & Counselling, New Delhi</div></div>
         <div class="rec-card anim stagger-3"><div class="icon">🏆</div><div class="title">Laureate Award</div><div class="desc">AILET 2026 Felicitation</div></div>
         <div class="rec-card anim stagger-4"><div class="icon">🎤</div><div class="title">500+ Students</div><div class="desc">School sessions across Haryana</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- FOR PARENTS -->
+<section id="for-parents">
+  <div class="fp-inner s-inner">
+    <div class="fp-header">
+      <span class="s-tag">👨‍👩‍👧 For Parents</span>
+      <h2 class="s-title">Helping You Guide Your Child with Confidence</h2>
+      <p class="s-sub">Parenting through academic and career transitions is challenging. Here's how Lume Live supports you in making the right decisions together.</p>
+    </div>
+    <div class="fp-grid">
+      <div class="fp-card anim stagger-1">
+        <span class="fp-card-icon">🎯</span>
+        <h4>Understand Your Child's True Potential</h4>
+        <p>Our psychometric assessments reveal your child's natural strengths, interests, and personality — beyond just marks and grades. Know what truly drives them before deciding their academic path.</p>
+      </div>
+      <div class="fp-card anim stagger-2">
+        <span class="fp-card-icon">🤝</span>
+        <h4>Resolve Parent-Child Career Conflicts</h4>
+        <p>When parents and children disagree on career choices, we facilitate structured joint sessions. Our data-driven approach helps both sides see clearly and reach consensus without emotional strain.</p>
+      </div>
+      <div class="fp-card anim stagger-3">
+        <span class="fp-card-icon">📊</span>
+        <h4>Science-Backed Stream Selection</h4>
+        <p>Don't rely on relatives' advice or societal pressure. Our API (Aptitude-Personality-Interest) testing provides objective clarity for Science vs Commerce vs Arts decisions after Class 10.</p>
+      </div>
+      <div class="fp-card anim stagger-4">
+        <span class="fp-card-icon">💚</span>
+        <h4>Recognize Early Signs of Stress</h4>
+        <p>Academic pressure, exam anxiety, and peer comparison can deeply affect your child's mental health. Learn to identify warning signs early and get professional support before issues escalate.</p>
+      </div>
+      <div class="fp-card anim stagger-5">
+        <span class="fp-card-icon">📚</span>
+        <h4>Stay Informed on Career Trends</h4>
+        <p>The job market is evolving rapidly — AI/ML, UX design, sports psychology, content creation, and environmental science are booming. We keep you updated on emerging opportunities your child can pursue.</p>
+      </div>
+      <div class="fp-card anim stagger-6">
+        <span class="fp-card-icon">🏠</span>
+        <h4>Create a Supportive Home Environment</h4>
+        <p>Learn practical strategies to support your child without controlling them. We guide parents on maintaining open communication, reducing pressure, and building confidence during crucial transitions.</p>
+      </div>
+    </div>
+    <div class="fp-cta anim">
+      <h3>Every Parent Wants the Best for Their Child</h3>
+      <p>Book a parent guidance session or a joint session with your child. Get clarity, reduce conflict, and move forward together with confidence.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;position:relative;z-index:1;">
+        <a href="#" class="btn-gold" onclick="openModal('session');return false;" style="font-size:.85rem;padding:12px 22px;">🎯 Book Parent Guidance Session</a>
+        <a href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20am%20a%20parent%20and%20would%20like%20guidance%20for%20my%20child." target="_blank" class="btn-ghost" style="font-size:.85rem;padding:12px 22px;border-color:rgba(255,255,255,.3);color:#fff;">💬 Chat on WhatsApp</a>
       </div>
     </div>
   </div>
@@ -1084,6 +1339,50 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
     </div>
   </div>
 </section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="faq-inner s-inner">
+    <div class="faq-header">
+      <span class="s-tag">Got Questions?</span>
+      <h2 class="s-title">Frequently Asked Questions</h2>
+      <p class="s-sub">Everything you need to know about our counselling process, sessions, and how we can help you or your child.</p>
+    </div>
+    <div class="faq-item anim stagger-1">
+      <div class="faq-q" onclick="toggleFaq(this)">What is career counselling and who needs it?</div>
+      <div class="faq-a"><div class="faq-a-inner">Career counselling is a structured process that helps individuals understand their strengths, interests, and personality to make informed career decisions. It is beneficial for students in Class 9–12 who are choosing streams, college students unsure about their path, and even working professionals considering a career change. At Lume Live, we use psychometric assessments combined with 1:1 expert guidance.</div></div>
+    </div>
+    <div class="faq-item anim stagger-2">
+      <div class="faq-q" onclick="toggleFaq(this)">How does online counselling work? Is it as effective as in-person?</div>
+      <div class="faq-a"><div class="faq-a-inner">Yes, online counselling is highly effective. All sessions are conducted via secure video calls (Google Meet or Zoom) from the comfort of your home. Research shows that tele-counselling delivers outcomes comparable to in-person sessions. We have successfully guided 500+ students and professionals across India through online sessions.</div></div>
+    </div>
+    <div class="faq-item anim stagger-3">
+      <div class="faq-q" onclick="toggleFaq(this)">What happens in the first ₹499 wellness session?</div>
+      <div class="faq-a"><div class="faq-a-inner">Your first session is a 45-minute 1:1 conversation with Sachin sir. We begin by understanding your current concerns — whether it is stream confusion, career anxiety, or emotional stress. Based on your needs, we may conduct a brief psychometric screening and provide immediate actionable insights. You will leave with clarity on your next steps.</div></div>
+    </div>
+    <div class="faq-item anim stagger-4">
+      <div class="faq-q" onclick="toggleFaq(this)">Is everything I share kept confidential?</div>
+      <div class="faq-a"><div class="faq-a-inner">Absolutely. 100% confidentiality is our highest priority. Everything shared during sessions — personal struggles, family issues, academic concerns — stays strictly between you and your counsellor. We follow professional ethical guidelines and do not share any information with parents, schools, or third parties without your explicit consent.</div></div>
+    </div>
+    <div class="faq-item anim stagger-5">
+      <div class="faq-q" onclick="toggleFaq(this)">What is a psychometric test and do I need one?</div>
+      <div class="faq-a"><div class="faq-a-inner">A psychometric test is a scientifically validated assessment that measures your aptitude, interests, and personality traits. It removes guesswork from career decisions by matching your natural strengths to suitable career paths. We recommend it for all students in Class 10+ and anyone facing career confusion. The test takes 30–45 minutes and results are explained in your session.</div></div>
+    </div>
+    <div class="faq-item anim stagger-6">
+      <div class="faq-q" onclick="toggleFaq(this)">Can parents attend the session with their child?</div>
+      <div class="faq-a"><div class="faq-a-inner">Yes, we offer joint parent-child sessions upon request. These are especially helpful when there is disagreement about stream or career choices. Our approach ensures the student's voice is heard while addressing parent concerns with data-driven insights. We also offer separate parent guidance sessions to help you support your child effectively.</div></div>
+    </div>
+    <div class="faq-item anim stagger-7">
+      <div class="faq-q" onclick="toggleFaq(this)">How many sessions will I need?</div>
+      <div class="faq-a"><div class="faq-a-inner">Most students achieve significant clarity in 2–3 sessions. The first session focuses on assessment and immediate guidance. Follow-up sessions deepen the roadmap, address emotional blocks, and refine action plans. For emotional wellness concerns, the number varies based on individual needs — we never push unnecessary sessions.</div></div>
+    </div>
+    <div class="faq-item anim stagger-8">
+      <div class="faq-q" onclick="toggleFaq(this)">Do you conduct sessions for schools and groups?</div>
+      <div class="faq-a"><div class="faq-a-inner">Yes! We regularly conduct career awareness workshops, mental health seminars, and psychometric assessment drives for schools across Haryana and beyond. We have impacted 500+ students through school sessions. Schools can partner with us for half-day workshops, full-day career fairs, or ongoing counselling support.</div></div>
+    </div>
+  </div>
+</section>
+
 <!-- QUESTIONNAIRE -->
 <section id="questionnaire">
   <div class="q-inner">
@@ -1164,6 +1463,61 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
   </div>
 </section>
 
+
+<!-- SCHOOL PARTNERSHIPS -->
+<section id="school-partnerships">
+  <div class="sp-inner s-inner">
+    <div class="sp-header">
+      <span class="s-tag">🏫 School Partnerships</span>
+      <h2 class="s-title">Bring World-Class Career & Mental Health Guidance to Your School</h2>
+      <p class="s-sub">Partner with Lume Live to give your students the clarity and confidence they deserve. We have impacted 500+ students across Haryana through workshops, assessments, and counselling drives.</p>
+    </div>
+    <div class="sp-stats">
+      <div class="sp-stat anim stagger-1">
+        <div class="num">500+</div>
+        <div class="lbl">Students Guided</div>
+      </div>
+      <div class="sp-stat anim stagger-2">
+        <div class="num">15+</div>
+        <div class="lbl">Schools Partnered</div>
+      </div>
+      <div class="sp-stat anim stagger-3">
+        <div class="num">4.9★</div>
+        <div class="lbl">Average Rating</div>
+      </div>
+      <div class="sp-stat anim stagger-4">
+        <div class="num">100%</div>
+        <div class="lbl">Satisfaction Rate</div>
+      </div>
+    </div>
+    <div class="sp-grid">
+      <div class="sp-photo anim left">
+        <img src="session7.jpg" alt="School Session at Auditorium">
+      </div>
+      <div class="anim right">
+        <span class="s-tag" style="color:var(--gold2);">What We Offer Schools</span>
+        <h2 class="s-title" style="color:#fff;margin-bottom:14px;">Comprehensive School Programs</h2>
+        <ul class="sp-feats">
+          <li><span>🎤</span> <div><strong>Career Awareness Workshops</strong> — Interactive sessions for Classes 9–12 covering stream selection, emerging careers, and goal setting.</div></li>
+          <li><span>📊</span> <div><strong>Psychometric Assessment Drives</strong> — Bulk API testing for entire batches with detailed individual and class-level reports.</div></li>
+          <li><span>🧠</span> <div><strong>Mental Health Seminars</strong> — Stress management, exam anxiety, peer pressure, and emotional wellness workshops.</div></li>
+          <li><span>👨‍🏫</span> <div><strong>Teacher Training Programs</strong> — Equip your faculty to identify early signs of student distress and provide first-level support.</div></li>
+          <li><span>📋</span> <div><strong>Parent Orientation Sessions</strong> — Help parents understand modern career landscapes and support their children effectively.</div></li>
+          <li><span>🎯</span> <div><strong>1:1 Counselling Booths</strong> — On-campus individual counselling sessions for students needing personalized guidance.</div></li>
+        </ul>
+        <div class="sp-form">
+          <h4>📩 Invite Lume Live to Your School</h4>
+          <input class="q-inp" type="text" id="spSchool" placeholder="School Name *" style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2);color:#fff;margin-bottom:10px;">
+          <input class="q-inp" type="text" id="spName" placeholder="Coordinator Name *" style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2);color:#fff;margin-bottom:10px;">
+          <input class="q-inp" type="tel" id="spPhone" placeholder="WhatsApp / Phone *" style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2);color:#fff;margin-bottom:10px;">
+          <input class="q-inp" type="email" id="spEmail" placeholder="School Email" style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2);color:#fff;margin-bottom:14px;">
+          <button class="q-btn" onclick="submitSchool()" style="width:100%;">Request a School Partnership Proposal →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- CAREER PDF -->
 <section id="career-pdf" style="padding:0;">
   <div style="background:linear-gradient(135deg,var(--navy),var(--navy2));padding:72px 20px;">
@@ -1180,7 +1534,7 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
           <li>The long-term vision: A lifelong career clarity platform</li>
         </ul>
         <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:8px;">
-          <a href="Lume-Career-Platform.pdf" download class="btn-gold-l">📥 Download Career PDF</a>
+          <a href="LUME.pdf" download class="btn-gold-l">📥 Download Career PDF</a>
           <a href="#" onclick="openModal('session');return false;" class="btn-out-w">🎯 Book a Session</a>
         </div>
       </div>
@@ -1195,7 +1549,7 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
           <div class="pdf-row-item"><span>📊</span><div><span class="l">Revenue Model</span><br><span class="s">Pricing & partnerships</span></div></div>
           <div class="pdf-row-item"><span>🚀</span><div><span class="l">Growth Vision</span><br><span class="s">Class 9 to corporate</span></div></div>
         </div>
-        <a href="Lume-Career-Platform.pdf" download class="btn-gold-l">📥 Download PDF</a>
+        <a href="LUME.pdf" download class="btn-gold-l">📥 Download PDF</a>
       </div>
     </div>
   </div>
@@ -1237,7 +1591,7 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
     <div class="contact-grid">
       <div>
         <div class="contact-item anim stagger-1"><div class="c-icon">📞</div><div><div class="c-label">Phone / WhatsApp</div><div class="c-val"><a href="tel:+917015671280">+91 7015671280</a></div></div></div>
-        <div class="contact-item anim stagger-2"><div class="c-icon">✉️</div><div><div class="c-label">Email</div><div class="c-val"><a href="mailto:sachin@lumelive.co.in">sachin@lumelive.co.in</a></div></div></div>
+        <div class="contact-item anim stagger-2"><div class="c-icon">✉️</div><div><div class="c-label">Email</div><div class="c-val"><a href="mailto:hello@lumelive.co.in">hello@lumelive.co.in</a></div></div></div>
         <div class="contact-item anim stagger-3"><div class="c-icon">📍</div><div><div class="c-label">Location</div><div class="c-val">Rohtak, Haryana — Online PAN India</div></div></div>
         <div class="contact-item anim stagger-4"><div class="c-icon">🕐</div><div><div class="c-label">Session Hours</div><div class="c-val">Mon–Sat: 9 AM – 8 PM IST</div></div></div>
         <div style="display:flex;flex-wrap:wrap;gap:9px;margin-top:6px;">
@@ -1274,7 +1628,7 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
         <div style="margin-top:16px;display:flex;gap:9px;">
           <a href="https://wa.me/917015671280" target="_blank" style="width:32px;height:32px;background:rgba(255,255,255,.08);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.95rem;text-decoration:none;transition:all .3s;">💬</a>
           <a href="tel:+917015671280" style="width:32px;height:32px;background:rgba(255,255,255,.08);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.95rem;text-decoration:none;transition:all .3s;">📞</a>
-          <a href="mailto:sachin@lumelive.co.in" style="width:32px;height:32px;background:rgba(255,255,255,.08);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.95rem;text-decoration:none;transition:all .3s;">✉️</a>
+          <a href="mailto:hello@lumelive.co.in" style="width:32px;height:32px;background:rgba(255,255,255,.08);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.95rem;text-decoration:none;transition:all .3s;">✉️</a>
         </div>
       </div>
       <div class="f-col">
@@ -1282,6 +1636,8 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
         <a href="#" onclick="openModal('session');return false;">1:1 Wellness Session</a>
         <a href="#" onclick="openModal('session');return false;">High School Guidance</a>
         <a href="#" onclick="openModal('session');return false;">Career Counselling</a>
+        <a href="#for-parents">For Parents</a>
+        <a href="#school-partnerships">School Partnerships</a>
         <a href="#" onclick="openPDF();return false;">Parents' Handbook ₹199</a>
       </div>
       <div class="f-col">
@@ -1289,12 +1645,13 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
         <a href="#" onclick="openModal('about');return false;">About Founder</a>
         <a href="#approach">Our Approach</a>
         <a href="#gallery">Sessions Gallery</a>
+        <a href="#faq">FAQ</a>
         <a href="#career-pdf">Career PDF</a>
       </div>
       <div class="f-col">
         <h4>Contact</h4>
         <a href="tel:+917015671280">+91 7015671280</a>
-        <a href="mailto:sachin@lumelive.co.in">sachin@lumelive.co.in</a>
+        <a href="mailto:hello@lumelive.co.in">hello@lumelive.co.in</a>
         <a>Rohtak, Haryana</a>
         <a>Online — PAN India</a>
       </div>
@@ -1341,15 +1698,36 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
         </div>
         <label style="font-size:.72rem;font-weight:600;color:var(--mid);display:block;margin-bottom:6px;">Quick Time Slots</label>
         <div class="time-slots">
-          <div class="time-slot" onclick="setTime('09:00')">9:00 AM</div>
-          <div class="time-slot" onclick="setTime('10:00')">10:00 AM</div>
-          <div class="time-slot" onclick="setTime('11:00')">11:00 AM</div>
-          <div class="time-slot" onclick="setTime('12:00')">12:00 PM</div>
-          <div class="time-slot" onclick="setTime('14:00')">2:00 PM</div>
-          <div class="time-slot" onclick="setTime('15:00')">3:00 PM</div>
-          <div class="time-slot" onclick="setTime('17:00')">5:00 PM</div>
-          <div class="time-slot" onclick="setTime('18:00')">6:00 PM</div>
-          <div class="time-slot" onclick="setTime('19:00')">7:00 PM</div>
+          <div class="time-slot" onclick="setTime('09:00',this)">9:00 AM</div>
+          <div class="time-slot" onclick="setTime('10:00',this)">10:00 AM</div>
+          <div class="time-slot" onclick="setTime('11:00',this)">11:00 AM</div>
+          <div class="time-slot" onclick="setTime('12:00',this)">12:00 PM</div>
+          <div class="time-slot" onclick="setTime('14:00',this)">2:00 PM</div>
+          <div class="time-slot" onclick="setTime('15:00',this)">3:00 PM</div>
+          <div class="time-slot" onclick="setTime('17:00',this)">5:00 PM</div>
+          <div class="time-slot" onclick="setTime('18:00',this)">6:00 PM</div>
+          <div class="time-slot" onclick="setTime('19:00',this)">7:00 PM</div>
+        </div>
+      </div>
+      <!-- Session Mode -->
+      <div class="mode-section">
+        <h4>🎥 Choose Your Preferred Session Mode</h4>
+        <div class="mode-options">
+          <div class="mode-opt sel" onclick="setMode(this,'Video Call (Google Meet / Zoom)')" id="modeVideo">
+            <span class="icon">🎥</span>
+            <span class="lbl">Video Call</span>
+            <span class="sub">Google Meet / Zoom</span>
+          </div>
+          <div class="mode-opt" onclick="setMode(this,'Phone Call')" id="modeCall">
+            <span class="icon">📞</span>
+            <span class="lbl">On Call</span>
+            <span class="sub">Voice Call</span>
+          </div>
+          <div class="mode-opt" onclick="setMode(this,'WhatsApp Chat')" id="modeChat">
+            <span class="icon">💬</span>
+            <span class="lbl">On Chat</span>
+            <span class="sub">Text-based Session</span>
+          </div>
         </div>
       </div>
       <div class="upi-sec">
@@ -1451,7 +1829,80 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
   </div>
 </div>
 
+
+
+<!-- ══ ABOUT MODAL ══ -->
+<div class="modal-overlay" id="modal-about">
+  <div class="modal" style="max-width:920px;">
+    <button class="modal-x" onclick="closeModal('about')">✕</button>
+    <div class="modal-body" style="padding:36px 32px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:start;">
+        <div style="position:relative;">
+          <div style="width:100%;aspect-ratio:3/4;max-height:380px;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(10,110,110,.2);">
+            <img src="session6.jpg" alt="Sachin Bajaj" style="width:100%;height:100%;object-fit:cover;object-position:center top;">
+          </div>
+          <div style="position:absolute;bottom:24px;left:24px;right:24px;z-index:2;">
+            <div style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:#fff;">Sachin Bajaj</div>
+            <div style="font-size:.73rem;color:var(--gold2);font-weight:600;margin-top:3px;">Counselling Psychologist · Founder, Lume Live</div>
+          </div>
+          <div style="position:absolute;top:-12px;right:-12px;background:var(--navy);border-radius:14px;padding:11px 15px;box-shadow:0 6px 20px rgba(13,27,64,.4);">
+            <div style="font-size:.78rem;font-weight:800;color:var(--gold2);">M.Sc</div>
+            <div style="font-size:.6rem;color:rgba(255,255,255,.7);font-weight:600;margin-top:2px;line-height:1.3;">Clinical Psychology<br>Gurugram University</div>
+          </div>
+          <div style="position:absolute;bottom:110px;right:-16px;background:#fff;border-radius:12px;padding:10px 13px;box-shadow:0 8px 24px rgba(0,0,0,.1);z-index:3;">
+            <div style="font-size:1.1rem;margin-bottom:3px;">🏆</div>
+            <div style="font-size:.65rem;font-weight:700;color:var(--dark);line-height:1.35;">AILET 2026 Laureate</div>
+          </div>
+        </div>
+        <div>
+          <span class="s-tag">About the Founder</span>
+          <h2 class="s-title">Where Academic Rigour Meets Human Empathy</h2>
+          <p style="font-size:.93rem;color:var(--mid);line-height:1.82;margin-bottom:16px;">Sachin Bajaj holds an <strong>M.Sc in Clinical Psychology from Gurugram University</strong> and a <strong>B.Ed (Bachelor of Education)</strong>, providing him with a powerful dual lens — the science of the mind and the art of teaching — to guide students at every level.</p>
+          <p style="font-size:.93rem;color:var(--mid);line-height:1.82;margin-bottom:16px;">He also holds a <strong>Post Graduate Diploma in Guidance and Counselling (PGDGC) from Jamia Millia Islamia, New Delhi</strong> — one of India's most prestigious central universities — adding formal specialisation in guidance methodology and career counselling.</p>
+          <ul style="list-style:none;margin-bottom:22px;">
+            <li style="display:flex;align-items:flex-start;gap:11px;padding:8px 0;border-bottom:1px solid var(--grayM);font-size:.84rem;color:var(--mid);line-height:1.55;"><span style="font-size:.95rem;flex-shrink:0;margin-top:1px;">🎓</span><strong>M.Sc Clinical Psychology</strong> — Gurugram University · Advanced training in psychological assessment & therapeutic techniques</li>
+            <li style="display:flex;align-items:flex-start;gap:11px;padding:8px 0;border-bottom:1px solid var(--grayM);font-size:.84rem;color:var(--mid);line-height:1.55;"><span style="font-size:.95rem;flex-shrink:0;margin-top:1px;">📜</span><strong>PG Diploma in Guidance & Counselling (PGDGC)</strong> — Jamia Millia Islamia, New Delhi · Specialisation in career guidance methodology</li>
+            <li style="display:flex;align-items:flex-start;gap:11px;padding:8px 0;border-bottom:1px solid var(--grayM);font-size:.84rem;color:var(--mid);line-height:1.55;"><span style="font-size:.95rem;flex-shrink:0;margin-top:1px;">📚</span><strong>B.Ed (Bachelor of Education)</strong> — Deep understanding of student learning, pedagogy & developmental psychology</li>
+            <li style="display:flex;align-items:flex-start;gap:11px;padding:8px 0;border-bottom:1px solid var(--grayM);font-size:.84rem;color:var(--mid);line-height:1.55;"><span style="font-size:.95rem;flex-shrink:0;margin-top:1px;">🏆</span>Felicitated at <strong>AILET 2026</strong> Toppers' & Qualifiers' Ceremony — Laureate Award</li>
+            <li style="display:flex;align-items:flex-start;gap:11px;padding:8px 0;border-bottom:1px solid var(--grayM);font-size:.84rem;color:var(--mid);line-height:1.55;"><span style="font-size:.95rem;flex-shrink:0;margin-top:1px;">🎤</span>Conducted career awareness sessions across <strong>multiple schools in Haryana</strong> — 500+ students impacted directly</li>
+            <li style="display:flex;align-items:flex-start;gap:11px;padding:8px 0;border-bottom:none;font-size:.84rem;color:var(--mid);line-height:1.55;"><span style="font-size:.95rem;flex-shrink:0;margin-top:1px;">📍</span>Based in <strong>Rohtak, Haryana</strong> — serving PAN India via secure online sessions</li>
+          </ul>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;">
+            <a href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20would%20like%20to%20know%20more%20about%20Lume%20Live%20counselling." target="_blank" class="wa-btn">
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.556 4.121 1.528 5.856L.057 23.215a.75.75 0 00.922.921l5.344-1.47A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.663-.523-5.183-1.432l-.37-.219-3.171.871.884-3.175-.237-.386A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+              Chat on WhatsApp
+            </a>
+            <a href="tel:+917015671280" class="call-btn">📞 +91 7015671280</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- EXIT INTENT POPUP -->
+<div class="exit-overlay" id="exitPopup">
+  <div class="exit-popup">
+    <button class="popup-x" onclick="closeExitPopup()" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,.15);border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:.9rem;color:#fff;display:flex;align-items:center;justify-content:center;z-index:1;transition:all .2s;">✕</button>
+    <div class="exit-hdr">
+      <div class="exit-logo"><img src="logo.png" alt="Lume Live"></div>
+      <h2>Wait — Get Your Personalized Recommendation!</h2>
+      <p>Don't leave without knowing exactly what support you need</p>
+    </div>
+    <div class="exit-body">
+      <p>Answer just <strong>4 quick questions</strong> and Sachin sir will personally send you a tailored recommendation within 24 hours — completely free.</p>
+      <input class="exit-inp" type="text" id="exitName" placeholder="Your Full Name *">
+      <input class="exit-inp" type="tel" id="exitPhone" placeholder="WhatsApp Number *">
+      <button class="exit-btn" onclick="submitExit()">Get My Free Recommendation →</button>
+      <button class="exit-close" onclick="closeExitPopup()">No thanks, I'll browse on my own</button>
+    </div>
+  </div>
+</div>
+
 <script>
+document.body.classList.add('js-ready');
+
 // ── MENU ──
 function toggleMenu(){
   document.getElementById('ham').classList.toggle('open');
@@ -1524,7 +1975,7 @@ function updateSessionWA(){
   const t=document.getElementById('sessionTime').value;
   let dateStr=d?'on '+d:'at my preferred date';
   let timeStr=t?'at '+formatTime(t):'';
-  const msg='Hi Sachin! I have made the payment of Rs.499 for my first wellness session. I would prefer my session '+dateStr+' '+timeStr+'. Please confirm my booking.';
+  const msg='Hi Sachin! I have made the payment of Rs.499 for my first wellness session. I would prefer my session '+dateStr+' '+timeStr+' via '+sessionMode+'. Please confirm my booking.';
   document.getElementById('sessionWaBtn').href='https://wa.me/917015671280?text='+encodeURIComponent(msg);
 }
 function formatTime(t){
@@ -1535,10 +1986,10 @@ function formatTime(t){
   const h12=hour%12||12;
   return h12+':'+(m||'00')+' '+ampm+' IST';
 }
-function setTime(t){
+function setTime(t,el){
   document.getElementById('sessionTime').value=t;
   document.querySelectorAll('.time-slot').forEach(s=>s.classList.remove('sel'));
-  event.target.classList.add('sel');
+  el.classList.add('sel');
   updateSessionWA();
 }
 // Set min date to today
@@ -1546,6 +1997,7 @@ const today=new Date().toISOString().split('T')[0];
 document.getElementById('sessionDate').min=today;
 document.getElementById('sessionDate').addEventListener('change',updateSessionWA);
 document.getElementById('sessionTime').addEventListener('change',updateSessionWA);
+let sessionMode='Video Call (Google Meet / Zoom)';
 updateSessionWA();
 
 // ── APPROACH STEPS ──
@@ -1601,18 +2053,20 @@ document.querySelectorAll('.anim').forEach((el,i)=>{
 
 // ── COUNTER ANIMATION ──
 function animateCounter(el,target,duration){
-  let start=0;const step=target/60;
+  let start=0;
+  const totalFrames = Math.ceil(duration / 32);
+  const step = target / totalFrames;
   const timer=setInterval(()=>{
     start+=step;
     if(start>=target){clearInterval(timer);el.textContent=target+'+';}
     else el.textContent=Math.floor(start)+'+';
-  },duration/60);
+  },32);
 }
 const counterObs=new IntersectionObserver(entries=>{
   entries.forEach(e=>{
     if(e.isIntersecting){
       const el=e.target.querySelector('[data-count]');
-      if(el){animateCounter(el,parseInt(el.dataset.count),1200);counterObs.unobserve(e.target);}
+      if(el){el.classList.add('animating');animateCounter(el,parseInt(el.dataset.count),2500);setTimeout(()=>el.classList.remove('animating'),2600);counterObs.unobserve(e.target);}
     }
   });
 },{threshold:0.3});
@@ -1620,7 +2074,9 @@ document.querySelectorAll('.hero-stats').forEach(el=>counterObs.observe(el));
 
 // ── NAV SCROLL ──
 window.addEventListener('scroll',()=>{
-  document.getElementById('navbar').style.boxShadow=window.scrollY>40?'0 4px 28px rgba(10,110,110,.12)':'0 2px 20px rgba(10,110,110,.08)';
+  const nav=document.getElementById('navbar');
+  if(window.scrollY>40){nav.classList.add('scrolled');nav.style.boxShadow='0 4px 28px rgba(10,110,110,.12)';}
+  else{nav.classList.remove('scrolled');nav.style.boxShadow='0 2px 20px rgba(10,110,110,.08)';}
 });
 
 // ── MOUSE GLOW ──
@@ -1646,14 +2102,7 @@ document.querySelectorAll('.gallery-item').forEach(item=>{
   });
 });
 
-// ── PARALLAX EFFECT ──
-window.addEventListener('scroll',()=>{
-  const scrolled=window.pageYOffset;
-  document.querySelectorAll('.particle').forEach((p,i)=>{
-    const speed=(i+1)*0.15;
-    p.style.transform='translateY('+scrolled*speed+'px)';
-  });
-});
+// ── PARALLAX EFFECT ── (removed — interfered with CSS float animation on particles)
 
 // ── SMOOTH ANCHOR SCROLL ──
 document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
@@ -1668,56 +2117,89 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
     }
   });
 });
+
+
+// ── FAQ TOGGLE ──
+function toggleFaq(el){
+  const item = el.parentElement;
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(f => f.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+
+// ── EXIT INTENT POPUP ──
+let exitShown = false;
+let exitTimer = null;
+function showExitPopup(){
+  if(exitShown) return;
+  exitShown = true;
+  document.getElementById('exitPopup').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeExitPopup(){
+  document.getElementById('exitPopup').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('exitPopup').addEventListener('click', function(e){
+  if(e.target === this) closeExitPopup();
+});
+// Detect mouse leaving viewport (desktop)
+document.addEventListener('mouseleave', function(e){
+  if(e.clientY < 10 && !exitShown && window.innerWidth > 768){
+    showExitPopup();
+  }
+});
+// Mobile: show after 45s or scroll to bottom
+if(window.innerWidth <= 768){
+  exitTimer = setTimeout(function(){
+    if(!exitShown) showExitPopup();
+  }, 45000);
+  window.addEventListener('scroll', function(){
+    if(!exitShown && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200){
+      showExitPopup();
+    }
+  });
+}
+function submitExit(){
+  const n = document.getElementById('exitName').value.trim();
+  const p = document.getElementById('exitPhone').value.trim();
+  if(!n){showToast('Please enter your name'); return;}
+  if(p.length < 10){showToast('Please enter a valid WhatsApp number'); return;}
+  const msg = 'Hi Sachin! My name is ' + n + ' and my WhatsApp is ' + p + '. I was about to leave your website but decided to get my personalized recommendation. Please reach out to me!';
+  window.open('https://wa.me/917015671280?text=' + encodeURIComponent(msg), '_blank');
+  closeExitPopup();
+  showToast('Thank you ' + n + '! We will reach out within 24 hours.');
+}
+
+// ── SCHOOL PARTNERSHIP FORM ──
+function submitSchool(){
+  const school = document.getElementById('spSchool').value.trim();
+  const name = document.getElementById('spName').value.trim();
+  const phone = document.getElementById('spPhone').value.trim();
+  const email = document.getElementById('spEmail').value.trim();
+  if(!school){showToast('Please enter your school name'); return;}
+  if(!name){showToast('Please enter coordinator name'); return;}
+  if(phone.length < 10){showToast('Please enter a valid phone number'); return;}
+  const msg = 'Hi Sachin! I am ' + name + ' from ' + school + '. We are interested in partnering with Lume Live for career counselling / mental health workshops at our school. Phone: ' + phone + (email ? '. Email: ' + email : '') + '. Please send us a partnership proposal.';
+  window.open('https://wa.me/917015671280?text=' + encodeURIComponent(msg), '_blank');
+  showToast('Request sent! We will contact you within 24 hours.');
+}
+
+// ── RE-INIT SCROLL ANIMATIONS FOR NEW SECTIONS ──
+document.querySelectorAll('#faq .anim, #for-parents .anim, #school-partnerships .anim').forEach(el => {
+  animObs.observe(el);
+});
+
+
+
+// ── SESSION MODE SELECTOR ──
+function setMode(el, mode){
+  sessionMode = mode;
+  document.querySelectorAll('.mode-opt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+  updateSessionWA();
+}
+
 </script>
-
-<!-- ══ ABOUT MODAL ══ -->
-<div class="modal-overlay" id="modal-about">
-  <div class="modal" style="max-width:920px;">
-    <button class="modal-x" onclick="closeModal('about')">✕</button>
-    <div class="modal-body" style="padding:36px 32px;">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:start;">
-        <div style="position:relative;">
-          <div style="width:100%;aspect-ratio:3/4;max-height:380px;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(10,110,110,.2);">
-            <img src="session6.jpg" alt="Sachin Bajaj" style="width:100%;height:100%;object-fit:cover;object-position:center top;">
-          </div>
-          <div style="position:absolute;bottom:24px;left:24px;right:24px;z-index:2;">
-            <div style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:#fff;">Sachin Bajaj</div>
-            <div style="font-size:.73rem;color:var(--gold2);font-weight:600;margin-top:3px;">Counselling Psychologist · Founder, Lume Live</div>
-          </div>
-          <div style="position:absolute;top:-12px;right:-12px;background:var(--navy);border-radius:14px;padding:11px 15px;box-shadow:0 6px 20px rgba(13,27,64,.4);">
-            <div style="font-size:.78rem;font-weight:800;color:var(--gold2);">M.Sc</div>
-            <div style="font-size:.6rem;color:rgba(255,255,255,.7);font-weight:600;margin-top:2px;line-height:1.3;">Clinical Psychology<br>Gurugram University</div>
-          </div>
-          <div style="position:absolute;bottom:110px;right:-16px;background:#fff;border-radius:12px;padding:10px 13px;box-shadow:0 8px 24px rgba(0,0,0,.1);z-index:3;">
-            <div style="font-size:1.1rem;margin-bottom:3px;">🏆</div>
-            <div style="font-size:.65rem;font-weight:700;color:var(--dark);line-height:1.35;">AILET 2026 Laureate</div>
-          </div>
-        </div>
-        <div>
-          <span class="s-tag">About the Founder</span>
-          <h2 class="s-title">Where Academic Rigour Meets Human Empathy</h2>
-          <p style="font-size:.93rem;color:var(--mid);line-height:1.82;margin-bottom:16px;">Sachin Bajaj holds an <strong>M.Sc in Clinical Psychology from Gurugram University</strong> and a <strong>B.Ed (Bachelor of Education)</strong>, providing him with a powerful dual lens — the science of the mind and the art of teaching — to guide students at every level.</p>
-          <p style="font-size:.93rem;color:var(--mid);line-height:1.82;margin-bottom:16px;">He also holds a <strong>Post Graduate Diploma in Guidance and Counselling (PGDGC) from Jamia Millia Islamia, New Delhi</strong> — one of India's most prestigious central universities — adding formal specialisation in guidance methodology and career counselling.</p>
-          <ul style="list-style:none;margin-bottom:22px;">
-            <li style="display:flex;align-items:flex-start;gap:11px;padding:8px 0;border-bottom:1px solid var(--grayM);font-size:.84rem;color:var(--mid);line-height:1.55;"><span style="font-size:.95rem;flex-shrink:0;margin-top:1px;">🎓</span><strong>M.Sc Clinical Psychology</strong> — Gurugram University · Advanced training in psychological assessment & therapeutic techniques</li>
-            <li style="display:flex;align-items:flex-start;gap:11px;padding:8px 0;border-bottom:1px solid var(--grayM);font-size:.84rem;color:var(--mid);line-height:1.55;"><span style="font-size:.95rem;flex-shrink:0;margin-top:1px;">📜</span><strong>PG Diploma in Guidance & Counselling (PGDGC)</strong> — Jamia Millia Islamia, New Delhi · Specialisation in career guidance methodology</li>
-            <li style="display:flex;align-items:flex-start;gap:11px;padding:8px 0;border-bottom:1px solid var(--grayM);font-size:.84rem;color:var(--mid);line-height:1.55;"><span style="font-size:.95rem;flex-shrink:0;margin-top:1px;">📚</span><strong>B.Ed (Bachelor of Education)</strong> — Deep understanding of student learning, pedagogy & developmental psychology</li>
-            <li style="display:flex;align-items:flex-start;gap:11px;padding:8px 0;border-bottom:1px solid var(--grayM);font-size:.84rem;color:var(--mid);line-height:1.55;"><span style="font-size:.95rem;flex-shrink:0;margin-top:1px;">🏆</span>Felicitated at <strong>AILET 2026</strong> Toppers' & Qualifiers' Ceremony — Laureate Award</li>
-            <li style="display:flex;align-items:flex-start;gap:11px;padding:8px 0;border-bottom:1px solid var(--grayM);font-size:.84rem;color:var(--mid);line-height:1.55;"><span style="font-size:.95rem;flex-shrink:0;margin-top:1px;">🎤</span>Conducted career awareness sessions across <strong>multiple schools in Haryana</strong> — 500+ students impacted directly</li>
-            <li style="display:flex;align-items:flex-start;gap:11px;padding:8px 0;border-bottom:none;font-size:.84rem;color:var(--mid);line-height:1.55;"><span style="font-size:.95rem;flex-shrink:0;margin-top:1px;">📍</span>Based in <strong>Rohtak, Haryana</strong> — serving PAN India via secure online sessions</li>
-          </ul>
-          <div style="display:flex;flex-wrap:wrap;gap:10px;">
-            <a href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20would%20like%20to%20know%20more%20about%20Lume%20Live%20counselling." target="_blank" class="wa-btn">
-              <svg viewBox="0 0 24 24" width="17" height="17" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.556 4.121 1.528 5.856L.057 23.215a.75.75 0 00.922.921l5.344-1.47A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.663-.523-5.183-1.432l-.37-.219-3.171.871.884-3.175-.237-.386A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-              Chat on WhatsApp
-            </a>
-            <a href="tel:+917015671280" class="call-btn">📞 +91 7015671280</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
