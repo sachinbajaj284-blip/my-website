@@ -556,6 +556,56 @@ body.js-ready .anim.right{transform:translateX(32px);}
 body.js-ready .anim.scale{transform:scale(.9);}
 .anim.visible,body.js-ready .anim.visible{opacity:1;transform:translate(0) scale(1);}
 
+/* ══ ENHANCED CTA BUTTONS ══ */
+.btn-cta{
+  display:inline-flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,#c9933a,#e8b84e);
+  color:#0d1b40;font-weight:800;font-size:1rem;
+  padding:16px 32px;border-radius:50px;
+  border:none;cursor:pointer;position:relative;overflow:hidden;
+  box-shadow:0 8px 24px rgba(201,147,58,.35),0 0 0 4px rgba(201,147,58,.15);
+  transition:all .3s cubic-bezier(.25,.46,.45,.94);
+  letter-spacing:.3px;text-decoration:none;
+}
+.btn-cta:hover{
+  transform:translateY(-3px) scale(1.02);
+  box-shadow:0 12px 32px rgba(201,147,58,.45),0 0 0 6px rgba(201,147,58,.2);
+  background:linear-gradient(135deg,#d4a044,#f0c860);
+}
+.btn-cta:active{transform:translateY(-1px) scale(.98);}
+.btn-cta::before{
+  content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);
+  transition:left .6s;
+}
+.btn-cta:hover::before{left:100%;}
+
+/* Floating CTA */
+.float-cta{
+  position:fixed;bottom:20px;right:20px;z-index:999;
+  display:none;animation:floatIn .5s ease both;
+}
+.float-cta .btn-cta{
+  padding:14px 24px;font-size:.9rem;
+  box-shadow:0 6px 20px rgba(201,147,58,.4),0 0 0 3px rgba(201,147,58,.15);
+}
+.float-cta .btn-cta::after{
+  content:'';position:absolute;inset:-4px;border-radius:50px;
+  border:2px solid rgba(201,147,58,.3);animation:pulse-ring 2s ease-out infinite;
+}
+@keyframes floatIn{
+  from{opacity:0;transform:translateY(30px);}
+  to{opacity:1;transform:translateY(0);}
+}
+@keyframes pulse-ring{
+  0%{transform:scale(1);opacity:.6;}
+  100%{transform:scale(1.15);opacity:0;}
+}
+@media(max-width:768px){
+  .float-cta{display:block;}
+  .hero-btns .btn-cta{width:100%;justify-content:center;}
+}
+
 /* ── STAGGER ANIMATION DELAYS ── */
 .stagger-1{transition-delay:.05s;}
 .stagger-2{transition-delay:.1s;}
@@ -859,7 +909,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
       <li><a href="#testimonials">Reviews</a></li>
       <li><a href="#questionnaire">Quiz</a></li>
       <li><a href="#contact">Contact</a></li>
-      <li><a href="#" class="nav-cta" onclick="openModal('session');return false;">Book ₹499</a></li>
+      <li><a href="#" class="nav-cta" onclick="openModal('session');return false;" style="background:linear-gradient(135deg,#c9933a,#e8b84e);color:#0d1b40;font-weight:800;padding:8px 18px;border-radius:20px;box-shadow:0 4px 12px rgba(201,147,58,.3);transition:all .3s;">Book ₹499</a></li>
     </ul>
     <button class="hamburger" id="ham" onclick="toggleMenu()" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -878,7 +928,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
   <a href="#testimonials" onclick="closeMob()">⭐ Client Reviews</a>
   <a href="#questionnaire" onclick="closeMob()">📋 Free Quiz</a>
   <a href="#contact" onclick="closeMob()">📍 Contact</a>
-  <a href="#" class="highlight" onclick="openModal('session');closeMob();return false;">🎯 Book Session — ₹499</a>
+  <a href="#" onclick="openModal('session');closeMob();return false;" style="background:linear-gradient(135deg,#c9933a,#e8b84e);color:#0d1b40;font-weight:800;padding:12px 20px;border-radius:12px;margin:8px 0;display:block;text-align:center;box-shadow:0 4px 12px rgba(201,147,58,.3);text-decoration:none;">🎯 Book Session — ₹499</a>
   <a href="https://wa.me/917015671280" target="_blank" style="color:#25D366;font-weight:700;">💬 WhatsApp Us Now</a>
 </div>
 
@@ -898,7 +948,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
       <h1 class="hero-h1">Your Mind Deserves <em>Clarity.</em><br>Your Future Deserves <em>Direction.</em></h1>
       <p class="hero-sub">Professional counselling that blends empathy with evidence. Whether you're navigating emotional distress or a career crossroads — we guide you with science, not guesswork.</p>
       <div class="hero-btns">
-        <a href="#" class="btn-gold" onclick="openModal('session');return false;">🎯 Book First Session — ₹499</a>
+        <a href="#" class="btn-cta" onclick="openModal('session');return false;"><span style="font-size:1.2rem;">🎯</span><span>Book First Session — ₹499</span><span style="background:rgba(13,27,64,.15);color:#0d1b40;font-size:.65rem;font-weight:800;padding:3px 8px;border-radius:10px;margin-left:4px;">LIMITED</span></a>
         <a href="#questionnaire" class="btn-ghost">📋 Take Free Quiz</a>
       </div>
       <div class="hero-stats">
@@ -916,8 +966,6 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
     </div>
   </div>
 </section>
-
-<!-- SESSION PHOTOS GALLERY -->
 <section id="gallery">
   <div class="gallery-label s-inner">
     <span class="s-tag">Real Sessions · Real Impact</span>
@@ -981,8 +1029,182 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
     </div>
   </div>
 </section>
+<section id="recognition" style="display:none;">
+  <div class="rec-inner s-inner">
+    <div class="rec-photo anim left">
+      <img src="session5.jpg" alt="Recognition Ceremony">
+      <div class="rec-photo-lbl">🏆 AILET 2026 · Toppers' Felicitation Ceremony · Laureate Award · Rohtak</div>
+    </div>
+    <div class="anim right">
+      <span class="s-tag">Recognition & Credibility</span>
+      <h2 class="s-title">Recognised. Trusted.<br>Committed.</h2>
+      <p class="s-sub">Recognised at the AILET 2026 Toppers' Ceremony for outstanding contribution to career education across Haryana.</p>
+      <div class="rec-grid">
+        <div class="rec-card anim stagger-1"><div class="icon">🎓</div><div class="title">M.Sc Clinical Psychology</div><div class="desc">Gurugram University</div></div>
+        <div class="rec-card anim stagger-2"><div class="icon">📜</div><div class="title">PGDGC — Jamia Millia</div><div class="desc">Guidance & Counselling, New Delhi</div></div>
+        <div class="rec-card anim stagger-3"><div class="icon">🏆</div><div class="title">Laureate Award</div><div class="desc">AILET 2026 Felicitation</div></div>
+        <div class="rec-card anim stagger-4"><div class="icon">🎤</div><div class="title">500+ Students</div><div class="desc">School sessions across Haryana</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="services">
+  <div class="s-inner">
+    <div style="text-align:center;max-width:580px;margin:0 auto;">
+      <span class="s-tag">What We Offer</span>
+      <h2 class="s-title">Guidance for Every Stage</h2>
+      <p class="s-sub" style="margin:0 auto;">Structured support that meets students and families exactly where they are.</p>
+    </div>
+    <div class="svc-grid">
+      <div class="svc-card hs anim stagger-1" onclick="openModal('session')">
+        <div class="svc-head">
+          <span class="chip chip-live">✅ Live Now</span>
+          <div class="svc-icon">🏫</div>
+          <div class="svc-for">For Students in Grades 9–12</div>
+          <div class="svc-name">Stream & Subject Clarity After 10th</div>
+        </div>
+        <div class="svc-body">
+          <ul class="svc-bullets">
+            <li>Psychometric Aptitude, Interest & Personality (API) testing</li>
+            <li>Science vs Commerce vs Arts — decide with data, not pressure</li>
+            <li>Reduce anxiety about the "wrong" stream choice</li>
+            <li>Align natural strengths to the right academic path</li>
+            <li>Every career each stream can lead to — explained</li>
+          </ul>
+          <div class="svc-price">Starting at <strong>₹999</strong> / session</div>
+          <button class="btn-teal">Book Your Session Now →</button>
+        </div>
+      </div>
+      <div class="svc-card cc anim stagger-2" onclick="openModal('session')">
+        <div class="svc-head">
+          <span class="chip chip-live">✅ Live Now</span>
+          <div class="svc-icon">🎓</div>
+          <div class="svc-for">For College Students & Graduates</div>
+          <div class="svc-name">Career Clarity & First-Job Readiness</div>
+        </div>
+        <div class="svc-body">
+          <ul class="svc-bullets">
+            <li>Move from confusion to confident career decisions</li>
+            <li>High-growth paths aligned to your personality</li>
+            <li>Résumé strategy, interview prep & LinkedIn audit</li>
+            <li>Bridge the gap between your degree & dream career</li>
+            <li>Entrepreneurship & startup guidance</li>
+          </ul>
+          <div class="svc-price">Starting at <strong>₹1,499</strong> / session</div>
+          <button class="btn-cta" style="font-size:.8rem;padding:10px 18px;"><span>Book Your Session Now →</span></button>
+        </div>
+      </div>
+      <div class="svc-card ew anim stagger-3" onclick="openModal('session')">
+        <div class="svc-head">
+          <span class="chip chip-live">✅ Live Now</span>
+          <div class="svc-icon">🧠</div>
+          <div class="svc-for">For Anyone Feeling Overwhelmed</div>
+          <div class="svc-name">1:1 Emotional Wellness Counselling</div>
+        </div>
+        <div class="svc-body">
+          <ul class="svc-bullets">
+            <li>Safe, non-judgemental space to speak freely</li>
+            <li>Manage stress, academic pressure & peer anxiety</li>
+            <li>Build resilience, confidence & self-esteem</li>
+            <li>Family pressure, relationships & identity support</li>
+            <li>Confidential online sessions — anywhere in India</li>
+          </ul>
+          <div class="svc-price">First session <strong>₹499</strong> · Regular ₹999</div>
+          <button class="btn-navy">Book Your Session Now →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="approach">
+  <div class="s-inner">
+    <div class="approach-grid">
+      <div class="anim left">
+        <span class="s-tag">The Lume Care Approach</span>
+        <h2 class="s-title">Confusion to Confidence<br>in 3 Steps</h2>
+        <p class="s-sub">Not generic advice. A proven framework built on science, empathy, and personalised action.</p>
+        <div style="margin-top:32px;">
+          <div class="approach-step active" onclick="setStep(1)">
+            <div class="step-n" id="sn1">01</div>
+            <div><div class="step-tag">Step One</div><div class="step-title">Scientific Discovery</div><div class="step-desc">Validated psychometric tools assess your aptitude, personality & core interests — creating an objective profile far beyond grades or gut feelings.</div></div>
+          </div>
+          <div class="approach-step" onclick="setStep(2)">
+            <div class="step-n" id="sn2">02</div>
+            <div><div class="step-tag">Step Two</div><div class="step-title">Expert 1:1 Counselling</div><div class="step-desc">Data meets dialogue. Psychometric insights are translated into real-world career paths you may never have considered.</div></div>
+          </div>
+          <div class="approach-step" onclick="setStep(3)">
+            <div class="step-n" id="sn3">03</div>
+            <div><div class="step-tag">Step Three</div><div class="step-title">Your Confident Future</div><div class="step-desc">A written, personalised roadmap with timelines, resources & next actions. Clarity replaces confusion. Confidence replaces anxiety.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="approach-panel anim right">
+        <div class="ap-logo"><img src="logo.png" alt="Lume Live"></div>
+        <div class="ap-quote">
+          <blockquote>"The right guidance at the right moment doesn't just change a career — it changes the entire trajectory of a life."</blockquote>
+          <cite>— Sachin Bajaj, Founder & Counselling Psychologist</cite>
+          <div class="ap-metrics">
+            <div class="ap-metric"><div class="num">M.Sc</div><div class="lbl">Clinical Psychology</div></div>
+            <div class="ap-metric"><div class="num">1:1</div><div class="lbl">Personalised Sessions</div></div>
+            <div class="ap-metric"><div class="num">Online</div><div class="lbl">PAN India</div></div>
+            <div class="ap-metric"><div class="num">100%</div><div class="lbl">Confidential</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ABOUT / FOUNDER -->
+<section id="about" style="display:none;">
+  <div class="s-inner">
+    <div style="text-align:center;max-width:600px;margin:0 auto 52px;">
+      <span class="s-tag">Meet the Founder</span>
+      <h2 class="s-title">Guided by Science.<br>Driven by Empathy.</h2>
+      <p class="s-sub" style="margin:0 auto;">Every session at Lume Live is led by a qualified counselling psychologist with advanced training in clinical psychology and career guidance.</p>
+    </div>
+    <div class="about-grid">
+      <div class="about-photo-wrap anim left">
+        <div class="about-photo" style="aspect-ratio:4/3;max-height:420px;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(10,110,110,.2);position:relative;">
+          <img src="sachin.jpeg" alt="Sachin Bajaj receiving the AILET 2026 Laureate Award" style="width:100%;height:100%;object-fit:cover;object-position:center 15%;">
+          <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(13,27,64,.9),transparent);padding:50px 20px 16px;">
+            <div style="font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:#fff;">Sachin Bajaj</div>
+            <div style="font-size:.72rem;color:var(--gold2);font-weight:600;margin-top:3px;">Founder & Lead Counsellor · Lume Live</div>
+          </div>
+        </div>
+        <div class="about-deg-badge" style="top:-10px;right:-10px;">
+          <div class="deg">M.Sc</div>
+          <div class="uni">Clinical Psychology<br>Gurugram University</div>
+        </div>
+        <div class="award-badge" style="bottom:100px;right:-14px;">
+          <div class="icon">🏆</div>
+          <div class="text">AILET 2026<br>Laureate Award</div>
+        </div>
+      </div>
+      <div class="anim right">
+        <p class="about-intro">Sachin Bajaj holds an <strong>M.Sc in Clinical Psychology from Gurugram University</strong> and a <strong>B.Ed</strong>, giving him a powerful dual lens — the science of the mind and the art of teaching — to guide students at every level.</p>
+        <p class="about-intro">He also holds a <strong>Post Graduate Diploma in Guidance and Counselling (PGDGC) from Jamia Millia Islamia, New Delhi</strong> — one of India's most prestigious central universities — adding formal specialisation in career guidance methodology.</p>
+        <ul class="creds">
+          <li><span class="ic">🎓</span><strong>M.Sc Clinical Psychology</strong> — Gurugram University</li>
+          <li><span class="ic">📜</span><strong>PGDGC</strong> — Jamia Millia Islamia, New Delhi</li>
+          <li><span class="ic">📚</span><strong>B.Ed</strong> — Bachelor of Education</li>
+          <li><span class="ic">🏆</span><strong>AILET 2026 Laureate</strong> — Felicitation Ceremony</li>
+          <li><span class="ic">🎤</span><strong>500+ Students</strong> — Guided across Haryana</li>
+          <li><span class="ic">📍</span><strong>Rohtak, Haryana</strong> — PAN India Online</li>
+        </ul>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;">
+          <a href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20would%20like%20to%20know%20more%20about%20Lume%20Live%20counselling." target="_blank" class="wa-btn">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.556 4.121 1.528 5.856L.057 23.215a.75.75 0 00.922.921l5.344-1.47A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.663-.523-5.183-1.432l-.37-.219-3.171.871.884-3.175-.237-.386A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+            Chat on WhatsApp
+          </a>
+          <a href="tel:+917015671280" class="call-btn">📞 +91 7015671280</a>
+          <a href="#" class="btn-gold" onclick="openModal('about');return false;" style="font-size:.85rem;padding:12px 20px;">👤 View Full Profile</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-<!-- EMOTIONAL WELL-BEING & COUNSELLING -->
+
 <section id="emotional-wellbeing">
   <div class="ewb-inner">
     <div class="ewb-header">
@@ -1077,191 +1299,6 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
     </div>
   </div>
 </section>
-
-<!-- SERVICES -->
-<section id="services">
-  <div class="s-inner">
-    <div style="text-align:center;max-width:580px;margin:0 auto;">
-      <span class="s-tag">What We Offer</span>
-      <h2 class="s-title">Guidance for Every Stage</h2>
-      <p class="s-sub" style="margin:0 auto;">Structured support that meets students and families exactly where they are.</p>
-    </div>
-    <div class="svc-grid">
-      <div class="svc-card hs anim stagger-1" onclick="openModal('session')">
-        <div class="svc-head">
-          <span class="chip chip-live">✅ Live Now</span>
-          <div class="svc-icon">🏫</div>
-          <div class="svc-for">For Students in Grades 9–12</div>
-          <div class="svc-name">Stream & Subject Clarity After 10th</div>
-        </div>
-        <div class="svc-body">
-          <ul class="svc-bullets">
-            <li>Psychometric Aptitude, Interest & Personality (API) testing</li>
-            <li>Science vs Commerce vs Arts — decide with data, not pressure</li>
-            <li>Reduce anxiety about the "wrong" stream choice</li>
-            <li>Align natural strengths to the right academic path</li>
-            <li>Every career each stream can lead to — explained</li>
-          </ul>
-          <div class="svc-price">Starting at <strong>₹999</strong> / session</div>
-          <button class="btn-teal">Book Your Session Now →</button>
-        </div>
-      </div>
-      <div class="svc-card cc anim stagger-2" onclick="openModal('session')">
-        <div class="svc-head">
-          <span class="chip chip-live">✅ Live Now</span>
-          <div class="svc-icon">🎓</div>
-          <div class="svc-for">For College Students & Graduates</div>
-          <div class="svc-name">Career Clarity & First-Job Readiness</div>
-        </div>
-        <div class="svc-body">
-          <ul class="svc-bullets">
-            <li>Move from confusion to confident career decisions</li>
-            <li>High-growth paths aligned to your personality</li>
-            <li>Résumé strategy, interview prep & LinkedIn audit</li>
-            <li>Bridge the gap between your degree & dream career</li>
-            <li>Entrepreneurship & startup guidance</li>
-          </ul>
-          <div class="svc-price">Starting at <strong>₹1,499</strong> / session</div>
-          <button class="btn-gold-sm">Book Your Session Now →</button>
-        </div>
-      </div>
-      <div class="svc-card ew anim stagger-3" onclick="openModal('session')">
-        <div class="svc-head">
-          <span class="chip chip-live">✅ Live Now</span>
-          <div class="svc-icon">🧠</div>
-          <div class="svc-for">For Anyone Feeling Overwhelmed</div>
-          <div class="svc-name">1:1 Emotional Wellness Counselling</div>
-        </div>
-        <div class="svc-body">
-          <ul class="svc-bullets">
-            <li>Safe, non-judgemental space to speak freely</li>
-            <li>Manage stress, academic pressure & peer anxiety</li>
-            <li>Build resilience, confidence & self-esteem</li>
-            <li>Family pressure, relationships & identity support</li>
-            <li>Confidential online sessions — anywhere in India</li>
-          </ul>
-          <div class="svc-price">First session <strong>₹499</strong> · Regular ₹999</div>
-          <button class="btn-navy">Book Your Session Now →</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- APPROACH -->
-<section id="approach">
-  <div class="s-inner">
-    <div class="approach-grid">
-      <div class="anim left">
-        <span class="s-tag">The Lume Care Approach</span>
-        <h2 class="s-title">Confusion to Confidence<br>in 3 Steps</h2>
-        <p class="s-sub">Not generic advice. A proven framework built on science, empathy, and personalised action.</p>
-        <div style="margin-top:32px;">
-          <div class="approach-step active" onclick="setStep(1)">
-            <div class="step-n" id="sn1">01</div>
-            <div><div class="step-tag">Step One</div><div class="step-title">Scientific Discovery</div><div class="step-desc">Validated psychometric tools assess your aptitude, personality & core interests — creating an objective profile far beyond grades or gut feelings.</div></div>
-          </div>
-          <div class="approach-step" onclick="setStep(2)">
-            <div class="step-n" id="sn2">02</div>
-            <div><div class="step-tag">Step Two</div><div class="step-title">Expert 1:1 Counselling</div><div class="step-desc">Data meets dialogue. Psychometric insights are translated into real-world career paths you may never have considered.</div></div>
-          </div>
-          <div class="approach-step" onclick="setStep(3)">
-            <div class="step-n" id="sn3">03</div>
-            <div><div class="step-tag">Step Three</div><div class="step-title">Your Confident Future</div><div class="step-desc">A written, personalised roadmap with timelines, resources & next actions. Clarity replaces confusion. Confidence replaces anxiety.</div></div>
-          </div>
-        </div>
-      </div>
-      <div class="approach-panel anim right">
-        <div class="ap-logo"><img src="logo.png" alt="Lume Live"></div>
-        <div class="ap-quote">
-          <blockquote>"The right guidance at the right moment doesn't just change a career — it changes the entire trajectory of a life."</blockquote>
-          <cite>— Sachin Bajaj, Founder & Counselling Psychologist</cite>
-          <div class="ap-metrics">
-            <div class="ap-metric"><div class="num">M.Sc</div><div class="lbl">Clinical Psychology</div></div>
-            <div class="ap-metric"><div class="num">1:1</div><div class="lbl">Personalised Sessions</div></div>
-            <div class="ap-metric"><div class="num">Online</div><div class="lbl">PAN India</div></div>
-            <div class="ap-metric"><div class="num">100%</div><div class="lbl">Confidential</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- ABOUT / FOUNDER -->
-<section id="about">
-  <div class="s-inner">
-    <div style="text-align:center;max-width:580px;margin:0 auto 48px;">
-      <span class="s-tag">Meet the Founder</span>
-      <h2 class="s-title">Guided by Science.<br>Driven by Empathy.</h2>
-      <p class="s-sub" style="margin:0 auto;">Every session at Lume Live is led by a qualified counselling psychologist with advanced training in clinical psychology and career guidance.</p>
-    </div>
-    <div class="about-grid">
-      <div class="about-photo-wrap anim left">
-        <div class="about-photo">
-          <img src="sachin.jpeg" alt="Sachin Bajaj - Founder & Lead Counsellor, Lume Live">
-        </div>
-        <div class="about-label">
-          <div class="about-name">Sachin Bajaj</div>
-          <div class="about-role">Founder & Lead Counsellor</div>
-        </div>
-        <div class="about-deg-badge">
-          <div class="deg">M.Sc Clinical Psychology</div>
-          <div class="uni">Gurugram University</div>
-        </div>
-        <div class="award-badge">
-          <div class="icon">🏆</div>
-          <div class="text">AILET 2026<br>Laureate Award</div>
-        </div>
-      </div>
-      <div class="anim right">
-        <p class="about-intro">Sachin Bajaj holds an <strong>M.Sc in Clinical Psychology from Gurugram University</strong> and a <strong>B.Ed</strong>, giving him a powerful dual lens — the science of the mind and the art of teaching — to guide students at every level.</p>
-        <p class="about-intro">He also holds a <strong>Post Graduate Diploma in Guidance and Counselling (PGDGC) from Jamia Millia Islamia, New Delhi</strong> — one of India's most prestigious central universities — adding formal specialisation in guidance methodology and career counselling.</p>
-        <ul class="creds">
-          <li><span class="ic">🎓</span><strong>M.Sc Clinical Psychology</strong> — Gurugram University · Advanced training in psychological assessment & therapeutic techniques</li>
-          <li><span class="ic">📜</span><strong>PG Diploma in Guidance & Counselling (PGDGC)</strong> — Jamia Millia Islamia, New Delhi · Career guidance methodology</li>
-          <li><span class="ic">📚</span><strong>B.Ed (Bachelor of Education)</strong> — Deep understanding of student learning, pedagogy & developmental psychology</li>
-          <li><span class="ic">🏆</span>Felicitated at <strong>AILET 2026</strong> Toppers' & Qualifiers' Ceremony — Laureate Award for contribution to career education</li>
-          <li><span class="ic">🎤</span>Conducted career awareness sessions across <strong>multiple schools in Haryana</strong> — 500+ students impacted directly</li>
-          <li><span class="ic">📍</span>Based in <strong>Rohtak, Haryana</strong> — serving students and families PAN India via secure online sessions</li>
-        </ul>
-        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:4px;">
-          <a href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20would%20like%20to%20know%20more%20about%20Lume%20Live%20counselling." target="_blank" class="wa-btn">
-            <svg viewBox="0 0 24 24" width="17" height="17" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.556 4.121 1.528 5.856L.057 23.215a.75.75 0 00.922.921l5.344-1.47A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.663-.523-5.183-1.432l-.37-.219-3.171.871.884-3.175-.237-.386A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-            Chat on WhatsApp
-          </a>
-          <a href="tel:+917015671280" class="call-btn">📞 +91 7015671280</a>
-          <a href="#" class="btn-gold" onclick="openModal('about');return false;" style="font-size:.85rem;padding:12px 20px;">👤 View Full Profile</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-
-<!-- RECOGNITION -->
-<section id="recognition" style="display:none;">
-  <div class="rec-inner s-inner">
-    <div class="rec-photo anim left">
-      <img src="session5.jpg" alt="Recognition Ceremony">
-      <div class="rec-photo-lbl">🏆 AILET 2026 · Toppers' Felicitation Ceremony · Laureate Award · Rohtak</div>
-    </div>
-    <div class="anim right">
-      <span class="s-tag">Recognition & Credibility</span>
-      <h2 class="s-title">Recognised. Trusted.<br>Committed.</h2>
-      <p class="s-sub">Recognised at the AILET 2026 Toppers' Ceremony for outstanding contribution to career education across Haryana.</p>
-      <div class="rec-grid">
-        <div class="rec-card anim stagger-1"><div class="icon">🎓</div><div class="title">M.Sc Clinical Psychology</div><div class="desc">Gurugram University</div></div>
-        <div class="rec-card anim stagger-2"><div class="icon">📜</div><div class="title">PGDGC — Jamia Millia</div><div class="desc">Guidance & Counselling, New Delhi</div></div>
-        <div class="rec-card anim stagger-3"><div class="icon">🏆</div><div class="title">Laureate Award</div><div class="desc">AILET 2026 Felicitation</div></div>
-        <div class="rec-card anim stagger-4"><div class="icon">🎤</div><div class="title">500+ Students</div><div class="desc">School sessions across Haryana</div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<!-- FOR PARENTS -->
 <section id="for-parents">
   <div class="fp-inner s-inner">
     <div class="fp-header">
@@ -1311,8 +1348,6 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
     </div>
   </div>
 </section>
-
-<!-- TESTIMONIALS -->
 <section id="testimonials">
   <div class="s-inner">
     <div style="text-align:center;max-width:540px;margin:0 auto;">
@@ -1397,8 +1432,6 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
     </div>
   </div>
 </section>
-
-<!-- FAQ -->
 <section id="faq">
   <div class="faq-inner s-inner">
     <div class="faq-header">
@@ -1440,8 +1473,6 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
     </div>
   </div>
 </section>
-
-<!-- QUESTIONNAIRE -->
 <section id="questionnaire">
   <div class="q-inner">
     <div class="q-label">
@@ -1515,9 +1546,6 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
     </div>
   </div>
 </section>
-
-
-<!-- SCHOOL PARTNERSHIPS -->
 <section id="school-partnerships">
   <div class="sp-inner s-inner">
     <div class="sp-header">
@@ -1570,8 +1598,6 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
     </div>
   </div>
 </section>
-
-<!-- CAREER PDF -->
 <section id="career-pdf" style="padding:0;display:none;">
   <div style="background:linear-gradient(135deg,var(--navy),var(--navy2));padding:72px 20px;display:none;">
     <div class="cpdf-inner s-inner">
@@ -1607,8 +1633,6 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
     </div>
   </div>
 </section>
-
-<!-- LEAD MAGNET -->
 <section id="lead-banner" style="padding:0;">
   <div style="background:linear-gradient(135deg,var(--teal),#0A5A5A);padding:52px 20px;">
     <div class="lead-inner s-inner">
@@ -1629,12 +1653,17 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
         <input class="f-inp" type="tel" id="lPhone" placeholder="WhatsApp Number *">
         <button class="btn-gold-full" onclick="openPDF()">Get Instant Access — ₹199</button>
         <p style="font-size:.68rem;color:rgba(255,255,255,.45);text-align:center;margin-top:8px;">Delivered to your WhatsApp within 24 hours.</p>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.15);text-align:center;">
+          <div style="font-size:.72rem;color:rgba(255,255,255,.6);margin-bottom:8px;">— OR —</div>
+          <a href="#" class="btn-cta" onclick="openModal('session');return false;" style="font-size:.85rem;padding:12px 22px;width:100%;justify-content:center;">
+            <span style="font-size:1.1rem;">🎯</span>
+            <span>Book ₹499 Counselling Session</span>
+          </a>
+        </div>
       </div>
     </div>
   </div>
 </section>
-
-<!-- CONTACT -->
 <section id="contact">
   <div class="s-inner">
     <div style="text-align:center;max-width:520px;margin:0 auto 34px;">
@@ -1648,7 +1677,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
         <div class="contact-item anim stagger-3"><div class="c-icon">📍</div><div><div class="c-label">Location</div><div class="c-val">Rohtak, Haryana — Online PAN India</div></div></div>
         <div class="contact-item anim stagger-4"><div class="c-icon">🕐</div><div><div class="c-label">Session Hours</div><div class="c-val">Mon–Sat: 9 AM – 8 PM IST</div></div></div>
         <div style="display:flex;flex-wrap:wrap;gap:9px;margin-top:6px;">
-          <a href="#" onclick="openModal('session');return false;" class="btn-gold" style="font-size:.83rem;padding:11px 18px;">🎯 Book ₹499 Session</a>
+          <a href="#" onclick="openModal('session');return false;" class="btn-cta" style="font-size:.85rem;padding:12px 22px;" onclick="openModal('session');return false;"><span style="font-size:1.1rem;">🎯</span><span>Book ₹499 Session</span></a>
           <a href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20would%20like%20to%20book%20a%20session%20with%20Lume%20Live." target="_blank" class="wa-btn" style="font-size:.83rem;padding:11px 18px;">WhatsApp Now</a>
         </div>
       </div>
@@ -1974,7 +2003,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
             Chat on WhatsApp
           </a>
           <a href="tel:+917015671280" class="call-btn" style="font-size:.85rem;padding:12px 22px;">📞 +91 7015671280</a>
-          <a href="#" class="btn-gold" onclick="openModal('session');return false;" style="font-size:.85rem;padding:12px 22px;">🎯 Book ₹499 Session</a>
+          <a href="#" class="btn-cta" onclick="openModal('session');return false;" style="font-size:.85rem;padding:12px 22px;"><span style="font-size:1.1rem;">🎯</span><span>Book ₹499 Session</span></a>
         </div>
       </div>
     </div>
@@ -2360,5 +2389,13 @@ function setMode(el, mode){
 }
 
 </script>
+<!-- ══ FLOATING CTA ══ -->
+<div class="float-cta">
+  <a href="#" class="btn-cta" onclick="openModal('session');return false;">
+    <span style="font-size:1.1rem;">🎯</span>
+    <span>Book ₹499</span>
+  </a>
+</div>
+
 </body>
 </html>
