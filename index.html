@@ -12,6 +12,12 @@
   --gray:#F4F6F5;--grayM:#D1D9D9;
   --dark:#1A2C2C;--mid:#4A6060;--white:#fff;
   --green:#22c55e;--green2:#4ade80;
+  --safe-top:env(safe-area-inset-top,0px);
+  --ann-h:32px;
+  --countdown-h:40px;
+  --nav-h:70px;
+  --top-bars-h:calc(var(--safe-top) + var(--ann-h) + var(--countdown-h));
+  --header-stack-h:calc(var(--top-bars-h) + var(--nav-h));
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
@@ -44,12 +50,44 @@ body{font-family:'Montserrat',sans-serif;color:var(--dark);background:var(--whit
 @keyframes wave{0%,100%{transform:translateY(0) rotate(0);}25%{transform:translateY(-5px) rotate(2deg);}50%{transform:translateY(0) rotate(0);}75%{transform:translateY(5px) rotate(-2deg);}}
 
 /* ── ANNOUNCEMENT ── */
-.ann{background:var(--gold);padding:9px 20px;text-align:center;font-size:.77rem;font-weight:700;color:#fff;position:relative;z-index:999;}
+.ann{background:var(--gold);padding:0 20px;height:var(--ann-h);text-align:center;font-size:.77rem;font-weight:700;color:#fff;position:fixed;top:var(--safe-top);left:0;right:0;z-index:1002;display:flex;align-items:center;justify-content:center;flex-wrap:nowrap;line-height:1.25;overflow:hidden;}
 .ann a{color:#fff;text-decoration:underline;cursor:pointer;margin-left:6px;}
+/* ── COUNTDOWN TIMER ── */
+.countdown-bar{background:linear-gradient(135deg,#dc2626,#ef4444);padding:0 16px;height:var(--countdown-h);text-align:center;font-size:.78rem;font-weight:700;color:#fff;position:fixed;top:calc(var(--safe-top) + var(--ann-h));left:0;right:0;z-index:1001;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:nowrap;overflow:hidden;box-shadow:0 2px 12px rgba(220,38,38,.3);}
+.countdown-bar .cd-label{display:flex;align-items:center;gap:6px;font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.6px;white-space:nowrap;flex-shrink:0;}
+.countdown-bar .cd-label .pulse-dot{width:7px;height:7px;background:#fff;border-radius:50%;animation:livePulse 1.5s infinite;}
+.countdown-timer{display:flex;gap:5px;align-items:center;flex-shrink:0;}
+.cd-unit{background:rgba(255,255,255,.18);border-radius:6px;padding:3px 8px;min-width:36px;text-align:center;border:1px solid rgba(255,255,255,.2);}
+.cd-unit .cd-num{font-size:.88rem;font-weight:800;color:#fff;display:block;line-height:1;}
+.cd-unit .cd-lbl{font-size:.48rem;font-weight:600;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:.4px;margin-top:1px;display:block;}
+.cd-sep{font-size:.9rem;font-weight:800;color:rgba(255,255,255,.5);}
+.countdown-bar .cd-cta{background:#fff;color:#dc2626;padding:4px 11px;border-radius:20px;font-size:.68rem;font-weight:800;text-decoration:none;transition:all .25s;margin-left:2px;white-space:nowrap;flex-shrink:0;}
+.countdown-bar .cd-cta:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.2);}
+
+/* Hero countdown */
+.hero-countdown{background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.4);border-radius:12px;padding:14px 18px;margin-bottom:22px;display:inline-flex;align-items:center;gap:14px;flex-wrap:wrap;animation:fadeUp .8s ease 1s both;backdrop-filter:blur(8px);}
+.hero-countdown .hcd-label{font-size:.72rem;font-weight:800;color:#fca5a5;text-transform:uppercase;letter-spacing:.8px;display:flex;align-items:center;gap:6px;}
+.hero-countdown .hcd-label .pulse-dot{width:7px;height:7px;background:#ef4444;border-radius:50%;animation:livePulse 1.5s infinite;}
+.hero-cd-timer{display:flex;gap:6px;}
+.hero-cd-unit{background:rgba(0,0,0,.3);border-radius:8px;padding:7px 12px;min-width:44px;text-align:center;border:1px solid rgba(220,38,38,.3);}
+.hero-cd-unit .hcd-num{font-size:1.15rem;font-weight:800;color:#fff;display:block;line-height:1;}
+.hero-cd-unit .hcd-lbl{font-size:.55rem;font-weight:600;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;display:block;}
+.hero-cd-sep{font-size:1.1rem;font-weight:800;color:rgba(255,255,255,.35);align-self:center;}
+.hero-countdown .hcd-urgent{font-size:.72rem;color:#fca5a5;font-weight:700;}
+
+/* Modal countdown */
+.modal-countdown{background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);border-radius:10px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;}
+.modal-countdown .mcd-label{font-size:.73rem;font-weight:700;color:#dc2626;display:flex;align-items:center;gap:5px;}
+.modal-countdown .mcd-label .pulse-dot{width:6px;height:6px;background:#dc2626;border-radius:50%;animation:livePulse 1.5s infinite;}
+.mcd-timer{display:flex;gap:5px;}
+.mcd-unit{background:rgba(220,38,38,.08);border-radius:6px;padding:5px 9px;min-width:36px;text-align:center;}
+.mcd-unit .mcd-num{font-size:.95rem;font-weight:800;color:#dc2626;display:block;line-height:1;}
+.mcd-unit .mcd-lbl{font-size:.52rem;font-weight:600;color:rgba(220,38,38,.6);text-transform:uppercase;letter-spacing:.5px;margin-top:1px;display:block;}
+
 
 /* ── NAVBAR ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255,.97);backdrop-filter:blur(14px);box-shadow:0 2px 20px rgba(10,110,110,.08);transition:.3s;}
-.nav-inner{max-width:1200px;margin:0 auto;padding:0 20px;height:70px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:rgba(255,255,255,.97);backdrop-filter:blur(14px);box-shadow:0 2px 20px rgba(10,110,110,.08);transition:.3s;}
+.nav-inner{max-width:1280px;margin:0 auto;padding:0 clamp(16px,2vw,28px);height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:16px;}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
 .nav-logo-img{width:48px;height:48px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 2px var(--gold);flex-shrink:0;transition:transform .3s;}
 .nav-logo-img:hover{transform:scale(1.08) rotate(5deg);}
@@ -58,8 +96,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255
 .nav-logo-text .lume{color:var(--navy);}
 .nav-logo-text .live{color:var(--gold);}
 .nav-logo-sub{font-size:.58rem;color:var(--mid);font-weight:600;letter-spacing:.7px;text-transform:uppercase;}
-.nav-links{display:flex;align-items:center;gap:20px;list-style:none;}
-.nav-links a{text-decoration:none;font-size:.81rem;font-weight:600;color:var(--mid);transition:.2s;position:relative;}
+.nav-links{display:flex;align-items:center;gap:clamp(8px,1vw,14px);list-style:none;min-width:0;}
+.nav-links a{text-decoration:none;font-size:.78rem;font-weight:600;color:var(--mid);transition:.2s;position:relative;white-space:nowrap;}
 .nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--gold);transition:width .3s;border-radius:2px;}
 .nav-links a:hover{color:var(--teal);}
 .nav-links a:hover::after{width:100%;}
@@ -70,14 +108,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255
 .hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}
 .hamburger.open span:nth-child(2){opacity:0;}
 .hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px);}
-.mob-menu{display:none;position:fixed;top:70px;left:0;right:0;background:#fff;z-index:998;padding:0;box-shadow:0 4px 20px rgba(0,0,0,.1);max-height:calc(100vh - 70px);overflow-y:auto;}
+.mob-menu{display:none;position:fixed;top:var(--header-stack-h);left:0;right:0;background:#fff;z-index:998;padding:0;box-shadow:0 4px 20px rgba(0,0,0,.1);max-height:calc(100vh - var(--header-stack-h));overflow-y:auto;}
 .mob-menu.open{display:block;animation:fadeUp .3s ease;}
 .mob-menu a{display:block;padding:14px 24px;font-weight:600;color:var(--dark);text-decoration:none;border-bottom:1px solid var(--gray);font-size:.93rem;transition:background .2s;}
 .mob-menu a:hover{background:var(--gray);}
 .mob-menu a.highlight{color:var(--gold);font-weight:700;}
 
 /* ── RIGHT GLOWING SIDEBAR ── */
-.side-icons{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:990;display:flex;flex-direction:column;gap:0;}
+.side-icons{position:fixed;right:0;top:55%;transform:translateY(-50%);z-index:990;display:flex;flex-direction:column;gap:0;}
 .side-icon{width:48px;height:48px;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;position:relative;transition:.3s;}
 .side-icon.wa{background:#25D366;animation:glowGreen 2.5s ease-in-out infinite;border-radius:8px 0 0 0;}
 .side-icon.call{background:#3b82f6;animation:glowBlue 2.5s ease-in-out infinite 0.4s;border-radius:0;}
@@ -88,7 +126,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255
 .side-icon:hover .tip{opacity:1;}
 
 /* ── HERO ── */
-#hero{min-height:100vh;background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 50%,#0A4A5A 100%);background-size:200% 200%;animation:heroGradient 15s ease infinite;position:relative;display:flex;align-items:center;overflow:hidden;padding-top:70px;}
+#hero{min-height:100vh;background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 50%,#0A4A5A 100%);background-size:200% 200%;animation:heroGradient 15s ease infinite;position:relative;display:flex;align-items:center;overflow:hidden;padding-top:var(--header-stack-h);}
 .hero-particles{position:absolute;inset:0;pointer-events:none;}
 .particle{position:absolute;border-radius:50%;animation:float var(--d,6s) ease-in-out infinite var(--delay,0s);}
 .hero-gold-bar{position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,transparent,var(--gold),var(--gold2),var(--gold),transparent);animation:shimmer 3s linear infinite;background-size:200% 100%;}
@@ -636,6 +674,14 @@ body.js-ready .anim.scale{transform:scale(.9);}
 @media(max-width:640px){
   section{padding:56px 16px;}
   #gallery{padding:50px 16px;}
+  .ann{font-size:.68rem;padding:0 12px;}
+  .ann a{margin-left:4px;}
+  .countdown-bar{padding:0 8px;gap:7px;}
+  .countdown-bar .cd-label{font-size:.62rem;letter-spacing:.3px;}
+  .countdown-bar .cd-cta{display:none;}
+  .countdown-timer{gap:3px;}
+  .cd-unit{min-width:32px;padding:3px 6px;}
+  .cd-sep{font-size:.75rem;}
   .hero-inner{padding:60px 16px;}
   .footer-grid{grid-template-columns:1fr;}
   .hero-btns{flex-direction:column;}
@@ -661,8 +707,7 @@ body.js-ready .anim.scale{transform:scale(.9);}
 }
 /* iOS safe area */
 @supports(padding:max(0px)){
-  nav{padding-top:max(0px,env(safe-area-inset-top));}
-  .mob-menu{top:calc(70px + max(0px,env(safe-area-inset-top)));}
+  :root{--safe-top:max(0px,env(safe-area-inset-top,0px));}
   footer{padding-bottom:max(22px,env(safe-area-inset-bottom));}
 }
 
@@ -870,7 +915,23 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 <div class="mouse-glow" id="mouseGlow"></div>
 
 <!-- ANNOUNCEMENT -->
-<div class="ann">🎉 First Wellness Session — ₹499 only · Limited slots this week! <a onclick="openModal('session')">Book Now →</a></div>
+<div class="ann">🔥 <b>Limited Time Offer:</b> First Wellness Session — <b>₹49</b> <span style="text-decoration:line-through;opacity:.7;font-weight:500;">₹499</span> · Only 3 days left! <a onclick="openModal('session')">Book Now →</a></div>
+
+<!-- COUNTDOWN BAR -->
+<div class="countdown-bar" id="countdownBar">
+  <div class="cd-label"><span class="pulse-dot"></span>⏰ Offer Ends In:</div>
+  <div class="countdown-timer" id="topCountdown">
+    <div class="cd-unit"><span class="cd-num" id="cdDays">03</span><span class="cd-lbl">Days</span></div>
+    <span class="cd-sep">:</span>
+    <div class="cd-unit"><span class="cd-num" id="cdHours">00</span><span class="cd-lbl">Hrs</span></div>
+    <span class="cd-sep">:</span>
+    <div class="cd-unit"><span class="cd-num" id="cdMins">00</span><span class="cd-lbl">Min</span></div>
+    <span class="cd-sep">:</span>
+    <div class="cd-unit"><span class="cd-num" id="cdSecs">00</span><span class="cd-lbl">Sec</span></div>
+  </div>
+  <a href="#" class="cd-cta" onclick="openModal('session');return false;">Claim ₹49 Offer →</a>
+</div>
+
 
 <!-- GLOWING SIDE ICONS (desktop) -->
 <div class="side-icons">
@@ -909,7 +970,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
       <li><a href="#testimonials">Reviews</a></li>
       <li><a href="#questionnaire">Quiz</a></li>
       <li><a href="#contact">Contact</a></li>
-      <li><a href="#" class="nav-cta" onclick="openModal('session');return false;" style="background:linear-gradient(135deg,#c9933a,#e8b84e);color:#0d1b40;font-weight:800;padding:8px 18px;border-radius:20px;box-shadow:0 4px 12px rgba(201,147,58,.3);transition:all .3s;">Book ₹499</a></li>
+      <li><a href="#" class="nav-cta" onclick="openModal('session');return false;" style="background:linear-gradient(135deg,#c9933a,#e8b84e);color:#0d1b40;font-weight:800;padding:8px 18px;border-radius:20px;box-shadow:0 4px 12px rgba(201,147,58,.3);transition:all .3s;">Book ₹49 <span style="font-size:.55rem;opacity:.7;text-decoration:line-through;margin-left:3px;">₹499</span></a></li>
     </ul>
     <button class="hamburger" id="ham" onclick="toggleMenu()" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -928,7 +989,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
   <a href="#testimonials" onclick="closeMob()">⭐ Client Reviews</a>
   <a href="#questionnaire" onclick="closeMob()">📋 Free Quiz</a>
   <a href="#contact" onclick="closeMob()">📍 Contact</a>
-  <a href="#" onclick="openModal('session');closeMob();return false;" style="background:linear-gradient(135deg,#c9933a,#e8b84e);color:#0d1b40;font-weight:800;padding:12px 20px;border-radius:12px;margin:8px 0;display:block;text-align:center;box-shadow:0 4px 12px rgba(201,147,58,.3);text-decoration:none;">🎯 Book Session — ₹499</a>
+  <a href="#" onclick="openModal('session');closeMob();return false;" style="background:linear-gradient(135deg,#c9933a,#e8b84e);color:#0d1b40;font-weight:800;padding:12px 20px;border-radius:12px;margin:8px 0;display:block;text-align:center;box-shadow:0 4px 12px rgba(201,147,58,.3);text-decoration:none;">🎯 Book Session — ₹49</a>
   <a href="https://wa.me/917015671280" target="_blank" style="color:#25D366;font-weight:700;">💬 WhatsApp Us Now</a>
 </div>
 
@@ -947,8 +1008,24 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
       <div class="hero-badge"><div class="dot"></div><span>Science-Backed · Rohtak & PAN India</span></div>
       <h1 class="hero-h1">Your Mind Deserves <em>Clarity.</em><br>Your Future Deserves <em>Direction.</em></h1>
       <p class="hero-sub">Professional counselling that blends empathy with evidence. Whether you're navigating emotional distress or a career crossroads — we guide you with science, not guesswork.</p>
+
+      <!-- 3-DAY COUNTDOWN -->
+      <div class="hero-countdown" id="heroCountdown">
+        <div class="hcd-label"><span class="pulse-dot"></span>🔥 Flash Sale Ends In:</div>
+        <div class="hero-cd-timer">
+          <div class="hero-cd-unit"><span class="hcd-num" id="hcdDays">03</span><span class="hcd-lbl">Days</span></div>
+          <span class="hero-cd-sep">:</span>
+          <div class="hero-cd-unit"><span class="hcd-num" id="hcdHours">00</span><span class="hcd-lbl">Hours</span></div>
+          <span class="hero-cd-sep">:</span>
+          <div class="hero-cd-unit"><span class="hcd-num" id="hcdMins">00</span><span class="hcd-lbl">Mins</span></div>
+          <span class="hero-cd-sep">:</span>
+          <div class="hero-cd-unit"><span class="hcd-num" id="hcdSecs">00</span><span class="hcd-lbl">Secs</span></div>
+        </div>
+        <span class="hcd-urgent">Save ₹450 — Limited slots!</span>
+      </div>
+
       <div class="hero-btns">
-        <a href="#" class="btn-cta" onclick="openModal('session');return false;"><span style="font-size:1.2rem;">🎯</span><span>Book First Session — ₹499</span><span style="background:rgba(13,27,64,.15);color:#0d1b40;font-size:.65rem;font-weight:800;padding:3px 8px;border-radius:10px;margin-left:4px;">LIMITED</span></a>
+        <a href="#" class="btn-cta" onclick="openModal('session');return false;"><span style="font-size:1.2rem;">🎯</span><span>Book First Session — ₹49</span><span style="background:rgba(13,27,64,.15);color:#0d1b40;font-size:.65rem;font-weight:800;padding:3px 8px;border-radius:10px;margin-left:4px;">LIMITED</span></a>
         <a href="#questionnaire" class="btn-ghost">📋 Take Free Quiz</a>
       </div>
       <div class="hero-stats">
@@ -1109,7 +1186,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
             <li>Family pressure, relationships & identity support</li>
             <li>Confidential online sessions — anywhere in India</li>
           </ul>
-          <div class="svc-price">First session <strong>₹499</strong> · Regular ₹999</div>
+          <div class="svc-price">First session <strong style="color:var(--green);">₹49</strong> <span style="text-decoration:line-through;color:var(--mid);">₹499</span> · Regular ₹999</div>
           <button class="btn-navy">Book Your Session Now →</button>
         </div>
       </div>
@@ -1448,8 +1525,8 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
       <div class="faq-a"><div class="faq-a-inner">Yes, online counselling is highly effective. All sessions are conducted via secure video calls (Google Meet or Zoom) from the comfort of your home. Research shows that tele-counselling delivers outcomes comparable to in-person sessions. We have successfully guided 500+ students and professionals across India through online sessions.</div></div>
     </div>
     <div class="faq-item anim stagger-3">
-      <div class="faq-q" onclick="toggleFaq(this)">What happens in the first ₹499 wellness session?</div>
-      <div class="faq-a"><div class="faq-a-inner">Your first session is a 45-minute 1:1 conversation with Sachin sir. We begin by understanding your current concerns — whether it is stream confusion, career anxiety, or emotional stress. Based on your needs, we may conduct a brief psychometric screening and provide immediate actionable insights. You will leave with clarity on your next steps.</div></div>
+      <div class="faq-q" onclick="toggleFaq(this)">What happens in the first ₹49 wellness session?</div>
+      <div class="faq-a"><div class="faq-a-inner">Your first session is a 45-minute 1:1 conversation with Sachin sir — currently at a special price of <strong style="color:var(--green);">₹49</strong> (regular ₹499). We begin by understanding your current concerns — whether it is stream confusion, career anxiety, or emotional stress. Based on your needs, we may conduct a brief psychometric screening and provide immediate actionable insights. You will leave with clarity on your next steps.</div></div>
     </div>
     <div class="faq-item anim stagger-4">
       <div class="faq-q" onclick="toggleFaq(this)">Is everything I share kept confidential?</div>
@@ -1657,7 +1734,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
           <div style="font-size:.72rem;color:rgba(255,255,255,.6);margin-bottom:8px;">— OR —</div>
           <a href="#" class="btn-cta" onclick="openModal('session');return false;" style="font-size:.85rem;padding:12px 22px;width:100%;justify-content:center;">
             <span style="font-size:1.1rem;">🎯</span>
-            <span>Book ₹499 Counselling Session</span>
+            <span>Book ₹49 Counselling Session <span style="font-size:.65rem;opacity:.7;text-decoration:line-through;margin-left:3px;">₹499</span></span>
           </a>
         </div>
       </div>
@@ -1677,13 +1754,13 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
         <div class="contact-item anim stagger-3"><div class="c-icon">📍</div><div><div class="c-label">Location</div><div class="c-val">Rohtak, Haryana — Online PAN India</div></div></div>
         <div class="contact-item anim stagger-4"><div class="c-icon">🕐</div><div><div class="c-label">Session Hours</div><div class="c-val">Mon–Sat: 9 AM – 8 PM IST</div></div></div>
         <div style="display:flex;flex-wrap:wrap;gap:9px;margin-top:6px;">
-          <a href="#" onclick="openModal('session');return false;" class="btn-cta" style="font-size:.85rem;padding:12px 22px;" onclick="openModal('session');return false;"><span style="font-size:1.1rem;">🎯</span><span>Book ₹499 Session</span></a>
+          <a href="#" onclick="openModal('session');return false;" class="btn-cta" style="font-size:.85rem;padding:12px 22px;" onclick="openModal('session');return false;"><span style="font-size:1.1rem;">🎯</span><span>Book ₹49 Session <span style="font-size:.65rem;opacity:.7;text-decoration:line-through;margin-left:3px;">₹499</span></span></a>
           <a href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20would%20like%20to%20book%20a%20session%20with%20Lume%20Live." target="_blank" class="wa-btn" style="font-size:.83rem;padding:11px 18px;">WhatsApp Now</a>
         </div>
       </div>
       <div class="contact-panel anim right">
         <div class="contact-panel-title">Start Your Journey Today</div>
-        <div class="contact-panel-sub">Your first session is just ₹499. Confidential, online, and personal.</div>
+        <div class="contact-panel-sub">Your first session is just <strong style="color:var(--gold2);">₹49</strong> <span style="text-decoration:line-through;opacity:.5;">₹499</span>. Confidential, online, and personal.</div>
         <div class="contact-steps">1. Book & pay via UPI<br>2. WhatsApp confirmation in 2 hrs<br>3. Choose your preferred date & time<br>4. Connect via Google Meet or Zoom</div>
         <div style="display:flex;flex-wrap:wrap;gap:8px;">
           <a href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20would%20like%20to%20book%20my%20first%20wellness%20session%20with%20Lume%20Live." target="_blank" class="c-wa-btn">
@@ -1760,9 +1837,22 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
       <p>Confidential · 1:1 · Available PAN India via Video Call</p>
     </div>
     <div class="modal-body">
+      <!-- Countdown in modal -->
+      <div class="modal-countdown" id="modalCountdown">
+        <div class="mcd-label"><span class="pulse-dot"></span>⏰ Offer ends in:</div>
+        <div class="mcd-timer">
+          <div class="mcd-unit"><span class="mcd-num" id="mcdDays">03</span><span class="mcd-lbl">Days</span></div>
+          <span class="cd-sep">:</span>
+          <div class="mcd-unit"><span class="mcd-num" id="mcdHours">00</span><span class="mcd-lbl">Hrs</span></div>
+          <span class="cd-sep">:</span>
+          <div class="mcd-unit"><span class="mcd-num" id="mcdMins">00</span><span class="mcd-lbl">Min</span></div>
+          <span class="cd-sep">:</span>
+          <div class="mcd-unit"><span class="mcd-num" id="mcdSecs">00</span><span class="mcd-lbl">Sec</span></div>
+        </div>
+      </div>
       <div class="price-row">
-        <div class="amt">₹499</div>
-        <div class="detail">First session<br><span style="color:var(--grayM);text-decoration:line-through;">₹999</span> regular price</div>
+        <div class="amt" style="color:var(--green);">₹49</div>
+        <div class="detail">First session<br><span style="color:var(--grayM);text-decoration:line-through;">₹499</span> <span style="color:var(--green);font-weight:700;">You save ₹450!</span></div>
       </div>
       <!-- Date & Time Picker -->
       <div class="date-section">
@@ -1812,14 +1902,14 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
         </div>
       </div>
       <div class="upi-sec">
-        <div class="ttl">Pay ₹499 via UPI — Scan QR Code</div>
+        <div class="ttl">Pay ₹49 via UPI — Scan QR Code</div>
         <div class="upi-qr"><img src="qrcode.jpg" alt="UPI QR Code - Sachin Bajaj"></div>
         <div class="upi-id" onclick="copyUPI()">sachinbajaj284-1@oksbi</div>
-        <div class="upi-hint">Tap to copy · PhonePe, GPay, Paytm · ₹499</div>
+        <div class="upi-hint">Tap to copy · PhonePe, GPay, Paytm · <strong style="color:var(--green);">₹49</strong> <span style="text-decoration:line-through;opacity:.5;">₹499</span></div>
         <a href="#" class="upi-download" onclick="downloadUPIQR();return false;">📥 Download QR Code</a>
       </div>
       <ol class="m-steps">
-        <li>Scan QR or pay ₹499 to the UPI ID above</li>
+        <li>Scan QR or pay <strong style="color:var(--green);">₹49</strong> to the UPI ID above</li>
         <li>Screenshot your payment confirmation</li>
         <li>Send screenshot to WhatsApp +91 7015671280 with your chosen date & time</li>
         <li>We confirm your slot within 2 hours</li>
@@ -2003,7 +2093,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
             Chat on WhatsApp
           </a>
           <a href="tel:+917015671280" class="call-btn" style="font-size:.85rem;padding:12px 22px;">📞 +91 7015671280</a>
-          <a href="#" class="btn-cta" onclick="openModal('session');return false;" style="font-size:.85rem;padding:12px 22px;"><span style="font-size:1.1rem;">🎯</span><span>Book ₹499 Session</span></a>
+          <a href="#" class="btn-cta" onclick="openModal('session');return false;" style="font-size:.85rem;padding:12px 22px;"><span style="font-size:1.1rem;">🎯</span><span>Book ₹49 Session <span style="font-size:.65rem;opacity:.7;text-decoration:line-through;margin-left:3px;">₹499</span></span></a>
         </div>
       </div>
     </div>
@@ -2048,7 +2138,7 @@ function downloadUPIQR(){
   if(qrImg && qrImg.src){
     const link = document.createElement('a');
     link.href = qrImg.src;
-    link.download = 'Lume-Live-UPI-QR-499.png';
+    link.download = 'Lume-Live-UPI-QR-49.png';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -2104,7 +2194,7 @@ function updateSessionWA(){
   const t=document.getElementById('sessionTime').value;
   let dateStr=d?'on '+d:'at my preferred date';
   let timeStr=t?'at '+formatTime(t):'';
-  const msg='Hi Sachin! I have made the payment of Rs.499 for my first wellness session. I would prefer my session '+dateStr+' '+timeStr+' via '+sessionMode+'. Please confirm my booking.';
+  const msg='Hi Sachin! I have made the payment of Rs.49 for my first wellness session. I would prefer my session '+dateStr+' '+timeStr+' via '+sessionMode+'. Please confirm my booking.';
   document.getElementById('sessionWaBtn').href='https://wa.me/917015671280?text='+encodeURIComponent(msg);
 }
 function formatTime(t){
@@ -2214,7 +2304,20 @@ function submitQ(){
   if(!name){showToast('Please enter your name');return;}
   if(phone.length<10){showToast('Please enter a valid WhatsApp number');return;}
   const email=document.getElementById('qEmail').value.trim();
-  const msg='Hi Sachin! I just completed the Lume Live quiz. Here are my answers: Who: '+(qData.role||'Not answered')+'. Challenge: '+(qData.challenge||'Not answered')+'. Urgency: '+(qData.urgency||'Not answered')+'. My name is '+name+'. WhatsApp: '+phone+(email?'. Email: '+email:'')+'. Please send me a personalised recommendation.';
+  const msg=[
+    'Hi Sachin!',
+    '',
+    'I just completed the Lume Live quiz. Here are my answers:',
+    '',
+    '• Name: '+name,
+    '• WhatsApp: '+phone,
+    email?'• Email: '+email:null,
+    '• Who needs support: '+(qData.role||'Not answered'),
+    '• Main challenge: '+(qData.challenge||'Not answered'),
+    '• Urgency: '+(qData.urgency||'Not answered'),
+    '',
+    'Please send me a personalised recommendation.'
+  ].filter(Boolean).join('\n');
   window.open('https://wa.me/917015671280?text='+encodeURIComponent(msg),'_blank');
   nextQStep(5);
 }
@@ -2388,12 +2491,98 @@ function setMode(el, mode){
   updateSessionWA();
 }
 
+
+
+// 3-day countdown timer
+(function(){
+  const STORAGE_KEY = 'lumeOfferDeadline3Day';
+  const OFFER_DAYS = 3;
+  const DAY_MS = 24 * 60 * 60 * 1000;
+  const timerGroups = [
+    ['cdDays', 'cdHours', 'cdMins', 'cdSecs'],
+    ['hcdDays', 'hcdHours', 'hcdMins', 'hcdSecs'],
+    ['mcdDays', 'mcdHours', 'mcdMins', 'mcdSecs']
+  ];
+
+  function readDeadline(){
+    try{
+      return Number(localStorage.getItem(STORAGE_KEY));
+    }catch(e){
+      return NaN;
+    }
+  }
+
+  function saveDeadline(value){
+    try{
+      localStorage.setItem(STORAGE_KEY, String(value));
+    }catch(e){}
+  }
+
+  let deadline = readDeadline();
+  if(!Number.isFinite(deadline) || deadline <= 0){
+    deadline = Date.now() + (OFFER_DAYS * DAY_MS);
+    saveDeadline(deadline);
+  }
+
+  const pad = n => String(Math.max(0, n)).padStart(2, '0');
+
+  function setText(id, value){
+    const el = document.getElementById(id);
+    if(el) el.textContent = value;
+  }
+
+  function renderTime(days, hours, mins, secs){
+    const values = [pad(days), pad(hours), pad(mins), pad(secs)];
+    timerGroups.forEach(group => {
+      group.forEach((id, index) => setText(id, values[index]));
+    });
+  }
+
+  function showExpiredState(){
+    renderTime(0, 0, 0, 0);
+
+    const bar = document.getElementById('countdownBar');
+    if(!bar || bar.dataset.expired === 'true') return;
+
+    bar.dataset.expired = 'true';
+    bar.innerHTML =
+      '<div class="cd-label"><span class="pulse-dot"></span>Offer Ending Soon!</div>' +
+      '<a href="#" class="cd-cta" id="expiredCountdownCta">Book Now</a>';
+
+    const cta = document.getElementById('expiredCountdownCta');
+    if(cta){
+      cta.addEventListener('click', function(e){
+        e.preventDefault();
+        if(typeof openModal === 'function') openModal('session');
+      });
+    }
+  }
+
+  function updateCountdown(){
+    const diff = deadline - Date.now();
+
+    if(diff <= 0){
+      showExpiredState();
+      return;
+    }
+
+    const days = Math.floor(diff / DAY_MS);
+    const hours = Math.floor((diff % DAY_MS) / (60 * 60 * 1000));
+    const mins = Math.floor((diff % (60 * 60 * 1000)) / (60 * 1000));
+    const secs = Math.floor((diff % (60 * 1000)) / 1000);
+
+    renderTime(days, hours, mins, secs);
+  }
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+})();
 </script>
 <!-- ══ FLOATING CTA ══ -->
 <div class="float-cta">
   <a href="#" class="btn-cta" onclick="openModal('session');return false;">
     <span style="font-size:1.1rem;">🎯</span>
-    <span>Book ₹499</span>
+    <span>Book ₹49 <span style="font-size:.6rem;opacity:.7;text-decoration:line-through;margin-left:2px;">₹499</span></span>
   </a>
 </div>
 
