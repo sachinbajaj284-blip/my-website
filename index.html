@@ -1024,7 +1024,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 .ca-payment-price{display:flex;align-items:end;gap:9px;margin:13px 0 15px;}
 .ca-payment-price strong{font-size:2.45rem;line-height:1;color:#fff;}
 .ca-payment-price span{font-size:.77rem;color:rgba(255,255,255,.66);padding-bottom:5px;}
-.ca-payment .upi-qr{width:156px;height:190px;border-color:var(--gold);margin:0 auto 13px;}
+.ca-payment .upi-qr{width:170px;height:170px;border-color:var(--gold);margin:0 auto 13px;}
 .ca-payment .upi-id{color:var(--navy);font-size:.77rem;margin-bottom:10px;}
 .ca-payment-steps{list-style:none;margin:15px 0;padding:0;color:rgba(255,255,255,.8);font-size:.74rem;line-height:1.65;}
 .ca-payment-steps li{display:flex;gap:9px;margin-bottom:8px;}
@@ -1247,7 +1247,6 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
   <a href="#services" onclick="closeMob()">🛎️ Services</a>
   <a href="#career-assessment" onclick="closeMob()">🧭 Career Assessment</a>
   <a href="#emotional-wellbeing" onclick="closeMob()">🧠 Emotional Wellbeing</a>
-  <a href="#approach" onclick="closeMob()">🔬 Our Approach</a>
   <a href="#about" onclick="closeMob()">👤 About Founder</a>
   <a href="#for-parents" onclick="closeMob()">👨‍👩‍👧 For Parents</a>
   <a href="#school-partnerships" onclick="closeMob()">🏫 School Partnerships</a>
@@ -1518,7 +1517,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
         <aside class="ca-payment">
           <span class="ca-payment-label">Career Assessment Fee</span>
           <div class="ca-payment-price"><strong>₹999</strong><span>one-time payment before assessment</span></div>
-          <div class="upi-qr"><img src="Lume-Live-UPI-QR-499%20(2).png" alt="UPI QR Code - Sachin Bajaj"></div>
+          <div class="upi-qr"><img src="lume-upi-qr.png" alt="UPI QR code — pay to Sachin Bajaj (UPI ID sachinbajaj284-1@oksbi)"></div>
           <div class="upi-id" onclick="copyUPI()">sachinbajaj284-1@oksbi</div>
           <ol class="ca-payment-steps">
             <li><b>1</b><span>Scan the QR and pay exactly <strong>₹999</strong>.</span></li>
@@ -1586,44 +1585,846 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
     <article class="ca-card ca-report ca-screen" id="caReport" hidden aria-live="polite"></article>
   </div>
 </section>
-<section id="approach">
-  <div class="s-inner">
-    <div class="approach-grid">
-      <div class="anim left">
-        <span class="s-tag">The Lume Care Approach</span>
-        <h2 class="s-title">Confusion to Confidence<br>in 3 Steps</h2>
-        <p class="s-sub">Not generic advice. A proven framework built on science, empathy, and personalised action.</p>
-        <div style="margin-top:32px;">
-          <div class="approach-step active" onclick="setStep(1)">
-            <div class="step-n" id="sn1">01</div>
-            <div><div class="step-tag">Step One</div><div class="step-title">Guided Discovery</div><div class="step-desc">Explore interests, preferences and goals first. Where appropriate, separately authorised assessment tools may be discussed in counselling.</div></div>
+<!-- ══════════ SELF-ASSESSMENT SUITE (added) ══════════ -->
+<style>
+/* All classes prefixed sa- to avoid collision with existing styles */
+#self-assessments{background:linear-gradient(180deg,#fff 0%,#F7FAF9 100%);padding:78px 20px;scroll-margin-top:calc(var(--nav-h) + 18px);}
+#self-assessments::after{display:none;}
+.sa-shell{max-width:1180px;margin:0 auto;}
+.sa-head{text-align:center;max-width:780px;margin:0 auto 34px;}
+.sa-head .s-sub{margin:0 auto;}
+.sa-screen[hidden]{display:none;}
+.sa-card{background:#fff;border:1px solid #E2E9E8;border-radius:22px;box-shadow:0 14px 44px rgba(13,27,64,.06);padding:30px;}
+
+.sa-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:0;border-radius:9px;padding:12px 22px;font-family:inherit;font-size:.84rem;font-weight:700;cursor:pointer;transition:all .22s;text-decoration:none;}
+.sa-btn.primary{color:#fff;background:var(--teal);}
+.sa-btn.primary:hover{background:var(--teal2);transform:translateY(-1px);}
+.sa-btn.gold{color:#fff;background:var(--gold);}
+.sa-btn.gold:hover{background:var(--gold2);transform:translateY(-1px);}
+.sa-btn.ghost{color:var(--teal);background:#fff;border:1px solid var(--grayM);}
+.sa-btn.ghost:hover{border-color:var(--teal);background:#F3FAF9;}
+.sa-btn:disabled{opacity:.42;cursor:not-allowed;transform:none!important;}
+.sa-error{color:#dc2626;font-size:.78rem;font-weight:600;margin-top:10px;min-height:1em;}
+
+/* ── GATE: overview + payment ── */
+.sa-gate-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:26px;align-items:start;}
+.sa-gate-grid h3{font-family:'Playfair Display',serif;color:var(--navy);font-size:1.42rem;margin-bottom:9px;}
+.sa-gate-grid p{color:var(--mid);font-size:.86rem;line-height:1.72;}
+.sa-list{display:grid;gap:11px;margin:18px 0;}
+.sa-list-item{display:flex;gap:13px;align-items:flex-start;border:1px solid #E7EDEC;border-radius:13px;padding:13px 14px;background:#FCFDFD;}
+.sa-li-ico{width:40px;height:40px;border-radius:10px;background:#ECF7F6;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex:none;}
+.sa-li-txt b{display:block;font-size:.86rem;color:var(--navy);}
+.sa-li-txt span{font-size:.78rem;color:var(--mid);line-height:1.55;}
+.sa-li-txt em{font-style:normal;font-size:.68rem;font-weight:700;color:var(--teal);}
+.sa-field{margin:14px 0 8px;}
+.sa-field label{display:block;font-size:.76rem;font-weight:700;color:var(--dark);margin-bottom:7px;}
+.sa-input{width:100%;padding:13px 14px;border:1px solid var(--grayM);border-radius:10px;background:#fff;color:var(--dark);font-family:inherit;font-size:.86rem;outline:none;}
+.sa-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(10,110,110,.12);}
+.sa-gate-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.sa-check{display:flex;gap:10px;align-items:flex-start;margin:13px 0;color:var(--mid);font-size:.79rem;line-height:1.55;}
+.sa-check input{accent-color:var(--teal);width:17px;height:17px;flex:none;margin-top:2px;}
+.sa-integrity{border-radius:11px;margin-top:14px;padding:12px 14px;background:#FFF7E9;border:1px solid #F0DFBA;color:#75531D;font-size:.72rem;line-height:1.58;}
+.sa-integrity strong{display:block;margin-bottom:3px;color:#63441A;}
+
+.sa-pay{background:#fff;border:1px solid #E2E9E8;border-radius:20px;box-shadow:0 14px 44px rgba(13,27,64,.07);padding:24px;position:sticky;top:calc(var(--nav-h) + 16px);}
+.sa-pay-label{font-size:.7rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);}
+.sa-pay-price{display:flex;align-items:baseline;gap:9px;margin:6px 0 4px;}
+.sa-pay-price strong{font-family:'Playfair Display',serif;font-size:2.3rem;color:var(--navy);}
+.sa-pay-price s{color:var(--mid);font-size:1rem;}
+.sa-pay-price span{font-size:.74rem;color:var(--mid);}
+.sa-qr{width:150px;height:150px;margin:14px auto 10px;border-radius:14px;overflow:hidden;border:1px solid #E2E9E8;background:#fff;}
+.sa-qr img{width:100%;height:100%;object-fit:contain;}
+.sa-upi{text-align:center;font-size:.82rem;font-weight:700;color:var(--teal);background:#ECF7F6;border:1px dashed #9DCFCC;border-radius:9px;padding:9px;cursor:pointer;}
+.sa-pay-steps{list-style:none;margin:14px 0;display:grid;gap:9px;}
+.sa-pay-steps li{display:flex;gap:10px;align-items:flex-start;font-size:.78rem;color:var(--mid);line-height:1.5;}
+.sa-pay-steps li b{width:21px;height:21px;border-radius:50%;background:var(--teal);color:#fff;font-size:.72rem;display:flex;align-items:center;justify-content:center;flex:none;}
+.sa-pay .sa-btn{width:100%;margin-top:8px;}
+.sa-pay-note{font-size:.69rem;color:var(--mid);line-height:1.55;margin-top:10px;}
+
+/* ── PROGRESS / STEPPER ── */
+.sa-progress{margin-bottom:18px;}
+.sa-progress-top{display:flex;justify-content:space-between;font-size:.74rem;font-weight:700;color:var(--mid);margin-bottom:6px;}
+.sa-track{height:8px;border-radius:6px;background:#E6EDEC;overflow:hidden;}
+.sa-track span{display:block;height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:6px;transition:width .4s ease;}
+.sa-steps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.sa-step{flex:1;min-width:120px;border:1px solid var(--grayM);border-radius:12px;padding:10px 12px;background:#fff;cursor:pointer;transition:all .2s;display:flex;gap:9px;align-items:center;}
+.sa-step:hover{border-color:var(--teal);}
+.sa-step.active{border-color:var(--teal);background:#ECF7F6;}
+.sa-step-n{width:26px;height:26px;border-radius:50%;background:#E6EDEC;color:var(--mid);font-size:.76rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none;}
+.sa-step.active .sa-step-n{background:var(--teal);color:#fff;}
+.sa-step.done .sa-step-n{background:var(--green);color:#fff;}
+.sa-step-t{font-size:.73rem;font-weight:700;color:var(--dark);line-height:1.25;}
+.sa-step-t small{display:block;font-size:.63rem;font-weight:600;color:var(--mid);}
+
+.sa-qmeta{font-size:.81rem;color:var(--mid);line-height:1.62;margin-bottom:16px;background:#F3FAF9;border-left:3px solid var(--teal);border-radius:0 8px 8px 0;padding:11px 14px;}
+.sa-q{border:1px solid #E7EDEC;border-radius:14px;padding:16px 17px;margin-bottom:11px;background:#FCFDFD;}
+.sa-q.flag{border-color:#F0A65A;background:#FFF7EE;}
+.sa-q-num{font-size:.68rem;font-weight:800;color:var(--gold);letter-spacing:.5px;}
+.sa-q-text{font-size:.87rem;font-weight:600;color:var(--dark);line-height:1.5;margin:3px 0 12px;}
+.sa-likert{display:flex;gap:7px;flex-wrap:wrap;}
+.sa-likert label{flex:1;min-width:74px;border:1px solid var(--grayM);border-radius:10px;padding:9px 6px;text-align:center;cursor:pointer;transition:all .15s;background:#fff;}
+.sa-likert label:hover{border-color:var(--teal);}
+.sa-likert input{position:absolute;opacity:0;width:0;height:0;}
+.sa-likert .sa-lk-n{display:block;font-size:1rem;font-weight:800;color:var(--navy);}
+.sa-likert .sa-lk-w{display:block;font-size:.61rem;color:var(--mid);font-weight:600;margin-top:2px;line-height:1.25;}
+.sa-likert label:has(input:checked){background:var(--teal);border-color:var(--teal);}
+.sa-likert label:has(input:checked) .sa-lk-n,.sa-likert label:has(input:checked) .sa-lk-w{color:#fff;}
+.sa-likert.bin label{min-width:120px;flex:1;}
+.sa-opts{display:grid;gap:8px;}
+.sa-opt{display:flex;gap:11px;align-items:flex-start;border:1px solid var(--grayM);border-radius:11px;padding:11px 13px;cursor:pointer;transition:all .15s;background:#fff;}
+.sa-opt:hover{border-color:var(--teal);}
+.sa-opt input{accent-color:var(--teal);width:17px;height:17px;flex:none;margin-top:1px;}
+.sa-opt span{font-size:.84rem;color:var(--dark);line-height:1.5;}
+.sa-opt:has(input:checked){background:#ECF7F6;border-color:var(--teal);}
+.sa-hint{font-size:.71rem;color:var(--mid);margin:2px 0 11px;}
+.sa-pick3{display:grid;gap:8px;margin:12px 0;}
+.sa-pick3 label{display:flex;gap:11px;align-items:flex-start;border:1px solid var(--grayM);border-radius:11px;padding:10px 12px;cursor:pointer;transition:all .15s;background:#fff;font-size:.82rem;line-height:1.5;color:var(--dark);}
+.sa-pick3 label:has(input:checked){background:#FFF7E9;border-color:var(--gold);}
+.sa-pick3 label.dim{opacity:.45;}
+.sa-pick3 input{accent-color:var(--gold);width:17px;height:17px;flex:none;margin-top:1px;}
+.sa-subhead{font-family:'Playfair Display',serif;color:var(--navy);font-size:1.12rem;margin:22px 0 4px;}
+.sa-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;}
+.sa-actions .sa-spacer{flex:1;}
+
+/* ── COMBINED REPORT ── */
+.sa-rpt{max-width:980px;margin:0 auto;}
+.sa-cover{background:linear-gradient(135deg,#102650,#0B6668);color:#fff;border-radius:22px 22px 0 0;padding:34px 34px 30px;position:relative;overflow:hidden;}
+.sa-cover::after{content:'';position:absolute;width:240px;height:240px;border-radius:50%;background:rgba(232,185,90,.1);top:-110px;right:-70px;}
+.sa-cover-brand{font-size:.72rem;font-weight:800;letter-spacing:2.6px;text-transform:uppercase;color:var(--gold2);}
+.sa-cover h3{font-family:'Playfair Display',serif;font-size:1.78rem;margin:8px 0 2px;}
+.sa-cover p{font-size:.85rem;color:rgba(255,255,255,.78);}
+.sa-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;position:relative;z-index:1;}
+.sa-chip{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:11px;padding:8px 13px;}
+.sa-chip small{display:block;font-size:.6rem;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:rgba(255,255,255,.62);}
+.sa-chip b{font-size:.92rem;}
+.sa-rtabs{display:flex;gap:6px;flex-wrap:wrap;background:#fff;border:1px solid #E2E9E8;border-top:0;padding:14px 22px 0;}
+.sa-rtab{border:0;background:#F1F5F4;color:var(--mid);font-family:inherit;font-size:.77rem;font-weight:700;padding:9px 14px;border-radius:9px 9px 0 0;cursor:pointer;transition:all .18s;}
+.sa-rtab:hover{color:var(--teal);}
+.sa-rtab.active{background:var(--teal);color:#fff;}
+.sa-rbody{background:#fff;border:1px solid #E2E9E8;border-top:0;border-radius:0 0 22px 22px;padding:28px 32px 30px;}
+.sa-rpanel[hidden]{display:none;}
+.sa-rpanel h4{font-family:'Playfair Display',serif;color:var(--navy);font-size:1.24rem;margin:22px 0 6px;}
+.sa-rpanel h4:first-child{margin-top:0;}
+.sa-rpanel p{font-size:.85rem;color:var(--mid);line-height:1.72;}
+.sa-radar{width:100%;max-width:300px;display:block;margin:8px auto 4px;}
+.sa-split{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:center;}
+.sa-bar-row{margin:11px 0;}
+.sa-bar-head{display:flex;justify-content:space-between;align-items:baseline;font-size:.83rem;margin-bottom:5px;gap:10px;}
+.sa-bar-head b{color:var(--navy);font-weight:700;}
+.sa-bar-meta{display:flex;align-items:center;gap:8px;flex:none;}
+.sa-bar-val{font-size:.77rem;font-weight:800;color:var(--teal);}
+.sa-band{font-size:.68rem;font-weight:800;padding:3px 9px;border-radius:13px;white-space:nowrap;}
+.sa-band.hi{background:#E7F6EC;color:#1d7a3d;}
+.sa-band.mid{background:#ECF1F8;color:#2d4a7a;}
+.sa-band.lo{background:#FBECEC;color:#a23636;}
+.sa-bar{height:9px;border-radius:6px;background:#E6EDEC;overflow:hidden;}
+.sa-bar-fill{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--teal),var(--gold));width:0;transition:width 1.1s cubic-bezier(.22,1,.36,1);}
+.sa-bar-desc{font-size:.77rem;color:var(--mid);line-height:1.6;margin-top:4px;}
+.sa-snap{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:6px 0 4px;}
+.sa-snap-card{border:1px solid #E2E9E8;border-radius:14px;padding:15px 16px;background:#FCFDFD;}
+.sa-snap-card small{font-size:.64rem;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--gold);}
+.sa-snap-card b{display:block;font-family:'Playfair Display',serif;color:var(--navy);font-size:1.16rem;margin-top:3px;line-height:1.2;}
+.sa-snap-card span{font-size:.73rem;color:var(--mid);}
+.sa-syn{background:#ECF7F6;border:1px solid #D6EAE7;border-radius:14px;padding:17px 19px;margin:12px 0;}
+.sa-syn p{color:var(--dark);font-size:.84rem;}
+.sa-rlist{list-style:none;display:grid;gap:8px;margin:8px 0;}
+.sa-rlist li{font-size:.82rem;color:var(--dark);line-height:1.6;padding-left:19px;position:relative;}
+.sa-rlist li::before{content:'▸';position:absolute;left:0;color:var(--gold);font-weight:800;}
+.sa-tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;}
+.sa-tags span{font-size:.71rem;font-weight:700;color:var(--teal);background:#ECF7F6;border-radius:20px;padding:5px 11px;}
+.sa-typecard{border:1px solid #E2E9E8;border-radius:14px;padding:15px 17px;margin:10px 0;background:#FCFDFD;}
+.sa-typecard h5{font-family:'Playfair Display',serif;color:var(--navy);font-size:1.02rem;margin-bottom:3px;}
+.sa-typecard p{font-size:.8rem;}
+.sa-disclaim{margin-top:22px;border-radius:12px;padding:13px 16px;background:#FFF7E9;border:1px solid #F0DFBA;color:#75531D;font-size:.74rem;line-height:1.62;}
+.sa-disclaim strong{color:#63441A;display:block;margin-bottom:3px;}
+.sa-rfoot{margin-top:18px;border-top:1px solid #EEF2F1;padding-top:18px;}
+
+@media(max-width:820px){
+  .sa-gate-grid{grid-template-columns:1fr;}
+  .sa-pay{position:static;}
+  .sa-split{grid-template-columns:1fr;}
+}
+@media(max-width:640px){
+  #self-assessments{padding:56px 16px;}
+  .sa-card,.sa-cover,.sa-rbody{padding:21px 18px;}
+  .sa-gate-2{grid-template-columns:1fr;}
+  .sa-likert label{min-width:0;flex:1 1 30%;}
+  .sa-likert .sa-lk-w{display:none;}
+  .sa-step{min-width:0;flex:1 1 44%;}
+}
+</style>
+
+<section id="self-assessments">
+  <div class="sa-shell">
+    <div class="sa-head">
+      <span class="s-tag">Self-Assessment Suite</span>
+      <h2 class="s-title">Five Guided Assessments. One Combined Report.</h2>
+      <p class="s-sub">Complete five recognised self-assessment questionnaires in a single guided session and receive one interactive, beautifully presented report — each section scored on its established manual and woven together for a counselling conversation.</p>
+    </div>
+
+    <!-- SCREEN 1 — overview + payment gate -->
+    <div class="sa-screen" id="saGate">
+      <div class="sa-card">
+        <div class="sa-gate-grid">
+          <div>
+            <span class="s-tag">What's included</span>
+            <h3>One Session — All Five Assessments</h3>
+            <p>This suite brings together the five questionnaires below. You complete them in one guided flow, and your responses are scored and combined into a single interactive report you can explore, print and discuss.</p>
+            <div class="sa-list" id="saToolList"></div>
+            <span class="s-tag" style="margin-top:8px;">Your details</span>
+            <div class="sa-gate-2">
+              <div class="sa-field"><label for="saName">Name for the report *</label>
+                <input class="sa-input" id="saName" type="text" maxlength="60" placeholder="Full name"></div>
+              <div class="sa-field"><label for="saPhone">WhatsApp number *</label>
+                <input class="sa-input" id="saPhone" type="tel" maxlength="18" placeholder="+91 98765 43210"></div>
+            </div>
+            <label class="sa-check"><input type="checkbox" id="saPurpose">
+              <span>I understand this is a set of educational self-assessment questionnaires for personal reflection and counselling discussion — not a psychological diagnosis, aptitude test, or selection or admissions decision.</span></label>
+            <div class="sa-integrity"><strong>Assessment integrity &amp; licensing</strong>
+              These questionnaires are administered for reflective and counselling use. Scores follow each tool's published scoring method. Results describe self-reported preferences on the day the assessment is completed.</div>
+            <p class="sa-error" id="saGateError"></p>
           </div>
-          <div class="approach-step" onclick="setStep(2)">
-            <div class="step-n" id="sn2">02</div>
-            <div><div class="step-tag">Step Two</div><div class="step-title">Expert 1:1 Counselling</div><div class="step-desc">Reflection meets dialogue. Your context is considered alongside education pathways and career options worth exploring.</div></div>
-          </div>
-          <div class="approach-step" onclick="setStep(3)">
-            <div class="step-n" id="sn3">03</div>
-            <div><div class="step-tag">Step Three</div><div class="step-title">Your Confident Future</div><div class="step-desc">A written, personalised roadmap with timelines, resources & next actions. Clarity replaces confusion. Confidence replaces anxiety.</div></div>
-          </div>
-        </div>
-      </div>
-      <div class="approach-panel anim right">
-        <div class="ap-logo"><img src="logo.png" alt="Lume Live"></div>
-        <div class="ap-quote">
-          <blockquote>"The right guidance at the right moment doesn't just change a career — it changes the entire trajectory of a life."</blockquote>
-          <cite>— Sachin Bajaj, Founder & Counselling Psychologist</cite>
-          <div class="ap-metrics">
-            <div class="ap-metric"><div class="num">M.Sc</div><div class="lbl">Clinical Psychology</div></div>
-            <div class="ap-metric"><div class="num">1:1</div><div class="lbl">Personalised Sessions</div></div>
-            <div class="ap-metric"><div class="num">Online</div><div class="lbl">PAN India</div></div>
-            <div class="ap-metric"><div class="num">100%</div><div class="lbl">Confidential</div></div>
-          </div>
+          <aside class="sa-pay">
+            <span class="sa-pay-label">Full Assessment Suite</span>
+            <div class="sa-pay-price"><strong>&#8377;999</strong><s>&#8377;1999</s><span>one-time fee</span></div>
+            <p style="font-size:.78rem;color:var(--mid);line-height:1.55;">Payable once before you begin — covers all five assessments and your combined report.</p>
+            <div class="sa-qr"><img src="lume-upi-qr.png" alt="UPI QR code — pay to Sachin Bajaj (UPI ID sachinbajaj284-1@oksbi)"></div>
+            <div class="sa-upi" onclick="copyUPI()">sachinbajaj284-1@oksbi</div>
+            <ol class="sa-pay-steps">
+              <li><b>1</b><span>Scan the QR or use the UPI ID and pay exactly <strong>&#8377;999</strong>.</span></li>
+              <li><b>2</b><span>Tap below to send your payment screenshot on WhatsApp.</span></li>
+              <li><b>3</b><span>Confirm below, then begin your assessment.</span></li>
+            </ol>
+            <button class="sa-btn gold" type="button" onclick="saSendPayment()">Send Payment Screenshot on WhatsApp</button>
+            <label class="sa-check"><input type="checkbox" id="saPaid">
+              <span>I have paid &#8377;999 and sent my payment screenshot to Lume Live.</span></label>
+            <button class="sa-btn primary" type="button" onclick="saBegin()">Begin Full Assessment &rarr;</button>
+            <p class="sa-pay-note">This page opens WhatsApp for proof of payment. Payment is confirmed manually by Lume Live, as the page is not linked to an automated payment gateway.</p>
+          </aside>
         </div>
       </div>
     </div>
+
+    <!-- SCREEN 2 — assessment stepper -->
+    <div class="sa-screen sa-card" id="saTest" hidden>
+      <div class="sa-progress">
+        <div class="sa-progress-top"><span id="saPartTitle">Part</span><span id="saProgCount">0 / 0</span></div>
+        <div class="sa-track"><span id="saProgBar" style="width:0%"></span></div>
+      </div>
+      <div class="sa-steps" id="saSteps"></div>
+      <p class="sa-qmeta" id="saQMeta"></p>
+      <div id="saQuestions"></div>
+      <div id="saExtra"></div>
+      <p class="sa-error" id="saTestError"></p>
+      <div class="sa-actions">
+        <button class="sa-btn ghost" type="button" id="saPrev" onclick="saMove(-1)">&larr; Previous</button>
+        <span class="sa-spacer"></span>
+        <button class="sa-btn primary" type="button" id="saNext" onclick="saMove(1)">Next Part &rarr;</button>
+        <button class="sa-btn gold" type="button" id="saGenerate" onclick="saGenerate()" hidden>Generate Combined Report</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 3 — combined report -->
+    <div class="sa-screen" id="saReport" hidden></div>
   </div>
 </section>
+
+<script>
+/* ══════════ SELF-ASSESSMENT SUITE (added; self-contained) ══════════ */
+(function(){
+"use strict";
+function esc(v){return String(v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function toast(m){if(typeof showToast==='function')showToast(m);}
+function el(id){return document.getElementById(id);}
+
+/* ─── Scale definitions ─── */
+var scP=[["1","Disagree"],["2","Slightly"],["3","Neutral"],["4","Slightly"],["5","Agree"]];
+var scA=[["1","Never"],["2","Rarely"],["3","Sometimes"],["4","Often"],["5","Usually"],["6","Always"]];
+var scL=[["1","Not true"],["2","Seldom"],["3","Occasionally"],["4","Somewhat"],["5","Very true"]];
+var scBin=[["1","Agree"],["2","Not for me"]];
+
+/* ─── 1. PERSONALITY (IPIP Big Five, 50 items) ─── */
+var personalityItems=["Am the life of the party.","Feel little concern for others.","Am always prepared.","Get stressed out easily.","Have a rich vocabulary.","Don't talk a lot.","Am interested in people.","Leave my belongings around.","Am relaxed most of the time.","Have difficulty understanding abstract ideas.","Feel comfortable around people.","Insult people.","Pay attention to details.","Worry about things.","Have a vivid imagination.","Keep in the background.","Sympathize with others' feelings.","Make a mess of things.","Seldom feel blue.","Am not interested in abstract ideas.","Start conversations.","Am not interested in other people's problems.","Get chores done right away.","Am easily disturbed.","Have excellent ideas.","Have little to say.","Have a soft heart.","Often forget to put things back in their proper place.","Get upset easily.","Do not have a good imagination.","Talk to a lot of different people at parties.","Am not really interested in others.","Like order.","Change my mood a lot.","Am quick to understand things.","Don't like to draw attention to myself.","Take time out for others.","Shirk my duties.","Have frequent mood swings.","Use difficult words.","Don't mind being the center of attention.","Feel others' emotions.","Follow a schedule.","Get irritated easily.","Spend time reflecting on things.","Am quiet around strangers.","Make people feel at ease.","Am exacting in my work.","Often feel blue.","Am full of ideas."];
+var personalityTraits=[
+ {key:"E",name:"Extroversion",base:20,pos:[1,11,21,31,41],neg:[6,16,26,36,46],desc:"How much energy you draw from social interaction. Higher scorers tend to be sociable and outgoing; lower scorers are more reserved and often prefer working independently."},
+ {key:"A",name:"Agreeableness",base:14,pos:[7,17,27,37,42,47],neg:[2,12,22,32],desc:"How much you adjust your behaviour to suit others. Higher scorers tend to be warm and cooperative; lower scorers are more direct and inclined to 'tell it like it is'."},
+ {key:"C",name:"Conscientiousness",base:14,pos:[3,13,23,33,43,48],neg:[8,18,28,38],desc:"Being organised, dependable and hardworking. Higher scorers plan, follow rules and attend to detail; lower scorers are more spontaneous and flexible."},
+ {key:"N",name:"Neuroticism",base:38,pos:[9,19],neg:[4,14,24,29,34,39,44,49],desc:"Emotional reactivity. Higher scorers experience worry and mood changes more readily; lower scorers tend to feel calm and emotionally steady."},
+ {key:"O",name:"Openness",base:8,pos:[5,15,25,35,40,45,50],neg:[10,20,30],desc:"Seeking new experiences and ideas. Higher scorers tend to be imaginative and curious; lower scorers are often practical and down to earth."}
+];
+
+/* ─── 2. RIASEC INTERESTS (42 items, agree / not) ─── */
+var riasecItems=["I like to work on cars.","I like to do puzzles.","I am good at working independently.","I like to work in teams.","I am an ambitious person — I set goals for myself.","I like to organize things (files, desks, offices).","I like to build things.","I like to read about art and music.","I like to have clear instructions to follow.","I like to try to influence or persuade people.","I like to do experiments.","I like to teach or train people.","I like trying to help people solve their problems.","I like to take care of animals.","I wouldn't mind working 8 hours per day in an office.","I like selling things.","I enjoy creative writing.","I enjoy science.","I am quick to take on new responsibilities.","I am interested in healing people.","I enjoy trying to figure out how things work.","I like putting things together or assembling things.","I am a creative person.","I pay attention to details.","I like to do filing or typing.","I like to analyze things (problems, situations).","I like to play instruments or sing.","I enjoy learning about other cultures.","I would like to start my own business.","I like to cook.","I like acting in plays.","I am a practical person.","I like working with numbers or charts.","I like to get into discussions about issues.","I am good at keeping records of my work.","I like to lead.","I like working outdoors.","I would like to work in an office.","I'm good at math.","I like helping people.","I like to draw.","I like to give speeches."];
+/* item index (1-based) -> RIASEC type */
+var riasecMap=["R","I","A","S","E","C","R","A","C","E","I","S","S","R","C","E","A","I","E","S","I","R","A","C","C","I","A","S","E","R","A","R","I","S","C","E","R","C","I","S","A","E"];
+var riasecMeta={
+ R:{name:"Realistic",tag:"the Doers",desc:"Practical, hands-on people who are often good at mechanical, technical, athletic or physical work and enjoy working with tools, machines, animals, plants or the outdoors.",majors:["Agriculture","Health Assistant","Computers","Construction","Mechanic / Machinist","Engineering","Food & Hospitality"],pathways:["Natural Resources","Health Services","Industrial & Engineering Technology","Arts & Communication"]},
+ I:{name:"Investigative",tag:"the Thinkers",desc:"Curious, analytical people who like to observe, learn, investigate and solve problems using ideas and evidence.",majors:["Marine Biology","Engineering","Chemistry","Zoology","Medicine / Surgery","Consumer Economics","Psychology"],pathways:["Health Services","Business","Public & Human Services","Industrial & Engineering Technology"]},
+ A:{name:"Artistic",tag:"the Creators",desc:"Imaginative, original people who like unstructured situations where they can use creativity and self-expression.",majors:["Communications","Cosmetology","Fine & Performing Arts","Photography","Radio & TV","Interior Design","Architecture"],pathways:["Public & Human Services","Arts & Communication"]},
+ S:{name:"Social",tag:"the Helpers",desc:"Warm, supportive people who like to work with and for others — teaching, helping, caring and guiding.",majors:["Counseling","Nursing","Physical Therapy","Travel","Advertising","Public Relations","Education"],pathways:["Health Services","Public & Human Services"]},
+ E:{name:"Enterprising",tag:"the Persuaders",desc:"Energetic, ambitious people who like to lead, persuade, sell and influence others to reach goals.",majors:["Fashion Merchandising","Real Estate","Marketing / Sales","Law","Political Science","International Trade","Banking / Finance"],pathways:["Business","Public & Human Services","Arts & Communication"]},
+ C:{name:"Conventional",tag:"the Organisers",desc:"Careful, detail-oriented people who like order, structure and working with data, records and clear procedures.",majors:["Accounting","Court Reporting","Insurance","Administration","Medical Records","Banking","Data Processing"],pathways:["Health Services","Business","Industrial & Engineering Technology"]}
+};
+
+/* ─── 3. CAREER ANCHORS (40 items) ─── */
+var anchorItems=["I dream of being so good at what I do that my expert advice will be sought continually.","I am most fulfilled in my work when I have been able to integrate and manage the efforts of others.","I dream of having a career that will allow me the freedom to do a job my own way and on my own schedule.","Security and stability are more important to me than freedom and autonomy.","I am always on the lookout for ideas that would permit me to start my own enterprise.","I will feel successful in my career only if I have a feeling of having made a real contribution to the welfare of society.","I dream of a career in which I can solve problems or win out in situations that are extremely challenging.","I would rather leave my organization than be put in a job that would compromise my ability to pursue personal and family concerns.","I will feel successful in my career only if I can develop technical or functional skills to a very high level of competence.","I dream of being in charge of a complex organization and making decisions that affect many people.","I am most fulfilled in my work when I am completely free to define my own tasks, schedules and procedures.","I would rather leave my organization altogether than accept an assignment that would jeopardize my security in that organization.","Building my own business is more important to me than achieving a high-level managerial position in someone else's organization.","I am most fulfilled in my career when I have been able to use my talents in the service of others.","I will feel successful in my career only if I face and overcome very difficult challenges.","I dream of a career that will permit me to integrate my personal, family and work needs.","Becoming a senior functional manager in my area of expertise is more attractive to me than becoming a general manager.","I will feel successful in my career only if I become a general manager in some organization.","I will feel successful in my career only if I achieve complete autonomy and freedom.","I seek jobs in organizations that will give me a sense of security and stability.","I am most fulfilled in my career when I have been able to build something that is entirely the result of my own ideas and efforts.","Using my skills to make the world a better place to live and work is more important to me than achieving a high-level managerial position.","I have been most fulfilled in my career when I have solved seemingly unsolvable problems or won out over seemingly impossible odds.","I feel successful in life only if I have been able to balance my personal, family and career requirements.","I would rather leave my organization than accept a rotational assignment that would take me out of my area of expertise.","Becoming a general manager is more attractive to me than becoming a senior functional manager in my current area of expertise.","The chance to do a job my own way, free of rules and constraints, is more important to me than security.","I am most fulfilled in my work when I feel that I have complete financial and employment security.","I will feel successful in my career only if I succeed in creating or building something that is entirely my own product or idea.","I dream of having a career that makes a real contribution to humanity and society.","I seek out work opportunities that strongly challenge my problem-solving and/or competitive skills.","Balancing the demands of personal and professional life is more important to me than achieving a high-level managerial position.","I am most fulfilled in my work when I have been able to use my special skills and talents.","I would rather leave my organization than accept a job that would take me away from the general managerial track.","I would rather leave my organization than accept a job that would reduce my autonomy and freedom.","I dream of having a career that will allow me to feel a sense of security and stability.","I dream of starting up and building my own business.","I would rather leave my organization than accept an assignment that would undermine my ability to be of service to others.","Working on problems that are almost unsolvable is more important to me than achieving a high-level managerial position.","I have always sought out work opportunities that minimize interference with personal or family concerns."];
+var anchorOrder=["TF","GM","AU","SE","EC","SV","CH","LS"];
+var anchorMeta={
+ TF:{name:"Technical / Functional Competence",short:"Technical / Functional",desc:"You are anchored by the actual content of your work and the feeling of being highly competent in a particular area. Career growth means deepening expertise rather than moving into general management."},
+ GM:{name:"General Managerial Competence",short:"General Management",desc:"You are anchored by the wish to manage, integrate the efforts of others and be accountable for the results of a whole unit. You are drawn to analytical, interpersonal and emotional challenge at a leadership level."},
+ AU:{name:"Autonomy / Independence",short:"Autonomy",desc:"You are anchored by the need to set your own pace, schedule and working style, free of organizational constraints. Independence matters more to you than promotion or status."},
+ SE:{name:"Security / Stability",short:"Security",desc:"You are anchored by the need for a stable, predictable future — steady employment, dependable income and long-term security."},
+ EC:{name:"Entrepreneurial Creativity",short:"Entrepreneurial",desc:"You are anchored by the drive to build or create something entirely your own — a product, a service or an enterprise. Ownership and creation matter deeply to you."},
+ SV:{name:"Service / Dedication to a Cause",short:"Service to a Cause",desc:"You are anchored by the wish to do something meaningful and make the world better. You are drawn to work that contributes to people, communities or important causes."},
+ CH:{name:"Pure Challenge",short:"Pure Challenge",desc:"You are anchored by the wish to overcome difficult obstacles, solve unsolvable problems and win against tough competition. Variety and challenge keep you engaged."},
+ LS:{name:"Lifestyle",short:"Lifestyle",desc:"You are anchored by the wish to integrate the needs of the individual, the family and the career into a balanced whole."}
+};
+
+/* ─── 4. LEADERSHIP SKILLS (18 items) ─── */
+var leaderItems=["I am effective with the detailed aspects of my work.","I usually know ahead of time how people will respond to a new idea or proposal.","I am effective at problem solving.","Filling out forms and working with details comes easily for me.","Understanding the social fabric of the program is important to me.","When problems arise, I immediately address them.","Managing people and resources is one of my strengths.","I am able to sense the emotional undercurrents in my group.","Seeing the big picture comes easily for me.","In my work, I enjoy responding to people's requests and concerns.","I use my emotional energy to motivate others.","Making strategic plans for my program appeals to me.","Obtaining and allocating resources is a challenging aspect of my job.","The key to successful conflict resolution is respecting my opponent.","I enjoy discussing our program's values and philosophy.","I am effective at obtaining resources to support our program.","I work hard to find consensus in conflict situations.","I am flexible about making changes in our organization."];
+var leaderScales=[
+ {name:"Administrative Skills",items:[1,4,7,10,13,16],desc:"Skills needed to run the operation — organising work, handling detail, and obtaining and allocating people and resources to get the job done."},
+ {name:"Interpersonal Skills",items:[2,5,8,11,14,17],desc:"Skills needed to work effectively with people — reading social dynamics, sensing emotions, motivating others and managing conflict constructively."},
+ {name:"Conceptual Skills",items:[3,6,9,12,15,18],desc:"Skills needed to work with ideas — problem solving, seeing the big picture, strategic planning and engaging with the values and direction of the work."}
+];
+
+/* ─── 5. VARK LEARNING STYLE (16 items) ─── */
+var varkItems=[
+ {q:"I need to find the way to a shop that a friend has recommended. I would:",o:["find out where the shop is in relation to somewhere I know.","ask my friend to tell me the directions.","write down the street directions I need to remember.","use a map."],map:["K","A","R","V"]},
+ {q:"A website has a video showing how to make a special graph or chart. There is a person speaking, some lists and words describing what to do and some diagrams. I would learn most from:",o:["seeing the diagrams.","listening.","reading the words.","watching the actions."],map:["V","A","R","K"]},
+ {q:"I want to find out more about a tour that I am going on. I would:",o:["look at details about the highlights and activities on the tour.","use a map and see where the places are.","read about the tour on the itinerary.","talk with the person who planned the tour or others who are going on the tour."],map:["K","V","R","A"]},
+ {q:"When choosing a career or area of study, these are important for me:",o:["Applying my knowledge in real situations.","Communicating with others through discussion.","Working with designs, maps or charts.","Using words well in written communications."],map:["K","A","V","R"]},
+ {q:"When I am learning I:",o:["like to talk things through.","see patterns in things.","use examples and applications.","read books, articles and handouts."],map:["A","V","K","R"]},
+ {q:"I want to save more money and to decide between a range of options. I would:",o:["consider examples of each option using my financial information.","read a print brochure that describes the options in detail.","use graphs showing different options for different time periods.","talk with an expert about the options."],map:["K","R","V","A"]},
+ {q:"I want to learn how to play a new board game or card game. I would:",o:["watch others play the game before joining in.","listen to somebody explaining it and ask questions.","use the diagrams that explain the various stages, moves and strategies in the game.","read the instructions."],map:["K","A","V","R"]},
+ {q:"I have a problem with my heart. I would prefer that the doctor:",o:["gave me something to read to explain what was wrong.","used a plastic model to show me what was wrong.","described what was wrong.","showed me a diagram of what was wrong."],map:["R","K","A","V"]},
+ {q:"I want to learn to do something new on a computer. I would:",o:["read the written instructions that came with the program.","talk with people who know about the program.","start using it and learn by trial and error.","follow the diagrams in a book."],map:["R","A","K","V"]},
+ {q:"When learning from the Internet I like:",o:["videos showing how to do or make things.","interesting design and visual features.","interesting written descriptions, lists and explanations.","audio channels where I can listen to podcasts or interviews."],map:["K","V","R","A"]},
+ {q:"I want to learn about a new project. I would ask for:",o:["diagrams to show the project stages with charts of benefits and costs.","a written report describing the main features of the project.","an opportunity to discuss the project.","examples where the project has been used successfully."],map:["V","R","A","K"]},
+ {q:"I want to learn how to take better photos. I would:",o:["ask questions and talk about the camera and its features.","use the written instructions about what to do.","use diagrams showing the camera and what each part does.","use examples of good and poor photos showing how to improve them."],map:["A","R","V","K"]},
+ {q:"I prefer a presenter or a teacher who uses:",o:["demonstrations, models or practical sessions.","question and answer, talk, group discussion, or guest speakers.","handouts, books, or readings.","diagrams, charts, maps or graphs."],map:["K","A","R","V"]},
+ {q:"I have finished a competition or test and I would like some feedback. I would like to have feedback:",o:["using examples from what I have done.","using a written description of my results.","from somebody who talks it through with me.","using graphs showing what I achieved."],map:["K","R","A","V"]},
+ {q:"I want to find out about a house or an apartment. Before visiting it I would want:",o:["to view a video of the property.","a discussion with the owner.","a printed description of the rooms and features.","a plan showing the rooms and a map of the area."],map:["K","A","R","V"]},
+ {q:"I want to assemble a wooden table that came in parts (kitset). I would learn best from:",o:["diagrams showing each stage of the assembly.","advice from someone who has done it before.","written instructions that came with the parts for the table.","watching a video of a person assembling a similar table."],map:["V","A","R","K"]}
+];
+var varkMeta={
+ V:{name:"Visual",desc:"You learn well from diagrams, charts, maps, layouts and information shown in picture form.",tip:"Convert notes into diagrams, mind-maps and flowcharts; use colour, symbols and spatial layout."},
+ A:{name:"Aural",desc:"You learn well by listening and talking — discussions, explanations and talking ideas through.",tip:"Discuss topics aloud, explain ideas to others, record and replay summaries, join study groups."},
+ R:{name:"Read / Write",desc:"You learn well from words — reading, making notes, lists and written explanations.",tip:"Rewrite notes in your own words, make lists and headings, read texts and turn diagrams into statements."},
+ K:{name:"Kinesthetic",desc:"You learn well by doing — hands-on practice, real examples, trial and error and concrete experience.",tip:"Use real examples and case studies, practise tasks physically, connect ideas to first-hand experience."}
+};
+
+/* ─── Tool registry & part order ─── */
+var tools={
+ personality:{id:"personality",icon:"🧭",name:"Personality Profile",tag:"Big Five — 50 items",type:"likert",scale:scP,items:personalityItems,
+   blurb:"Profiles the five core personality dimensions.",
+   guide:"For each statement, mark how much you agree. There are no right or wrong answers."},
+ riasec:{id:"riasec",icon:"🎨",name:"RIASEC Interests",tag:"Holland Codes — 42 items",type:"binary",scale:scBin,items:riasecItems,
+   blurb:"Reveals your strongest career-interest areas.",
+   guide:"Read each statement. Choose Agree if it sounds like you — there are no wrong answers."},
+ anchors:{id:"anchors",icon:"⚓",name:"Career Anchors",tag:"Career Orientations — 40 items",type:"likert",scale:scA,items:anchorItems,
+   blurb:"Identifies the values you would least give up.",
+   guide:"Rate each statement from 1 (never true) to 6 (always true). Work quickly and honestly."},
+ leadership:{id:"leadership",icon:"🎯",name:"Leadership Skills",tag:"Leadership Profile — 18 items",type:"likert",scale:scL,items:leaderItems,
+   blurb:"Profiles administrative, interpersonal & conceptual skills.",
+   guide:"Place yourself in the role of a program manager and rate how true each statement is."},
+ vark:{id:"vark",icon:"📚",name:"Learning Style (VARK)",tag:"VARK — 16 questions",type:"multi",items:varkItems,
+   blurb:"Shows how you take in and process information best.",
+   guide:"Choose the option(s) that best match what you would really do. You may pick more than one, or leave a question blank if none apply."}
+};
+var order=["personality","riasec","anchors","leadership","vark"];
+var TOTAL=order.reduce(function(t,k){return t+tools[k].items.length;},0);
+
+/* ─── State ─── */
+var S={name:"",phone:"",paid:false,handoff:false,identity:"",part:0,answers:{},picks:[]};
+order.forEach(function(k){S.answers[k]={};});
+
+function show(screen){["saGate","saTest","saReport"].forEach(function(s){el(s).hidden=(s!==screen);});}
+
+/* ─── Gate ─── */
+function renderToolList(){
+ el("saToolList").innerHTML=order.map(function(k,i){
+  var t=tools[k];
+  return '<div class="sa-list-item"><div class="sa-li-ico">'+t.icon+'</div>'+
+   '<div class="sa-li-txt"><b>'+(i+1)+'. '+esc(t.name)+'</b>'+
+   '<span>'+esc(t.blurb)+'</span> <em>'+esc(t.tag)+'</em></div></div>';
+ }).join("");
+}
+function validateGate(){
+ var err=el("saGateError");
+ var name=el("saName").value.trim();
+ var phone=el("saPhone").value.trim();
+ if(!name){err.textContent="Please enter the name for the report.";return false;}
+ if(phone.replace(/\D/g,"").length<10){err.textContent="Please enter a valid WhatsApp number.";return false;}
+ if(!el("saPurpose").checked){err.textContent="Please acknowledge the purpose of the assessment.";return false;}
+ S.name=name;S.phone=phone;err.textContent="";return true;
+}
+window.saSendPayment=function(){
+ if(!validateGate())return;
+ var msg=["Hi Sachin!","","I would like to begin the Lume Live Self-Assessment Suite (all five assessments).",
+  "Name: "+S.name,"WhatsApp: "+S.phone,"Fee: Rs.999","",
+  "I will attach my payment screenshot here for confirmation before starting."].join("\n");
+ S.handoff=true;S.identity=S.name+"|"+S.phone;
+ window.open("https://wa.me/917015671280?text="+encodeURIComponent(msg),"_blank","noopener");
+ toast("Attach your payment screenshot in WhatsApp, then confirm below to begin.");
+};
+window.saBegin=function(){
+ var err=el("saGateError");
+ if(!validateGate())return;
+ if(!S.handoff||S.identity!==(S.name+"|"+S.phone)){
+  err.textContent="Please send your \u20B9999 payment screenshot on WhatsApp for these details before starting.";return;}
+ if(!el("saPaid").checked){err.textContent="Please confirm that you have paid and sent your payment screenshot.";return;}
+ err.textContent="";S.paid=true;S.part=0;
+ show("saTest");
+ renderPart();
+ el("saTest").scrollIntoView({behavior:"smooth",block:"start"});
+};
+
+/* ─── Stepper / questionnaire ─── */
+function answeredIn(k){
+ var t=tools[k],a=S.answers[k],n=0;
+ if(t.type==="multi"){for(var q in a){if(a[q]&&a[q].length)n++;}}
+ else{n=Object.keys(a).length;}
+ return n;
+}
+function partComplete(k){
+ var t=tools[k];
+ if(t.type==="multi")return answeredIn(k)>=10;
+ if(answeredIn(k)<t.items.length)return false;
+ if(k==="anchors"&&S.picks.length!==3)return false;
+ return true;
+}
+function updateProgress(){
+ var done=order.reduce(function(s,k){return s+answeredIn(k);},0);
+ el("saProgCount").textContent=done+" / "+TOTAL;
+ el("saProgBar").style.width=Math.round(done/TOTAL*100)+"%";
+}
+function renderSteps(){
+ el("saSteps").innerHTML=order.map(function(k,i){
+  var t=tools[k];
+  var cls="sa-step"+(i===S.part?" active":"")+(partComplete(k)?" done":"");
+  return '<div class="'+cls+'" onclick="saJump('+i+')">'+
+   '<div class="sa-step-n">'+(partComplete(k)?"\u2713":(i+1))+'</div>'+
+   '<div class="sa-step-t">'+esc(t.name)+'<small>Part '+(i+1)+' of 5</small></div></div>';
+ }).join("");
+}
+window.saJump=function(i){S.part=i;renderPart();el("saTest").scrollIntoView({behavior:"smooth",block:"start"});};
+window.saMove=function(d){
+ var n=S.part+d;
+ if(n<0||n>order.length-1)return;
+ S.part=n;renderPart();el("saTest").scrollIntoView({behavior:"smooth",block:"start"});
+};
+function renderPart(){
+ var k=order[S.part],t=tools[k];
+ el("saPartTitle").textContent="Part "+(S.part+1)+" of 5 — "+t.name;
+ el("saQMeta").textContent=t.guide;
+ el("saTestError").textContent="";
+ var html;
+ if(t.type==="likert"||t.type==="binary"){
+  html=t.items.map(function(text,i){
+   var qid=i+1,cur=S.answers[k][qid];
+   return '<div class="sa-q" id="saQ'+qid+'"><div class="sa-q-num">Q'+qid+'</div>'+
+    '<div class="sa-q-text">'+esc(text)+'</div>'+
+    '<div class="sa-likert'+(t.type==="binary"?" bin":"")+'">'+
+     t.scale.map(function(s){
+      var ck=String(cur)===s[0]?" checked":"";
+      return '<label><input type="radio" name="sa_'+k+'_'+qid+'" value="'+s[0]+'"'+ck+
+        ' onchange="saSetRadio(\''+k+'\','+qid+','+s[0]+')"><span class="sa-lk-n">'+s[0]+'</span>'+
+        '<span class="sa-lk-w">'+esc(s[1])+'</span></label>';
+     }).join("")+'</div></div>';
+  }).join("");
+ }else{
+  html=t.items.map(function(item,i){
+   var qid=i+1,cur=S.answers[k][qid]||[];
+   return '<div class="sa-q" id="saQ'+qid+'"><div class="sa-q-num">Q'+qid+'</div>'+
+    '<div class="sa-q-text">'+esc(item.q)+'</div>'+
+    '<div class="sa-hint">Select all that apply — or leave blank if none fit.</div>'+
+    '<div class="sa-opts">'+item.o.map(function(opt,oi){
+      var ck=cur.indexOf(oi)>-1?" checked":"";
+      return '<label class="sa-opt"><input type="checkbox" value="'+oi+'"'+ck+
+        ' onchange="saSetMulti(\''+k+'\','+qid+','+oi+',this.checked)"><span>'+esc(opt)+'</span></label>';
+     }).join("")+'</div></div>';
+  }).join("");
+ }
+ el("saQuestions").innerHTML=html;
+ /* anchors pick-3 sub-step */
+ if(k==="anchors"){
+  el("saExtra").innerHTML='<h3 class="sa-subhead">Finally — your three most-true statements</h3>'+
+   '<p style="font-size:.82rem;color:var(--mid);line-height:1.65;">Look back over your answers and tick the <strong>three statements that feel most true for you</strong>. As the scoring method requires, each of these receives an additional four points.</p>'+
+   '<div class="sa-pick3" id="saPick3">'+anchorItems.map(function(text,i){
+     var qid=i+1,ck=S.picks.indexOf(qid)>-1?" checked":"";
+     return '<label data-q="'+qid+'"><input type="checkbox" value="'+qid+'"'+ck+
+       ' onchange="saTogglePick('+qid+')"><span><strong>Q'+qid+'.</strong> '+esc(text)+'</span></label>';
+   }).join("")+'</div>';
+  refreshPick3Dim();
+ }else{el("saExtra").innerHTML="";}
+ el("saPrev").disabled=S.part===0;
+ el("saNext").hidden=S.part===order.length-1;
+ el("saGenerate").hidden=S.part!==order.length-1;
+ renderSteps();updateProgress();
+}
+window.saSetRadio=function(k,qid,v){
+ S.answers[k][qid]=Number(v);
+ var q=el("saQ"+qid);if(q)q.classList.remove("flag");
+ renderSteps();updateProgress();
+};
+window.saSetMulti=function(k,qid,oi,checked){
+ if(!S.answers[k][qid])S.answers[k][qid]=[];
+ var arr=S.answers[k][qid],p=arr.indexOf(oi);
+ if(checked&&p===-1)arr.push(oi);
+ if(!checked&&p>-1)arr.splice(p,1);
+ renderSteps();updateProgress();
+};
+function refreshPick3Dim(){
+ var full=S.picks.length>=3;
+ var labels=el("saPick3").querySelectorAll("label");
+ labels.forEach(function(l){
+  var q=Number(l.getAttribute("data-q"));
+  l.classList.toggle("dim",full&&S.picks.indexOf(q)===-1);
+ });
+}
+window.saTogglePick=function(qid){
+ var p=S.picks.indexOf(qid);
+ if(p===-1){
+  if(S.picks.length>=3){
+   var box=el("saPick3").querySelector('input[value="'+qid+'"]');
+   if(box)box.checked=false;
+   el("saTestError").textContent="You can choose only three statements. Deselect one first.";
+   return;
+  }
+  S.picks.push(qid);
+ }else{S.picks.splice(p,1);}
+ el("saTestError").textContent="";
+ refreshPick3Dim();renderSteps();
+};
+
+/* ─── Generate ─── */
+window.saGenerate=function(){
+ for(var i=0;i<order.length;i++){
+  var k=order[i];
+  if(!partComplete(k)){
+   S.part=i;renderPart();
+   var t=tools[k];
+   if(t.type!=="multi"){
+    for(var q=1;q<=t.items.length;q++){
+     if(!S.answers[k][q]){var qe=el("saQ"+q);if(qe)qe.classList.add("flag");}
+    }
+   }
+   var msg=t.type==="multi"?"Please answer at least 10 questions in this part for a meaningful result.":
+     (k==="anchors"&&answeredIn(k)>=40?"Please tick exactly three most-true statements below.":"Please answer every statement in this part before generating your report.");
+   el("saTestError").textContent=msg;
+   el("saTest").scrollIntoView({behavior:"smooth",block:"start"});
+   return;
+  }
+ }
+ el("saReport").innerHTML=buildReport();
+ show("saReport");
+ el("saReport").scrollIntoView({behavior:"smooth",block:"start"});
+ setTimeout(animateBars,120);
+};
+
+/* ─── Scoring ─── */
+function scorePersonality(){
+ return personalityTraits.map(function(tr){
+  var v=tr.base,a=S.answers.personality;
+  tr.pos.forEach(function(q){v+=a[q];});
+  tr.neg.forEach(function(q){v-=a[q];});
+  v=Math.max(0,Math.min(40,v));
+  return {key:tr.key,name:tr.name,score:v,max:40,pct:Math.round(v/40*100),
+   band:v>=27?"hi":(v<=13?"lo":"mid"),word:v>=27?"Higher":(v<=13?"Lower":"Mid-range"),desc:tr.desc};
+ });
+}
+function scoreRiasec(){
+ var c={R:0,I:0,A:0,S:0,E:0,C:0},a=S.answers.riasec;
+ for(var q in a){if(Number(a[q])===1)c[riasecMap[Number(q)-1]]++;}
+ var rows=["R","I","A","S","E","C"].map(function(t){
+  return {key:t,name:riasecMeta[t].name,tag:riasecMeta[t].tag,desc:riasecMeta[t].desc,
+   majors:riasecMeta[t].majors,pathways:riasecMeta[t].pathways,score:c[t],max:7,pct:Math.round(c[t]/7*100)};
+ });
+ rows.sort(function(x,y){return y.score-x.score;});
+ return rows;
+}
+function scoreAnchors(){
+ var tot={},a=S.answers.anchors;anchorOrder.forEach(function(x){tot[x]=0;});
+ for(var q=1;q<=40;q++){tot[anchorOrder[(q-1)%8]]+=a[q];}
+ S.picks.forEach(function(q){tot[anchorOrder[(q-1)%8]]+=4;});
+ return anchorOrder.map(function(x){
+  return {key:x,name:anchorMeta[x].name,short:anchorMeta[x].short,desc:anchorMeta[x].desc,score:tot[x],max:42};
+ }).sort(function(p,q){return q.score-p.score;});
+}
+function scoreLeadership(){
+ var a=S.answers.leadership;
+ return leaderScales.map(function(sc){
+  var v=0;sc.items.forEach(function(q){v+=a[q];});
+  var band,word;
+  if(v>=26){band="hi";word="Very high";}else if(v>=21){band="hi";word="High";}
+  else if(v>=16){band="mid";word="Moderate";}else if(v>=11){band="lo";word="Low";}
+  else{band="lo";word="Very low";}
+  return {name:sc.name,desc:sc.desc,score:v,max:30,pct:Math.round((v-6)/24*100),band:band,word:word};
+ });
+}
+function scoreVark(){
+ var c={V:0,A:0,R:0,K:0},a=S.answers.vark;
+ for(var q in a){(a[q]||[]).forEach(function(oi){c[varkItems[Number(q)-1].map[oi]]++;});}
+ var rows=["V","A","R","K"].map(function(t){
+  return {key:t,name:varkMeta[t].name,desc:varkMeta[t].desc,tip:varkMeta[t].tip,score:c[t]};
+ });
+ rows.sort(function(x,y){return y.score-x.score;});
+ return rows;
+}
+
+/* ─── Visual helpers ─── */
+function radar(axes,color){
+ var n=axes.length,cx=130,cy=130,R=82;
+ function pt(i,r){var ang=-Math.PI/2+i*2*Math.PI/n;return [cx+R*r*Math.cos(ang),cy+R*r*Math.sin(ang)];}
+ var g="";
+ [0.34,0.67,1].forEach(function(r){
+  g+='<polygon points="'+axes.map(function(_,i){var q=pt(i,r);return q[0].toFixed(1)+","+q[1].toFixed(1);}).join(" ")+'" fill="none" stroke="#E2E9E8" stroke-width="1"/>';
+ });
+ axes.forEach(function(_,i){var q=pt(i,1);g+='<line x1="'+cx+'" y1="'+cy+'" x2="'+q[0].toFixed(1)+'" y2="'+q[1].toFixed(1)+'" stroke="#E2E9E8" stroke-width="1"/>';});
+ var poly=axes.map(function(a,i){var q=pt(i,Math.max(0.03,a.val));return q[0].toFixed(1)+","+q[1].toFixed(1);}).join(" ");
+ var dots="",labels="";
+ axes.forEach(function(a,i){
+  var q=pt(i,Math.max(0.03,a.val));
+  dots+='<circle cx="'+q[0].toFixed(1)+'" cy="'+q[1].toFixed(1)+'" r="3.4" fill="'+color+'"/>';
+  var l=pt(i,1.26),x=l[0],y=l[1];
+  var anc=x<cx-5?"end":(x>cx+5?"start":"middle");
+  labels+='<text x="'+x.toFixed(1)+'" y="'+(y+3.5).toFixed(1)+'" text-anchor="'+anc+'" font-size="9.5" font-weight="700" fill="#4A6060">'+esc(a.label)+'</text>';
+ });
+ return '<svg viewBox="0 0 260 260" class="sa-radar" xmlns="http://www.w3.org/2000/svg">'+g+
+  '<polygon points="'+poly+'" fill="'+color+'" fill-opacity="0.17" stroke="'+color+'" stroke-width="2"/>'+dots+labels+'</svg>';
+}
+function bar(name,valText,pct,band,word){
+ var b=band?'<span class="sa-band '+band+'">'+esc(word)+'</span>':'';
+ return '<div class="sa-bar-row"><div class="sa-bar-head"><b>'+esc(name)+'</b>'+
+  '<span class="sa-bar-meta"><span class="sa-bar-val">'+esc(valText)+'</span>'+b+'</span></div>'+
+  '<div class="sa-bar"><span class="sa-bar-fill" data-w="'+pct+'"></span></div></div>';
+}
+function animateBars(){
+ var root=el("saReport");if(!root)return;
+ root.querySelectorAll(".sa-bar-fill").forEach(function(f){
+  f.style.width=(f.getAttribute("data-w")||0)+"%";
+ });
+}
+
+/* ─── Report assembly ─── */
+function buildPanels(){
+ var P=scorePersonality(),R=scoreRiasec(),A=scoreAnchors(),L=scoreLeadership(),V=scoreVark();
+ var topP=P.slice().sort(function(a,b){return b.score-a.score;})[0];
+ var code=R.slice(0,3).map(function(r){return r.key;}).join("");
+ var anchor=A[0];
+ var topL=L.slice().sort(function(a,b){return b.score-a.score;})[0];
+ var topV=V[0];
+ var multiV=V.filter(function(r){return r.score>0&&topV.score-r.score<=1;});
+ var learnLabel=multiV.length>1?"Multimodal":topV.name;
+
+ /* SNAPSHOT */
+ var top3=R.slice(0,3);
+ var pathSet=[];top3.forEach(function(r){r.pathways.forEach(function(p){if(pathSet.indexOf(p)===-1)pathSet.push(p);});});
+ var fields=[];top3.slice(0,2).forEach(function(r){r.majors.slice(0,4).forEach(function(m){if(fields.indexOf(m)===-1)fields.push(m);});});
+ var syn="Your Holland interest code is <strong>"+code+"</strong> — led by "+top3[0].name.toLowerCase()+
+  ", "+top3[1].name.toLowerCase()+" and "+top3[2].name.toLowerCase()+" interests. Your most pronounced personality dimension is <strong>"+
+  topP.name.toLowerCase()+"</strong>, and your strongest career anchor is <strong>"+anchor.short+
+  "</strong> — the orientation you would be least willing to give up. In a leadership setting your <strong>"+
+  topL.name.toLowerCase()+"</strong> stand out, and you tend to absorb new information best through "+
+  (multiV.length>1?"several modes combined":topV.name.toLowerCase()+" approaches")+". Together these point toward "+
+  (top3[0].tag)+"-style work, balanced against your need for "+anchor.short.toLowerCase()+".";
+ var snap='<div class="sa-snap">'+
+  '<div class="sa-snap-card"><small>Interest Code</small><b>'+code+'</b><span>'+esc(top3[0].name+" · "+top3[1].name+" · "+top3[2].name)+'</span></div>'+
+  '<div class="sa-snap-card"><small>Top Personality</small><b>'+esc(topP.name)+'</b><span>'+topP.score+' / 40 · '+topP.word+'</span></div>'+
+  '<div class="sa-snap-card"><small>Career Anchor</small><b>'+esc(anchor.short)+'</b><span>'+anchor.score+' points</span></div>'+
+  '<div class="sa-snap-card"><small>Leadership Strength</small><b>'+esc(topL.name.replace(" Skills",""))+'</b><span>'+topL.score+' / 30 · '+topL.word+'</span></div>'+
+  '<div class="sa-snap-card"><small>Learning Style</small><b>'+esc(learnLabel)+'</b><span>'+(multiV.length>1?multiV.map(function(r){return r.key;}).join("/"):"VARK preference")+'</span></div>'+
+  '</div>'+
+  '<div class="sa-syn"><p>'+syn+'</p></div>'+
+  '<h4>Career directions to explore together</h4>'+
+  '<p>Drawn from your three leading interest areas — to investigate in counselling, not as fixed recommendations:</p>'+
+  '<div class="sa-tags">'+pathSet.map(function(p){return '<span>'+esc(p)+'</span>';}).join("")+'</div>'+
+  '<h4>Sample fields linked to your code</h4>'+
+  '<div class="sa-tags">'+fields.map(function(f){return '<span>'+esc(f)+'</span>';}).join("")+'</div>'+
+  '<h4>How to use this report</h4>'+
+  '<ul class="sa-rlist"><li>Read each section and note what feels accurate and what surprises you.</li>'+
+  '<li>Look for themes that repeat across assessments — these are usually the most reliable.</li>'+
+  '<li>Bring the report to a counselling conversation to turn insight into concrete next steps.</li></ul>';
+
+ /* PERSONALITY */
+ var pers='<div class="sa-split">'+radar(P.map(function(r){return {label:r.key,val:r.score/40};}),"#0A6E6E")+
+  '<div><p>Each dimension is scored from 0 to 40, where 20 is the neutral mid-point. A higher or lower score is simply a preference — every pattern has its own strengths.</p></div></div>'+
+  P.map(function(r){return bar(r.name+" ("+r.key+")",r.score+" / 40",r.pct,r.band,r.word)+
+   '<p class="sa-bar-desc">'+esc(r.desc)+'</p>';}).join("");
+
+ /* RIASEC */
+ var riasec='<div class="sa-split">'+radar(R.slice().sort(function(a,b){return "RIASEC".indexOf(a.key)-"RIASEC".indexOf(b.key);}).map(function(r){return {label:r.key,val:r.score/7};}),"#C9933A")+
+  '<div><p>Your interest code is the three highest-scoring areas: <strong>'+code+'</strong>. Each area is scored from 0 to 7 (the number of statements you agreed with).</p></div></div>'+
+  R.map(function(r){return bar(r.name+" ("+r.key+")",r.score+" / 7",r.pct,r.score>=5?"hi":(r.score<=2?"lo":"mid"),r.score>=5?"Strong":(r.score<=2?"Lower":"Moderate"));}).join("")+
+  '<h4>Your three leading interest areas</h4>'+
+  top3.map(function(r){
+   return '<div class="sa-typecard"><h5>'+esc(r.name)+' &mdash; '+esc(r.tag)+'</h5>'+
+    '<p>'+esc(r.desc)+'</p>'+
+    '<div class="sa-tags">'+r.majors.map(function(m){return '<span>'+esc(m)+'</span>';}).join("")+'</div></div>';
+  }).join("");
+
+ /* ANCHORS */
+ var anch='<div class="sa-split">'+radar(A.map(function(r){return {label:r.key,val:r.score/42};}),"#1A2E5E")+
+  '<div><p>Your highest-scoring anchor is your likely <strong>primary career anchor</strong> — the orientation you would be least willing to give up if forced to choose.</p></div></div>'+
+  '<div class="sa-syn"><p><strong>Primary anchor: '+esc(anchor.name)+'.</strong> '+esc(anchor.desc)+'</p></div>'+
+  A.map(function(r,i){return bar((i+1)+". "+r.name,r.score+" pts",Math.round(r.score/42*100),
+   i===0?"hi":(i<3?"mid":"lo"),i===0?"Primary":(i<3?"Strong":"Lower"));}).join("")+
+  '<p style="margin-top:10px;">The three highest anchors usually matter most. Where scores are close, it can mean you have not yet had to choose between them.</p>';
+
+ /* LEADERSHIP */
+ var lead='<p>Each skill area is scored from 6 to 30. Comparing the three shows where your leadership strengths and growth areas lie.</p>'+
+  L.map(function(r){return bar(r.name,r.score+" / 30",r.pct,r.band,r.word)+
+   '<p class="sa-bar-desc">'+esc(r.desc)+'</p>';}).join("")+
+  '<h4>Interpretation</h4><p>Bands: 26&ndash;30 very high, 21&ndash;25 high, 16&ndash;20 moderate, 11&ndash;15 low, 6&ndash;10 very low. Effective leaders draw on all three skill sets; a noticeably lower area is simply a useful place to focus development.</p>';
+
+ /* VARK */
+ var lrn='<p>'+(multiV.length>1
+   ? "Your scores are fairly even — a multimodal style. You draw on more than one mode rather than a single strong preference."
+   : "Your clearest learning preference is "+esc(topV.name)+".")+'</p>'+
+  V.map(function(r){return bar(r.name+" ("+r.key+")",String(r.score),Math.round(r.score/16*100),
+   r.score===topV.score&&r.score>0?"hi":"mid","");}).join("")+
+  '<h4>Study strategies that suit you</h4><ul class="sa-rlist">'+
+  (multiV.length>1?multiV:[topV]).map(function(r){return '<li><strong>'+esc(r.name)+':</strong> '+esc(r.tip)+'</li>';}).join("")+
+  '</ul><p>VARK describes a learning preference, not an ability or a limit — combining modes often works best.</p>';
+
+ return {
+  code:code,topP:topP,anchor:anchor,topL:topL,learnLabel:learnLabel,
+  panels:[
+   {id:"snap",label:"Snapshot",html:'<h4>Your Integrated Snapshot</h4>'+snap},
+   {id:"pers",label:"Personality",html:'<h4>Personality Profile</h4>'+pers},
+   {id:"riasec",label:"Interests",html:'<h4>RIASEC Career Interests</h4>'+riasec},
+   {id:"anch",label:"Career Anchors",html:'<h4>Career Anchors</h4>'+anch},
+   {id:"lead",label:"Leadership",html:'<h4>Leadership Skills</h4>'+lead},
+   {id:"lrn",label:"Learning Style",html:'<h4>Learning Style (VARK)</h4>'+lrn}
+  ]
+ };
+}
+
+function buildReport(){
+ var d=buildPanels();
+ S.report=d;
+ var date=new Intl.DateTimeFormat("en-IN",{dateStyle:"long"}).format(new Date());
+ var disp=S.name?esc(S.name):"Personal Report";
+ var tabs=d.panels.map(function(p,i){
+  return '<button class="sa-rtab'+(i===0?" active":"")+'" type="button" onclick="saTab(\''+p.id+'\')" data-tab="'+p.id+'">'+esc(p.label)+'</button>';
+ }).join("");
+ var panels=d.panels.map(function(p,i){
+  return '<div class="sa-rpanel" data-panel="'+p.id+'"'+(i===0?"":" hidden")+'>'+p.html+'</div>';
+ }).join("");
+ return '<div class="sa-rpt">'+
+  '<div class="sa-cover"><span class="sa-cover-brand">Lume Live</span>'+
+   '<h3>'+disp+'</h3><p>Combined Self-Assessment Report &mdash; Five Assessments</p>'+
+   '<div class="sa-chips">'+
+    '<div class="sa-chip"><small>Interest Code</small><b>'+d.code+'</b></div>'+
+    '<div class="sa-chip"><small>Top Personality</small><b>'+esc(d.topP.name)+'</b></div>'+
+    '<div class="sa-chip"><small>Career Anchor</small><b>'+esc(d.anchor.short)+'</b></div>'+
+    '<div class="sa-chip"><small>Learning Style</small><b>'+esc(d.learnLabel)+'</b></div>'+
+   '</div></div>'+
+  '<nav class="sa-rtabs">'+tabs+'</nav>'+
+  '<div class="sa-rbody"><div id="saRPanels">'+panels+'</div>'+
+   '<p style="font-size:.74rem;color:var(--mid);margin-top:18px;">Report generated '+date+' for '+disp+'.</p>'+
+   '<div class="sa-disclaim"><strong>Important note</strong>This combined report brings together five educational self-assessment questionnaires completed for personal reflection and as a starting point for a counselling discussion. It is not a psychological diagnosis, an aptitude test, or a selection or admissions decision tool. Results describe self-reported preferences on the day the assessment was completed and can change over time.</div>'+
+   '<div class="sa-rfoot">'+
+    '<label class="sa-check"><input type="checkbox" id="saShareConsent"><span>I consent to share a summary of this combined report with a Lume Live counsellor on WhatsApp.</span></label>'+
+    '<p class="sa-error" id="saShareError"></p>'+
+    '<div class="sa-actions"><button class="sa-btn gold" type="button" onclick="saShare()">Send Summary on WhatsApp</button>'+
+    '<button class="sa-btn ghost" type="button" onclick="saPrint()">Print / Save as PDF</button></div>'+
+   '</div>'+
+  '</div></div>';
+}
+window.saTab=function(id){
+ document.querySelectorAll(".sa-rtab").forEach(function(b){b.classList.toggle("active",b.getAttribute("data-tab")===id);});
+ document.querySelectorAll(".sa-rpanel").forEach(function(p){p.hidden=p.getAttribute("data-panel")!==id;});
+ var act=document.querySelector('.sa-rpanel[data-panel="'+id+'"]');
+ if(act)act.querySelectorAll(".sa-bar-fill").forEach(function(f){f.style.width=(f.getAttribute("data-w")||0)+"%";});
+};
+
+/* ─── Share ─── */
+window.saShare=function(){
+ var c=el("saShareConsent");
+ if(!c||!c.checked){el("saShareError").textContent="Please tick the consent box before sharing.";return;}
+ el("saShareError").textContent="";
+ var d=S.report;
+ var P=scorePersonality(),A=scoreAnchors(),L=scoreLeadership(),V=scoreVark(),R=scoreRiasec();
+ var msg=["Hi Sachin!","",
+  "I have completed the Lume Live Self-Assessment Suite (all five assessments) and consent to discuss my combined report.",
+  "Name: "+(S.name||"Not given"),"",
+  "Headline results:",
+  "- Holland interest code: "+d.code,
+  "- Top personality dimension: "+d.topP.name+" ("+d.topP.score+"/40)",
+  "- Primary career anchor: "+d.anchor.short+" ("+d.anchor.score+" pts)",
+  "- Strongest leadership area: "+d.topL.name+" ("+d.topL.score+"/30)",
+  "- Learning style: "+d.learnLabel,
+  "","Please guide me on what these results suggest."].join("\n");
+ window.open("https://wa.me/917015671280?text="+encodeURIComponent(msg),"_blank","noopener");
+ toast("Your combined result summary is ready to send on WhatsApp.");
+};
+
+/* ─── Print (standalone window — independent of page print CSS) ─── */
+window.saPrint=function(){
+ var d=S.report,disp=S.name?esc(S.name):"Personal Report";
+ var w=window.open("","_blank");
+ if(!w){toast("Please allow pop-ups to print the report.");return;}
+ var css='body{font-family:Arial,Helvetica,sans-serif;color:#1A2C2C;margin:0;padding:22px 28px;}'+
+  '.cover{background:#102650;color:#fff;border-radius:13px;padding:22px 24px;margin-bottom:18px;}'+
+  '.brand{font-size:11px;letter-spacing:2.4px;text-transform:uppercase;color:#E8B95A;font-weight:bold;}'+
+  '.cover h1{font-size:23px;margin:6px 0 2px;}.cover p{font-size:12px;color:#cfd8e6;margin:0 0 8px;}'+
+  '.chips{display:flex;flex-wrap:wrap;gap:7px;}'+
+  '.chip{background:rgba(255,255,255,.13);border-radius:9px;padding:6px 10px;font-size:11px;}'+
+  '.chip small{display:block;font-size:8px;text-transform:uppercase;color:#9fb0c8;}'+
+  '.chip b{font-size:12px;}'+
+  'h4{font-size:15px;color:#0D1B40;border-bottom:2px solid #E8B95A;padding-bottom:4px;margin:20px 0 9px;break-after:avoid;}'+
+  'h5{font-size:12.5px;color:#0D1B40;margin:4px 0 2px;}'+
+  'p{font-size:12px;line-height:1.6;color:#3a4a4a;}'+
+  '.sa-bar-row{margin:8px 0;}.sa-bar-head{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;}'+
+  '.sa-bar-head b{color:#0D1B40;}.sa-bar-meta{display:flex;gap:7px;}.sa-bar-val{font-weight:bold;color:#0A6E6E;}'+
+  '.sa-band{font-size:9px;font-weight:bold;padding:2px 7px;border-radius:11px;background:#ECF1F8;color:#2d4a7a;}'+
+  '.sa-bar{height:8px;background:#e6edec;border-radius:5px;overflow:hidden;}'+
+  '.sa-bar-fill{display:block;height:100%;background:#0A6E6E;}'+
+  '.sa-bar-desc{font-size:10.5px;color:#5a6a6a;margin-top:2px;}'+
+  '.sa-snap{display:flex;flex-wrap:wrap;gap:8px;}'+
+  '.sa-snap-card{border:1px solid #E2E9E8;border-radius:11px;padding:9px 12px;min-width:120px;}'+
+  '.sa-snap-card small{font-size:8px;text-transform:uppercase;color:#C9933A;font-weight:bold;}'+
+  '.sa-snap-card b{display:block;font-size:13px;color:#0D1B40;}.sa-snap-card span{font-size:10px;color:#5a6a6a;}'+
+  '.sa-syn{background:#ECF7F6;border:1px solid #D6EAE7;border-radius:11px;padding:11px 14px;margin:9px 0;}'+
+  '.sa-tags{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0;}'+
+  '.sa-tags span{font-size:10px;font-weight:bold;color:#0A6E6E;background:#ECF7F6;border-radius:14px;padding:3px 9px;}'+
+  '.sa-typecard{border:1px solid #E2E9E8;border-radius:11px;padding:10px 13px;margin:7px 0;}'+
+  '.sa-rlist{font-size:11.5px;color:#3a4a4a;padding-left:18px;}'+
+  '.sa-split{display:flex;gap:14px;align-items:center;}.sa-radar{width:210px;}'+
+  '.disc{margin-top:16px;border:1px solid #F0DFBA;background:#FFF7E9;border-radius:9px;padding:10px 13px;font-size:10.5px;color:#75531D;line-height:1.55;}'+
+  '.panel{break-inside:avoid;}'+
+  '@media print{@page{size:A4;margin:11mm;}}';
+ var allPanels=d.panels.map(function(p){return '<div class="panel">'+p.html+'</div>';}).join("");
+ w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Combined Self-Assessment Report — Lume Live</title>'+
+  '<style>'+css+'</style></head><body>'+
+  '<div class="cover"><span class="brand">Lume Live</span><h1>'+disp+'</h1>'+
+  '<p>Combined Self-Assessment Report — Five Assessments</p><div class="chips">'+
+   '<div class="chip"><small>Interest Code</small><b>'+d.code+'</b></div>'+
+   '<div class="chip"><small>Top Personality</small><b>'+esc(d.topP.name)+'</b></div>'+
+   '<div class="chip"><small>Career Anchor</small><b>'+esc(d.anchor.short)+'</b></div>'+
+   '<div class="chip"><small>Learning Style</small><b>'+esc(d.learnLabel)+'</b></div>'+
+  '</div></div>'+allPanels+
+  '<div class="disc"><strong>Important note:</strong> This combined report brings together five educational self-assessment questionnaires for personal reflection and counselling discussion. It is not a psychological diagnosis, aptitude test, or selection/admissions decision tool.</div>'+
+  '</body></html>');
+ w.document.close();w.focus();
+ /* fill print bars */
+ var imgs=w.document.querySelectorAll(".sa-bar-fill");
+ imgs.forEach(function(f){f.style.width=(f.getAttribute("data-w")||0)+"%";});
+ setTimeout(function(){w.print();},350);
+};
+
+/* ─── init ─── */
+renderToolList();
+show("saGate");
+
+})();
+</script>
+<!-- ══════════ END SELF-ASSESSMENT SUITE ══════════ -->
+
+
+
 <!-- ABOUT / FOUNDER -->
 <section id="about" style="display:none;">
   <div class="s-inner">
@@ -2207,7 +3008,6 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
       <div class="f-col">
         <h4>Company</h4>
         <a href="#" onclick="openModal('about');return false;">About Founder</a>
-        <a href="#approach">Our Approach</a>
         <a href="#gallery">Sessions Gallery</a>
         <a href="#faq">FAQ</a>
         </div>
@@ -2233,6 +3033,16 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 <div class="toast" id="toast"></div>
 
 <!-- ══ SESSION BOOKING MODAL ══ -->
+<style>
+.sess-reassure{background:linear-gradient(135deg,#ECF7F6,#F3F9EC);border:1px solid #D6EAE7;border-radius:14px;padding:15px 17px;margin-bottom:16px;}
+.sess-reassure .sr-top{display:flex;gap:9px;align-items:flex-start;margin-bottom:6px;}
+.sess-reassure .sr-emoji{font-size:1.15rem;line-height:1.3;flex:none;}
+.sess-reassure .sr-top b{font-size:.87rem;color:#0D1B40;line-height:1.45;}
+.sess-reassure p{font-size:.78rem;color:#4A6060;line-height:1.66;}
+.sess-reassure .sr-points{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
+.sess-reassure .sr-points span{font-size:.71rem;font-weight:700;color:#0A6E6E;background:#fff;border:1px solid #D6EAE7;border-radius:20px;padding:5px 11px;}
+.sess-closing{text-align:center;font-size:.78rem;color:#0A6E6E;font-weight:600;margin-top:12px;line-height:1.55;}
+</style>
 <div class="modal-overlay" id="modal-session">
   <div class="modal">
     <button class="modal-x" onclick="closeModal('session')">✕</button>
@@ -2242,6 +3052,11 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
       <p>Confidential · 1:1 · Available PAN India via Video Call</p>
     </div>
     <div class="modal-body">
+      <div class="sess-reassure">
+        <div class="sr-top"><span class="sr-emoji">🌱</span><b>Reaching out takes courage — and you're already doing the hardest part.</b></div>
+        <p>This is a calm, private, one-to-one conversation with a caring professional. There is nothing you need to prepare and nothing you have to "get right" — we simply listen, understand where you are, and gently help you find your next step.</p>
+        <div class="sr-points"><span>🔒 100% confidential</span><span>💬 A safe, judgment-free space</span><span>🕊️ We move at your pace</span></div>
+      </div>
       <div class="price-row">
         <div class="amt" style="color:var(--green);">₹49</div>
         <div class="detail">Introductory session<br><span style="color:var(--grayM);text-decoration:line-through;">₹499</span> regular price</div>
@@ -2295,7 +3110,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
       </div>
       <div class="upi-sec">
         <div class="ttl">Pay ₹49 via UPI — Scan QR Code</div>
-        <div class="upi-qr"><img src="qrcode.jpg" alt="UPI QR Code - Sachin Bajaj"></div>
+        <div class="upi-qr"><img src="lume-upi-qr.png" alt="UPI QR Code - Sachin Bajaj"></div>
         <div class="upi-id" onclick="copyUPI()">sachinbajaj284-1@oksbi</div>
         <div class="upi-hint">Tap to copy · PhonePe, GPay, Paytm · <strong style="color:var(--green);">₹49</strong> <span style="text-decoration:line-through;opacity:.5;">₹499</span></div>
         <a href="#" class="upi-download" onclick="downloadUPIQR();return false;">📥 Download QR Code</a>
@@ -2306,6 +3121,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
         <li>Send screenshot to WhatsApp +91 7015671280 with your chosen date & time</li>
         <li>We confirm your slot within 2 hours</li>
       </ol>
+      <p class="sess-closing">Whatever you're facing, you don't have to navigate it alone — we'll take the next step together. 💛</p>
       <a id="sessionWaBtn" href="#" target="_blank" class="m-wa-btn">
         <svg viewBox="0 0 24 24" width="17" height="17" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.556 4.121 1.528 5.856L.057 23.215a.75.75 0 00.922.921l5.344-1.47A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.663-.523-5.183-1.432l-.37-.219-3.171.871.884-3.175-.237-.386A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
         Send Payment Screenshot on WhatsApp
@@ -2334,7 +3150,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
       </div>
       <div class="upi-sec">
         <div class="ttl">Pay ₹199 via UPI — Scan QR Code</div>
-        <div class="upi-qr"><img src="qrcode.jpg" alt="UPI QR Code - Sachin Bajaj"></div>
+        <div class="upi-qr"><img src="lume-upi-qr.png" alt="UPI QR Code - Sachin Bajaj"></div>
         <div class="upi-id" onclick="copyUPI()">sachinbajaj284-1@oksbi</div>
         <div class="upi-hint">Tap to copy · PhonePe, GPay, Paytm · ₹199</div>
       </div>
