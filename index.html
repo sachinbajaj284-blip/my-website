@@ -1777,6 +1777,7 @@ window.saGenerate=function(){
  show("saReport");
  el("saReport").scrollIntoView({behavior:"smooth",block:"start"});
  setTimeout(animateBars,120);
+ try{saLoadJsPDF();}catch(e){}
 };
 
 /* ─── Scoring ─── */
@@ -1982,10 +1983,15 @@ function buildReport(){
    '<p style="font-size:.74rem;color:var(--mid);margin-top:18px;">Report generated '+date+' for '+disp+'.</p>'+
    '<div class="sa-disclaim"><strong>Important note</strong>This combined report brings together five educational self-assessment questionnaires completed for personal reflection and as a starting point for a counselling discussion. It is not a psychological diagnosis, an aptitude test, or a selection or admissions decision tool. Results describe self-reported preferences on the day the assessment was completed and can change over time.</div>'+
    '<div class="sa-rfoot">'+
-    '<label class="sa-check"><input type="checkbox" id="saShareConsent"><span>I consent to share a summary of this combined report with a Lume Live counsellor on WhatsApp.</span></label>'+
+    '<h4 style="margin-top:0;">Save &amp; Share Your Report</h4>'+
+    '<p>Download your full report as a PDF, or send it straight to a Lume Live counsellor on WhatsApp to talk it through.</p>'+
+    '<label class="sa-check"><input type="checkbox" id="saShareConsent"><span>I consent to share my report with a Lume Live counsellor on WhatsApp.</span></label>'+
     '<p class="sa-error" id="saShareError"></p>'+
-    '<div class="sa-actions"><button class="sa-btn gold" type="button" onclick="saShare()">Send Summary on WhatsApp</button>'+
-    '<button class="sa-btn ghost" type="button" onclick="saPrint()">Print / Save as PDF</button></div>'+
+    '<div class="sa-actions">'+
+     '<button class="sa-btn gold" type="button" onclick="saSharePDF()">Send Report PDF on WhatsApp</button>'+
+     '<button class="sa-btn ghost" type="button" onclick="saDownloadPDF()">Download Report PDF</button>'+
+    '</div>'+
+    '<p class="sa-pay-note" style="margin-top:11px;">On a phone, this opens your share menu — just choose WhatsApp to send the PDF. On a computer, the PDF downloads and WhatsApp opens so you can attach it.</p>'+
    '</div>'+
   '</div></div>';
 }
@@ -2072,6 +2078,242 @@ window.saPrint=function(){
 };
 
 /* ─── init ─── */
+/* ── PDF report builder (embedded into the suite IIFE) ── */
+function saPdfSafe(s){
+ return String(s)
+  .replace(/[\u2014\u2013]/g,'-').replace(/[\u2018\u2019]/g,"'")
+  .replace(/[\u201C\u201D]/g,'"').replace(/\u00B7/g,'-')
+  .replace(/\u20B9/g,'Rs ').replace(/\u2192/g,'->').replace(/[^\x00-\xFF]/g,'');
+}
+function saPdfName(){
+ var n=(S.name||'Personal').replace(/[^A-Za-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+ return 'Lume-Live-Report-'+(n||'Personal')+'.pdf';
+}
+function saBuildPdfDoc(){
+ var jsPDF=window.jspdf.jsPDF;
+ var doc=new jsPDF({unit:'mm',format:'a4',compress:true});
+ var W=210,H=297,M=15;
+ var NAVY=[16,38,80],TEAL=[10,110,110],GOLD=[201,147,58],MID=[92,108,108],LINE=[224,233,232];
+ var TOP=23,BOT=19;
+ var y=TOP;
+ function ensure(h){ if(y+h>H-BOT){ doc.addPage(); y=TOP; } }
+ function heading(t){
+  ensure(16); y+=4;
+  doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(NAVY[0],NAVY[1],NAVY[2]);
+  doc.text(saPdfSafe(t),M,y);
+  y+=2.4;doc.setDrawColor(GOLD[0],GOLD[1],GOLD[2]);doc.setLineWidth(0.9);doc.line(M,y,M+20,y);
+  y+=6.5;
+ }
+ function para(t,size,col,gap){
+  doc.setFont('helvetica','normal');doc.setFontSize(size||9.3);
+  var c=col||MID;doc.setTextColor(c[0],c[1],c[2]);
+  var lines=doc.splitTextToSize(saPdfSafe(t),W-2*M);
+  for(var i=0;i<lines.length;i++){ ensure(5); doc.text(lines[i],M,y); y+=4.5; }
+  y+=(gap===undefined?2:gap);
+ }
+ function bar(label,value,pct){
+  ensure(12.5);
+  doc.setFont('helvetica','bold');doc.setFontSize(9.3);doc.setTextColor(NAVY[0],NAVY[1],NAVY[2]);
+  doc.text(saPdfSafe(label),M,y);
+  doc.setTextColor(TEAL[0],TEAL[1],TEAL[2]);
+  doc.text(saPdfSafe(value),W-M,y,{align:'right'});
+  y+=2.4;
+  var bw=W-2*M;
+  doc.setFillColor(LINE[0],LINE[1],LINE[2]);doc.roundedRect(M,y,bw,3.6,1.8,1.8,'F');
+  var fw=Math.max(2.4,bw*Math.min(1,Math.max(0,pct/100)));
+  doc.setFillColor(TEAL[0],TEAL[1],TEAL[2]);doc.roundedRect(M,y,fw,3.6,1.8,1.8,'F');
+  y+=9;
+ }
+ /* scores */
+ var P=scorePersonality(),R=scoreRiasec(),A=scoreAnchors(),L=scoreLeadership(),V=scoreVark();
+ var topP=P.slice().sort(function(a,b){return b.score-a.score;})[0];
+ var code=R.slice(0,3).map(function(r){return r.key;}).join('');
+ var anchor=A[0];
+ var topL=L.slice().sort(function(a,b){return b.score-a.score;})[0];
+ var topV=V[0];
+ var multiV=V.filter(function(r){return r.score>0&&topV.score-r.score<=1;});
+ var learnLabel=multiV.length>1?'Multimodal':topV.name;
+ var date=new Intl.DateTimeFormat('en-IN',{dateStyle:'long'}).format(new Date());
+
+ /* COVER PANEL */
+ doc.setFillColor(NAVY[0],NAVY[1],NAVY[2]);
+ doc.roundedRect(M,y,W-2*M,53,3.5,3.5,'F');
+ var cx=M+8,cy=y+12;
+ doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(GOLD[0],GOLD[1],GOLD[2]);
+ doc.text('LUME LIVE  -  SELF-ASSESSMENT SUITE',cx,cy);
+ doc.setFontSize(19);doc.setTextColor(255,255,255);
+ doc.text(saPdfSafe(S.name||'Personal Report'),cx,cy+9.5);
+ doc.setFont('helvetica','normal');doc.setFontSize(9.3);doc.setTextColor(205,213,226);
+ doc.text('Combined Report - Five Assessments   |   '+date,cx,cy+16);
+ var chips=[['INTEREST CODE',code],['TOP PERSONALITY',topP.name],['CAREER ANCHOR',anchor.short],['LEARNING STYLE',learnLabel]];
+ var chw=(W-2*M-16-3*4)/4,chy=cy+22;
+ chips.forEach(function(c,i){
+  var xx=cx+i*(chw+4);
+  doc.setFillColor(36,56,96);doc.roundedRect(xx,chy,chw,15,2,2,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(5.5);doc.setTextColor(150,166,196);
+  doc.text(c[0],xx+3,chy+5);
+  doc.setFontSize(8);doc.setTextColor(255,255,255);
+  doc.text(saPdfSafe(String(c[1])),xx+3,chy+10.8);
+ });
+ y+=53+4;
+
+ /* SNAPSHOT */
+ heading('Your Integrated Snapshot');
+ var syn='Your Holland interest code is '+code+', led by '+R[0].name.toLowerCase()+', '+
+  R[1].name.toLowerCase()+' and '+R[2].name.toLowerCase()+' interests. Your most pronounced personality '+
+  'dimension is '+topP.name.toLowerCase()+', and your strongest career anchor is '+anchor.short+
+  ' - the orientation you would be least willing to give up. In a leadership setting your '+
+  topL.name.toLowerCase()+' stand out, and you tend to learn best through '+
+  (multiV.length>1?'several modes combined':topV.name.toLowerCase()+' approaches')+'.';
+ para(syn,9.3,MID,3);
+ var pathSet=[];R.slice(0,3).forEach(function(r){r.pathways.forEach(function(p){if(pathSet.indexOf(p)===-1)pathSet.push(p);});});
+ doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(NAVY[0],NAVY[1],NAVY[2]);
+ ensure(6);doc.text('Career directions to explore in counselling:',M,y);y+=5;
+ para(pathSet.join('   -   '),8.7,TEAL,3);
+
+ /* PERSONALITY */
+ heading('1.  Personality Profile (Big Five)');
+ para('Each dimension is scored from 0 to 40, where 20 is the neutral mid-point. A higher or lower score is simply a preference - every pattern has its own strengths.');
+ P.forEach(function(r){
+  bar(r.name+' ('+r.key+')',r.score+' / 40   -   '+r.word,r.pct);
+  para(r.desc,8,MID,2.5);
+ });
+
+ /* RIASEC */
+ heading('2.  RIASEC Career Interests');
+ para('Your interest code is the three highest-scoring areas: '+code+'. Each area is scored from 0 to 7 (the number of statements you agreed with).');
+ R.forEach(function(r){ bar(r.name+' ('+r.key+')',r.score+' / 7',r.pct); });
+ y+=1;
+ doc.setFont('helvetica','bold');doc.setFontSize(9.4);doc.setTextColor(NAVY[0],NAVY[1],NAVY[2]);
+ ensure(6);doc.text('Your three leading interest areas',M,y);y+=5.5;
+ R.slice(0,3).forEach(function(r){
+  ensure(8);
+  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(TEAL[0],TEAL[1],TEAL[2]);
+  doc.text(saPdfSafe(r.name+' - '+r.tag),M,y);y+=4.4;
+  para(r.desc,8,MID,1.5);
+  para('Sample fields: '+r.majors.join(', '),7.8,[120,134,134],3);
+ });
+
+ /* ANCHORS */
+ heading('3.  Career Anchors');
+ para('Your highest-scoring anchor is your likely primary career anchor - the orientation you would be least willing to give up. Primary anchor: '+anchor.name+'.');
+ para(anchor.desc,8.6,[60,74,74],3);
+ A.forEach(function(r,i){ bar((i+1)+'.  '+r.name,r.score+' pts',Math.round(r.score/42*100)); });
+
+ /* LEADERSHIP */
+ heading('4.  Leadership Skills');
+ para('Each skill area is scored from 6 to 30. Bands: 26-30 very high, 21-25 high, 16-20 moderate, 11-15 low, 6-10 very low.');
+ L.forEach(function(r){
+  bar(r.name,r.score+' / 30   -   '+r.word,r.pct);
+  para(r.desc,8,MID,2.5);
+ });
+
+ /* VARK */
+ heading('5.  Learning Style (VARK)');
+ para(multiV.length>1
+  ? 'Your scores are fairly even - a multimodal style. You draw on more than one mode rather than a single strong preference.'
+  : 'Your clearest learning preference is '+topV.name+'.');
+ V.forEach(function(r){ bar(r.name+' ('+r.key+')',String(r.score),Math.round(r.score/16*100)); });
+ y+=1;
+ (multiV.length>1?multiV:[topV]).forEach(function(r){
+  para('Tip - '+r.name+': '+r.tip,8.3,[60,74,74],2);
+ });
+
+ /* DISCLAIMER */
+ ensure(26);y+=3;
+ doc.setFillColor(255,247,233);doc.setDrawColor(240,223,186);doc.setLineWidth(0.3);
+ var dl=doc.splitTextToSize(saPdfSafe('Important note: This combined report brings together five educational self-assessment questionnaires completed for personal reflection and as a starting point for a counselling discussion. It is not a psychological diagnosis, an aptitude test, or a selection or admissions decision tool. Results describe self-reported preferences on the day the assessment was completed and can change over time.'),W-2*M-12);
+ var dh=10+dl.length*4;
+ doc.roundedRect(M,y,W-2*M,dh,2.5,2.5,'FD');
+ doc.setFont('helvetica','bold');doc.setFontSize(8.4);doc.setTextColor(117,83,29);
+ doc.text('Important note',M+6,y+7);
+ doc.setFont('helvetica','normal');doc.setFontSize(8);
+ for(var i=0;i<dl.length;i++){ doc.text(dl[i],M+6,y+12+i*4); }
+
+ /* HEADER + FOOTER ON EVERY PAGE */
+ var n=doc.getNumberOfPages();
+ for(var p=1;p<=n;p++){
+  doc.setPage(p);
+  doc.setFillColor(NAVY[0],NAVY[1],NAVY[2]);doc.rect(0,0,W,15.4,'F');
+  doc.setFillColor(GOLD[0],GOLD[1],GOLD[2]);doc.rect(0,15.4,W,0.8,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(255,255,255);
+  doc.text('LUME LIVE',M,9.9);
+  doc.setFont('helvetica','normal');doc.setFontSize(7.2);doc.setTextColor(GOLD[0],GOLD[1],GOLD[2]);
+  doc.text('Career Counselling & Mental Wellness',M+24.5,9.9);
+  doc.setTextColor(206,214,228);doc.setFontSize(7.6);
+  doc.text('Combined Self-Assessment Report',W-M,9.9,{align:'right'});
+  doc.setDrawColor(LINE[0],LINE[1],LINE[2]);doc.setLineWidth(0.3);doc.line(M,H-13.5,W-M,H-13.5);
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(MID[0],MID[1],MID[2]);
+  doc.text('Lume Live   |   WhatsApp +91 70156 71280   |   hello@lumelive.co.in   |   lumelive.co.in   |   Rohtak, Haryana - Online PAN India',W/2,H-9,{align:'center'});
+  doc.setFontSize(6.6);
+  doc.text('Confidential - for personal reflection & counselling discussion',M,H-5);
+  doc.text('Page '+p+' of '+n,W-M,H-5,{align:'right'});
+ }
+ return doc;
+}
+
+/* ─── PDF download & WhatsApp share ─── */
+var saJsPdfPromise=null;
+function saLoadJsPDF(){
+ if(window.jspdf&&window.jspdf.jsPDF) return Promise.resolve();
+ if(saJsPdfPromise) return saJsPdfPromise;
+ saJsPdfPromise=new Promise(function(res,rej){
+  var s=document.createElement("script");
+  s.src="https://cdn.jsdelivr.net/npm/jspdf@4.2.1/dist/jspdf.umd.min.js";
+  s.onload=function(){ (window.jspdf&&window.jspdf.jsPDF)?res():rej(new Error("jspdf")); };
+  s.onerror=function(){ saJsPdfPromise=null; rej(new Error("jspdf load failed")); };
+  document.head.appendChild(s);
+ });
+ return saJsPdfPromise;
+}
+function saSummaryText(){
+ var P=scorePersonality(),R=scoreRiasec(),A=scoreAnchors(),L=scoreLeadership(),V=scoreVark();
+ var topP=P.slice().sort(function(a,b){return b.score-a.score;})[0];
+ var topL=L.slice().sort(function(a,b){return b.score-a.score;})[0];
+ var topV=V[0],multiV=V.filter(function(r){return r.score>0&&topV.score-r.score<=1;});
+ return ["Hi Sachin!","",
+  "I have completed the Lume Live Self-Assessment Suite (all five assessments) and would like to discuss my combined report.",
+  "Name: "+(S.name||"Not given"),"",
+  "Headline results:",
+  "- Holland interest code: "+R.slice(0,3).map(function(r){return r.key;}).join(""),
+  "- Top personality dimension: "+topP.name+" ("+topP.score+"/40)",
+  "- Primary career anchor: "+A[0].short+" ("+A[0].score+" pts)",
+  "- Strongest leadership area: "+topL.name+" ("+topL.score+"/30)",
+  "- Learning style: "+(multiV.length>1?"Multimodal":topV.name)
+ ].join("\n");
+}
+function saMakeDoc(cb){
+ function go(){
+  try{ cb(saBuildPdfDoc()); }
+  catch(e){ toast("Sorry — the report PDF could not be generated. Please try again."); }
+ }
+ if(window.jspdf&&window.jspdf.jsPDF){ go(); }
+ else{ saLoadJsPDF().then(go).catch(function(){ toast("Could not load the PDF tool — please check your internet connection and try again."); }); }
+}
+window.saDownloadPDF=function(){
+ saMakeDoc(function(doc){ doc.save(saPdfName()); toast("Your report PDF has been downloaded."); });
+};
+window.saSharePDF=function(){
+ var c=el("saShareConsent");
+ if(!c||!c.checked){ el("saShareError").textContent="Please tick the consent box before sharing your report."; return; }
+ el("saShareError").textContent="";
+ saMakeDoc(function(doc){
+  var fname=saPdfName(),waText=saSummaryText(),file=null;
+  try{ file=new File([doc.output("blob")],fname,{type:"application/pdf"}); }catch(e){}
+  if(file&&navigator.canShare&&navigator.canShare({files:[file]})){
+   navigator.share({files:[file],title:"My Lume Live Assessment Report",text:waText})
+    .then(function(){ toast("Report ready to send — choose WhatsApp in the share menu."); })
+    .catch(function(err){ if(err&&err.name!=="AbortError"){ saShareFallback(doc,fname,waText); } });
+  }else{ saShareFallback(doc,fname,waText); }
+ });
+};
+function saShareFallback(doc,fname,waText){
+ try{ doc.save(fname); }catch(e){}
+ var msg=waText+"\n\n(I am attaching my report PDF \""+fname+"\", which has just been downloaded to my device.)";
+ setTimeout(function(){ window.open("https://wa.me/917015671280?text="+encodeURIComponent(msg),"_blank","noopener"); },700);
+ toast("Report downloaded — please attach the PDF in the WhatsApp chat that opens.");
+}
+
 renderToolList();
 show("saGate");
 
