@@ -3656,5 +3656,28 @@ function setMode(el, mode){
   </a>
 </div>
 
+<!-- ══════════ FIREBASE (added) ══════════ -->
+<!-- Firebase JS SDK v12.13.0 — loaded as a browser ES module (works without any build step) -->
+<script type="module">
+  // Import the Firebase features you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+  // To add more Firebase products later, import them the same way, e.g.:
+  // import { getFirestore } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDWifVIos_IGC7RT0xojH8gjMZekacR6bk",
+    authDomain: "lume-live-cf865.firebaseapp.com",
+    projectId: "lume-live-cf865",
+    storageBucket: "lume-live-cf865.firebasestorage.app",
+    messagingSenderId: "524991686804",
+    appId: "1:524991686804:web:e7019de465f5065901ec81"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  window.firebaseApp = app;
+</script>
+<!-- ══════════ END FIREBASE ══════════ -->
 </body>
 </html>
