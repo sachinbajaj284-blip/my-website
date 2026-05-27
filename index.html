@@ -171,6 +171,9 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .nav-links a:hover::after{width:100%;}
 .nav-cta{background:var(--gold)!important;color:#fff!important;padding:8px 18px;border-radius:6px;transition:all .2s!important;}
 .nav-cta:hover{background:var(--gold2)!important;transform:translateY(-1px);box-shadow:0 4px 16px rgba(201,147,58,.35);}
+.nav-auth-link{border:1px solid rgba(10,110,110,.22);color:var(--teal)!important;border-radius:18px;padding:7px 12px;font-weight:700!important;}
+.nav-auth-link::after{display:none;}
+.nav-auth-link:hover{background:rgba(10,110,110,.06);border-color:var(--teal);}
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none;}
 .hamburger span{width:24px;height:2px;background:var(--navy);border-radius:2px;transition:.3s;display:block;}
 .hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}
@@ -635,6 +638,36 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
 .m-confirm{background:var(--navy);color:#fff;padding:11px 16px;border-radius:8px;font-weight:700;font-size:.86rem;border:none;cursor:pointer;width:100%;margin-top:10px;transition:all .25s;position:relative;overflow:hidden;}
 .m-confirm:hover{background:var(--navy2);transform:translateY(-2px);box-shadow:0 6px 20px rgba(13,27,64,.25);}
 
+/* Account access */
+[hidden]{display:none!important;}
+#modal-auth .modal{max-width:455px;}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--gray);padding:5px;border-radius:11px;margin-bottom:18px;}
+.auth-tab{border:none;background:transparent;color:var(--mid);font:700 .82rem 'Montserrat',sans-serif;padding:10px;border-radius:8px;cursor:pointer;transition:all .2s;}
+.auth-tab.active{background:#fff;color:var(--navy);box-shadow:0 2px 8px rgba(13,27,64,.08);}
+.auth-field{margin-bottom:12px;}
+.auth-field label{display:block;font-size:.72rem;font-weight:700;color:var(--dark);margin-bottom:6px;}
+.auth-field input{width:100%;border:1px solid var(--grayM);background:var(--gray);border-radius:8px;padding:11px 12px;font:500 .83rem 'Montserrat',sans-serif;color:var(--dark);outline:none;transition:all .2s;}
+.auth-field input:focus{background:#fff;border-color:var(--teal);box-shadow:0 0 0 3px rgba(10,110,110,.1);}
+.auth-signup-only{display:none;}
+.auth-form.signup .auth-signup-only{display:block;}
+.auth-submit{background:var(--gold);color:#fff;border:none;border-radius:8px;width:100%;padding:12px 16px;font:700 .87rem 'Montserrat',sans-serif;cursor:pointer;transition:all .2s;margin-top:5px;}
+.auth-submit:hover{background:var(--gold2);transform:translateY(-1px);}
+.auth-submit:disabled{opacity:.58;cursor:wait;transform:none;}
+.auth-tools{text-align:center;margin-top:13px;}
+.auth-reset{background:none;border:none;color:var(--teal);font:700 .75rem 'Montserrat',sans-serif;cursor:pointer;padding:4px;}
+.auth-note{font-size:.68rem;line-height:1.55;color:var(--mid);text-align:center;margin-top:13px;}
+.auth-feedback{display:none;font-size:.75rem;line-height:1.55;border-radius:8px;padding:9px 11px;margin-bottom:13px;}
+.auth-feedback.show{display:block;}
+.auth-feedback.info{color:#075985;background:#e0f2fe;}
+.auth-feedback.error{color:#991b1b;background:#fee2e2;}
+.auth-profile{text-align:center;padding:4px 0 6px;}
+.auth-profile-mark{width:54px;height:54px;margin:0 auto 14px;border-radius:50%;background:rgba(10,110,110,.1);color:var(--teal);display:flex;align-items:center;justify-content:center;font-size:1.35rem;font-weight:800;}
+.auth-profile h3{font-family:'Playfair Display',serif;color:var(--navy);font-size:1.18rem;margin-bottom:8px;}
+.auth-email{font-size:.82rem;font-weight:700;color:var(--dark);word-break:break-all;margin-bottom:10px;}
+.auth-status{font-size:.73rem;color:var(--mid);line-height:1.55;margin-bottom:17px;}
+.auth-signout{width:100%;background:#fff;color:var(--navy);border:1px solid var(--grayM);border-radius:8px;padding:11px;font:700 .83rem 'Montserrat',sans-serif;cursor:pointer;}
+.auth-signout:hover{background:var(--gray);}
+
 /* ── POPUP ── */
 .popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:3000;display:none;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(5px);}
 .popup-overlay.open{display:flex;}
@@ -1028,13 +1061,13 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
       <li><a href="#services">Services</a></li>
       <li><a href="#self-assessments">Self-Assessment Suite</a></li>
       <li><a href="#emotional-wellbeing">Emotional Wellbeing</a></li>
-      <li><a href="#about">About</a></li>
       <li><a href="#for-parents">For Parents</a></li>
       <li><a href="#school-partnerships">Schools</a></li>
       <li><a href="#faq">FAQ</a></li>
       <li><a href="#testimonials">Reviews</a></li>
       <li><a href="#questionnaire">Enquire</a></li>
       <li><a href="#contact">Contact</a></li>
+      <li><a href="#" id="navAccountLink" class="nav-auth-link" onclick="openAuth('signin');return false;">Sign In / Sign Up</a></li>
       <li><a href="#" class="nav-cta" onclick="openModal('session');return false;" style="background:linear-gradient(135deg,#c9933a,#e8b84e);color:#0d1b40;font-weight:800;padding:8px 18px;border-radius:20px;box-shadow:0 4px 12px rgba(201,147,58,.3);transition:all .3s;">Counselling ₹49 <span style="font-size:.55rem;opacity:.7;text-decoration:line-through;margin-left:3px;">₹499</span></a></li>
     </ul>
     <button class="hamburger" id="ham" onclick="toggleMenu()" aria-label="Menu">
@@ -1047,13 +1080,15 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
   <a href="#services" onclick="closeMob()">🛎️ Services</a>
   <a href="#self-assessments" onclick="closeMob()">🧭 Self-Assessment Suite</a>
   <a href="#emotional-wellbeing" onclick="closeMob()">🧠 Emotional Wellbeing</a>
-  <a href="#about" onclick="closeMob()">👤 About Founder</a>
   <a href="#for-parents" onclick="closeMob()">👨‍👩‍👧 For Parents</a>
   <a href="#school-partnerships" onclick="closeMob()">🏫 School Partnerships</a>
   <a href="#faq" onclick="closeMob()">❓ FAQ</a>
   <a href="#testimonials" onclick="closeMob()">⭐ Client Reviews</a>
   <a href="#questionnaire" onclick="closeMob()">📋 Support Enquiry</a>
   <a href="#contact" onclick="closeMob()">📍 Contact</a>
+  <a href="#" class="auth-signed-out" onclick="closeMob();openAuth('signin');return false;">Sign In</a>
+  <a href="#" class="highlight auth-signed-out" onclick="closeMob();openAuth('signup');return false;">Create Account</a>
+  <a href="#" class="highlight auth-signed-in" id="mobileAccountLink" onclick="closeMob();openAuth('signin');return false;" hidden>My Account</a>
   <a href="#" onclick="openModal('session');closeMob();return false;" style="background:linear-gradient(135deg,#c9933a,#e8b84e);color:#0d1b40;font-weight:800;padding:12px 20px;border-radius:12px;margin:8px 0;display:block;text-align:center;box-shadow:0 4px 12px rgba(201,147,58,.3);text-decoration:none;">🎯 Book Session — ₹49</a>
   <a href="https://wa.me/917015671280" target="_blank" style="color:#25D366;font-weight:700;">💬 WhatsApp Us Now</a>
 </div>
@@ -3054,7 +3089,6 @@ show("saGate");
       </div>
       <div class="f-col">
         <h4>Company</h4>
-        <a href="#" onclick="openModal('about');return false;">About Founder</a>
         <a href="#gallery">Sessions Gallery</a>
         <a href="#faq">FAQ</a>
         </div>
@@ -3236,6 +3270,57 @@ show("saGate");
   </div>
 </div>
 
+<!-- ACCOUNT MODAL -->
+<div class="modal-overlay" id="modal-auth">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal('auth')" aria-label="Close account dialog">&times;</button>
+    <div class="modal-hdr">
+      <div class="modal-hdr-logo"><img src="logo.png" alt="Lume Live"></div>
+      <h2>Client Account</h2>
+      <p>Sign in securely or create your Lume Live account.</p>
+    </div>
+    <div class="modal-body">
+      <div id="authSignedOut">
+        <div class="auth-tabs" role="tablist" aria-label="Account access options">
+          <button class="auth-tab active" id="authSignInTab" type="button" role="tab" aria-selected="true" onclick="setAuthMode('signin')">Sign In</button>
+          <button class="auth-tab" id="authSignUpTab" type="button" role="tab" aria-selected="false" onclick="setAuthMode('signup')">Create Account</button>
+        </div>
+        <div class="auth-feedback" id="authFeedback" aria-live="polite"></div>
+        <form class="auth-form" id="authForm" onsubmit="handleAuthSubmit(event)" novalidate>
+          <div class="auth-field auth-signup-only">
+            <label for="authName">Full name</label>
+            <input id="authName" type="text" autocomplete="name" maxlength="80" placeholder="Your full name">
+          </div>
+          <div class="auth-field">
+            <label for="authEmail">Email address</label>
+            <input id="authEmail" type="email" autocomplete="email" required placeholder="you@example.com">
+          </div>
+          <div class="auth-field">
+            <label for="authPassword">Password</label>
+            <input id="authPassword" type="password" autocomplete="current-password" minlength="6" required placeholder="At least 6 characters">
+          </div>
+          <div class="auth-field auth-signup-only">
+            <label for="authConfirm">Confirm password</label>
+            <input id="authConfirm" type="password" autocomplete="new-password" minlength="6" placeholder="Repeat your password">
+          </div>
+          <button type="submit" class="auth-submit" id="authSubmit">Sign In</button>
+        </form>
+        <div class="auth-tools">
+          <button class="auth-reset" type="button" id="authReset" onclick="requestPasswordReset()">Forgot password?</button>
+        </div>
+        <p class="auth-note">Authentication is handled securely through Firebase. Do not share your password over phone or WhatsApp.</p>
+      </div>
+      <div class="auth-profile" id="authSignedIn" hidden>
+        <div class="auth-profile-mark" aria-hidden="true">L</div>
+        <h3>You are signed in</h3>
+        <div class="auth-email" id="authUserEmail"></div>
+        <p class="auth-status" id="authUserStatus"></p>
+        <button class="auth-signout" type="button" onclick="signOutUser()">Sign Out</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ ABOUT MODAL (Expanded Profile) ══ -->
 <div class="modal-overlay" id="modal-about">
   <div class="modal" style="max-width:900px;border-radius:24px;overflow:hidden;">
@@ -3345,6 +3430,122 @@ function toggleMenu(){
 function closeMob(){
   document.getElementById('ham').classList.remove('open');
   document.getElementById('mobMenu').classList.remove('open');
+}
+
+// Account access UI; Firebase actions are provided by the module at the bottom of the page.
+let authView='signin';
+function openAuth(mode){
+  if(!window.currentFirebaseUser){setAuthMode(mode||'signin');}
+  openModal('auth');
+}
+function setAuthMode(mode){
+  authView=mode==='signup'?'signup':'signin';
+  const signingUp=authView==='signup';
+  const form=document.getElementById('authForm');
+  form.classList.toggle('signup',signingUp);
+  document.getElementById('authSignInTab').classList.toggle('active',!signingUp);
+  document.getElementById('authSignUpTab').classList.toggle('active',signingUp);
+  document.getElementById('authSignInTab').setAttribute('aria-selected',String(!signingUp));
+  document.getElementById('authSignUpTab').setAttribute('aria-selected',String(signingUp));
+  document.getElementById('authName').required=signingUp;
+  document.getElementById('authConfirm').required=signingUp;
+  document.getElementById('authPassword').autocomplete=signingUp?'new-password':'current-password';
+  document.getElementById('authSubmit').textContent=signingUp?'Create Account':'Sign In';
+  document.getElementById('authReset').hidden=signingUp;
+  setAuthFeedback('','info');
+}
+function setAuthFeedback(message,type){
+  const feedback=document.getElementById('authFeedback');
+  feedback.textContent=message||'';
+  feedback.className='auth-feedback'+(message?' show '+(type||'info'):'');
+}
+function setAuthBusy(busy){
+  const button=document.getElementById('authSubmit');
+  button.disabled=busy;
+  button.textContent=busy?'Please wait...':(authView==='signup'?'Create Account':'Sign In');
+}
+async function handleAuthSubmit(event){
+  event.preventDefault();
+  if(!window.lumeAuth){
+    setAuthFeedback('Account service is still loading. Please try again in a moment.','error');
+    return;
+  }
+  const name=document.getElementById('authName').value.trim();
+  const email=document.getElementById('authEmail').value.trim();
+  const password=document.getElementById('authPassword').value;
+  const confirm=document.getElementById('authConfirm').value;
+  if(!email || !password){
+    setAuthFeedback('Please enter your email and password.','error');
+    return;
+  }
+  if(password.length<6){
+    setAuthFeedback('Your password must be at least 6 characters.','error');
+    return;
+  }
+  if(authView==='signup' && (!name || password!==confirm)){
+    setAuthFeedback(!name?'Please enter your full name.':'The passwords do not match.','error');
+    return;
+  }
+  setAuthFeedback('','info');
+  setAuthBusy(true);
+  try{
+    if(authView==='signup'){
+      const result=await window.lumeAuth.signUp(name,email,password);
+      showToast(result.verificationSent?'Account created. Check your email to verify it.':'Account created. You are signed in.');
+    }else{
+      await window.lumeAuth.signIn(email,password);
+      closeModal('auth');
+      showToast('Welcome back. You are signed in.');
+    }
+    document.getElementById('authPassword').value='';
+    document.getElementById('authConfirm').value='';
+  }catch(error){
+    setAuthFeedback(error.message||'Unable to complete your request. Please try again.','error');
+  }finally{
+    setAuthBusy(false);
+  }
+}
+async function requestPasswordReset(){
+  const email=document.getElementById('authEmail').value.trim();
+  if(!email){
+    setAuthFeedback('Enter your email address first, then choose Forgot password.','error');
+    return;
+  }
+  if(!window.lumeAuth){
+    setAuthFeedback('Account service is still loading. Please try again in a moment.','error');
+    return;
+  }
+  try{
+    await window.lumeAuth.resetPassword(email);
+    setAuthFeedback('If an account exists for that email, a password reset message has been sent.','info');
+  }catch(error){
+    setAuthFeedback(error.message||'Unable to send a reset email right now.','error');
+  }
+}
+function renderAuthUser(user){
+  window.currentFirebaseUser=user||null;
+  const signedIn=Boolean(user);
+  document.querySelectorAll('.auth-signed-out').forEach(el=>{el.hidden=signedIn;});
+  document.querySelectorAll('.auth-signed-in').forEach(el=>{el.hidden=!signedIn;});
+  document.getElementById('navAccountLink').textContent=signedIn?'My Account':'Sign In / Sign Up';
+  document.getElementById('authSignedOut').hidden=signedIn;
+  document.getElementById('authSignedIn').hidden=!signedIn;
+  if(signedIn){
+    document.getElementById('authUserEmail').textContent=user.email||'Signed-in client';
+    document.getElementById('authUserStatus').textContent=user.emailVerified?'Your email address is verified.':'Please open the verification email sent to you to confirm your address.';
+  }else{
+    setAuthMode('signin');
+  }
+}
+async function signOutUser(){
+  if(!window.lumeAuth){return;}
+  try{
+    await window.lumeAuth.signOut();
+    closeModal('auth');
+    showToast('You have been signed out.');
+  }catch(error){
+    showToast('Unable to sign out right now. Please try again.');
+  }
 }
 
 // ── UPI QR DOWNLOAD ──
@@ -3659,10 +3860,19 @@ function setMode(el, mode){
 <!-- ══════════ FIREBASE (added) ══════════ -->
 <!-- Firebase JS SDK v12.13.0 — loaded as a browser ES module (works without any build step) -->
 <script type="module">
-  // Import the Firebase features you need
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-  // To add more Firebase products later, import them the same way, e.g.:
-  // import { getFirestore } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+  import {
+    browserLocalPersistence,
+    createUserWithEmailAndPassword,
+    getAuth,
+    onAuthStateChanged,
+    sendEmailVerification,
+    sendPasswordResetEmail,
+    setPersistence,
+    signInWithEmailAndPassword,
+    signOut,
+    updateProfile
+  } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
   // Your web app's Firebase configuration
   const firebaseConfig = {
@@ -3676,7 +3886,88 @@ function setMode(el, mode){
 
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
   window.firebaseApp = app;
+  window.firebaseAuth = auth;
+
+  function trackAccountEvent(eventName){
+    if(typeof window.gtag==='function'){
+      window.gtag('event',eventName,{method:'Email'});
+    }
+  }
+  function authErrorMessage(error){
+    switch(error && error.code){
+      case 'auth/email-already-in-use':
+        return 'An account already exists for this email. Please sign in instead.';
+      case 'auth/invalid-email':
+        return 'Please enter a valid email address.';
+      case 'auth/weak-password':
+        return 'Choose a stronger password with at least 6 characters.';
+      case 'auth/invalid-credential':
+      case 'auth/user-not-found':
+      case 'auth/wrong-password':
+        return 'The email or password is incorrect.';
+      case 'auth/operation-not-allowed':
+      case 'auth/configuration-not-found':
+        return 'Account access is being set up. Please contact Lume Live for assistance.';
+      case 'auth/unauthorized-domain':
+        return 'Account access is not enabled for this website domain yet.';
+      case 'auth/too-many-requests':
+        return 'Too many attempts. Please wait a little while and try again.';
+      case 'auth/network-request-failed':
+        return 'Network connection failed. Please check your internet and try again.';
+      default:
+        return 'We could not complete your account request. Please try again.';
+    }
+  }
+
+  try{
+    await setPersistence(auth,browserLocalPersistence);
+  }catch(error){
+    // Authentication can continue using Firebase's default persistence mode.
+  }
+  window.lumeAuth = {
+    async signUp(name,email,password){
+      try{
+        const result=await createUserWithEmailAndPassword(auth,email,password);
+        await updateProfile(result.user,{displayName:name});
+        let verificationSent=false;
+        try{
+          await sendEmailVerification(result.user);
+          verificationSent=true;
+        }catch(error){
+          verificationSent=false;
+        }
+        trackAccountEvent('sign_up');
+        return {user:result.user,verificationSent:verificationSent};
+      }catch(error){
+        throw new Error(authErrorMessage(error));
+      }
+    },
+    async signIn(email,password){
+      try{
+        const result=await signInWithEmailAndPassword(auth,email,password);
+        trackAccountEvent('login');
+        return result.user;
+      }catch(error){
+        throw new Error(authErrorMessage(error));
+      }
+    },
+    async resetPassword(email){
+      try{
+        await sendPasswordResetEmail(auth,email);
+      }catch(error){
+        if(error && error.code==='auth/user-not-found'){return;}
+        throw new Error(authErrorMessage(error));
+      }
+    },
+    async signOut(){
+      await signOut(auth);
+    }
+  };
+  onAuthStateChanged(auth,user=>{
+    window.renderAuthUser(user);
+  });
 </script>
 <!-- ══════════ END FIREBASE ══════════ -->
 </body>
