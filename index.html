@@ -11,19 +11,19 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Career Counselling in India | Mental Health Counselling | Lume Live</title>
-<meta name="description" content="Lume Live offers confidential online career counselling, mental health counselling, psychometric assessments, and parent guidance for students and families across India.">
+<title>Career & Mental Health Counselling in India | Lume Live</title>
+<meta name="description" content="Lume Live offers confidential online mental health counselling, career counselling, exam anxiety support, stress management, self-assessments, and parent guidance across India.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://lumelive.co.in/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Lume Live">
-<meta property="og:title" content="Career Counselling in India | Lume Live">
-<meta property="og:description" content="Confidential online career counselling and mental health counselling for students, parents, and professionals across India.">
+<meta property="og:title" content="Career & Mental Health Counselling in India | Lume Live">
+<meta property="og:description" content="Confidential online mental health counselling, career guidance, stress support, exam anxiety support, and self-assessments for students and families across India.">
 <meta property="og:url" content="https://lumelive.co.in/">
 <meta property="og:image" content="https://lumelive.co.in/logo.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Career Counselling in India | Lume Live">
-<meta name="twitter:description" content="Confidential online career counselling and mental health counselling for students and families across India.">
+<meta name="twitter:title" content="Career & Mental Health Counselling in India | Lume Live">
+<meta name="twitter:description" content="Online mental health counselling, career guidance, exam anxiety support, stress support, and self-assessments for students and families across India.">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -44,12 +44,14 @@
     {
       "@type": "ProfessionalService",
       "@id": "https://lumelive.co.in/#career-counselling",
-      "name": "Lume Live Career Counselling",
+      "name": "Lume Live Mental Health and Career Counselling",
       "url": "https://lumelive.co.in/",
-      "description": "Confidential online career counselling, mental health counselling, psychometric assessment, and parent guidance for students and families across India.",
+      "description": "Confidential online mental health counselling, career counselling, exam anxiety support, stress management, self-assessment, and parent guidance for students and families across India.",
       "provider": {
         "@id": "https://lumelive.co.in/#organization"
       },
+      "image": "https://lumelive.co.in/logo.png",
+      "priceRange": "₹49-₹1499",
       "areaServed": {
         "@type": "Country",
         "name": "India"
@@ -62,11 +64,80 @@
       },
       "telephone": "+91-7015671280",
       "email": "hello@lumelive.co.in",
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+          ],
+          "opens": "09:00",
+          "closes": "20:00"
+        }
+      ],
       "serviceType": [
         "Career counselling",
         "Mental health counselling",
+        "Exam anxiety counselling",
+        "Stress management counselling",
         "Psychometric assessment",
         "Parent guidance"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Lume Live counselling services",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "name": "Introductory emotional wellness session",
+            "price": "49",
+            "priceCurrency": "INR",
+            "availability": "https://schema.org/InStock"
+          },
+          {
+            "@type": "Offer",
+            "name": "Self-Assessment Suite",
+            "price": "999",
+            "priceCurrency": "INR",
+            "availability": "https://schema.org/InStock"
+          }
+        ]
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://lumelive.co.in/#website",
+      "url": "https://lumelive.co.in/",
+      "name": "Lume Live",
+      "publisher": {
+        "@id": "https://lumelive.co.in/#organization"
+      },
+      "inLanguage": "en-IN"
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://lumelive.co.in/#faq-schema",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Does Lume Live offer mental health counselling online?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Lume Live offers confidential online mental health counselling for stress, anxiety, low mood, exam pressure, burnout, self-esteem concerns, and emotional regulation across India."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can career counselling help with exam anxiety and academic stress?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Lume Live combines career guidance with emotional wellness support so students can discuss academic stress, exam anxiety, parent pressure, confidence, and future decisions in a structured counselling conversation."
+          }
+        }
       ]
     }
   ]
@@ -311,6 +382,12 @@ section{padding:80px 20px;}
 .ewb-why-item:hover .icon{transform:scale(1.2) rotate(-5deg);}
 .ewb-why-item h4{font-size:.84rem;font-weight:700;color:var(--dark);margin-bottom:3px;}
 .ewb-why-item p{font-size:.76rem;color:var(--mid);line-height:1.55;}
+.mh-quote-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:0 0 38px;}
+.mh-quote-card{background:linear-gradient(180deg,#fff,#FCFEFD);border:1px solid #E2E9E8;border-left:4px solid var(--teal);border-radius:16px;padding:20px 18px;box-shadow:0 10px 30px rgba(13,27,64,.05);transition:all .25s;}
+.mh-quote-card:hover{transform:translateY(-4px);box-shadow:0 16px 38px rgba(13,27,64,.08);border-left-color:var(--gold);}
+.mh-quote-card blockquote{font-family:'Playfair Display',serif;font-size:1rem;line-height:1.45;color:var(--navy);margin-bottom:12px;}
+.mh-quote-card cite{font-style:normal;font-size:.72rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--gold);}
+.mh-quote-note{text-align:center;font-size:.76rem;color:var(--mid);line-height:1.6;margin:-18px auto 34px;max-width:760px;}
 .ewb-cta{text-align:center;padding:40px 0 20px;}
 .ewb-cta h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--navy);margin-bottom:10px;}
 .ewb-cta p{font-size:.88rem;color:var(--mid);margin-bottom:24px;max-width:500px;margin-left:auto;margin-right:auto;line-height:1.7;}
@@ -324,6 +401,7 @@ section{padding:80px 20px;}
 @media(max-width:960px){
   .ewb-grid{grid-template-columns:1fr 1fr;}
   .ewb-why-grid{grid-template-columns:1fr 1fr;}
+  .mh-quote-strip{grid-template-columns:1fr;}
 }
 @media(max-width:640px){
   .ewb-grid{grid-template-columns:1fr;}
@@ -1030,6 +1108,21 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 <!-- MOUSE GLOW -->
 <div class="mouse-glow" id="mouseGlow"></div>
 
+<!-- INTRODUCTORY OFFER COUNTDOWN -->
+<div class="countdown-bar offer-countdown" id="offerCountdownBar" hidden>
+  <div class="cd-label"><span class="pulse-dot"></span><span>₹49 introductory session ends in</span></div>
+  <div class="countdown-timer" aria-live="polite">
+    <div class="cd-unit"><span class="cd-num" data-offer-days>07</span><span class="cd-lbl">Days</span></div>
+    <span class="cd-sep">:</span>
+    <div class="cd-unit"><span class="cd-num" data-offer-hours>00</span><span class="cd-lbl">Hrs</span></div>
+    <span class="cd-sep">:</span>
+    <div class="cd-unit"><span class="cd-num" data-offer-mins>00</span><span class="cd-lbl">Min</span></div>
+    <span class="cd-sep">:</span>
+    <div class="cd-unit"><span class="cd-num" data-offer-secs>00</span><span class="cd-lbl">Sec</span></div>
+  </div>
+  <a href="#" class="cd-cta" onclick="openModal('session');return false;">Book ₹49</a>
+</div>
+
 <!-- GLOWING SIDE ICONS (desktop) -->
 <div class="side-icons">
   <a href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20would%20like%20to%20know%20more%20about%20Lume%20Live." target="_blank" class="side-icon wa" title="WhatsApp">
@@ -1325,6 +1418,13 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 .sa-check input{accent-color:var(--teal);width:20px;height:20px;flex:none;margin-top:1px;}
 .sa-integrity{border-radius:11px;margin-top:14px;padding:12px 14px;background:#FFF7E9;border:1px solid #F0DFBA;color:#75531D;font-size:.73rem;line-height:1.58;}
 .sa-integrity strong{display:block;margin-bottom:3px;color:#63441A;}
+.sa-save-prompt{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;border:1px solid #D6EAE7;background:linear-gradient(135deg,#ECF7F6,#F8FCFB);border-radius:13px;padding:14px 16px;margin:18px 0 16px;}
+.sa-save-copy{flex:1;min-width:230px;}
+.sa-save-copy strong{display:block;color:var(--navy);font-size:.85rem;margin-bottom:3px;}
+.sa-save-copy span{display:block;color:var(--mid);font-size:.76rem;line-height:1.52;}
+.sa-save-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.sa-save-actions .sa-btn{padding:9px 14px;min-height:39px;font-size:.76rem;}
+.sa-saved-badge{font-size:.75rem;font-weight:700;color:var(--teal);background:#fff;border:1px solid #D6EAE7;border-radius:20px;padding:9px 13px;}
 
 .sa-pay{background:#fff;border:1px solid #E2E9E8;border-radius:20px;box-shadow:0 14px 44px rgba(13,27,64,.07);padding:24px;position:sticky;top:calc(var(--nav-h) + 16px);}
 .sa-pay-label{font-size:.7rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);}
@@ -1555,6 +1655,17 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
             <h3>One Session — All Five Assessments</h3>
             <p>This suite brings together the five questionnaires below. You complete them in one guided flow, and your responses are scored and combined into a single interactive report you can explore, print and discuss.</p>
             <div class="sa-list" id="saToolList"></div>
+            <div class="sa-save-prompt">
+              <div class="sa-save-copy">
+                <strong>Want to save your assessment progress?</strong>
+                <span>Sign up or sign in before you begin to keep your progress saved in this browser on this device.</span>
+              </div>
+              <div class="sa-save-actions auth-signed-out">
+                <button class="sa-btn primary" type="button" onclick="openAuth('signup')">Create Account</button>
+                <button class="sa-btn ghost" type="button" onclick="openAuth('signin')">Sign In</button>
+              </div>
+              <div class="sa-saved-badge auth-signed-in" id="saSaveStatus" hidden>Progress saving is active</div>
+            </div>
             <span class="s-tag" style="margin-top:8px;">Your details</span>
             <div class="sa-gate-2">
               <div class="sa-field"><label for="saName">Name for the report *</label>
@@ -1723,6 +1834,64 @@ var TOTAL=order.reduce(function(t,k){return t+tools[k].items.length;},0);
 /* ─── State ─── */
 var S={name:"",phone:"",paid:false,handoff:false,identity:"",part:0,answers:{},picks:[]};
 order.forEach(function(k){S.answers[k]={};});
+var saProgressKey="";
+var saSaveStatusTimer=null;
+
+function hasAssessmentProgress(){
+ return Boolean(S.name||S.phone||S.paid||S.picks.length||order.some(function(k){return Object.keys(S.answers[k]).length>0;}));
+}
+function collectAssessmentDraft(){
+ var purpose=el("saPurpose"),paid=el("saPaid");
+ return {
+  version:2,name:S.name,phone:S.phone,paid:S.paid,handoff:S.handoff,identity:S.identity,part:S.part,
+  answers:S.answers,picks:S.picks,purpose:Boolean(purpose&&purpose.checked),
+  paidChecked:Boolean(paid&&paid.checked),savedAt:new Date().toISOString()
+ };
+}
+function updateSaveStatus(message){
+ var status=el("saSaveStatus");
+ if(!status||!window.currentFirebaseUser)return;
+ status.textContent=message||"Progress saved just now";
+ clearTimeout(saSaveStatusTimer);
+ saSaveStatusTimer=setTimeout(function(){
+  if(status)status.textContent="Progress saving is active";
+ },2200);
+}
+function persistAssessmentProgress(silent){
+ if(!saProgressKey)return;
+ try{
+  localStorage.setItem(saProgressKey,JSON.stringify(collectAssessmentDraft()));
+  if(!silent)updateSaveStatus("Progress saved just now");
+ }catch(e){}
+}
+function restoreAssessmentProgress(saved){
+ if(!saved||!saved.answers)return false;
+ S.name=typeof saved.name==="string"?saved.name:"";
+ S.phone=typeof saved.phone==="string"?saved.phone:"";
+ S.paid=Boolean(saved.paid);
+ S.handoff=Boolean(saved.handoff);
+ S.identity=typeof saved.identity==="string"?saved.identity:"";
+ S.part=Math.max(0,Math.min(order.length-1,Number(saved.part)||0));
+ S.picks=Array.isArray(saved.picks)?saved.picks.map(Number).filter(function(n){return n>0;}):[];
+ order.forEach(function(k){S.answers[k]=saved.answers[k]&&typeof saved.answers[k]==="object"?saved.answers[k]:{};});
+ el("saName").value=S.name;
+ el("saPhone").value=S.phone;
+ el("saPurpose").checked=Boolean(saved.purpose);
+ el("saPaid").checked=Boolean(saved.paidChecked||saved.paid);
+ if(S.paid){show("saTest");renderPart();}else{show("saGate");}
+ return true;
+}
+window.saUseAccountProgress=function(user){
+ if(!user||!user.uid){saProgressKey="";return;}
+ saProgressKey="lume-live-assessment-progress:"+user.uid;
+ if(hasAssessmentProgress()){persistAssessmentProgress();return;}
+ try{
+  var raw=localStorage.getItem(saProgressKey);
+  if(raw&&restoreAssessmentProgress(JSON.parse(raw))){
+   toast("Your saved assessment progress has been restored on this device.");
+  }
+ }catch(e){}
+};
 
 function show(screen){["saGate","saTest","saReport"].forEach(function(s){el(s).hidden=(s!==screen);});}
 
@@ -1742,7 +1911,7 @@ function validateGate(){
  if(!name){err.textContent="Please enter the name for the report.";return false;}
  if(phone.replace(/\D/g,"").length<10){err.textContent="Please enter a valid WhatsApp number.";return false;}
  if(!el("saPurpose").checked){err.textContent="Please acknowledge the purpose of the assessment.";return false;}
- S.name=name;S.phone=phone;err.textContent="";return true;
+ S.name=name;S.phone=phone;err.textContent="";persistAssessmentProgress();return true;
 }
 window.saSendPayment=function(){
  if(!validateGate())return;
@@ -1750,6 +1919,7 @@ window.saSendPayment=function(){
   "Name: "+S.name,"WhatsApp: "+S.phone,"Fee: Rs.999","",
   "I will attach my payment screenshot here for confirmation before starting."].join("\n");
  S.handoff=true;S.identity=S.name+"|"+S.phone;
+ persistAssessmentProgress();
  window.open("https://wa.me/917015671280?text="+encodeURIComponent(msg),"_blank","noopener");
  toast("Attach your payment screenshot in WhatsApp, then confirm below to begin.");
 };
@@ -1760,6 +1930,7 @@ window.saBegin=function(){
   err.textContent="Please send your \u20B9999 payment screenshot on WhatsApp for these details before starting.";return;}
  if(!el("saPaid").checked){err.textContent="Please confirm that you have paid and sent your payment screenshot.";return;}
  err.textContent="";S.paid=true;S.part=0;
+ persistAssessmentProgress();
  show("saTest");
  renderPart();
  el("saTest").scrollIntoView({behavior:"smooth",block:"start"});
@@ -1793,11 +1964,11 @@ function renderSteps(){
    '<div class="sa-step-t">'+esc(t.name)+'<small>Part '+(i+1)+' of 5</small></div></div>';
  }).join("");
 }
-window.saJump=function(i){S.part=i;renderPart();el("saTest").scrollIntoView({behavior:"smooth",block:"start"});};
+window.saJump=function(i){S.part=i;persistAssessmentProgress();renderPart();el("saTest").scrollIntoView({behavior:"smooth",block:"start"});};
 window.saMove=function(d){
  var n=S.part+d;
  if(n<0||n>order.length-1)return;
- S.part=n;renderPart();el("saTest").scrollIntoView({behavior:"smooth",block:"start"});
+ S.part=n;persistAssessmentProgress();renderPart();el("saTest").scrollIntoView({behavior:"smooth",block:"start"});
 };
 function renderPart(){
  var k=order[S.part],t=tools[k];
@@ -1847,10 +2018,12 @@ function renderPart(){
  el("saNext").hidden=S.part===order.length-1;
  el("saGenerate").hidden=S.part!==order.length-1;
  renderSteps();updateProgress();
+ persistAssessmentProgress(true);
 }
 window.saSetRadio=function(k,qid,v){
  S.answers[k][qid]=Number(v);
  var q=el("saQ"+qid);if(q)q.classList.remove("flag");
+ persistAssessmentProgress();
  renderSteps();updateProgress();
 };
 window.saSetMulti=function(k,qid,oi,checked){
@@ -1858,6 +2031,7 @@ window.saSetMulti=function(k,qid,oi,checked){
  var arr=S.answers[k][qid],p=arr.indexOf(oi);
  if(checked&&p===-1)arr.push(oi);
  if(!checked&&p>-1)arr.splice(p,1);
+ persistAssessmentProgress();
  renderSteps();updateProgress();
 };
 function refreshPick3Dim(){
@@ -1877,9 +2051,10 @@ window.saTogglePick=function(qid){
    el("saTestError").textContent="You can choose only three statements. Deselect one first.";
    return;
   }
-  S.picks.push(qid);
+ S.picks.push(qid);
  }else{S.picks.splice(p,1);}
  el("saTestError").textContent="";
+ persistAssessmentProgress();
  refreshPick3Dim();renderSteps();
 };
 
@@ -1903,6 +2078,7 @@ window.saGenerate=function(){
   }
  }
  el("saReport").innerHTML=buildReport();
+ persistAssessmentProgress();
  show("saReport");
  el("saReport").scrollIntoView({behavior:"smooth",block:"start"});
  setTimeout(animateBars,120);
@@ -2503,6 +2679,19 @@ function saShareFallback(doc,fname,waText){
 }
 
 renderToolList();
+["saName","saPhone"].forEach(function(id){
+ var node=el(id);
+ if(node){node.addEventListener("input",function(){
+  S.name=el("saName").value.trim();
+  S.phone=el("saPhone").value.trim();
+  persistAssessmentProgress(true);
+ });}
+});
+["saPurpose","saPaid"].forEach(function(id){
+ var node=el(id);
+ if(node){node.addEventListener("change",function(){persistAssessmentProgress();});}
+});
+window.addEventListener("beforeunload",function(){persistAssessmentProgress(true);});
 show("saGate");
 
 })();
@@ -2642,6 +2831,22 @@ show("saGate");
         </div>
       </div>
     </div>
+
+    <div class="mh-quote-strip" aria-label="Mental health reflections from psychologists">
+      <div class="mh-quote-card anim stagger-1">
+        <blockquote>"When I accept myself as I am, then I can change."</blockquote>
+        <cite>Carl Rogers</cite>
+      </div>
+      <div class="mh-quote-card anim stagger-2">
+        <blockquote>"Between stimulus and response, there is a space."</blockquote>
+        <cite>Viktor Frankl</cite>
+      </div>
+      <div class="mh-quote-card anim stagger-3">
+        <blockquote>"Act as if what you do makes a difference. It does."</blockquote>
+        <cite>William James</cite>
+      </div>
+    </div>
+    <p class="mh-quote-note">Mental health support is not about being broken. It is about creating enough safety, clarity, and self-understanding to choose your next step.</p>
 
     <div class="ewb-cta">
       <h3>Take the First Step Toward Clarity</h3>
@@ -3113,6 +3318,22 @@ show("saGate");
 </a>
 <div class="toast" id="toast"></div>
 
+<!-- END-OF-PAGE ACCOUNT PROMPT -->
+<div class="exit-overlay" id="scrollEndPopup" role="dialog" aria-modal="true" aria-labelledby="scrollEndTitle">
+  <div class="exit-popup">
+    <button class="popup-x" type="button" onclick="closeScrollEndPopup()" aria-label="Close">&times;</button>
+    <div class="exit-hdr">
+      <h2 id="scrollEndTitle">Save Your Assessment Journey</h2>
+      <p>Create your client account before you begin</p>
+    </div>
+    <div class="exit-body">
+      <p>Want to take the Self-Assessment Suite? Sign up or sign in to keep your progress saved in this browser on this device.</p>
+      <button class="exit-btn" type="button" onclick="closeScrollEndPopup();openAuth('signup')">Create Account to Save Progress</button>
+      <button class="exit-close" type="button" onclick="closeScrollEndPopup()">Continue Browsing</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ SESSION BOOKING MODAL ══ -->
 <style>
 .sess-reassure{background:linear-gradient(135deg,#ECF7F6,#F3F9EC);border:1px solid #D6EAE7;border-radius:14px;padding:15px 17px;margin-bottom:16px;}
@@ -3133,6 +3354,15 @@ show("saGate");
       <p>Confidential · 1:1 · Available PAN India via Video Call</p>
     </div>
     <div class="modal-body">
+      <div class="modal-countdown offer-countdown" hidden>
+        <div class="mcd-label"><span class="pulse-dot"></span><span>₹49 introductory offer ends in</span></div>
+        <div class="mcd-timer" aria-live="polite">
+          <div class="mcd-unit"><span class="mcd-num" data-offer-days>07</span><span class="mcd-lbl">Days</span></div>
+          <div class="mcd-unit"><span class="mcd-num" data-offer-hours>00</span><span class="mcd-lbl">Hrs</span></div>
+          <div class="mcd-unit"><span class="mcd-num" data-offer-mins>00</span><span class="mcd-lbl">Min</span></div>
+          <div class="mcd-unit"><span class="mcd-num" data-offer-secs>00</span><span class="mcd-lbl">Sec</span></div>
+        </div>
+      </div>
       <div class="sess-reassure">
         <div class="sr-top"><span class="sr-emoji">🌱</span><b>Reaching out takes courage — and you're already doing the hardest part.</b></div>
         <p>This is a calm, private, one-to-one conversation with a caring professional. There is nothing you need to prepare and nothing you have to "get right" — we simply listen, understand where you are, and gently help you find your next step.</p>
@@ -3422,6 +3652,33 @@ show("saGate");
 <script>
 document.body.classList.add('js-ready');
 
+// Seven-day introductory offer countdown.
+const offerDeadlineIso='2026-06-04T23:59:59+05:30';
+function padOffer(n){return String(Math.max(0,n)).padStart(2,'0');}
+function updateOfferCountdown(){
+  const deadline=new Date(offerDeadlineIso).getTime();
+  const diff=deadline-Date.now();
+  const offerNodes=document.querySelectorAll('.offer-countdown');
+  if(diff<=0){
+    document.documentElement.style.setProperty('--countdown-h','0px');
+    offerNodes.forEach(el=>{el.hidden=true;});
+    return;
+  }
+  const days=Math.floor(diff/86400000);
+  const hours=Math.floor((diff%86400000)/3600000);
+  const mins=Math.floor((diff%3600000)/60000);
+  const secs=Math.floor((diff%60000)/1000);
+  document.documentElement.style.setProperty('--countdown-h',window.innerWidth<=640?'34px':'38px');
+  offerNodes.forEach(el=>{el.hidden=false;});
+  document.querySelectorAll('[data-offer-days]').forEach(el=>{el.textContent=padOffer(days);});
+  document.querySelectorAll('[data-offer-hours]').forEach(el=>{el.textContent=padOffer(hours);});
+  document.querySelectorAll('[data-offer-mins]').forEach(el=>{el.textContent=padOffer(mins);});
+  document.querySelectorAll('[data-offer-secs]').forEach(el=>{el.textContent=padOffer(secs);});
+}
+updateOfferCountdown();
+setInterval(updateOfferCountdown,1000);
+window.addEventListener('resize',updateOfferCountdown);
+
 // ── MENU ──
 function toggleMenu(){
   document.getElementById('ham').classList.toggle('open');
@@ -3524,6 +3781,7 @@ async function requestPasswordReset(){
 }
 function renderAuthUser(user){
   window.currentFirebaseUser=user||null;
+  window.authStateReady=true;
   const signedIn=Boolean(user);
   document.querySelectorAll('.auth-signed-out').forEach(el=>{el.hidden=signedIn;});
   document.querySelectorAll('.auth-signed-in').forEach(el=>{el.hidden=!signedIn;});
@@ -3536,6 +3794,8 @@ function renderAuthUser(user){
   }else{
     setAuthMode('signin');
   }
+  if(typeof window.saUseAccountProgress==='function'){window.saUseAccountProgress(user);}
+  if(signedIn){closeScrollEndPopup();}else{checkScrollEndPrompt();}
 }
 async function signOutUser(){
   if(!window.lumeAuth){return;}
@@ -3569,6 +3829,31 @@ function openModal(id){document.getElementById('modal-'+id).classList.add('open'
 function closeModal(id){document.getElementById('modal-'+id).classList.remove('open');document.body.style.overflow='';}
 document.querySelectorAll('.modal-overlay').forEach(el=>{
   el.addEventListener('click',function(e){if(e.target===this){this.classList.remove('open');document.body.style.overflow='';}});
+});
+
+// End-of-page prompt for visitors who may want saved assessment progress.
+let scrollEndPromptShown=false;
+function checkScrollEndPrompt(){
+  if(!window.authStateReady){return;}
+  if(window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-80){
+    openScrollEndPopup();
+  }
+}
+function openScrollEndPopup(){
+  const popup=document.getElementById('scrollEndPopup');
+  if(!popup||scrollEndPromptShown||window.currentFirebaseUser||document.querySelector('.modal-overlay.open')){return;}
+  scrollEndPromptShown=true;
+  popup.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeScrollEndPopup(){
+  const popup=document.getElementById('scrollEndPopup');
+  if(!popup){return;}
+  popup.classList.remove('open');
+  document.body.style.overflow='';
+}
+document.getElementById('scrollEndPopup').addEventListener('click',function(e){
+  if(e.target===this){closeScrollEndPopup();}
 });
 
 // ── COMING SOON ──
@@ -3770,6 +4055,7 @@ window.addEventListener('scroll',()=>{
   const nav=document.getElementById('navbar');
   if(window.scrollY>40){nav.classList.add('scrolled');nav.style.boxShadow='0 4px 28px rgba(10,110,110,.12)';}
   else{nav.classList.remove('scrolled');nav.style.boxShadow='0 2px 20px rgba(10,110,110,.08)';}
+  checkScrollEndPrompt();
 });
 
 // ── MOUSE GLOW ──
