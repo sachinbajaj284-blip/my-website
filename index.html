@@ -58,8 +58,7 @@
       },
       "address": {
         "@type": "PostalAddress",
-        "addressLocality": "Rohtak",
-        "addressRegion": "Haryana",
+        "addressRegion": "India",
         "addressCountry": "IN"
       },
       "telephone": "+91-7015671280",
@@ -436,6 +435,38 @@ section{padding:80px 20px;}
 .svc-card:hover .svc-bullets li{padding-left:4px;}
 .svc-price{font-size:.77rem;color:var(--mid);margin-bottom:12px;}
 .svc-price strong{color:var(--navy);font-size:.93rem;font-weight:800;}
+
+/* ── PREMIUM CLIENT EXPERIENCE ── */
+#client-experience{background:linear-gradient(135deg,#0D1B40 0%,#142C5A 48%,#0A6E6E 100%);padding:82px 20px;position:relative;overflow:hidden;color:#fff;}
+#client-experience::before{content:'';position:absolute;inset:-35% auto auto -15%;width:420px;height:420px;background:radial-gradient(circle,rgba(201,147,58,.18),transparent 68%);border-radius:50%;animation:softPulse 8s ease-in-out infinite;}
+#client-experience::after{content:'';position:absolute;right:-120px;bottom:-140px;width:360px;height:360px;background:rgba(255,255,255,.05);border-radius:50%;animation:morphBlob 14s ease-in-out infinite;}
+.experience-head{text-align:center;max-width:680px;margin:0 auto 36px;position:relative;z-index:1;}
+.experience-head .s-tag{background:rgba(255,255,255,.1);border-color:rgba(201,147,58,.35);color:var(--gold2);}
+.experience-head .s-title{color:#fff;}
+.experience-head .s-sub{color:rgba(255,255,255,.74);}
+.experience-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:24px;position:relative;z-index:1;}
+.ai-card,.booking-flow{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.15);border-radius:22px;padding:28px;box-shadow:0 24px 60px rgba(0,0,0,.18);backdrop-filter:blur(12px);}
+.ai-card h3,.booking-flow h3{font-family:'Playfair Display',serif;font-size:1.22rem;margin-bottom:8px;color:#fff;}
+.ai-card p,.booking-flow p{font-size:.84rem;line-height:1.7;color:rgba(255,255,255,.72);}
+.ai-note{display:inline-flex;align-items:center;gap:7px;background:rgba(201,147,58,.16);border:1px solid rgba(201,147,58,.35);color:#FFE2A3;border-radius:20px;padding:6px 12px;font-size:.68rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px;}
+.ai-options{display:grid;gap:16px;margin:22px 0;}
+.ai-option-group label{display:block;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:#FFE2A3;margin-bottom:8px;}
+.ai-pills{display:flex;flex-wrap:wrap;gap:8px;}
+.ai-pill{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:#fff;border-radius:999px;padding:9px 13px;font-family:'Montserrat',sans-serif;font-size:.76rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.ai-pill:hover,.ai-pill.active{background:#fff;color:var(--navy);border-color:#fff;transform:translateY(-2px);}
+.ai-result{background:#fff;color:var(--dark);border-radius:18px;padding:20px;margin-top:16px;box-shadow:0 16px 40px rgba(0,0,0,.16);}
+.ai-result small{display:block;color:var(--gold);font-weight:800;text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px;}
+.ai-result h4{font-family:'Playfair Display',serif;color:var(--navy);font-size:1.08rem;margin-bottom:6px;}
+.ai-result p{color:var(--mid);font-size:.82rem;margin-bottom:12px;}
+.ai-summary{background:#F7FAF9;border:1px solid #E2E9E8;border-radius:12px;padding:12px;font-size:.78rem;color:var(--dark);line-height:1.6;margin-bottom:13px;}
+.ai-actions{display:flex;flex-wrap:wrap;gap:8px;}
+.ai-actions .btn-cta,.ai-actions .wa-btn{font-size:.78rem;padding:11px 17px;}
+.booking-steps{display:grid;gap:12px;margin-top:20px;}
+.booking-step{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:flex-start;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:15px;padding:15px;}
+.booking-step b{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-size:.86rem;}
+.booking-step h4{font-size:.86rem;color:#fff;margin-bottom:3px;}
+.booking-step span{font-size:.76rem;color:rgba(255,255,255,.68);line-height:1.55;}
+.booking-flow .flow-foot{margin-top:18px;background:rgba(255,255,255,.08);border-left:3px solid var(--gold);border-radius:12px;padding:14px 15px;font-size:.78rem;color:rgba(255,255,255,.76);line-height:1.65;}
 .chip{position:absolute;top:16px;right:16px;font-size:.6rem;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.5px;text-transform:uppercase;animation:fadeScale .5s ease both;}
 .chip-live{background:#dcfce7;color:#166534;}
 .chip-soon{background:#fef9c3;color:#854d0e;}
@@ -846,7 +877,7 @@ body.js-ready .anim.scale{transform:scale(.9);}
 
 /* ── RESPONSIVE ── */
 @media(max-width:960px){
-  .hero-inner,.approach-grid,.about-grid,.rec-inner,.cpdf-inner,.contact-grid{grid-template-columns:1fr;}
+  .hero-inner,.approach-grid,.about-grid,.rec-inner,.cpdf-inner,.contact-grid,.experience-grid{grid-template-columns:1fr;}
   .svc-grid{grid-template-columns:1fr;}
   .footer-grid{grid-template-columns:1fr 1fr;}
   .nav-links{display:none;}
@@ -1198,7 +1229,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
   <div class="hero-gold-bar"></div>
   <div class="hero-inner">
     <div>
-      <div class="hero-badge"><div class="dot"></div><span>Science-Backed · Rohtak & PAN India</span></div>
+      <div class="hero-badge"><div class="dot"></div><span>Premium Guidance for Parents · Online Across India</span></div>
       <h1 class="hero-h1">Your Mind Deserves <em>Clarity.</em><br>Your Future Deserves <em>Direction.</em></h1>
       <p class="hero-sub">Professional online career counselling and mental health counselling in India, blending empathy with evidence. Whether you're navigating emotional distress or a career crossroads — we guide you with science, not guesswork.</p>
       <div class="hero-assurance" aria-label="Counselling session assurances">
@@ -1208,8 +1239,8 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
       </div>
 
       <div class="hero-btns">
-        <a href="#" class="btn-cta" onclick="openModal('session');return false;"><span style="font-size:1.2rem;">🎯</span><span>Book Introductory Session — ₹49</span></a>
-        <a href="#self-assessments" class="btn-ghost">🧭 Self-Assessment Suite — ₹999</a>
+        <a href="#services" class="btn-cta"><span style="font-size:1.2rem;">✨</span><span>Explore Services</span></a>
+        <a href="#" class="btn-ghost" onclick="openModal('session');return false;">🎯 Book Introductory Session — ₹49</a>
       </div>
       <div class="hero-stats">
         <div class="hero-stat"><div class="num" data-count="500">0+</div><div class="lbl">Lives Guided</div></div>
@@ -1230,7 +1261,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
   <div class="gallery-label s-inner">
     <span class="s-tag">Real Sessions · Real Impact</span>
     <h2 class="s-title">See Lume Live in Action</h2>
-    <p class="s-sub">Sachin sir has conducted awareness and counselling sessions at schools across Haryana — impacting hundreds of students directly.</p>
+    <p class="s-sub">Sachin sir has conducted awareness and counselling sessions for students, parents, and schools across India — impacting hundreds of learners directly.</p>
   </div>
   <div class="gallery-grid s-inner" style="margin-top:28px;">
     <div class="gallery-item anim stagger-1">
@@ -1293,17 +1324,17 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
   <div class="rec-inner s-inner">
     <div class="rec-photo anim left">
       <img src="session5.jpg" alt="Recognition Ceremony">
-      <div class="rec-photo-lbl">🏆 AILET 2026 · Toppers' Felicitation Ceremony · Laureate Award · Rohtak</div>
+      <div class="rec-photo-lbl">🏆 AILET 2026 · Toppers' Felicitation Ceremony · Laureate Award</div>
     </div>
     <div class="anim right">
       <span class="s-tag">Recognition & Credibility</span>
       <h2 class="s-title">Recognised. Trusted.<br>Committed.</h2>
-      <p class="s-sub">Recognised at the AILET 2026 Toppers' Ceremony for outstanding contribution to career education across Haryana.</p>
+      <p class="s-sub">Recognised at the AILET 2026 Toppers' Ceremony for outstanding contribution to career education and student guidance.</p>
       <div class="rec-grid">
         <div class="rec-card anim stagger-1"><div class="icon">🎓</div><div class="title">M.Sc Clinical Psychology</div><div class="desc">Gurugram University</div></div>
         <div class="rec-card anim stagger-2"><div class="icon">📜</div><div class="title">PGDGC — Jamia Millia</div><div class="desc">Guidance & Counselling, New Delhi</div></div>
         <div class="rec-card anim stagger-3"><div class="icon">🏆</div><div class="title">Laureate Award</div><div class="desc">AILET 2026 Felicitation</div></div>
-        <div class="rec-card anim stagger-4"><div class="icon">🎤</div><div class="title">500+ Students</div><div class="desc">School sessions across Haryana</div></div>
+        <div class="rec-card anim stagger-4"><div class="icon">🎤</div><div class="title">500+ Students</div><div class="desc">School sessions across India</div></div>
       </div>
     </div>
   </div>
@@ -1320,8 +1351,8 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
         <div class="svc-head">
           <span class="chip chip-live">✅ Live Now</span>
           <div class="svc-icon">🏫</div>
-          <div class="svc-for">For Students in Grades 9–12</div>
-          <div class="svc-name">Stream & Subject Clarity After 10th</div>
+          <div class="svc-for">For Parents of Grades 9–12 Students</div>
+          <div class="svc-name">Career Confusion & Stream Clarity</div>
         </div>
         <div class="svc-body">
           <ul class="svc-bullets">
@@ -1339,8 +1370,8 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
         <div class="svc-head">
           <span class="chip chip-live">✅ Live Now</span>
           <div class="svc-icon">🎓</div>
-          <div class="svc-for">For College Students & Graduates</div>
-          <div class="svc-name">Career Clarity & First-Job Readiness</div>
+          <div class="svc-for">For Older Students & Young Adults</div>
+          <div class="svc-name">Career Direction & First-Job Readiness</div>
         </div>
         <div class="svc-body">
           <ul class="svc-bullets">
@@ -1358,7 +1389,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
         <div class="svc-head">
           <span class="chip chip-live">✅ Live Now</span>
           <div class="svc-icon">🧠</div>
-          <div class="svc-for">For Anyone Feeling Overwhelmed</div>
+          <div class="svc-for">Separate Mental Health Support</div>
           <div class="svc-name">1:1 Emotional Wellness Counselling</div>
         </div>
         <div class="svc-body">
@@ -1372,6 +1403,71 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
           <div class="svc-price">First session <strong style="color:var(--green);">₹49</strong> <span style="text-decoration:line-through;color:var(--mid);">₹499</span> · Regular ₹999</div>
           <button class="btn-navy">Book Your Session Now →</button>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="client-experience">
+  <div class="s-inner">
+    <div class="experience-head">
+      <span class="s-tag">Client Experience</span>
+      <h2 class="s-title">Explore First. Choose with Confidence.</h2>
+      <p class="s-sub">A premium, parent-friendly path that helps families understand the right service before paying or booking.</p>
+    </div>
+    <div class="experience-grid">
+      <div class="ai-card anim stagger-1">
+        <span class="ai-note">AI-Assisted Service Guide</span>
+        <h3>Find the right Lume Live support path</h3>
+        <p>Answer three quick prompts and this guide prepares a clean recommendation plus a WhatsApp-ready client summary for the counsellor.</p>
+        <div class="ai-options" id="aiGuideOptions">
+          <div class="ai-option-group" data-ai-group="stage">
+            <label>Child / learner stage</label>
+            <div class="ai-pills">
+              <button class="ai-pill" type="button" onclick="setAiGuide(this,'stage','Class 9-10')">Class 9–10</button>
+              <button class="ai-pill" type="button" onclick="setAiGuide(this,'stage','Class 11-12')">Class 11–12</button>
+              <button class="ai-pill" type="button" onclick="setAiGuide(this,'stage','College / graduate')">College / Graduate</button>
+            </div>
+          </div>
+          <div class="ai-option-group" data-ai-group="concern">
+            <label>Main concern</label>
+            <div class="ai-pills">
+              <button class="ai-pill" type="button" onclick="setAiGuide(this,'concern','Career confusion')">Career confusion</button>
+              <button class="ai-pill" type="button" onclick="setAiGuide(this,'concern','Stream selection')">Stream selection</button>
+              <button class="ai-pill" type="button" onclick="setAiGuide(this,'concern','Parent-child disagreement')">Parent-child disagreement</button>
+              <button class="ai-pill" type="button" onclick="setAiGuide(this,'concern','Exam stress')">Exam stress</button>
+            </div>
+          </div>
+          <div class="ai-option-group" data-ai-group="preference">
+            <label>Preferred next step</label>
+            <div class="ai-pills">
+              <button class="ai-pill" type="button" onclick="setAiGuide(this,'preference','Explore services first')">Explore services</button>
+              <button class="ai-pill" type="button" onclick="setAiGuide(this,'preference','Take assessment')">Take assessment</button>
+              <button class="ai-pill" type="button" onclick="setAiGuide(this,'preference','Book session')">Book session</button>
+            </div>
+          </div>
+        </div>
+        <div class="ai-result" id="aiGuideResult">
+          <small>Recommended Path</small>
+          <h4>Start by choosing the stage and concern above.</h4>
+          <p>The guide will create a short client brief that can be sent on WhatsApp before your first conversation.</p>
+          <div class="ai-summary">No client summary yet.</div>
+          <div class="ai-actions">
+            <a href="#services" class="btn-cta"><span>Explore Services</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="booking-flow anim stagger-2">
+        <span class="ai-note">After Booking</span>
+        <h3>What happens after you book?</h3>
+        <p>Parents should know exactly what happens next. This simple process keeps the first conversation calm, structured, and professional.</p>
+        <div class="booking-steps">
+          <div class="booking-step"><b>1</b><div><h4>Pay the ₹49 introductory fee</h4><span>Use the UPI QR or UPI ID shown in the booking popup.</span></div></div>
+          <div class="booking-step"><b>2</b><div><h4>Send payment screenshot on WhatsApp</h4><span>The WhatsApp message opens with your preferred date, time, and session mode.</span></div></div>
+          <div class="booking-step"><b>3</b><div><h4>Receive confirmation</h4><span>Your slot and joining link are confirmed manually, usually within 2 hours.</span></div></div>
+          <div class="booking-step"><b>4</b><div><h4>Get a clear next-step plan</h4><span>The first session focuses on career confusion, family concerns, and the most suitable service path.</span></div></div>
+        </div>
+        <div class="flow-foot">Assessment progress is saved only after sign-in, so accidental refreshes are safer for clients who create an account before starting.</div>
       </div>
     </div>
   </div>
@@ -1577,6 +1673,11 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 
 .sa-syn{background:#ECF7F6;border:1px solid #D6EAE7;border-radius:14px;padding:17px 19px;margin:12px 0;}
 .sa-syn p{color:var(--dark);font-size:.84rem;}
+.sa-insight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0 16px;}
+.sa-insight{background:linear-gradient(180deg,#fff,#FCFEFD);border:1px solid #E2E9E8;border-radius:14px;padding:15px;box-shadow:0 10px 28px rgba(13,27,64,.05);}
+.sa-insight small{display:block;color:var(--gold);font-weight:800;font-size:.63rem;text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px;}
+.sa-insight b{display:block;color:var(--navy);font-family:'Playfair Display',serif;font-size:1.02rem;margin-bottom:4px;}
+.sa-insight span{font-size:.74rem;color:var(--mid);line-height:1.55;}
 .sa-rlist{list-style:none;display:grid;gap:8px;margin:8px 0;}
 .sa-rlist li{font-size:.82rem;color:var(--dark);line-height:1.6;padding-left:19px;position:relative;}
 .sa-rlist li::before{content:'▸';position:absolute;left:0;color:var(--gold);font-weight:800;}
@@ -1603,6 +1704,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 @media(max-width:960px){
   .sa-rings{grid-template-columns:1fr;max-width:340px;margin-left:auto;margin-right:auto;}
   .sa-donut-wrap{grid-template-columns:1fr;}
+  .sa-insight-grid{grid-template-columns:1fr;}
 }
 @media(max-width:820px){
   .sa-gate-grid{grid-template-columns:1fr;}
@@ -1642,8 +1744,8 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
   <div class="sa-shell">
     <div class="sa-head">
       <span class="s-tag">Self-Assessment Suite</span>
-      <h2 class="s-title">Five Guided Assessments. One Combined Report.</h2>
-      <p class="s-sub">Complete five recognised self-assessment questionnaires in a single guided session and receive one interactive, beautifully presented report — each section scored on its established manual and woven together for a counselling conversation.</p>
+      <h2 class="s-title">Five Friendly Assessments. One Visual Report.</h2>
+      <p class="s-sub">Complete five recognised self-assessment questionnaires in a guided, friendly flow and receive a full infographic-style report — each section scored on its established manual and converted into a practical counselling conversation.</p>
     </div>
 
     <!-- SCREEN 1 — overview + payment gate -->
@@ -1657,8 +1759,8 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
             <div class="sa-list" id="saToolList"></div>
             <div class="sa-save-prompt">
               <div class="sa-save-copy">
-                <strong>Want to save your assessment progress?</strong>
-                <span>Sign up or sign in before you begin to keep your progress saved in this browser on this device.</span>
+                <strong>Sign-in is required before assessment.</strong>
+                <span>Create an account or sign in first so your progress can be saved safely if the page refreshes.</span>
               </div>
               <div class="sa-save-actions auth-signed-out">
                 <button class="sa-btn primary" type="button" onclick="openAuth('signup')">Create Account</button>
@@ -1732,6 +1834,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 function esc(v){return String(v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function toast(m){if(typeof showToast==='function')showToast(m);}
 function el(id){return document.getElementById(id);}
+function saWa(lines){return lines.filter(Boolean).join("\n");}
 
 /* ─── Scale definitions ─── */
 var scP=[["1","Disagree"],["2","Slightly disagree"],["3","Neutral"],["4","Slightly agree"],["5","Agree"]];
@@ -1913,11 +2016,29 @@ function validateGate(){
  if(!el("saPurpose").checked){err.textContent="Please acknowledge the purpose of the assessment.";return false;}
  S.name=name;S.phone=phone;err.textContent="";persistAssessmentProgress();return true;
 }
+function requireAssessmentSignin(){
+ var err=el("saGateError");
+ if(window.currentFirebaseUser)return true;
+ err.textContent="Please sign up or sign in before starting so your assessment progress can be saved safely.";
+ if(typeof openAuth==="function")openAuth("signin");
+ return false;
+}
 window.saSendPayment=function(){
+ if(!requireAssessmentSignin())return;
  if(!validateGate())return;
- var msg=["Hi Sachin!","","I would like to begin the Lume Live Self-Assessment Suite (all five assessments).",
-  "Name: "+S.name,"WhatsApp: "+S.phone,"Fee: Rs.999","",
-  "I will attach my payment screenshot here for confirmation before starting."].join("\n");
+ var msg=saWa(["👋 Hi Sachin!","",
+  "🧭 I would like to begin the Lume Live Self-Assessment Suite.",
+  "",
+  "👤 Student Details",
+  "• Name: "+S.name,
+  "• WhatsApp: "+S.phone,
+  "",
+  "💳 Payment Details",
+  "• Assessment suite: All five assessments",
+  "• Fee: ₹999",
+  "",
+  "📎 I will attach my payment screenshot here for confirmation.",
+  "Please confirm my access before I begin."]);
  S.handoff=true;S.identity=S.name+"|"+S.phone;
  persistAssessmentProgress();
  window.open("https://wa.me/917015671280?text="+encodeURIComponent(msg),"_blank","noopener");
@@ -1925,6 +2046,7 @@ window.saSendPayment=function(){
 };
 window.saBegin=function(){
  var err=el("saGateError");
+ if(!requireAssessmentSignin())return;
  if(!validateGate())return;
  if(!S.handoff||S.identity!==(S.name+"|"+S.phone)){
   err.textContent="Please send your \u20B9999 payment screenshot on WhatsApp for these details before starting.";return;}
@@ -2239,15 +2361,20 @@ function buildPanels(){
   topL.name.toLowerCase()+"</strong> stand out, and you tend to absorb new information best through "+
   (multiV.length>1?"several modes combined":topV.name.toLowerCase()+" approaches")+". Together these point toward "+
   (top3[0].tag)+"-style work, balanced against your need for "+anchor.short.toLowerCase()+".";
- var snap='<div class="sa-snap">'+
-  '<div class="sa-snap-card"><small>Interest Code</small><b>'+code+'</b><span>'+esc(top3[0].name+" · "+top3[1].name+" · "+top3[2].name)+'</span></div>'+
-  '<div class="sa-snap-card"><small>Top Personality</small><b>'+esc(topP.name)+'</b><span>'+cu(topP.score)+' / 40 · '+topP.word+'</span></div>'+
-  '<div class="sa-snap-card"><small>Career Anchor</small><b>'+esc(anchor.short)+'</b><span>'+cu(anchor.score)+' points</span></div>'+
-  '<div class="sa-snap-card"><small>Leadership Strength</small><b>'+esc(topL.name.replace(" Skills",""))+'</b><span>'+cu(topL.score)+' / 30 · '+topL.word+'</span></div>'+
-  '<div class="sa-snap-card"><small>Learning Style</small><b>'+esc(learnLabel)+'</b><span>'+(multiV.length>1?multiV.map(function(r){return r.key;}).join("/"):"VARK preference")+'</span></div>'+
-  '</div>'+
-  '<div class="sa-syn"><p>'+syn+'</p></div>'+
-  '<h4>Career directions to explore together</h4>'+
+  var snap='<div class="sa-snap">'+
+   '<div class="sa-snap-card"><small>Interest Code</small><b>'+code+'</b><span>'+esc(top3[0].name+" · "+top3[1].name+" · "+top3[2].name)+'</span></div>'+
+   '<div class="sa-snap-card"><small>Top Personality</small><b>'+esc(topP.name)+'</b><span>'+cu(topP.score)+' / 40 · '+topP.word+'</span></div>'+
+   '<div class="sa-snap-card"><small>Career Anchor</small><b>'+esc(anchor.short)+'</b><span>'+cu(anchor.score)+' points</span></div>'+
+   '<div class="sa-snap-card"><small>Leadership Strength</small><b>'+esc(topL.name.replace(" Skills",""))+'</b><span>'+cu(topL.score)+' / 30 · '+topL.word+'</span></div>'+
+   '<div class="sa-snap-card"><small>Learning Style</small><b>'+esc(learnLabel)+'</b><span>'+(multiV.length>1?multiV.map(function(r){return r.key;}).join("/"):"VARK preference")+'</span></div>'+
+   '</div>'+
+   '<div class="sa-syn"><p>'+syn+'</p></div>'+
+   '<div class="sa-insight-grid">'+
+    '<div class="sa-insight"><small>Best Exploration Theme</small><b>'+esc(top3[0].tag)+'</b><span>Start with career paths that match the student&apos;s strongest interest energy.</span></div>'+
+    '<div class="sa-insight"><small>Family Discussion Point</small><b>'+esc(anchor.short)+'</b><span>Use this anchor to discuss what the student may value most before choosing a stream or course.</span></div>'+
+    '<div class="sa-insight"><small>Counsellor Brief</small><b>AI-ready summary</b><span>This visual report can be shared before the session so counselling begins with clearer context.</span></div>'+
+   '</div>'+
+   '<h4>Career directions to explore together</h4>'+
   '<p>Drawn from your three leading interest areas — to investigate in counselling, not as fixed recommendations:</p>'+
   '<div class="sa-tags">'+pathSet.map(function(p){return '<span>'+esc(p)+'</span>';}).join("")+'</div>'+
   '<h4>Sample fields linked to your code</h4>'+
@@ -2608,7 +2735,7 @@ function saBuildPdfDoc(){
   doc.text('Combined Self-Assessment Report',W-M,9.9,{align:'right'});
   doc.setDrawColor(LINE[0],LINE[1],LINE[2]);doc.setLineWidth(0.3);doc.line(M,H-13.5,W-M,H-13.5);
   doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(MID[0],MID[1],MID[2]);
-  doc.text('Lume Live   |   WhatsApp +91 70156 71280   |   hello@lumelive.co.in   |   lumelive.co.in   |   Rohtak, Haryana - Online PAN India',W/2,H-9,{align:'center'});
+  doc.text('Lume Live   |   WhatsApp +91 70156 71280   |   hello@lumelive.co.in   |   lumelive.co.in   |   Online Counselling Across India',W/2,H-9,{align:'center'});
   doc.setFontSize(6.6);
   doc.text('Confidential - for personal reflection & counselling discussion',M,H-5);
   doc.text('Page '+p+' of '+n,W-M,H-5,{align:'right'});
@@ -2635,16 +2762,20 @@ function saSummaryText(){
  var topP=P.slice().sort(function(a,b){return b.score-a.score;})[0];
  var topL=L.slice().sort(function(a,b){return b.score-a.score;})[0];
  var topV=V[0],multiV=V.filter(function(r){return r.score>0&&topV.score-r.score<=1;});
- return ["Hi Sachin!","",
-  "I have completed the Lume Live Self-Assessment Suite (all five assessments) and would like to discuss my combined report.",
-  "Name: "+(S.name||"Not given"),"",
-  "Headline results:",
-  "- Holland interest code: "+R.slice(0,3).map(function(r){return r.key;}).join(""),
-  "- Top personality dimension: "+topP.name+" ("+topP.score+"/40)",
-  "- Primary career anchor: "+A[0].short+" ("+A[0].score+" pts)",
-  "- Strongest leadership area: "+topL.name+" ("+topL.score+"/30)",
-  "- Learning style: "+(multiV.length>1?"Multimodal":topV.name)
- ].join("\n");
+ return saWa(["👋 Hi Sachin!","",
+  "🧭 I have completed the Lume Live Self-Assessment Suite and would like to discuss my combined report.",
+  "",
+  "👤 Student",
+  "• Name: "+(S.name||"Not given"),
+  "",
+  "📊 Headline Results",
+  "• Holland interest code: "+R.slice(0,3).map(function(r){return r.key;}).join(""),
+  "• Top personality dimension: "+topP.name+" ("+topP.score+"/40)",
+  "• Primary career anchor: "+A[0].short+" ("+A[0].score+" pts)",
+  "• Strongest leadership area: "+topL.name+" ("+topL.score+"/30)",
+  "• Learning style: "+(multiV.length>1?"Multimodal":topV.name),
+  "",
+  "📎 I am ready to share the PDF report for review."]);
 }
 function saMakeDoc(cb){
  function go(){
@@ -2673,7 +2804,7 @@ window.saSharePDF=function(){
 };
 function saShareFallback(doc,fname,waText){
  try{ doc.save(fname); }catch(e){}
- var msg=waText+"\n\n(I am attaching my report PDF \""+fname+"\", which has just been downloaded to my device.)";
+ var msg=waText+"\n\n📎 PDF report: \""+fname+"\"\nI have downloaded it on my device and will attach it here.";
  setTimeout(function(){ window.open("https://wa.me/917015671280?text="+encodeURIComponent(msg),"_blank","noopener"); },700);
  toast("Report downloaded — please attach the PDF in the WhatsApp chat that opens.");
 }
@@ -2734,8 +2865,8 @@ show("saGate");
           <li><span class="ic">📜</span><strong>PGDGC</strong> — Jamia Millia Islamia, New Delhi</li>
           <li><span class="ic">📚</span><strong>B.Ed</strong> — Bachelor of Education</li>
           <li><span class="ic">🏆</span><strong>AILET 2026 Laureate</strong> — Felicitation Ceremony</li>
-          <li><span class="ic">🎤</span><strong>500+ Students</strong> — Guided across Haryana</li>
-          <li><span class="ic">📍</span><strong>Rohtak, Haryana</strong> — PAN India Online</li>
+          <li><span class="ic">🎤</span><strong>500+ Students</strong> — Guided across India</li>
+          <li><span class="ic">📍</span><strong>Online Across India</strong> — Private 1:1 Sessions</li>
         </ul>
         <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;">
           <a href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20would%20like%20to%20know%20more%20about%20Lume%20Live%20counselling." target="_blank" class="wa-btn">
@@ -2754,9 +2885,9 @@ show("saGate");
 <section id="emotional-wellbeing">
   <div class="ewb-inner">
     <div class="ewb-header">
-      <span class="s-tag">🧠 Emotional Wellness</span>
+      <span class="s-tag">🧠 Separate Mental Health Support</span>
       <h2 class="s-title">Emotional Well-being &amp; Counseling</h2>
-      <p class="s-sub">At Lumelive, we believe that mental wellness is just as important as physical health. We provide a safe, confidential, and non-judgmental space where you can explore your thoughts and navigate life's challenges with professional guidance.</p>
+      <p class="s-sub">Mental health support is presented separately from career counselling, so families can choose the right space with clarity. At Lumelive, we provide a safe, confidential, and non-judgmental place to explore thoughts, stress, and emotional challenges with professional guidance.</p>
     </div>
     <p class="ewb-desc">You don't need a &ldquo;diagnosis&rdquo; to seek support. If you are feeling overwhelmed, stuck, or simply need someone to listen, we address a wide range of concerns:</p>
 
@@ -2832,21 +2963,21 @@ show("saGate");
       </div>
     </div>
 
-    <div class="mh-quote-strip" aria-label="Mental health reflections from psychologists">
+    <div class="mh-quote-strip" aria-label="Psychology-informed Lume Live reflections">
       <div class="mh-quote-card anim stagger-1">
-        <blockquote>"When I accept myself as I am, then I can change."</blockquote>
-        <cite>Carl Rogers</cite>
+        <blockquote>"A child chooses better when they feel understood before they feel advised."</blockquote>
+        <cite>Parent Guidance</cite>
       </div>
       <div class="mh-quote-card anim stagger-2">
-        <blockquote>"Between stimulus and response, there is a space."</blockquote>
-        <cite>Viktor Frankl</cite>
+        <blockquote>"Career confusion is rarely a lack of options; it is usually a lack of calm, clarity, and direction."</blockquote>
+        <cite>Career Clarity</cite>
       </div>
       <div class="mh-quote-card anim stagger-3">
-        <blockquote>"Act as if what you do makes a difference. It does."</blockquote>
-        <cite>William James</cite>
+        <blockquote>"Assessment scores are not labels. They are conversation starters for strengths, values, and next steps."</blockquote>
+        <cite>Self-Assessment Suite</cite>
       </div>
     </div>
-    <p class="mh-quote-note">Mental health support is not about being broken. It is about creating enough safety, clarity, and self-understanding to choose your next step.</p>
+    <p class="mh-quote-note">At Lume Live, psychology is used to reduce pressure, understand patterns, and help families choose with confidence.</p>
 
     <div class="ewb-cta">
       <h3>Take the First Step Toward Clarity</h3>
@@ -2924,7 +3055,7 @@ show("saGate");
         <div class="test-stars">★★★★★</div>
         <p class="test-text">"Meri beti ko Science aur Commerce ke beech bahut confusion tha. Sachin sir ke 2 sessions ke baad, usne khud decide kiya ki commerce lena hai. Ab woh confident hai. Bahut shukriya!"</p>
         <div class="test-name">Priya Sharma</div>
-        <div class="test-role">Parent of Class 10 student · Rohtak</div>
+        <div class="test-role">Parent of Class 10 student · Online India</div>
       </div>
 
       <div class="test-card anim stagger-2">
@@ -2940,7 +3071,7 @@ show("saGate");
         <div class="test-stars">★★★★★</div>
         <p class="test-text">"Humne apne bete ko engineering mein dhakelna tha relatives ke pressure mein. Structured guidance ne uski creative interests ko samajhne aur design pathways explore karne mein madad ki."</p>
         <div class="test-name">Ramesh & Kavita Goyal</div>
-        <div class="test-role">Parents · Hisar, Haryana</div>
+        <div class="test-role">Parents · North India</div>
       </div>
 
       <div class="test-card anim stagger-4">
@@ -2980,7 +3111,7 @@ show("saGate");
         <div class="test-stars">★★★★★</div>
         <p class="test-text">"Sachin sir came and conducted a session at our school. The way he explained career options to 150 students in one room — everyone was engaged, no phones, no distraction. That says everything about his energy."</p>
         <div class="test-name">Meenakshi Tyagi</div>
-        <div class="test-role">School Teacher · Rohtak</div>
+        <div class="test-role">School Teacher · Online India</div>
       </div>
 
       <div class="test-card anim stagger-9">
@@ -2988,7 +3119,7 @@ show("saGate");
         <div class="test-stars">★★★★★</div>
         <p class="test-text">"My son was depressed after not getting into medical. One session with Sachin sir changed his entire perspective. He's now passionate about health management — a field he never knew existed. Life-changing guidance."</p>
         <div class="test-name">Dr. Saroj Yadav</div>
-        <div class="test-role">Parent · Jind, Haryana</div>
+        <div class="test-role">Parent · North India</div>
       </div>
 
     </div>
@@ -3027,7 +3158,7 @@ show("saGate");
     </div>
     <div class="faq-item anim stagger-8">
       <div class="faq-q" onclick="toggleFaq(this)">Do you conduct sessions for schools and groups?</div>
-      <div class="faq-a"><div class="faq-a-inner">Yes. We conduct career-awareness workshops, mental-health seminars and structured guidance activities for schools across Haryana and beyond. Any formal assessment programme is discussed separately with the school, including purpose, consent and reporting arrangements.</div></div>
+      <div class="faq-a"><div class="faq-a-inner">Yes. We conduct career-awareness workshops, mental-health seminars and structured guidance activities for schools across India. Any formal assessment programme is discussed separately with the school, including purpose, consent and reporting arrangements.</div></div>
     </div>
   </div>
 </section>
@@ -3109,7 +3240,7 @@ show("saGate");
     <div class="sp-header">
       <span class="s-tag">🏫 School Partnerships</span>
       <h2 class="s-title">Bring World-Class Career & Mental Health Guidance to Your School</h2>
-      <p class="s-sub">Partner with Lume Live to give your students the clarity and confidence they deserve. We have impacted 500+ students across Haryana through workshops, assessments, and counselling drives.</p>
+      <p class="s-sub">Partner with Lume Live to give your students the clarity and confidence they deserve. We have impacted 500+ students across India through workshops, assessments, and counselling drives.</p>
     </div>
     <div class="sp-stats">
       <div class="sp-stat anim stagger-1">
@@ -3232,7 +3363,7 @@ show("saGate");
       <div>
         <div class="contact-item anim stagger-1"><div class="c-icon">📞</div><div><div class="c-label">Phone / WhatsApp</div><div class="c-val"><a href="tel:+917015671280">+91 7015671280</a></div></div></div>
         <div class="contact-item anim stagger-2"><div class="c-icon">✉️</div><div><div class="c-label">Email</div><div class="c-val"><a href="mailto:hello@lumelive.co.in">hello@lumelive.co.in</a></div></div></div>
-        <div class="contact-item anim stagger-3"><div class="c-icon">📍</div><div><div class="c-label">Location</div><div class="c-val">Rohtak, Haryana — Online PAN India</div></div></div>
+        <div class="contact-item anim stagger-3"><div class="c-icon">📍</div><div><div class="c-label">Location</div><div class="c-val">Online Counselling — PAN India</div></div></div>
         <div class="contact-item anim stagger-4"><div class="c-icon">🕐</div><div><div class="c-label">Session Hours</div><div class="c-val">Mon–Sat: 9 AM – 8 PM IST</div></div></div>
         <div style="display:flex;flex-wrap:wrap;gap:9px;margin-top:6px;">
           <a href="#" onclick="openModal('session');return false;" class="btn-cta" style="font-size:.85rem;padding:12px 22px;" onclick="openModal('session');return false;"><span style="font-size:1.1rem;">🎯</span><span>Book ₹49 Session <span style="font-size:.65rem;opacity:.7;text-decoration:line-through;margin-left:3px;">₹499</span></span></a>
@@ -3301,12 +3432,12 @@ show("saGate");
         <h4>Contact</h4>
         <a href="tel:+917015671280">+91 7015671280</a>
         <a href="mailto:hello@lumelive.co.in">hello@lumelive.co.in</a>
-        <a>Rohtak, Haryana</a>
+        <a>Online Counselling</a>
         <a>Online — PAN India</a>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2025 Lume Live · All rights reserved · Rohtak, Haryana</p>
+      <p>© 2025 Lume Live · All rights reserved · Online Across India</p>
       <p>Built with ❤️ for India's students</p>
     </div>
   </div>
@@ -3350,8 +3481,8 @@ show("saGate");
     <button class="modal-x" onclick="closeModal('session')">✕</button>
     <div class="modal-hdr">
       <div class="modal-hdr-logo"><img src="logo.png" alt="Lume Live"></div>
-      <h2>Book Your Wellness Session</h2>
-      <p>Confidential · 1:1 · Available PAN India via Video Call</p>
+      <h2>Book Your Introductory Guidance Session</h2>
+      <p>For parents, students & families · Online across India</p>
     </div>
     <div class="modal-body">
       <div class="modal-countdown offer-countdown" hidden>
@@ -3364,9 +3495,9 @@ show("saGate");
         </div>
       </div>
       <div class="sess-reassure">
-        <div class="sr-top"><span class="sr-emoji">🌱</span><b>Reaching out takes courage — and you're already doing the hardest part.</b></div>
-        <p>This is a calm, private, one-to-one conversation with a caring professional. There is nothing you need to prepare and nothing you have to "get right" — we simply listen, understand where you are, and gently help you find your next step.</p>
-        <div class="sr-points"><span>🔒 100% confidential</span><span>💬 A safe, judgment-free space</span><span>🕊️ We move at your pace</span></div>
+        <div class="sr-top"><span class="sr-emoji">🌱</span><b>Not sure which service fits your child? Start with one calm clarity session.</b></div>
+        <p>This first conversation helps understand career confusion, family expectations, emotional pressure, and the right next step. You do not need to prepare anything — we listen, structure the concern, and guide you forward.</p>
+        <div class="sr-points"><span>🔒 100% confidential</span><span>👨‍👩‍👧 Parent-friendly</span><span>🧭 Clear next steps</span></div>
       </div>
       <div class="price-row">
         <div class="amt" style="color:var(--green);">₹49</div>
@@ -3432,7 +3563,7 @@ show("saGate");
         <li>Send screenshot to WhatsApp +91 7015671280 with your chosen date & time</li>
         <li>We confirm your slot within 2 hours</li>
       </ol>
-      <p class="sess-closing">Whatever you're facing, you don't have to navigate it alone — we'll take the next step together. 💛</p>
+      <p class="sess-closing">You do not have to solve career confusion alone — we will turn the concern into a clear next step. 💛</p>
       <a id="sessionWaBtn" href="#" target="_blank" class="m-wa-btn">
         <svg viewBox="0 0 24 24" width="17" height="17" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.556 4.121 1.528 5.856L.057 23.215a.75.75 0 00.922.921l5.344-1.47A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.663-.523-5.183-1.432l-.37-.219-3.171.871.884-3.175-.237-.386A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
         Send Payment Screenshot on WhatsApp
@@ -3608,14 +3739,14 @@ show("saGate");
                 <span style="font-size:1.2rem;">🏆</span>
                 <div>
                   <div style="font-size:.82rem;font-weight:700;color:var(--dark);">AILET 2026 Laureate Award</div>
-                  <div style="font-size:.72rem;color:var(--mid);">Toppers' & Qualifiers' Felicitation Ceremony · Rohtak</div>
+                  <div style="font-size:.72rem;color:var(--mid);">Toppers' & Qualifiers' Felicitation Ceremony</div>
                 </div>
               </div>
               <div style="display:flex;align-items:center;gap:10px;">
                 <span style="font-size:1.2rem;">🎤</span>
                 <div>
                   <div style="font-size:.82rem;font-weight:700;color:var(--dark);">500+ Students Guided</div>
-                  <div style="font-size:.72rem;color:var(--mid);">Career awareness sessions across Haryana schools</div>
+                  <div style="font-size:.72rem;color:var(--mid);">Career awareness sessions across Indian schools</div>
                 </div>
               </div>
             </div>
@@ -3651,6 +3782,166 @@ show("saGate");
 
 <script>
 document.body.classList.add('js-ready');
+
+const lumeWhatsAppNumber='917015671280';
+function waMessage(lines){return lines.filter(Boolean).join('\n');}
+function waLink(message){return 'https://wa.me/'+lumeWhatsAppNumber+'?text='+encodeURIComponent(message);}
+function waUrl(lines){return waLink(waMessage(lines));}
+function waLine(label,value){return value ? label+': '+value : null;}
+function applyStaticWhatsAppMessages(){
+  const generic=[
+    '👋 Hi Sachin!',
+    '',
+    '✨ I would like to know more about Lume Live.',
+    '',
+    'Please share the next steps and available counselling options.'
+  ];
+  const messages=new Map([
+    ['Hi Sachin! I would like to know more about Lume Live.',generic],
+    ['Hi Sachin! I would like to know more about Lume Live counselling.',[
+      '👋 Hi Sachin!',
+      '',
+      '🧠 I would like to know more about Lume Live counselling.',
+      '',
+      'Please guide me on the right support option.'
+    ]],
+    ['Hi Sachin! I would like to know more about Emotional Wellness Counselling at Lume Live.',[
+      '👋 Hi Sachin!',
+      '',
+      '🧠 I would like to know more about Emotional Wellness Counselling at Lume Live.',
+      '',
+      'Please guide me on the right support option.'
+    ]],
+    ['Hi Sachin! I am a parent and would like guidance for my child.',[
+      '👋 Hi Sachin!',
+      '',
+      '👨‍👩‍👧 I am a parent and would like guidance for my child.',
+      '',
+      'Please share the next steps for parent counselling.'
+    ]],
+    ['Hi Sachin! I would like to discuss Lume Live support options.',[
+      '👋 Hi Sachin!',
+      '',
+      '🧠 I would like to discuss Lume Live support options.',
+      '',
+      'Please help me choose the most suitable next step.'
+    ]],
+    ['Hi Sachin! I would like to book a session with Lume Live.',[
+      '👋 Hi Sachin!',
+      '',
+      '🎯 I would like to book a session with Lume Live.',
+      '',
+      'Please share available slots and next steps.'
+    ]],
+    ['Hi Sachin! I would like to book my first wellness session with Lume Live.',[
+      '👋 Hi Sachin!',
+      '',
+      '🎯 I would like to book my first ₹49 wellness session with Lume Live.',
+      '',
+      'Please share available slots and next steps.'
+    ]],
+    ['Hi Sachin! I have paid Rs.199 for the Parents Career Handbook PDF. Please send it to me.',[
+      '👋 Hi Sachin!',
+      '',
+      '📘 I have paid ₹199 for the Parents Career Handbook PDF.',
+      '',
+      '📎 I will attach my payment screenshot here.',
+      'Please send the PDF to me.'
+    ]]
+  ]);
+  document.querySelectorAll('a[href^="https://wa.me/917015671280"]').forEach(link=>{
+    const rawHref=link.getAttribute('href')||'';
+    if(rawHref==='https://wa.me/917015671280'){
+      link.href=waUrl(generic);
+      return;
+    }
+    try{
+      const url=new URL(link.href);
+      const current=url.searchParams.get('text')||'';
+      const lines=messages.get(current);
+      if(lines)link.href=waUrl(lines);
+    }catch(e){}
+  });
+}
+applyStaticWhatsAppMessages();
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',applyStaticWhatsAppMessages);
+}
+
+function htmlSafe(value){
+  return String(value||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
+}
+const aiGuideState={stage:'',concern:'',preference:''};
+function aiGuidePlan(){
+  const s=aiGuideState.stage,c=aiGuideState.concern,p=aiGuideState.preference;
+  let title='Career clarity consultation';
+  let description='Begin with a structured 1:1 session to understand the family concern, reduce confusion, and decide the right service path.';
+  let action='Book introductory session';
+  if(c==='Stream selection'||s==='Class 9-10'){
+    title='Stream & subject clarity for parents';
+    description='Best for families comparing Science, Commerce, Humanities, and emerging paths after Class 10.';
+  }
+  if(c==='Parent-child disagreement'){
+    title='Joint parent-child guidance session';
+    description='Best when the child and parent are seeing different futures and need a calm, structured conversation.';
+  }
+  if(c==='Exam stress'){
+    title='Separate emotional wellness support';
+    description='Best when stress, anxiety, pressure, or confidence is affecting decision-making or daily functioning.';
+  }
+  if(p==='Take assessment'){
+    action='Sign in and start the assessment suite';
+    description+=' The Self-Assessment Suite can add a visual report before counselling.';
+  }else if(p==='Explore services first'){
+    action='Explore services, then book';
+  }
+  return {title,description,action};
+}
+function renderAiGuide(){
+  const panel=document.getElementById('aiGuideResult');
+  if(!panel)return;
+  const missing=!aiGuideState.stage||!aiGuideState.concern||!aiGuideState.preference;
+  if(missing){
+    panel.innerHTML='<small>Recommended Path</small><h4>Start by choosing the stage and concern above.</h4><p>The guide will create a short client brief that can be sent on WhatsApp before your first conversation.</p><div class="ai-summary">No client summary yet.</div><div class="ai-actions"><a href="#services" class="btn-cta"><span>Explore Services</span></a></div>';
+    return;
+  }
+  const plan=aiGuidePlan();
+  const summary='Parent enquiry: '+aiGuideState.stage+' · '+aiGuideState.concern+' · Preferred next step: '+aiGuideState.preference+'.';
+  const primary=aiGuideState.preference==='Take assessment'
+    ? '<a href="#self-assessments" class="btn-cta"><span>Start Assessment</span></a>'
+    : "<a href=\"#\" class=\"btn-cta\" onclick=\"openModal('session');return false;\"><span>Book ₹49 Session</span></a>";
+  panel.innerHTML='<small>Recommended Path</small><h4>'+htmlSafe(plan.title)+'</h4><p>'+htmlSafe(plan.description)+'</p><div class="ai-summary"><strong>Client summary:</strong><br>'+htmlSafe(summary)+'</div><div class="ai-actions">'+primary+'<button class="wa-btn" type="button" onclick="sendAiGuideWA()">Send Summary on WhatsApp</button></div>';
+}
+window.setAiGuide=function(btn,key,value){
+  aiGuideState[key]=value;
+  const group=btn.closest('.ai-option-group');
+  if(group)group.querySelectorAll('.ai-pill').forEach(function(pill){pill.classList.toggle('active',pill===btn);});
+  renderAiGuide();
+};
+window.sendAiGuideWA=function(){
+  if(!aiGuideState.stage||!aiGuideState.concern||!aiGuideState.preference){
+    showToast('Please select all three guide options first.');
+    return;
+  }
+  const plan=aiGuidePlan();
+  const msg=waMessage([
+    '👋 Hi Sachin!',
+    '',
+    '✨ I used the Lume Live AI-assisted service guide.',
+    '',
+    '👨‍👩‍👧 Parent Enquiry Summary',
+    '• Stage: '+aiGuideState.stage,
+    '• Main concern: '+aiGuideState.concern,
+    '• Preferred next step: '+aiGuideState.preference,
+    '',
+    '🎯 Recommended path',
+    '• '+plan.title,
+    '',
+    'Please guide me on the next best step.'
+  ]);
+  window.open(waLink(msg),'_blank');
+};
+renderAiGuide();
 
 // Seven-day introductory offer countdown.
 const offerDeadlineIso='2026-06-04T23:59:59+05:30';
@@ -3866,8 +4157,21 @@ function submitNotify(){
   const p=document.getElementById('csPhone').value.trim();
   if(!p){showToast('Please enter your WhatsApp number');return;}
   const t=document.getElementById('comingTitle').textContent;
-  const msg='Hi Sachin! My name is '+(n||'(not given)')+'. I would like to be notified when '+t+' is available on Lume Live.';
-  window.open('https://wa.me/917015671280?text='+encodeURIComponent(msg),'_blank');
+  const msg=waMessage([
+    '👋 Hi Sachin!',
+    '',
+    '🔔 Please notify me when this Lume Live service is available.',
+    '',
+    '👤 Contact Details',
+    '• Name: '+(n||'Not given'),
+    '• WhatsApp: '+p,
+    '',
+    '🧾 Service',
+    '• '+t,
+    '',
+    'Thank you.'
+  ]);
+  window.open(waLink(msg),'_blank');
   closeModal('coming');
   showToast('Your notification message is ready in WhatsApp.');
 }
@@ -3879,10 +4183,20 @@ function openPDF(){openModal('pdf');}
 function updateSessionWA(){
   const d=document.getElementById('sessionDate').value;
   const t=document.getElementById('sessionTime').value;
-  let dateStr=d?'on '+d:'at my preferred date';
-  let timeStr=t?'at '+formatTime(t):'';
-  const msg='Hi Sachin! I have made the payment of Rs.49 for my first wellness session. I would prefer my session '+dateStr+' '+timeStr+' via '+sessionMode+'. Please confirm my booking.';
-  document.getElementById('sessionWaBtn').href='https://wa.me/917015671280?text='+encodeURIComponent(msg);
+  const msg=waMessage([
+    '👋 Hi Sachin!',
+    '',
+    '🎯 I have made the ₹49 introductory payment for my first wellness session.',
+    '',
+    '🧾 Booking Details',
+    '• Preferred date: '+(d||'Not selected yet'),
+    '• Preferred time: '+(t?formatTime(t):'Not selected yet'),
+    '• Session mode: '+sessionMode,
+    '',
+    '📎 I will attach my payment screenshot here.',
+    'Please confirm my booking.'
+  ]);
+  document.getElementById('sessionWaBtn').href=waLink(msg);
 }
 function formatTime(t){
   if(!t)return'';
@@ -3992,20 +4306,23 @@ function submitQ(){
   if(phone.length<10){showToast('Please enter a valid WhatsApp number');return;}
   const email=document.getElementById('qEmail').value.trim();
   const msg=[
-    'Hi Sachin!',
+    '👋 Hi Sachin!',
     '',
-    'I would like to discuss Lume Live support options. Here are my enquiry details:',
+    '🧠 I would like to discuss Lume Live support options.',
     '',
+    '👤 Contact Details',
     '• Name: '+name,
     '• WhatsApp: '+phone,
     email?'• Email: '+email:null,
+    '',
+    '📝 Support Details',
     '• Who needs support: '+(qData.role||'Not answered'),
     '• Main challenge: '+(qData.challenge||'Not answered'),
     '• Urgency: '+(qData.urgency||'Not answered'),
     '',
     'Please contact me about suitable support options.'
   ].filter(Boolean).join('\n');
-  window.open('https://wa.me/917015671280?text='+encodeURIComponent(msg),'_blank');
+  window.open(waLink(msg),'_blank');
   nextQStep(5);
 }
 
@@ -4115,8 +4432,25 @@ function submitSchool(){
   if(!school){showToast('Please enter your school name'); return;}
   if(!name){showToast('Please enter coordinator name'); return;}
   if(phone.length < 10){showToast('Please enter a valid phone number'); return;}
-  const msg = 'Hi Sachin! I am ' + name + ' from ' + school + '. We are interested in partnering with Lume Live for career counselling / mental health workshops at our school. Phone: ' + phone + (email ? '. Email: ' + email : '') + '. Please send us a partnership proposal.';
-  window.open('https://wa.me/917015671280?text=' + encodeURIComponent(msg), '_blank');
+  const msg = waMessage([
+    '👋 Hi Sachin!',
+    '',
+    '🏫 School Partnership Enquiry',
+    '',
+    '👤 Coordinator',
+    '• Name: '+name,
+    '• Phone / WhatsApp: '+phone,
+    email?'• Email: '+email:null,
+    '',
+    '🏫 School',
+    '• School name: '+school,
+    '',
+    '🎯 Interest',
+    '• Career counselling and mental health workshops',
+    '',
+    'Please send us a partnership proposal.'
+  ]);
+  window.open(waLink(msg), '_blank');
   showToast('Request sent! We will contact you within 24 hours.');
 }
 
