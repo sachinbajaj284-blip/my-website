@@ -282,6 +282,12 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .hero-assurance{display:flex;flex-wrap:wrap;gap:8px;margin:-14px 0 24px;animation:fadeUp .8s ease .8s both;}
 .hero-assurance span{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:6px 12px;color:rgba(255,255,255,.88);font-size:.7rem;font-weight:700;letter-spacing:.2px;white-space:nowrap;}
 .hero-assurance span:first-child{background:rgba(34,197,94,.13);border-color:rgba(34,197,94,.4);color:var(--green2);}
+.hero-assessment-card{display:flex;align-items:center;justify-content:space-between;gap:16px;max-width:620px;margin:-8px 0 22px;padding:16px 18px;background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.06));border:1px solid rgba(232,185,90,.34);border-left:4px solid var(--gold2);border-radius:16px;box-shadow:0 18px 46px rgba(0,0,0,.16);backdrop-filter:blur(12px);animation:fadeUp .8s ease .85s both;}
+.hero-assessment-copy small{display:block;color:var(--gold2);font-size:.64rem;font-weight:900;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:4px;}
+.hero-assessment-copy b{display:block;color:#fff;font-family:'Playfair Display',serif;font-size:1.08rem;line-height:1.2;margin-bottom:3px;}
+.hero-assessment-copy span{display:block;color:rgba(255,255,255,.68);font-size:.76rem;line-height:1.5;}
+.hero-assessment-btn{flex:none;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:11px 16px;border-radius:10px;background:#fff;color:var(--navy);font-size:.78rem;font-weight:900;text-decoration:none;box-shadow:0 8px 20px rgba(0,0,0,.18);transition:all .22s;}
+.hero-assessment-btn:hover{transform:translateY(-2px);background:var(--gold2);color:#102650;}
 .hero-btns{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:36px;animation:fadeUp .8s ease .9s both;}
 .btn-gold{background:var(--gold);color:#fff;padding:13px 24px;border-radius:8px;font-weight:700;font-size:.87rem;border:none;cursor:pointer;letter-spacing:.3px;transition:all .25s;text-decoration:none;display:inline-flex;align-items:center;gap:8px;position:relative;overflow:hidden;}
 .btn-gold::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);transition:left .5s;}
@@ -371,6 +377,47 @@ section{padding:80px 20px;}
 .ewb-card:hover .ewb-card-icon{transform:scale(1.2);}
 .ewb-card h4{font-size:.88rem;font-weight:700;color:var(--dark);margin-bottom:8px;}
 .ewb-card p{font-size:.78rem;color:var(--mid);line-height:1.65;}
+.ll-check-btn{margin-top:14px;border:1px solid rgba(10,110,110,.2);background:#F7FBFA;color:var(--teal);border-radius:8px;padding:9px 12px;font-size:.74rem;font-weight:800;cursor:pointer;transition:all .22s;display:inline-flex;align-items:center;justify-content:center;gap:6px;line-height:1.2;}
+.ll-check-btn:hover,.ll-check-btn:focus{background:var(--teal);color:#fff;box-shadow:0 8px 22px rgba(10,110,110,.18);transform:translateY(-1px);outline:none;}
+.ll-check-row,.svc-check-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.svc-check-row .ll-check-btn{background:#fff;margin-top:0;}
+.ll-check-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(13,27,64,.58);backdrop-filter:blur(7px);}
+.ll-check-modal.open{display:flex;}
+.ll-check-dialog{width:min(680px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:12px;box-shadow:0 28px 80px rgba(0,0,0,.28);position:relative;border:1px solid rgba(255,255,255,.5);}
+.ll-check-head{padding:22px 24px 15px;border-bottom:1px solid #E6EDEC;}
+.ll-check-head small{display:block;font-size:.68rem;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:5px;}
+.ll-check-head h3{font-family:'Playfair Display',serif;color:var(--navy);font-size:1.35rem;line-height:1.2;margin:0 36px 7px 0;}
+.ll-check-head p{font-size:.8rem;color:var(--mid);line-height:1.6;margin:0;}
+.ll-check-x{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;border:1px solid #E1E8E7;background:#fff;color:var(--dark);font-size:1.1rem;cursor:pointer;}
+.ll-check-body{padding:20px 24px 24px;}
+.ll-progress{height:7px;background:#E9F0EF;border-radius:999px;overflow:hidden;margin:0 0 18px;}
+.ll-progress span{display:block;height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));width:0;transition:width .25s;}
+.ll-q-count{font-size:.72rem;color:var(--mid);font-weight:800;text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;}
+.ll-question{font-size:1rem;font-weight:800;color:var(--dark);line-height:1.45;margin-bottom:14px;}
+.ll-options{display:grid;gap:8px;}
+.ll-option{border:1px solid #DDE7E5;background:#fff;border-radius:8px;padding:11px 13px;text-align:left;cursor:pointer;color:var(--dark);font-size:.84rem;line-height:1.35;transition:all .2s;}
+.ll-option.selected{border-color:var(--teal);background:#ECF7F6;box-shadow:0 0 0 3px rgba(10,110,110,.08);}
+.ll-nav{display:flex;justify-content:space-between;gap:10px;margin-top:18px;}
+.ll-nav button,.ll-result-actions button,.ll-result-actions a{border:none;border-radius:8px;padding:11px 15px;font-size:.78rem;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;}
+.ll-secondary{background:#EEF3F2;color:var(--dark);}
+.ll-primary{background:var(--teal);color:#fff;}
+.ll-gold{background:var(--gold);color:#fff;}
+.ll-error{min-height:18px;color:#B3442E;font-size:.75rem;font-weight:700;margin-top:8px;}
+.ll-result-band{border-left:4px solid var(--teal);background:#F7FBFA;border-radius:8px;padding:14px 16px;margin:12px 0;}
+.ll-result-band b{display:block;color:var(--navy);font-size:1.05rem;margin-bottom:4px;}
+.ll-result-band span{display:block;color:var(--mid);font-size:.82rem;line-height:1.55;}
+.ll-result-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+.ll-note{width:100%;min-height:78px;border:1px solid #DDE7E5;border-radius:8px;padding:11px;font:inherit;font-size:.82rem;resize:vertical;margin-top:12px;}
+.ll-menu{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.ll-menu button{border:1px solid #DDE7E5;background:#fff;border-radius:8px;padding:16px;text-align:left;cursor:pointer;}
+.ll-menu b{display:block;color:var(--navy);margin-bottom:4px;}
+.ll-menu span{font-size:.78rem;color:var(--mid);line-height:1.5;}
+@media(max-width:640px){
+  .ll-check-dialog{max-height:95vh;border-radius:10px;}
+  .ll-check-head,.ll-check-body{padding-left:18px;padding-right:18px;}
+  .ll-menu{grid-template-columns:1fr;}
+  .ll-nav{position:sticky;bottom:0;background:#fff;padding-top:10px;}
+}
 .ewb-why{background:#fff;border-radius:16px;padding:36px 32px;box-shadow:0 2px 20px rgba(0,0,0,.04);margin-bottom:40px;}
 .ewb-why-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
 .ewb-why-item{display:flex;align-items:flex-start;gap:14px;padding:16px;background:var(--gray);border-radius:10px;transition:all 0.35s ease;position:relative;overflow:hidden;}
@@ -909,6 +956,8 @@ body.js-ready .anim.scale{transform:scale(.9);}
   .cd-unit{min-width:32px;padding:3px 6px;}
   .cd-sep{font-size:.75rem;}
   .hero-inner{padding:60px 16px;}
+  .hero-assessment-card{flex-direction:column;align-items:flex-start;gap:12px;margin-top:-4px;padding:15px;}
+  .hero-assessment-btn{width:100%;}
   .footer-grid{grid-template-columns:1fr;}
   .hero-btns{flex-direction:column;}
   .btn-gold,.btn-ghost{justify-content:center;}
@@ -935,6 +984,19 @@ body.js-ready .anim.scale{transform:scale(.9);}
 @supports(padding:max(0px)){
   :root{--safe-top:max(0px,env(safe-area-inset-top,0px));}
   footer{padding-bottom:max(22px,env(safe-area-inset-bottom));}
+  .float-cta{bottom:max(20px,calc(env(safe-area-inset-bottom) + 12px));}
+  .mob-menu{padding-bottom:max(18px,calc(env(safe-area-inset-bottom) + 14px));}
+  .ll-check-modal{padding-top:max(18px,env(safe-area-inset-top));padding-bottom:max(18px,env(safe-area-inset-bottom));}
+}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:calc(var(--header-stack-h) + 12px);}
+body{overflow-x:hidden;}
+button,a,label,input,textarea,select{-webkit-tap-highlight-color:rgba(201,147,58,.18);}
+button,a,.btn-cta,.btn-gold,.btn-ghost,.sa-btn,.ll-check-btn,.ll-option{touch-action:manipulation;}
+@media(max-width:768px){
+  #hero{min-height:100svh;min-height:100dvh;}
+  input,textarea,select{font-size:16px!important;}
+  .btn-cta,.btn-gold,.btn-ghost,.sa-btn,.ll-check-btn,.ll-option{min-height:44px;}
+  .modal,.ll-check-dialog{max-height:calc(100dvh - 28px);}
 }
 
 
@@ -1237,6 +1299,14 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
         <span>Private 1:1 Sessions</span>
         <span>Online Across India</span>
       </div>
+      <div class="hero-assessment-card">
+        <div class="hero-assessment-copy">
+          <small>Paid Self-Assessment Suite</small>
+          <b>Get a 5-part visual career report</b>
+          <span>Personality, interests, work drivers, leadership, and learning preferences in one counselling-ready report.</span>
+        </div>
+        <a href="#self-assessments" class="hero-assessment-btn">Start Assessment</a>
+      </div>
 
       <div class="hero-btns">
         <a href="#services" class="btn-cta"><span style="font-size:1.2rem;">✨</span><span>Explore Services</span></a>
@@ -1363,6 +1433,10 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
             <li>Every career each stream can lead to — explained</li>
           </ul>
           <div class="svc-price">Starting at <strong>₹999</strong> / session</div>
+          <div class="svc-check-row">
+            <button class="ll-check-btn" type="button" data-ll-open="careerValues">Career Values Preview</button>
+            <button class="ll-check-btn" type="button" data-ll-open="learningPrefs">Learning Preferences Preview</button>
+          </div>
           <button class="btn-teal">Book Your Session Now →</button>
         </div>
       </div>
@@ -1401,6 +1475,10 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
             <li>Confidential online sessions — anywhere in India</li>
           </ul>
           <div class="svc-price">First session <strong style="color:var(--green);">₹49</strong> <span style="text-decoration:line-through;color:var(--mid);">₹499</span> · Regular ₹999</div>
+          <div class="svc-check-row">
+            <button class="ll-check-btn" type="button" data-ll-open="phq4Anxiety">Anxiety Quick Check</button>
+            <button class="ll-check-btn" type="button" data-ll-open="wellbeingMenu">Wellbeing Checks</button>
+          </div>
           <button class="btn-navy">Book Your Session Now →</button>
         </div>
       </div>
@@ -1595,6 +1673,9 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 .sa-pick3 label:has(input:checked){background:#FFF7E9;border-color:var(--gold);}
 .sa-pick3 label.dim{opacity:.45;}
 .sa-pick3 input{accent-color:var(--gold);width:20px;height:20px;flex:none;margin-top:1px;}
+.sa-likert input:checked + .sa-lk-n{background:var(--teal);color:#fff;border-color:var(--teal);}
+.sa-likert input:checked ~ .sa-lk-w{color:var(--teal);font-weight:800;}
+.sa-opt input:checked + span,.sa-pick3 input:checked + span{color:var(--navy);font-weight:800;}
 .sa-subhead{font-family:'Playfair Display',serif;color:var(--navy);font-size:1.12rem;margin:22px 0 4px;}
 .sa-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;align-items:center;}
 .sa-actions .sa-spacer{flex:1;}
@@ -1607,6 +1688,14 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 .sa-cover-brand{font-size:.72rem;font-weight:800;letter-spacing:2.6px;text-transform:uppercase;color:var(--gold2);}
 .sa-cover h3{font-family:'Playfair Display',serif;font-size:1.78rem;margin:8px 0 2px;}
 .sa-cover p{font-size:.85rem;color:rgba(255,255,255,.78);}
+.sa-cover-grid{display:grid;grid-template-columns:1fr 210px;gap:24px;align-items:center;position:relative;z-index:1;}
+.sa-cover-main{min-width:0;}
+.sa-cover-score{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:18px;padding:18px 16px;text-align:center;backdrop-filter:blur(10px);}
+.sa-score-ring{width:112px;height:112px;margin:0 auto 10px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--gold2) 0 100%,rgba(255,255,255,.16) 0);box-shadow:inset 0 0 0 10px rgba(255,255,255,.12),0 16px 34px rgba(0,0,0,.18);}
+.sa-score-ring span{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:800;line-height:1;color:#fff;}
+.sa-score-ring small{display:block;font-size:.58rem;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.68);margin-top:4px;}
+.sa-cover-score b{display:block;color:#fff;font-size:.9rem;margin-bottom:4px;}
+.sa-cover-score em{display:block;font-style:normal;color:rgba(255,255,255,.7);font-size:.72rem;line-height:1.45;}
 .sa-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;position:relative;z-index:1;}
 .sa-chip{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:11px;padding:8px 13px;animation:saPop .5s ease both;}
 .sa-chip:nth-child(2){animation-delay:.08s;}.sa-chip:nth-child(3){animation-delay:.16s;}.sa-chip:nth-child(4){animation-delay:.24s;}
@@ -1639,6 +1728,34 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 .sa-bar-fill{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--teal),var(--gold));width:0;transition:width 1.1s cubic-bezier(.22,1,.36,1);}
 .sa-bar-desc{font-size:.78rem;color:var(--mid);line-height:1.6;margin-top:4px;}
 .sa-cu{font-variant-numeric:tabular-nums;}
+
+/* infographic — report dashboard */
+.sa-dashboard{display:grid;grid-template-columns:1.12fr .88fr;gap:14px;margin:16px 0 18px;}
+.sa-dash-card{border:1px solid #E2E9E8;border-radius:16px;background:linear-gradient(180deg,#fff,#FCFEFD);padding:17px;box-shadow:0 12px 32px rgba(13,27,64,.055);}
+.sa-dash-card h5{font-family:'Playfair Display',serif;color:var(--navy);font-size:1.04rem;margin:0 0 10px;}
+.sa-mini-meter{margin:10px 0;}
+.sa-mini-meter-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;font-size:.78rem;margin-bottom:5px;}
+.sa-mini-meter-head b{color:var(--navy);}
+.sa-mini-meter-head span{color:var(--mid);font-weight:800;font-size:.7rem;}
+.sa-mini-track{height:9px;border-radius:999px;background:#E8EFEE;overflow:hidden;}
+.sa-mini-track span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--teal),var(--gold));}
+.sa-mosaic{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:12px;}
+.sa-mosaic span{min-height:58px;border-radius:13px;background:#ECF7F6;border:1px solid #D6EAE7;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;font-size:.67rem;font-weight:900;color:var(--teal);line-height:1.2;}
+.sa-mosaic span:nth-child(2),.sa-mosaic span:nth-child(5){background:#FFF7E9;border-color:#F0DFBA;color:#9A6A21;}
+.sa-mosaic span:nth-child(3){background:#EEF2FF;border-color:#DDE4FF;color:#304B8A;}
+.sa-podium{display:grid;grid-template-columns:1fr;gap:8px;margin-top:7px;}
+.sa-podium-row{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:10px;border:1px solid #E7EEED;border-radius:12px;padding:9px 10px;background:#fff;}
+.sa-podium-rank{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--navy);color:#fff;font-weight:900;font-size:.75rem;}
+.sa-podium-row:first-child .sa-podium-rank{background:var(--gold);}
+.sa-podium-row b{color:var(--navy);font-size:.82rem;}
+.sa-podium-row span:last-child{font-size:.72rem;font-weight:900;color:var(--teal);}
+.sa-journey{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin:16px 0 18px;}
+.sa-journey-step{position:relative;background:#F7FAF9;border:1px solid #E2E9E8;border-radius:14px;padding:14px 12px;min-height:102px;}
+.sa-journey-step::after{content:'';position:absolute;top:28px;right:-9px;width:9px;height:2px;background:#DDE7E5;}
+.sa-journey-step:last-child::after{display:none;}
+.sa-journey-step small{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--teal);color:#fff;font-weight:900;margin-bottom:8px;font-size:.72rem;}
+.sa-journey-step b{display:block;color:var(--navy);font-size:.78rem;margin-bottom:3px;}
+.sa-journey-step span{display:block;color:var(--mid);font-size:.68rem;line-height:1.38;}
 
 /* infographic — snapshot stat tiles */
 .sa-snap{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:8px 0 4px;}
@@ -1702,6 +1819,11 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 
 /* ── RESPONSIVE / MOBILE (Android + iOS) ── */
 @media(max-width:960px){
+  .sa-cover-grid{grid-template-columns:1fr;}
+  .sa-cover-score{max-width:240px;}
+  .sa-dashboard{grid-template-columns:1fr;}
+  .sa-journey{grid-template-columns:1fr 1fr;}
+  .sa-journey-step::after{display:none;}
   .sa-rings{grid-template-columns:1fr;max-width:340px;margin-left:auto;margin-right:auto;}
   .sa-donut-wrap{grid-template-columns:1fr;}
   .sa-insight-grid{grid-template-columns:1fr;}
@@ -1716,6 +1838,11 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
   .sa-card,.sa-cover,.sa-rbody{padding:20px 16px;}
   .sa-gate-2{grid-template-columns:1fr;}
   .sa-cover h3{font-size:1.5rem;}
+  .sa-cover-score{max-width:none;width:100%;}
+  .sa-score-ring{width:96px;height:96px;}
+  .sa-score-ring span{font-size:2rem;}
+  .sa-mosaic{grid-template-columns:1fr 1fr;}
+  .sa-journey{grid-template-columns:1fr;}
   .sa-head{margin-bottom:26px;}
   .sa-likert{flex-direction:column;gap:8px;}
   .sa-likert label{flex:1 1 100%;min-width:0;flex-direction:row;justify-content:flex-start;text-align:left;gap:12px;padding:12px 14px;min-height:52px;}
@@ -1865,18 +1992,59 @@ var riasecMeta={
  C:{name:"Conventional",tag:"the Organisers",desc:"Careful, detail-oriented people who like order, structure and working with data, records and clear procedures.",majors:["Accounting","Court Reporting","Insurance","Administration","Medical Records","Banking","Data Processing"],pathways:["Health Services","Business","Industrial & Engineering Technology"]}
 };
 
-/* ─── 3. CAREER ANCHORS (40 items) ─── */
-var anchorItems=["I dream of being so good at what I do that my expert advice will be sought continually.","I am most fulfilled in my work when I have been able to integrate and manage the efforts of others.","I dream of having a career that will allow me the freedom to do a job my own way and on my own schedule.","Security and stability are more important to me than freedom and autonomy.","I am always on the lookout for ideas that would permit me to start my own enterprise.","I will feel successful in my career only if I have a feeling of having made a real contribution to the welfare of society.","I dream of a career in which I can solve problems or win out in situations that are extremely challenging.","I would rather leave my organization than be put in a job that would compromise my ability to pursue personal and family concerns.","I will feel successful in my career only if I can develop technical or functional skills to a very high level of competence.","I dream of being in charge of a complex organization and making decisions that affect many people.","I am most fulfilled in my work when I am completely free to define my own tasks, schedules and procedures.","I would rather leave my organization altogether than accept an assignment that would jeopardize my security in that organization.","Building my own business is more important to me than achieving a high-level managerial position in someone else's organization.","I am most fulfilled in my career when I have been able to use my talents in the service of others.","I will feel successful in my career only if I face and overcome very difficult challenges.","I dream of a career that will permit me to integrate my personal, family and work needs.","Becoming a senior functional manager in my area of expertise is more attractive to me than becoming a general manager.","I will feel successful in my career only if I become a general manager in some organization.","I will feel successful in my career only if I achieve complete autonomy and freedom.","I seek jobs in organizations that will give me a sense of security and stability.","I am most fulfilled in my career when I have been able to build something that is entirely the result of my own ideas and efforts.","Using my skills to make the world a better place to live and work is more important to me than achieving a high-level managerial position.","I have been most fulfilled in my career when I have solved seemingly unsolvable problems or won out over seemingly impossible odds.","I feel successful in life only if I have been able to balance my personal, family and career requirements.","I would rather leave my organization than accept a rotational assignment that would take me out of my area of expertise.","Becoming a general manager is more attractive to me than becoming a senior functional manager in my current area of expertise.","The chance to do a job my own way, free of rules and constraints, is more important to me than security.","I am most fulfilled in my work when I feel that I have complete financial and employment security.","I will feel successful in my career only if I succeed in creating or building something that is entirely my own product or idea.","I dream of having a career that makes a real contribution to humanity and society.","I seek out work opportunities that strongly challenge my problem-solving and/or competitive skills.","Balancing the demands of personal and professional life is more important to me than achieving a high-level managerial position.","I am most fulfilled in my work when I have been able to use my special skills and talents.","I would rather leave my organization than accept a job that would take me away from the general managerial track.","I would rather leave my organization than accept a job that would reduce my autonomy and freedom.","I dream of having a career that will allow me to feel a sense of security and stability.","I dream of starting up and building my own business.","I would rather leave my organization than accept an assignment that would undermine my ability to be of service to others.","Working on problems that are almost unsolvable is more important to me than achieving a high-level managerial position.","I have always sought out work opportunities that minimize interference with personal or family concerns."];
-var anchorOrder=["TF","GM","AU","SE","EC","SV","CH","LS"];
+/* ─── 3. CAREER VALUES & WORK DRIVERS (40 items) ─── */
+var anchorItems=[
+ "I feel proud when my work lets me become highly skilled in a subject or craft.",
+ "I am energised by coordinating people and bringing a group toward a shared outcome.",
+ "I do my best work when I can choose how to plan my day and solve problems.",
+ "I value dependable income, clear expectations and a stable work environment.",
+ "I often imagine creating a service, product or project that carries my own signature.",
+ "I want my work to improve lives, communities or causes that matter to me.",
+ "I feel alive when a task is difficult enough to stretch my current abilities.",
+ "I want a career that leaves real space for health, family and personal priorities.",
+ "I enjoy becoming the person others consult for careful, reliable know-how.",
+ "I like roles where I can make decisions that shape direction for other people.",
+ "I prefer enough freedom to set my process instead of following every step exactly.",
+ "I am attracted to paths that offer long-term security and predictable growth.",
+ "Starting something new from an idea is more exciting to me than maintaining a routine.",
+ "Meaningful work for me includes helping people feel safer, stronger or better supported.",
+ "I am motivated by complex goals that require persistence and smart problem solving.",
+ "I notice whether a role will allow a sustainable rhythm outside work or study.",
+ "I would choose deeper expertise over a title that moves me away from the work I enjoy.",
+ "I am comfortable carrying responsibility when a team needs direction and accountability.",
+ "Too many rigid rules quickly reduce my interest in a role.",
+ "I feel calmer when a career path has clear requirements, benefits and future steps.",
+ "I like spotting gaps in the market and imagining practical ways to fill them.",
+ "I care about doing work that feels useful beyond my own success.",
+ "I prefer goals that test me instead of tasks I can already do easily.",
+ "I would question a prestigious opportunity if it regularly damaged my personal life.",
+ "I want to keep improving until my skill level is visibly strong.",
+ "I enjoy influencing priorities, resources and decisions in a constructive way.",
+ "I work better when trusted to manage my own methods and timing.",
+ "I respect organisations that offer consistency, transparent policies and continuity.",
+ "I get energy from building a project from zero into something people can use.",
+ "I am drawn to roles where empathy and social impact are part of the work.",
+ "I like assignments where the answer is not obvious at first.",
+ "I want success to include time, energy and relationships outside work.",
+ "Recognition feels best when it is tied to the quality of my actual work.",
+ "I can see myself guiding a department, team or initiative toward measurable results.",
+ "I would rather be judged on outcomes than controlled through constant supervision.",
+ "A secure base makes it easier for me to take thoughtful career steps.",
+ "I like ownership: shaping the idea, testing it and improving it from feedback.",
+ "I would trade some status for work that feels aligned with my values.",
+ "I stay engaged when a role keeps presenting new problems to solve.",
+ "A good career should fit my whole life, not consume it."
+];
+var anchorOrder=["MA","IN","AU","ST","EN","SV","CH","WF"];
 var anchorMeta={
- TF:{name:"Technical / Functional Competence",short:"Technical / Functional",desc:"You are anchored by the actual content of your work and the feeling of being highly competent in a particular area. Career growth means deepening expertise rather than moving into general management."},
- GM:{name:"General Managerial Competence",short:"General Management",desc:"You are anchored by the wish to manage, integrate the efforts of others and be accountable for the results of a whole unit. You are drawn to analytical, interpersonal and emotional challenge at a leadership level."},
- AU:{name:"Autonomy / Independence",short:"Autonomy",desc:"You are anchored by the need to set your own pace, schedule and working style, free of organizational constraints. Independence matters more to you than promotion or status."},
- SE:{name:"Security / Stability",short:"Security",desc:"You are anchored by the need for a stable, predictable future — steady employment, dependable income and long-term security."},
- EC:{name:"Entrepreneurial Creativity",short:"Entrepreneurial",desc:"You are anchored by the drive to build or create something entirely your own — a product, a service or an enterprise. Ownership and creation matter deeply to you."},
- SV:{name:"Service / Dedication to a Cause",short:"Service to a Cause",desc:"You are anchored by the wish to do something meaningful and make the world better. You are drawn to work that contributes to people, communities or important causes."},
- CH:{name:"Pure Challenge",short:"Pure Challenge",desc:"You are anchored by the wish to overcome difficult obstacles, solve unsolvable problems and win against tough competition. Variety and challenge keep you engaged."},
- LS:{name:"Lifestyle",short:"Lifestyle",desc:"You are anchored by the wish to integrate the needs of the individual, the family and the career into a balanced whole."}
+ MA:{name:"Mastery & Expertise",short:"Mastery",desc:"You are driven by becoming genuinely capable at meaningful work. Growth feels strongest when you can deepen skill, earn trust for quality, and keep improving your craft."},
+ IN:{name:"Influence & Leadership",short:"Influence",desc:"You are driven by shaping direction with and through people. You may enjoy coordinating effort, taking responsibility, and turning shared goals into clear progress."},
+ AU:{name:"Autonomy",short:"Autonomy",desc:"You are driven by room to decide how work gets done. Trust, flexible methods, and ownership of your process matter more than constant supervision."},
+ ST:{name:"Stability & Security",short:"Stability",desc:"You are driven by predictability, fairness and a reliable base. Clear expectations, dependable income, and long-term continuity help you do your best work."},
+ EN:{name:"Enterprise & Creation",short:"Enterprise",desc:"You are driven by building new things. Creating a product, service, project or independent path may feel more exciting than simply maintaining an existing routine."},
+ SV:{name:"Service & Impact",short:"Service",desc:"You are driven by usefulness and human impact. Work feels meaningful when it supports people, communities, wellbeing or causes that matter to you."},
+ CH:{name:"Challenge & Growth",short:"Challenge",desc:"You are driven by stretch. Complex problems, high standards and visible growth keep you engaged, especially when the answer is not obvious at first."},
+ WF:{name:"Work-Life Fit",short:"Work-Life Fit",desc:"You are driven by a sustainable fit between career, health, relationships and personal priorities. Success needs to leave room for the whole person."}
 };
 
 /* ─── 4. LEADERSHIP SKILLS (18 items) ─── */
@@ -1887,30 +2055,30 @@ var leaderScales=[
  {name:"Conceptual Skills",items:[3,6,9,12,15,18],desc:"Skills needed to work with ideas — problem solving, seeing the big picture, strategic planning and engaging with the values and direction of the work."}
 ];
 
-/* ─── 5. VARK LEARNING STYLE (16 items) ─── */
+/* ─── 5. LEARNING PREFERENCES (16 items) ─── */
 var varkItems=[
- {q:"I need to find the way to a shop that a friend has recommended. I would:",o:["find out where the shop is in relation to somewhere I know.","ask my friend to tell me the directions.","write down the street directions I need to remember.","use a map."],map:["K","A","R","V"]},
- {q:"A website has a video showing how to make a special graph or chart. There is a person speaking, some lists and words describing what to do and some diagrams. I would learn most from:",o:["seeing the diagrams.","listening.","reading the words.","watching the actions."],map:["V","A","R","K"]},
- {q:"I want to find out more about a tour that I am going on. I would:",o:["look at details about the highlights and activities on the tour.","use a map and see where the places are.","read about the tour on the itinerary.","talk with the person who planned the tour or others who are going on the tour."],map:["K","V","R","A"]},
- {q:"When choosing a career or area of study, these are important for me:",o:["Applying my knowledge in real situations.","Communicating with others through discussion.","Working with designs, maps or charts.","Using words well in written communications."],map:["K","A","V","R"]},
- {q:"When I am learning I:",o:["like to talk things through.","see patterns in things.","use examples and applications.","read books, articles and handouts."],map:["A","V","K","R"]},
- {q:"I want to save more money and to decide between a range of options. I would:",o:["consider examples of each option using my financial information.","read a print brochure that describes the options in detail.","use graphs showing different options for different time periods.","talk with an expert about the options."],map:["K","R","V","A"]},
- {q:"I want to learn how to play a new board game or card game. I would:",o:["watch others play the game before joining in.","listen to somebody explaining it and ask questions.","use the diagrams that explain the various stages, moves and strategies in the game.","read the instructions."],map:["K","A","V","R"]},
- {q:"I have a problem with my heart. I would prefer that the doctor:",o:["gave me something to read to explain what was wrong.","used a plastic model to show me what was wrong.","described what was wrong.","showed me a diagram of what was wrong."],map:["R","K","A","V"]},
- {q:"I want to learn to do something new on a computer. I would:",o:["read the written instructions that came with the program.","talk with people who know about the program.","start using it and learn by trial and error.","follow the diagrams in a book."],map:["R","A","K","V"]},
- {q:"When learning from the Internet I like:",o:["videos showing how to do or make things.","interesting design and visual features.","interesting written descriptions, lists and explanations.","audio channels where I can listen to podcasts or interviews."],map:["K","V","R","A"]},
- {q:"I want to learn about a new project. I would ask for:",o:["diagrams to show the project stages with charts of benefits and costs.","a written report describing the main features of the project.","an opportunity to discuss the project.","examples where the project has been used successfully."],map:["V","R","A","K"]},
- {q:"I want to learn how to take better photos. I would:",o:["ask questions and talk about the camera and its features.","use the written instructions about what to do.","use diagrams showing the camera and what each part does.","use examples of good and poor photos showing how to improve them."],map:["A","R","V","K"]},
- {q:"I prefer a presenter or a teacher who uses:",o:["demonstrations, models or practical sessions.","question and answer, talk, group discussion, or guest speakers.","handouts, books, or readings.","diagrams, charts, maps or graphs."],map:["K","A","R","V"]},
- {q:"I have finished a competition or test and I would like some feedback. I would like to have feedback:",o:["using examples from what I have done.","using a written description of my results.","from somebody who talks it through with me.","using graphs showing what I achieved."],map:["K","R","A","V"]},
- {q:"I want to find out about a house or an apartment. Before visiting it I would want:",o:["to view a video of the property.","a discussion with the owner.","a printed description of the rooms and features.","a plan showing the rooms and a map of the area."],map:["K","A","R","V"]},
- {q:"I want to assemble a wooden table that came in parts (kitset). I would learn best from:",o:["diagrams showing each stage of the assembly.","advice from someone who has done it before.","written instructions that came with the parts for the table.","watching a video of a person assembling a similar table."],map:["V","A","R","K"]}
+ {q:"When I begin a difficult topic, I first look for:",o:["a simple diagram or layout of the main parts.","someone explaining the idea in conversation.","a clear written summary I can reread.","a small task or example I can try."],map:["V","A","R","K"]},
+ {q:"If a class or training session feels confusing, I usually want:",o:["the teacher to sketch the steps or show the structure.","a chance to ask questions out loud.","notes, definitions or a checklist in writing.","a demonstration followed by practice."],map:["V","A","R","K"]},
+ {q:"For revision, I am most likely to make:",o:["charts, timelines, mind maps or colour-coded pages.","voice notes or discussion points for a study partner.","summaries, lists, flashcards or written answers.","practice attempts, sample problems or case examples."],map:["V","A","R","K"]},
+ {q:"When learning a new software tool, I prefer:",o:["screenshots or a visual flow of where to click.","a walkthrough where someone talks through each step.","step-by-step written instructions.","opening the tool and learning by trying it."],map:["V","A","R","K"]},
+ {q:"A helpful explanation usually includes:",o:["patterns, categories or visual organisation.","conversation, tone and spoken examples.","precise words and key points in writing.","real-life use, practice and feedback."],map:["V","A","R","K"]},
+ {q:"When I remember information well, it is often because:",o:["I can picture where it sits on a page or chart.","I remember how it sounded in a discussion.","I remember the words I wrote or read.","I remember doing something connected to it."],map:["V","A","R","K"]},
+ {q:"For a project briefing, I would ask for:",o:["a roadmap or visual overview of phases.","a meeting to talk through expectations.","a written brief with criteria and deadlines.","examples of finished work or a trial task."],map:["V","A","R","K"]},
+ {q:"When preparing for an exam or presentation, I rely most on:",o:["visual organisers that connect ideas.","explaining topics aloud to myself or others.","rewriting notes into crisp points.","mock practice under realistic conditions."],map:["V","A","R","K"]},
+ {q:"If I am learning a process, I prefer to see:",o:["the full sequence arranged visually.","someone describe why each step matters.","the rules and steps written clearly.","the process performed, then practise it myself."],map:["V","A","R","K"]},
+ {q:"In group learning, I contribute best by:",o:["organising ideas on a board or shared canvas.","talking through doubts and examples.","capturing notes and action points.","testing the idea through an activity."],map:["V","A","R","K"]},
+ {q:"When feedback is given, I understand it best when it comes as:",o:["marked examples, rubrics or comparison charts.","a calm conversation about what to improve.","written comments I can revisit.","a revised attempt where I apply the suggestion."],map:["V","A","R","K"]},
+ {q:"For a long chapter, I am helped most by:",o:["headings, diagrams and a map of the chapter.","discussion before or after reading.","highlighted terms and concise written notes.","questions or activities that use the chapter."],map:["V","A","R","K"]},
+ {q:"If I miss an important class, I would prefer:",o:["slides or board photos that show the layout.","a friend's spoken explanation of what happened.","complete notes or a written recap.","practice questions from the missed topic."],map:["V","A","R","K"]},
+ {q:"When choosing study material, I look for:",o:["clean design, charts and structured pages.","audio explanations or interactive discussion.","well-written explanations and examples.","tasks, worksheets or applied exercises."],map:["V","A","R","K"]},
+ {q:"I feel most confident after learning when I have:",o:["a visual map of the topic in my mind.","talked through the idea and answered questions.","written the key points in my own words.","used the idea in a real or simulated task."],map:["V","A","R","K"]},
+ {q:"When a topic is abstract, I make it clearer by:",o:["turning it into a diagram or comparison table.","discussing the idea until it sounds simpler.","reading and rewriting definitions carefully.","connecting it to an example, activity or case."],map:["V","A","R","K"]}
 ];
 var varkMeta={
- V:{name:"Visual",desc:"You learn well from diagrams, charts, maps, layouts and information shown in picture form.",tip:"Convert notes into diagrams, mind-maps and flowcharts; use colour, symbols and spatial layout."},
- A:{name:"Aural",desc:"You learn well by listening and talking — discussions, explanations and talking ideas through.",tip:"Discuss topics aloud, explain ideas to others, record and replay summaries, join study groups."},
- R:{name:"Read / Write",desc:"You learn well from words — reading, making notes, lists and written explanations.",tip:"Rewrite notes in your own words, make lists and headings, read texts and turn diagrams into statements."},
- K:{name:"Kinesthetic",desc:"You learn well by doing — hands-on practice, real examples, trial and error and concrete experience.",tip:"Use real examples and case studies, practise tasks physically, connect ideas to first-hand experience."}
+ V:{name:"Visual Structure",desc:"You learn well when ideas are arranged in clear layouts, diagrams, charts, timelines or maps.",tip:"Turn notes into charts, mind maps, comparison tables and colour-coded structures."},
+ A:{name:"Spoken Discussion",desc:"You learn well through explanation, dialogue, questions, teaching back and hearing ideas in words.",tip:"Talk topics through, explain them aloud, use study conversations and record short verbal summaries."},
+ R:{name:"Written Notes",desc:"You learn well from precise words, lists, definitions, summaries and written examples you can revisit.",tip:"Rewrite notes in your own words, build checklists, make flashcards and practise concise written answers."},
+ K:{name:"Hands-On Practice",desc:"You learn well by trying, applying, testing and connecting ideas to real examples or practical tasks.",tip:"Use sample problems, role plays, case examples, mock attempts and quick practice cycles."}
 };
 
 /* ─── Tool registry & part order ─── */
@@ -1921,14 +2089,14 @@ var tools={
  riasec:{id:"riasec",icon:"🎨",name:"RIASEC Interests",tag:"Holland Codes — 42 items",type:"binary",scale:scBin,items:riasecItems,
    blurb:"Reveals your strongest career-interest areas.",
    howto:{steps:["Read each statement about activities and interests.","Tap 'Agree' if it sounds like you, or 'Not for me' if it does not.","Pick what feels true for you, not what sounds impressive."],note:"Don't overthink it — your first instinct is usually the most honest."}},
- anchors:{id:"anchors",icon:"⚓",name:"Career Anchors",tag:"Career Orientations — 40 items",type:"likert",scale:scA,items:anchorItems,
-   blurb:"Identifies the values you would least give up.",
+ anchors:{id:"anchors",icon:"⚓",name:"Career Values & Work Drivers",tag:"Work Drivers — 40 items",type:"likert",scale:scA,items:anchorItems,
+   blurb:"Identifies the values and working conditions that matter most to you.",
    howto:{steps:["Read each statement about what matters to you in your work and career.","Tap one button from 1 to 6 to show how true it is for you.","After the questions, you will pick the three statements that feel most true."],note:"Work quickly and honestly — avoid the extreme ends unless you truly feel strongly."}},
  leadership:{id:"leadership",icon:"🎯",name:"Leadership Skills",tag:"Leadership Profile — 18 items",type:"likert",scale:scL,items:leaderItems,
    blurb:"Profiles administrative, interpersonal & conceptual skills.",
    howto:{steps:["Imagine you are leading a team or running a programme.","Read each statement and tap how true it is for you, from 1 to 5.","Describe how you actually work, not how you think a leader should be."],note:"There are no right answers — this simply maps your natural leadership style."}},
- vark:{id:"vark",icon:"📚",name:"Learning Style (VARK)",tag:"VARK — 16 questions",type:"multi",items:varkItems,
-   blurb:"Shows how you take in and process information best.",
+ vark:{id:"vark",icon:"📚",name:"Learning Preferences",tag:"Study Supports — 16 questions",type:"multi",items:varkItems,
+   blurb:"Shows which study supports make learning feel more workable.",
    howto:{steps:["Read each everyday situation.","Tap the option or options you would really choose — you can pick more than one.","If none of the options fit you, you may leave that question blank."],note:"Choose what you would genuinely do in real life."}}
 };
 var order=["personality","riasec","anchors","leadership","vark"];
@@ -2285,6 +2453,11 @@ function bar(name,valText,pct,band,word){
   '<span class="sa-bar-meta"><span class="sa-bar-val">'+vt+'</span>'+b+'</span></div>'+
   '<div class="sa-bar"><span class="sa-bar-fill" data-w="'+pct+'"></span></div></div>';
 }
+function miniMeter(label,value,sub,pct){
+ return '<div class="sa-mini-meter"><div class="sa-mini-meter-head"><b>'+esc(label)+'</b><span>'+esc(value)+'</span></div>'+
+  '<div class="sa-mini-track"><span style="width:'+Math.max(3,Math.min(100,pct))+'%"></span></div>'+
+  '<div style="font-size:.68rem;color:var(--mid);line-height:1.4;margin-top:4px;">'+esc(sub)+'</div></div>';
+}
 function cu(n){return '<span class="sa-cu" data-count="'+n+'">0</span>';}
 function countUp(span){
  var target=parseFloat(span.getAttribute("data-count"))||0,dur=850,t0=null;
@@ -2313,7 +2486,7 @@ function donut(items){
  });
  return '<svg viewBox="0 0 140 140" class="sa-donut" xmlns="http://www.w3.org/2000/svg">'+
   '<circle cx="70" cy="70" r="52" fill="none" stroke="#EEF2F1" stroke-width="20"/>'+segs+
-  '<text x="70" y="66" text-anchor="middle" font-size="13" font-weight="800" fill="#0D1B40">VARK</text>'+
+  '<text x="70" y="66" text-anchor="middle" font-size="11" font-weight="800" fill="#0D1B40">LEARN</text>'+
   '<text x="70" y="80" text-anchor="middle" font-size="8" fill="#5A6A6A">learning mix</text></svg>';
 }
 function partInstructions(t){
@@ -2349,29 +2522,55 @@ function buildPanels(){
  var topV=V[0];
  var multiV=V.filter(function(r){return r.score>0&&topV.score-r.score<=1;});
  var learnLabel=multiV.length>1?"Multimodal":topV.name;
+ var varkTotal=V.reduce(function(s,r){return s+r.score;},0);
 
  /* SNAPSHOT */
  var top3=R.slice(0,3);
  var pathSet=[];top3.forEach(function(r){r.pathways.forEach(function(p){if(pathSet.indexOf(p)===-1)pathSet.push(p);});});
  var fields=[];top3.slice(0,2).forEach(function(r){r.majors.slice(0,4).forEach(function(m){if(fields.indexOf(m)===-1)fields.push(m);});});
+ var dashboard='<div class="sa-dashboard">'+
+  '<div class="sa-dash-card"><h5>Interest intensity map</h5>'+
+   top3.map(function(r){return miniMeter(r.name+" ("+r.key+")",r.score+" / 7",r.tag,r.pct);}).join("")+
+   '<div class="sa-mosaic">'+
+    '<span>'+esc(code)+' interest code</span>'+
+    '<span>'+esc(topP.name)+' personality signal</span>'+
+    '<span>'+esc(anchor.short)+' work driver</span>'+
+    '<span>'+esc(topL.name.replace(" Skills",""))+' leadership</span>'+
+    '<span>'+esc(learnLabel)+' learning</span>'+
+   '</div></div>'+
+  '<div class="sa-dash-card"><h5>Top work-driver podium</h5>'+
+   '<div class="sa-podium">'+A.slice(0,3).map(function(r,i){
+    return '<div class="sa-podium-row"><span class="sa-podium-rank">'+(i+1)+'</span><b>'+esc(r.short)+'</b><span>'+r.score+' pts</span></div>';
+   }).join("")+'</div>'+
+   miniMeter("Learning preference weight",topV.score+" selections",learnLabel,varkTotal?Math.round(topV.score/varkTotal*100):0)+
+  '</div></div>';
+ var journey='<div class="sa-journey">'+
+  '<div class="sa-journey-step"><small>1</small><b>Interests</b><span>'+esc(code)+' shows where curiosity naturally goes.</span></div>'+
+  '<div class="sa-journey-step"><small>2</small><b>Personality</b><span>'+esc(topP.name)+' adds working-style context.</span></div>'+
+  '<div class="sa-journey-step"><small>3</small><b>Values</b><span>'+esc(anchor.short)+' shows what to protect while choosing.</span></div>'+
+  '<div class="sa-journey-step"><small>4</small><b>Leadership</b><span>'+esc(topL.name.replace(" Skills",""))+' indicates a visible strength.</span></div>'+
+  '<div class="sa-journey-step"><small>5</small><b>Learning</b><span>'+esc(learnLabel)+' guides study strategy.</span></div>'+
+  '</div>';
  var syn="Your Holland interest code is <strong>"+code+"</strong> — led by "+top3[0].name.toLowerCase()+
   ", "+top3[1].name.toLowerCase()+" and "+top3[2].name.toLowerCase()+" interests. Your most pronounced personality dimension is <strong>"+
-  topP.name.toLowerCase()+"</strong>, and your strongest career anchor is <strong>"+anchor.short+
-  "</strong> — the orientation you would be least willing to give up. In a leadership setting your <strong>"+
+  topP.name.toLowerCase()+"</strong>, and your strongest work driver is <strong>"+anchor.short+
+  "</strong> — a value you may want to protect while choosing a path. In a leadership setting your <strong>"+
   topL.name.toLowerCase()+"</strong> stand out, and you tend to absorb new information best through "+
   (multiV.length>1?"several modes combined":topV.name.toLowerCase()+" approaches")+". Together these point toward "+
   (top3[0].tag)+"-style work, balanced against your need for "+anchor.short.toLowerCase()+".";
   var snap='<div class="sa-snap">'+
    '<div class="sa-snap-card"><small>Interest Code</small><b>'+code+'</b><span>'+esc(top3[0].name+" · "+top3[1].name+" · "+top3[2].name)+'</span></div>'+
    '<div class="sa-snap-card"><small>Top Personality</small><b>'+esc(topP.name)+'</b><span>'+cu(topP.score)+' / 40 · '+topP.word+'</span></div>'+
-   '<div class="sa-snap-card"><small>Career Anchor</small><b>'+esc(anchor.short)+'</b><span>'+cu(anchor.score)+' points</span></div>'+
+   '<div class="sa-snap-card"><small>Work Driver</small><b>'+esc(anchor.short)+'</b><span>'+cu(anchor.score)+' points</span></div>'+
    '<div class="sa-snap-card"><small>Leadership Strength</small><b>'+esc(topL.name.replace(" Skills",""))+'</b><span>'+cu(topL.score)+' / 30 · '+topL.word+'</span></div>'+
-   '<div class="sa-snap-card"><small>Learning Style</small><b>'+esc(learnLabel)+'</b><span>'+(multiV.length>1?multiV.map(function(r){return r.key;}).join("/"):"VARK preference")+'</span></div>'+
+   '<div class="sa-snap-card"><small>Learning Preferences</small><b>'+esc(learnLabel)+'</b><span>'+(multiV.length>1?multiV.map(function(r){return r.name;}).join(" + "):"clearest preference")+'</span></div>'+
    '</div>'+
+   dashboard+
+   journey+
    '<div class="sa-syn"><p>'+syn+'</p></div>'+
    '<div class="sa-insight-grid">'+
     '<div class="sa-insight"><small>Best Exploration Theme</small><b>'+esc(top3[0].tag)+'</b><span>Start with career paths that match the student&apos;s strongest interest energy.</span></div>'+
-    '<div class="sa-insight"><small>Family Discussion Point</small><b>'+esc(anchor.short)+'</b><span>Use this anchor to discuss what the student may value most before choosing a stream or course.</span></div>'+
+    '<div class="sa-insight"><small>Family Discussion Point</small><b>'+esc(anchor.short)+'</b><span>Use this driver to discuss what the student may value most before choosing a stream or course.</span></div>'+
     '<div class="sa-insight"><small>Counsellor Brief</small><b>AI-ready summary</b><span>This visual report can be shared before the session so counselling begins with clearer context.</span></div>'+
    '</div>'+
    '<h4>Career directions to explore together</h4>'+
@@ -2401,13 +2600,13 @@ function buildPanels(){
     '<div class="sa-tags">'+r.majors.map(function(m){return '<span>'+esc(m)+'</span>';}).join("")+'</div></div>';
   }).join("");
 
- /* ANCHORS */
+ /* WORK DRIVERS */
  var anch='<div class="sa-split">'+radar(A.map(function(r){return {label:r.key,val:r.score/42};}),"#1A2E5E")+
-  '<div><p>Your highest-scoring anchor is your likely <strong>primary career anchor</strong> — the orientation you would be least willing to give up if forced to choose.</p></div></div>'+
-  '<div class="sa-syn"><p><strong>Primary anchor: '+esc(anchor.name)+'.</strong> '+esc(anchor.desc)+'</p></div>'+
+  '<div><p>Your highest-scoring area is your likely <strong>primary work driver</strong> — a value you may want to protect while choosing a path.</p></div></div>'+
+  '<div class="sa-syn"><p><strong>Primary driver: '+esc(anchor.name)+'.</strong> '+esc(anchor.desc)+'</p></div>'+
   A.map(function(r,i){return bar((i+1)+". "+r.name,r.score+" pts",Math.round(r.score/42*100),
    i===0?"hi":(i<3?"mid":"lo"),i===0?"Primary":(i<3?"Strong":"Lower"));}).join("")+
-  '<p style="margin-top:10px;">The three highest anchors usually matter most. Where scores are close, it can mean you have not yet had to choose between them.</p>';
+  '<p style="margin-top:10px;">The three highest drivers usually matter most. Where scores are close, it can mean you are balancing more than one important value.</p>';
 
  /* LEADERSHIP */
  var leadColors=["#0A6E6E","#C9933A","#1A2E5E"];
@@ -2420,7 +2619,7 @@ function buildPanels(){
   }).join("")+'</div>'+
   '<h4>Interpretation</h4><p>Bands: 26&ndash;30 very high, 21&ndash;25 high, 16&ndash;20 moderate, 11&ndash;15 low, 6&ndash;10 very low. Effective leaders draw on all three skill sets; a noticeably lower area is simply a useful place to focus development.</p>';
 
- /* VARK */
+ /* LEARNING PREFERENCES */
  var varkColors={V:"#0A6E6E",A:"#C9933A",R:"#1A2E5E",K:"#2E8B6F"};
  var varkTotal=V.reduce(function(s,r){return s+r.score;},0);
  var lrn='<p>'+(multiV.length>1
@@ -2435,7 +2634,7 @@ function buildPanels(){
    r.score===topV.score&&r.score>0?"hi":"mid","");}).join("")+
   '<h4>Study strategies that suit you</h4><ul class="sa-rlist">'+
   (multiV.length>1?multiV:[topV]).map(function(r){return '<li><strong>'+esc(r.name)+':</strong> '+esc(r.tip)+'</li>';}).join("")+
-  '</ul><p>VARK describes a learning preference, not an ability or a limit — combining modes often works best.</p>';
+  '</ul><p>Learning preferences describe useful supports, not ability or limits — combining approaches often works best.</p>';
 
  return {
   code:code,topP:topP,anchor:anchor,topL:topL,learnLabel:learnLabel,
@@ -2443,9 +2642,9 @@ function buildPanels(){
    {id:"snap",label:"Snapshot",html:'<h4>Your Integrated Snapshot</h4>'+snap},
    {id:"pers",label:"Personality",html:'<h4>Personality Profile</h4>'+pers},
    {id:"riasec",label:"Interests",html:'<h4>RIASEC Career Interests</h4>'+riasec},
-   {id:"anch",label:"Career Anchors",html:'<h4>Career Anchors</h4>'+anch},
+   {id:"anch",label:"Work Drivers",html:'<h4>Career Values & Work Drivers</h4>'+anch},
    {id:"lead",label:"Leadership",html:'<h4>Leadership Skills</h4>'+lead},
-   {id:"lrn",label:"Learning Style",html:'<h4>Learning Style (VARK)</h4>'+lrn}
+   {id:"lrn",label:"Learning Preferences",html:'<h4>Learning Preferences</h4>'+lrn}
   ]
  };
 }
@@ -2462,14 +2661,17 @@ function buildReport(){
   return '<div class="sa-rpanel" data-panel="'+p.id+'"'+(i===0?"":" hidden")+'>'+p.html+'</div>';
  }).join("");
  return '<div class="sa-rpt">'+
-  '<div class="sa-cover"><span class="sa-cover-brand">Lume Live</span>'+
+  '<div class="sa-cover"><div class="sa-cover-grid"><div class="sa-cover-main"><span class="sa-cover-brand">Lume Live</span>'+
    '<h3>'+disp+'</h3><p>Combined Self-Assessment Report &mdash; Five Assessments</p>'+
    '<div class="sa-chips">'+
     '<div class="sa-chip"><small>Interest Code</small><b>'+d.code+'</b></div>'+
     '<div class="sa-chip"><small>Top Personality</small><b>'+esc(d.topP.name)+'</b></div>'+
-    '<div class="sa-chip"><small>Career Anchor</small><b>'+esc(d.anchor.short)+'</b></div>'+
-    '<div class="sa-chip"><small>Learning Style</small><b>'+esc(d.learnLabel)+'</b></div>'+
-   '</div></div>'+
+    '<div class="sa-chip"><small>Work Driver</small><b>'+esc(d.anchor.short)+'</b></div>'+
+    '<div class="sa-chip"><small>Learning Preferences</small><b>'+esc(d.learnLabel)+'</b></div>'+
+   '</div></div><div class="sa-cover-score">'+
+    '<div class="sa-score-ring"><span>5</span><small>tools</small></div>'+
+    '<b>Infographic client report</b><em>Snapshot, pathway, charts, and counselling prompts in one view.</em>'+
+   '</div></div></div>'+
   '<nav class="sa-rtabs">'+tabs+'</nav>'+
   '<div class="sa-rbody"><div id="saRPanels">'+panels+'</div>'+
    '<p style="font-size:.74rem;color:var(--mid);margin-top:18px;">Report generated '+date+' for '+disp+'.</p>'+
@@ -2506,9 +2708,9 @@ window.saShare=function(){
   "Headline results:",
   "- Holland interest code: "+d.code,
   "- Top personality dimension: "+d.topP.name+" ("+d.topP.score+"/40)",
-  "- Primary career anchor: "+d.anchor.short+" ("+d.anchor.score+" pts)",
+  "- Primary work driver: "+d.anchor.short+" ("+d.anchor.score+" pts)",
   "- Strongest leadership area: "+d.topL.name+" ("+d.topL.score+"/30)",
-  "- Learning style: "+d.learnLabel,
+  "- Learning preferences: "+d.learnLabel,
   "","Please guide me on what these results suggest."].join("\n");
  window.open("https://wa.me/917015671280?text="+encodeURIComponent(msg),"_blank","noopener");
  toast("Your combined result summary is ready to send on WhatsApp.");
@@ -2556,8 +2758,8 @@ window.saPrint=function(){
   '<p>Combined Self-Assessment Report — Five Assessments</p><div class="chips">'+
    '<div class="chip"><small>Interest Code</small><b>'+d.code+'</b></div>'+
    '<div class="chip"><small>Top Personality</small><b>'+esc(d.topP.name)+'</b></div>'+
-   '<div class="chip"><small>Career Anchor</small><b>'+esc(d.anchor.short)+'</b></div>'+
-   '<div class="chip"><small>Learning Style</small><b>'+esc(d.learnLabel)+'</b></div>'+
+   '<div class="chip"><small>Work Driver</small><b>'+esc(d.anchor.short)+'</b></div>'+
+   '<div class="chip"><small>Learning Preferences</small><b>'+esc(d.learnLabel)+'</b></div>'+
   '</div></div>'+allPanels+
   '<div class="disc"><strong>Important note:</strong> This combined report brings together five educational self-assessment questionnaires for personal reflection and counselling discussion. It is not a psychological diagnosis, aptitude test, or selection/admissions decision tool.</div>'+
   '</body></html>');
@@ -2636,7 +2838,7 @@ function saBuildPdfDoc(){
  doc.text(saPdfSafe(S.name||'Personal Report'),cx,cy+9.5);
  doc.setFont('helvetica','normal');doc.setFontSize(9.3);doc.setTextColor(205,213,226);
  doc.text('Combined Report - Five Assessments   |   '+date,cx,cy+16);
- var chips=[['INTEREST CODE',code],['TOP PERSONALITY',topP.name],['CAREER ANCHOR',anchor.short],['LEARNING STYLE',learnLabel]];
+ var chips=[['INTEREST CODE',code],['TOP PERSONALITY',topP.name],['WORK DRIVER',anchor.short],['LEARNING PREFS',learnLabel]];
  var chw=(W-2*M-16-3*4)/4,chy=cy+22;
  chips.forEach(function(c,i){
   var xx=cx+i*(chw+4);
@@ -2652,8 +2854,8 @@ function saBuildPdfDoc(){
  heading('Your Integrated Snapshot');
  var syn='Your Holland interest code is '+code+', led by '+R[0].name.toLowerCase()+', '+
   R[1].name.toLowerCase()+' and '+R[2].name.toLowerCase()+' interests. Your most pronounced personality '+
-  'dimension is '+topP.name.toLowerCase()+', and your strongest career anchor is '+anchor.short+
-  ' - the orientation you would be least willing to give up. In a leadership setting your '+
+  'dimension is '+topP.name.toLowerCase()+', and your strongest work driver is '+anchor.short+
+  ' - a value you may want to protect while choosing a path. In a leadership setting your '+
   topL.name.toLowerCase()+' stand out, and you tend to learn best through '+
   (multiV.length>1?'several modes combined':topV.name.toLowerCase()+' approaches')+'.';
  para(syn,9.3,MID,3);
@@ -2685,9 +2887,9 @@ function saBuildPdfDoc(){
   para('Sample fields: '+r.majors.join(', '),7.8,[120,134,134],3);
  });
 
- /* ANCHORS */
- heading('3.  Career Anchors');
- para('Your highest-scoring anchor is your likely primary career anchor - the orientation you would be least willing to give up. Primary anchor: '+anchor.name+'.');
+ /* WORK DRIVERS */
+ heading('3.  Career Values & Work Drivers');
+ para('Your highest-scoring area is your likely primary work driver - a value you may want to protect while choosing a path. Primary driver: '+anchor.name+'.');
  para(anchor.desc,8.6,[60,74,74],3);
  A.forEach(function(r,i){ bar((i+1)+'.  '+r.name,r.score+' pts',Math.round(r.score/42*100)); });
 
@@ -2699,8 +2901,8 @@ function saBuildPdfDoc(){
   para(r.desc,8,MID,2.5);
  });
 
- /* VARK */
- heading('5.  Learning Style (VARK)');
+ /* LEARNING PREFERENCES */
+ heading('5.  Learning Preferences');
  para(multiV.length>1
   ? 'Your scores are fairly even - a multimodal style. You draw on more than one mode rather than a single strong preference.'
   : 'Your clearest learning preference is '+topV.name+'.');
@@ -2771,9 +2973,9 @@ function saSummaryText(){
   "📊 Headline Results",
   "• Holland interest code: "+R.slice(0,3).map(function(r){return r.key;}).join(""),
   "• Top personality dimension: "+topP.name+" ("+topP.score+"/40)",
-  "• Primary career anchor: "+A[0].short+" ("+A[0].score+" pts)",
+  "• Primary work driver: "+A[0].short+" ("+A[0].score+" pts)",
   "• Strongest leadership area: "+topL.name+" ("+topL.score+"/30)",
-  "• Learning style: "+(multiV.length>1?"Multimodal":topV.name),
+  "• Learning preferences: "+(multiV.length>1?"Multimodal":topV.name),
   "",
   "📎 I am ready to share the PDF report for review."]);
 }
@@ -2896,11 +3098,13 @@ show("saGate");
         <span class="ewb-card-icon">😰</span>
         <h4>Anxiety &amp; Stress</h4>
         <p>Managing constant worry, panic, social anxiety, and daily life pressure.</p>
+        <button class="ll-check-btn" type="button" data-ll-open="phq4Anxiety">Anxiety Test</button>
       </div>
       <div class="ewb-card c2 anim stagger-2">
         <span class="ewb-card-icon">😔</span>
         <h4>Depression &amp; Low Mood</h4>
         <p>Dealing with persistent sadness, lack of motivation, or feeling &ldquo;empty.&rdquo;</p>
+        <button class="ll-check-btn" type="button" data-ll-open="phq4Mood">Low Mood Check</button>
       </div>
       <div class="ewb-card c3 anim stagger-3">
         <span class="ewb-card-icon">💔</span>
@@ -2911,6 +3115,7 @@ show("saGate");
         <span class="ewb-card-icon">🪞</span>
         <h4>Self-Esteem &amp; Confidence</h4>
         <p>Overcoming self-doubt, body image concerns, and the habit of social comparison.</p>
+        <button class="ll-check-btn" type="button" data-ll-open="selfEsteem">Self-Esteem Test</button>
       </div>
       <div class="ewb-card c5 anim stagger-5">
         <span class="ewb-card-icon">🕊️</span>
@@ -2921,11 +3126,18 @@ show("saGate");
         <span class="ewb-card-icon">🔥</span>
         <h4>Work &amp; Academic Burnout</h4>
         <p>Managing professional stress, career-related anxiety, and exam pressure.</p>
+        <button class="ll-check-btn" type="button" data-ll-open="workStress">Work-Stress Check</button>
       </div>
       <div class="ewb-card c7 anim stagger-7">
         <span class="ewb-card-icon">🧘</span>
         <h4>Emotional Regulation</h4>
         <p>Learning to manage anger, mood swings, and intense emotional outbursts.</p>
+      </div>
+      <div class="ewb-card c3 anim stagger-1">
+        <span class="ewb-card-icon">🌿</span>
+        <h4>Wellbeing &amp; Life Satisfaction</h4>
+        <p>Reflecting on satisfaction, meaning, relationships, and overall flourishing.</p>
+        <button class="ll-check-btn" type="button" data-ll-open="wellbeingMenu">Choose Wellbeing Test</button>
       </div>
     </div>
 
@@ -4468,6 +4680,152 @@ function setMode(el, mode){
   el.classList.add('sel');
   updateSessionWA();
 }
+</script>
+<script>
+(function(){
+  var WA_PHONE="917015671280";
+  var modal,state,currentResult;
+  var commonDisclaimer="This is a brief self-check for reflection and counselling discussion. It is not a diagnosis, emergency service, or replacement for professional care.";
+  var freq4=[[0,"Not at all"],[1,"Several days"],[2,"More than half the days"],[3,"Nearly every day"]];
+  var agree4=[[0,"Strongly disagree"],[1,"Disagree"],[2,"Agree"],[3,"Strongly agree"]];
+  var agree7=[[1,"Strongly disagree"],[2,"Disagree"],[3,"Slightly disagree"],[4,"Neutral"],[5,"Slightly agree"],[6,"Agree"],[7,"Strongly agree"]];
+  function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];});}
+  function band(score,bands){for(var i=0;i<bands.length;i++){if(score<=bands[i].max)return bands[i];}return bands[bands.length-1];}
+  function sum(arr){return arr.reduce(function(a,b){return a+Number(b||0);},0);}
+  function ensureModal(){
+    if(modal)return modal;
+    modal=document.createElement("div");
+    modal.className="ll-check-modal";
+    modal.innerHTML='<div class="ll-check-dialog" role="dialog" aria-modal="true" aria-labelledby="llCheckTitle">'+
+      '<button class="ll-check-x" type="button" data-ll-close aria-label="Close">×</button>'+
+      '<div class="ll-check-head"><small id="llCheckKicker">Self-check</small><h3 id="llCheckTitle"></h3><p id="llCheckDesc"></p></div>'+
+      '<div class="ll-check-body" id="llCheckBody"></div></div>';
+    document.body.appendChild(modal);
+    modal.addEventListener("click",function(e){if(e.target===modal||e.target.closest("[data-ll-close]"))close();});
+    document.addEventListener("keydown",function(e){if(e.key==="Escape"&&modal.classList.contains("open"))close();});
+    return modal;
+  }
+  function setHead(title,desc,kicker){
+    ensureModal();
+    document.getElementById("llCheckTitle").textContent=title;
+    document.getElementById("llCheckDesc").textContent=desc||commonDisclaimer;
+    document.getElementById("llCheckKicker").textContent=kicker||"Free self-check";
+  }
+  function open(id){
+    ensureModal();
+    if(id==="wellbeingMenu"){renderMenu();return;}
+    state={id:id,index:0,answers:[]};
+    currentResult=null;
+    modal.classList.add("open");
+    document.body.style.overflow="hidden";
+    renderQuestion();
+  }
+  function close(){
+    if(!modal)return;
+    modal.classList.remove("open");
+    document.body.style.overflow="";
+    state=null;
+  }
+  function renderMenu(){
+    setHead("Wellbeing & Life Satisfaction Checks","Choose one short reflection. These tools are for self-awareness and counselling discussion, not diagnosis.","Free wellbeing checks");
+    document.getElementById("llCheckBody").innerHTML='<div class="ll-menu">'+
+      '<button type="button" data-ll-open="lifeSat"><b>Satisfaction With Life Check</b><span>Five questions about overall life satisfaction.</span></button>'+
+      '<button type="button" data-ll-open="flourishing"><b>Flourishing Check</b><span>Eight questions about meaning, relationships, competence and optimism.</span></button>'+
+      '</div>';
+    modal.classList.add("open");
+    document.body.style.overflow="hidden";
+  }
+  var tests={
+    phq4Anxiety:{title:"PHQ-4: Anxiety + Low Mood Quick Check",desc:"A 2-minute screening/reflection. It flags anxiety and low mood symptoms over the last two weeks, but it does not diagnose.",items:["Feeling nervous, anxious or on edge","Not being able to stop or control worrying","Little interest or pleasure in doing things","Feeling down, depressed or hopeless"],scale:freq4,next:"gad7",focus:"anxiety",score:scorePhq4},
+    phq4Mood:{title:"PHQ-4: Low Mood Quick Check",desc:"A brief screening/reflection for anxiety and low mood symptoms over the last two weeks. It is not a diagnosis.",items:["Feeling nervous, anxious or on edge","Not being able to stop or control worrying","Little interest or pleasure in doing things","Feeling down, depressed or hopeless"],scale:freq4,focus:"mood",score:scorePhq4},
+    gad7:{title:"GAD-7: Anxiety Self-Check",desc:"A short anxiety screening/reflection for the last two weeks. Use the result as a starting point for support, not as a diagnosis.",items:["Feeling nervous, anxious or on edge","Not being able to stop or control worrying","Worrying too much about different things","Trouble relaxing","Being so restless that it is hard to sit still","Becoming easily annoyed or irritable","Feeling afraid as if something awful might happen"],scale:freq4,score:function(a){var total=sum(a),b=band(total,[{max:4,name:"Minimal anxiety range"},{max:9,name:"Mild anxiety range"},{max:14,name:"Moderate anxiety range"},{max:21,name:"Severe anxiety range"}]);return {scoreLabel:total+" / 21",band:b.name,summary:"Your answers fall in the "+b.name.toLowerCase()+".",detail:"If worry is affecting sleep, study, work, relationships or daily choices, a counselling conversation can help you make a practical next plan."};}},
+    selfEsteem:{title:"Rosenberg Self-Esteem Scale",desc:"A confidence and self-worth reflection. Scores can shift with stress, context and support.",items:["On the whole, I feel satisfied with myself.","I feel that I have a number of good qualities.","At times I feel I do not have much to be proud of.","I am able to do things as well as most other people.","I sometimes feel useless.","I feel I am a person of worth, at least equal to others.","I take a positive attitude toward myself.","I wish I could have more respect for myself.","I tend to feel that I am not good at anything.","I sometimes think my self-view is too negative."],scale:agree4,reverse:[2,4,7,8,9],score:function(a,t){var total=a.reduce(function(s,v,i){v=Number(v);return s+(t.reverse.indexOf(i)>-1?3-v:v);},0),b=band(total,[{max:14,name:"Lower self-esteem range"},{max:25,name:"Typical self-esteem range"},{max:30,name:"Higher self-esteem range"}]);return {scoreLabel:total+" / 30",band:b.name,summary:"Your responses fall in the "+b.name.toLowerCase()+".",detail:"This is best read as a snapshot. If self-criticism is limiting your choices, counselling can help build a kinder and more accurate self-view."};}},
+    lifeSat:{title:"Satisfaction With Life Check",desc:"A five-question life satisfaction reflection using common wellbeing domains. It is not a diagnosis.",items:["In most ways, my life feels close to what I want it to be.","My current life conditions feel good enough for me right now.","I feel satisfied with my life overall.","So far, I have been able to reach many things that matter to me.","If I could start again, I would keep many major parts of my life."],scale:agree7,score:function(a){var total=sum(a),b=band(total,[{max:9,name:"Very dissatisfied range"},{max:14,name:"Dissatisfied range"},{max:19,name:"Slightly dissatisfied range"},{max:20,name:"Neutral range"},{max:25,name:"Slightly satisfied range"},{max:30,name:"Satisfied range"},{max:35,name:"Highly satisfied range"}]);return {scoreLabel:total+" / 35",band:b.name,summary:"Your responses fall in the "+b.name.toLowerCase()+".",detail:"Life satisfaction can change as stress, support, health and relationships change. Use this as a reflection point, not a fixed label."};}},
+    flourishing:{title:"Flourishing Check",desc:"A wellbeing reflection across meaning, relationships, engagement, competence and optimism. It is not a clinical scale.",items:["I lead a purposeful and meaningful life.","My relationships feel supportive and rewarding.","I am engaged and interested in my daily activities.","I contribute to other people's wellbeing in some way.","I feel competent in responsibilities that matter to me.","I am generally optimistic about my future.","People usually respect me for who I am.","I have enough direction to keep growing."],scale:agree7,score:function(a){var total=sum(a),b=band(total,[{max:31,name:"Needs support / rebuilding range"},{max:43,name:"Mixed flourishing range"},{max:56,name:"Strong flourishing range"}]);return {scoreLabel:total+" / 56",band:b.name,summary:"Your responses suggest a "+b.name.toLowerCase()+".",detail:"There are no diagnostic cutoffs here. Look at which areas feel low and bring those themes into a counselling or mentoring conversation."};}},
+    workStress:{title:"COPSOQ III Workplace / Study Stress Reflection",desc:"A short psychosocial stress reflection inspired by work-stress domains. It is not a diagnosis and is not a full COPSOQ III administration.",items:["My workload or study load feels too heavy.","I feel rushed or under time pressure most days.","I have too little control over how I complete my work or study tasks.","Expectations from others feel unclear or conflicting.","I do not receive enough support when demands are high.","My effort often feels unnoticed or unrewarded.","Work or study pressure spills into sleep, health or family time.","I feel emotionally drained by work, classes or responsibilities.","I worry about making mistakes because the consequences feel heavy.","I struggle to recover energy after demanding days."],scale:freq4,score:function(a){var total=sum(a),b=band(total,[{max:8,name:"Lower strain range"},{max:15,name:"Moderate strain range"},{max:22,name:"High strain range"},{max:30,name:"Very high strain range"}]);return {scoreLabel:total+" / 30",band:b.name,summary:"Your answers fall in the "+b.name.toLowerCase()+".",detail:"Higher strain suggests it may help to review workload, boundaries, support and recovery. If symptoms feel intense or persistent, seek professional support."};}},
+    careerValues:{title:"Career Values & Work Drivers Preview",desc:"A short preview of the paid suite's original career values tool. The full paid report gives a broader combined picture.",type:"dimensions",items:[
+      {q:"When choosing a future role, I would most want to protect:",options:driverOptions("deep expertise","a chance to lead","freedom in how I work","a secure path","building something new","useful impact","stretch goals","fit with my whole life")},
+      {q:"The opportunity that would energise me most includes:",options:driverOptions("becoming highly skilled","guiding people","working independently","clear stability","creating a venture","helping a cause","hard problems","healthy balance")},
+      {q:"I would feel frustrated if my work had too little:",options:driverOptions("room to improve craft","influence on decisions","personal choice","predictability","space for new ideas","meaningful contribution","challenge","time outside work")},
+      {q:"Success would feel most real when I can say:",options:driverOptions("I became excellent","I shaped direction","I stayed self-directed","I built security","I made my idea real","I helped people","I grew through difficulty","I lived sustainably")},
+      {q:"A counsellor should especially understand that I value:",options:driverOptions("mastery","influence","autonomy","stability","enterprise","service","challenge","work-life fit")}
+    ],score:scoreDimension},
+    learningPrefs:{title:"Learning Preferences Preview",desc:"A short preview of the paid suite's original learning preferences tool. It describes useful study supports, not ability or limits.",type:"dimensions",items:[
+      {q:"When a topic is new, I prefer to start with:",options:learningOptions("a diagram or overview","a spoken explanation","a written summary","a practical example")},
+      {q:"For revision, I usually trust:",options:learningOptions("charts and visual maps","discussion or teaching aloud","notes and lists","practice questions")},
+      {q:"Feedback is clearest when it is:",options:learningOptions("shown with marked examples","talked through calmly","written in specific points","applied in another attempt")},
+      {q:"I remember best after:",options:learningOptions("seeing structure","hearing or saying it","writing it in my words","doing a task with it")},
+      {q:"A strong study plan for me should include:",options:learningOptions("visual organisers","discussion time","written checklists","mock practice")}
+    ],score:scoreDimension}
+  };
+  function driverOptions(a,b,c,d,e,f,g,h){var keys=["Mastery","Influence","Autonomy","Stability","Enterprise","Service","Challenge","Work-Life Fit"],texts=[a,b,c,d,e,f,g,h];return keys.map(function(k,i){return {key:k,text:texts[i]};});}
+  function learningOptions(a,b,c,d){var keys=["Visual Structure","Spoken Discussion","Written Notes","Hands-On Practice"],texts=[a,b,c,d];return keys.map(function(k,i){return {key:k,text:texts[i]};});}
+  function scorePhq4(a,t){
+    var anxiety=Number(a[0])+Number(a[1]),mood=Number(a[2])+Number(a[3]),total=anxiety+mood;
+    var b=band(total,[{max:2,name:"Normal range"},{max:5,name:"Mild range"},{max:8,name:"Moderate range"},{max:12,name:"Severe range"}]);
+    var focus=t.focus==="mood"?"low mood subscore: "+mood+" / 6":"anxiety subscore: "+anxiety+" / 6";
+    return {scoreLabel:total+" / 12",band:b.name,summary:"Your PHQ-4 total is in the "+b.name.toLowerCase()+"; "+focus+".",detail:"A subscore of 3 or more on anxiety or low mood can be a useful signal to discuss support, especially if symptoms affect daily life.",next:t.next};
+  }
+  function scoreDimension(a,t){
+    var counts={},top;
+    t.items[0].options.forEach(function(o){counts[o.key]=0;});
+    a.forEach(function(k){counts[k]=(counts[k]||0)+1;});
+    top=Object.keys(counts).map(function(k){return {name:k,score:counts[k]};}).sort(function(x,y){return y.score-x.score;});
+    return {scoreLabel:top[0].score+" selections",band:top[0].name,summary:"Your strongest preview theme is "+top[0].name+".",detail:"This preview is intentionally short. The paid suite combines this with interests, personality, leadership and a fuller report."};
+  }
+  function answeredCount(){return state.answers.filter(function(v){return v!==undefined&&v!==null&&v!=="";}).length;}
+  function renderQuestion(){
+    var t=tests[state.id],item=t.items[state.index],total=t.items.length,ans=state.answers[state.index];
+    setHead(t.title,t.desc,"Free self-check");
+    var options=(item.options||t.scale.map(function(s){return {key:String(s[0]),text:s[1]};})).map(function(o){
+      var selected=String(ans)===String(o.key)?" selected":"";
+      return '<button class="ll-option'+selected+'" type="button" data-ll-answer="'+esc(o.key)+'">'+esc(o.text)+'</button>';
+    }).join("");
+    document.getElementById("llCheckBody").innerHTML='<div class="ll-progress"><span style="width:'+Math.round(answeredCount()/total*100)+'%"></span></div>'+
+      '<div class="ll-q-count">Question '+(state.index+1)+' of '+total+'</div>'+
+      '<div class="ll-question">'+esc(item.q||item)+'</div><div class="ll-options">'+options+'</div>'+
+      '<div class="ll-error" id="llCheckError"></div>'+
+      '<div class="ll-nav"><button class="ll-secondary" type="button" data-ll-back '+(state.index===0?"disabled":"")+'>Back</button>'+
+      '<button class="ll-primary" type="button" data-ll-next>'+(state.index===total-1?"See Result":"Next")+'</button></div>';
+  }
+  function renderResult(){
+    var t=tests[state.id],result=t.score(state.answers,t);
+    currentResult={test:t.title,result:result};
+    setHead(t.title,"Your result is a reflection snapshot. It is not a diagnosis, and it is not stored by this page.","Result");
+    document.getElementById("llCheckBody").innerHTML='<div class="ll-progress"><span style="width:100%"></span></div>'+
+      '<div class="ll-result-band"><b>'+esc(result.band)+'</b><span>Score: '+esc(result.scoreLabel)+'</span></div>'+
+      '<p style="color:var(--dark);font-size:.9rem;line-height:1.65;margin:0 0 8px;">'+esc(result.summary)+'</p>'+
+      '<p style="color:var(--mid);font-size:.82rem;line-height:1.65;margin:0;">'+esc(result.detail)+'</p>'+
+      '<textarea class="ll-note" id="llCheckNote" placeholder="Optional message for the counsellor"></textarea>'+
+      '<div class="ll-result-actions">'+
+      '<button class="ll-gold" type="button" data-ll-book>Book Rs 49 introductory session</button>'+
+      (result.next?'<button class="ll-primary" type="button" data-ll-open="'+esc(result.next)+'">Continue to GAD-7</button>':'')+
+      '<button class="ll-secondary" type="button" data-ll-retake>Retake</button></div>';
+  }
+  function book(){
+    if(!currentResult)return;
+    var note=document.getElementById("llCheckNote");
+    var msg=["Hi Sachin!","I completed a Lume Live self-check and would like to book the Rs 49 introductory session.","","Test: "+currentResult.test,"Result band: "+currentResult.result.band,"Score: "+currentResult.result.scoreLabel];
+    if(note&&note.value.trim())msg.push("Message: "+note.value.trim());
+    window.open("https://wa.me/"+WA_PHONE+"?text="+encodeURIComponent(msg.join("\n")),"_blank","noopener");
+  }
+  document.addEventListener("click",function(e){
+    var opener=e.target.closest("[data-ll-open]");
+    if(opener){e.preventDefault();e.stopPropagation();open(opener.getAttribute("data-ll-open"));return;}
+    if(!state)return;
+    var answer=e.target.closest("[data-ll-answer]");
+    if(answer){state.answers[state.index]=answer.getAttribute("data-ll-answer");renderQuestion();return;}
+    if(e.target.closest("[data-ll-back]")){if(state.index>0){state.index--;renderQuestion();}return;}
+    if(e.target.closest("[data-ll-next]")){
+      if(state.answers[state.index]===undefined){var err=document.getElementById("llCheckError");if(err)err.textContent="Please choose an option to continue.";return;}
+      if(state.index<tests[state.id].items.length-1){state.index++;renderQuestion();}else{renderResult();}
+      return;
+    }
+    if(e.target.closest("[data-ll-retake]")){state.index=0;state.answers=[];currentResult=null;renderQuestion();return;}
+    if(e.target.closest("[data-ll-book]")){book();}
+  },true);
+  window.lumeOpenSelfCheck=open;
+})();
 </script>
 <!-- ══ FLOATING CTA ══ -->
 <div class="float-cta">
