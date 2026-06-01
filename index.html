@@ -492,7 +492,9 @@ section{padding:80px 20px;}
 .experience-head .s-tag{background:rgba(255,255,255,.1);border-color:rgba(201,147,58,.35);color:var(--gold2);}
 .experience-head .s-title{color:#fff;}
 .experience-head .s-sub{color:rgba(255,255,255,.74);}
-.experience-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:24px;position:relative;z-index:1;}
+.experience-grid{display:grid;grid-template-columns:1fr;gap:24px;max-width:940px;margin:0 auto;position:relative;z-index:1;}
+.ai-card,.booking-flow{width:100%;}
+.booking-flow{margin-top:18px;}
 .ai-card,.booking-flow{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.15);border-radius:22px;padding:28px;box-shadow:0 24px 60px rgba(0,0,0,.18);backdrop-filter:blur(12px);}
 .ai-card h3,.booking-flow h3{font-family:'Playfair Display',serif;font-size:1.22rem;margin-bottom:8px;color:#fff;}
 .ai-card p,.booking-flow p{font-size:.84rem;line-height:1.7;color:rgba(255,255,255,.72);}
@@ -509,7 +511,7 @@ section{padding:80px 20px;}
 .ai-summary{background:#F7FAF9;border:1px solid #E2E9E8;border-radius:12px;padding:12px;font-size:.78rem;color:var(--dark);line-height:1.6;margin-bottom:13px;}
 .ai-actions{display:flex;flex-wrap:wrap;gap:8px;}
 .ai-actions .btn-cta,.ai-actions .wa-btn{font-size:.78rem;padding:11px 17px;}
-.booking-steps{display:grid;gap:12px;margin-top:20px;}
+.booking-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px;}
 .booking-step{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:flex-start;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:15px;padding:15px;}
 .booking-step b{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-size:.86rem;}
 .booking-step h4{font-size:.86rem;color:#fff;margin-bottom:3px;}
@@ -1089,6 +1091,7 @@ button,a,.btn-cta,.btn-gold,.btn-ghost,.sa-btn,.ll-check-btn,.ll-option{touch-ac
   .price-row{flex-direction:column;align-items:flex-start;gap:6px;}
   .price-row .amt{font-size:1.3rem;}
   .m-steps li{font-size:.76rem;}
+  .booking-steps{grid-template-columns:1fr;}
 }
 
 /* ── QUIZ OPTIMIZATION ── */
@@ -1491,14 +1494,14 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
   <div class="s-inner">
     <div class="experience-head">
       <span class="s-tag">Client Experience</span>
-      <h2 class="s-title">Explore First. Choose with Confidence.</h2>
-      <p class="s-sub">A premium, parent-friendly path that helps families understand the right service before paying or booking.</p>
+      <h2 class="s-title">Need Help Choosing the Right Support?</h2>
+      <p class="s-sub">Use the assisted guide at the end of the page to turn confusion into a clear first step before you book.</p>
     </div>
     <div class="experience-grid">
       <div class="ai-card anim stagger-1">
         <span class="ai-note">AI-Assisted Service Guide</span>
-        <h3>Find the right Lume Live support path</h3>
-        <p>Answer three quick prompts and this guide prepares a clean recommendation plus a WhatsApp-ready client summary for the counsellor.</p>
+        <h3>Get a clearer first recommendation</h3>
+        <p>Select the learner stage, main concern, and preferred next step. The guide creates a practical recommendation plus a WhatsApp-ready brief for Sachin sir.</p>
         <div class="ai-options" id="aiGuideOptions">
           <div class="ai-option-group" data-ai-group="stage">
             <label>Child / learner stage</label>
@@ -1506,6 +1509,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
               <button class="ai-pill" type="button" onclick="setAiGuide(this,'stage','Class 9-10')">Class 9–10</button>
               <button class="ai-pill" type="button" onclick="setAiGuide(this,'stage','Class 11-12')">Class 11–12</button>
               <button class="ai-pill" type="button" onclick="setAiGuide(this,'stage','College / graduate')">College / Graduate</button>
+              <button class="ai-pill" type="button" onclick="setAiGuide(this,'stage','Working professional')">Working Professional</button>
             </div>
           </div>
           <div class="ai-option-group" data-ai-group="concern">
@@ -1515,6 +1519,8 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
               <button class="ai-pill" type="button" onclick="setAiGuide(this,'concern','Stream selection')">Stream selection</button>
               <button class="ai-pill" type="button" onclick="setAiGuide(this,'concern','Parent-child disagreement')">Parent-child disagreement</button>
               <button class="ai-pill" type="button" onclick="setAiGuide(this,'concern','Exam stress')">Exam stress</button>
+              <button class="ai-pill" type="button" onclick="setAiGuide(this,'concern','Emotional stress')">Emotional stress</button>
+              <button class="ai-pill" type="button" onclick="setAiGuide(this,'concern','Career switch')">Career switch</button>
             </div>
           </div>
           <div class="ai-option-group" data-ai-group="preference">
@@ -1529,7 +1535,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
         <div class="ai-result" id="aiGuideResult">
           <small>Recommended Path</small>
           <h4>Start by choosing the stage and concern above.</h4>
-          <p>The guide will create a short client brief that can be sent on WhatsApp before your first conversation.</p>
+          <p>The guide will suggest whether to explore services, start the assessment suite, or book a 1:1 conversation first.</p>
           <div class="ai-summary">No client summary yet.</div>
           <div class="ai-actions">
             <a href="#services" class="btn-cta"><span>Explore Services</span></a>
@@ -1538,10 +1544,10 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
       </div>
       <div class="booking-flow anim stagger-2">
         <span class="ai-note">After Booking</span>
-        <h3>What happens after you book?</h3>
-        <p>Parents should know exactly what happens next. This simple process keeps the first conversation calm, structured, and professional.</p>
+        <h3>What happens after booking?</h3>
+        <p>This process keeps the first conversation calm, structured, and professional once the booking payment is complete.</p>
         <div class="booking-steps">
-          <div class="booking-step"><b>1</b><div><h4>Pay the ₹49 introductory fee</h4><span>Use the UPI QR or UPI ID shown in the booking popup.</span></div></div>
+          <div class="booking-step"><b>1</b><div><h4>Pay the ₹499 booking fee</h4><span>Use the UPI QR or UPI ID shown in the booking popup.</span></div></div>
           <div class="booking-step"><b>2</b><div><h4>Send payment screenshot on WhatsApp</h4><span>The WhatsApp message opens with your preferred date, time, and session mode.</span></div></div>
           <div class="booking-step"><b>3</b><div><h4>Receive confirmation</h4><span>Your slot and joining link are confirmed manually, usually within 2 hours.</span></div></div>
           <div class="booking-step"><b>4</b><div><h4>Get a clear next-step plan</h4><span>The first session focuses on career confusion, family concerns, and the most suitable service path.</span></div></div>
@@ -1913,8 +1919,8 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
             <span class="sa-pay-label">Full Assessment Suite</span>
             <div class="sa-pay-price"><strong>&#8377;999</strong><s>&#8377;1999</s><span>one-time fee</span></div>
             <p style="font-size:.78rem;color:var(--mid);line-height:1.55;">Payable once before you begin — covers all four assessments and your combined report.</p>
-            <div class="sa-qr"><img src="lume-upi-qr.png" alt="UPI QR code — pay to Sachin Bajaj (UPI ID sachinbajaj284-1@oksbi)"></div>
-            <div class="sa-upi" onclick="copyUPI()">sachinbajaj284-1@oksbi</div>
+            <div class="sa-qr"><img src="lume-upi-qr.png" alt="UPI QR code — pay to Sachin Bajaj (UPI ID sachinbajaj284@okaxis)"></div>
+            <div class="sa-upi" onclick="copyUPI()">sachinbajaj284@okaxis</div>
             <a class="sa-dl-qr" href="lume-upi-qr.png" download="Lume-Live-UPI-QR.png">⬇ Download QR Code</a>
             <ol class="sa-pay-steps">
               <li><b>1</b><span>Scan the QR or use the UPI ID and pay exactly <strong>&#8377;999</strong>.</span></li>
@@ -3718,7 +3724,7 @@ show("saGate");
       <div class="upi-sec">
         <div class="ttl">Pay ₹49 via UPI — Scan QR Code</div>
         <div class="upi-qr"><img src="lume-upi-qr.png" alt="UPI QR Code - Sachin Bajaj"></div>
-        <div class="upi-id" onclick="copyUPI()">sachinbajaj284-1@oksbi</div>
+        <div class="upi-id" onclick="copyUPI()">sachinbajaj284@okaxis</div>
         <div class="upi-hint">Tap to copy · PhonePe, GPay, Paytm · <strong style="color:var(--green);">₹49</strong> <span style="text-decoration:line-through;opacity:.5;">₹499</span></div>
         <a href="#" class="upi-download" onclick="downloadUPIQR();return false;">📥 Download QR Code</a>
       </div>
@@ -3758,7 +3764,7 @@ show("saGate");
       <div class="upi-sec">
         <div class="ttl">Pay ₹199 via UPI — Scan QR Code</div>
         <div class="upi-qr"><img src="lume-upi-qr.png" alt="UPI QR Code - Sachin Bajaj"></div>
-        <div class="upi-id" onclick="copyUPI()">sachinbajaj284-1@oksbi</div>
+        <div class="upi-id" onclick="copyUPI()">sachinbajaj284@okaxis</div>
         <div class="upi-hint">Tap to copy · PhonePe, GPay, Paytm · ₹199</div>
       </div>
       <ol class="m-steps">
@@ -4039,43 +4045,57 @@ function htmlSafe(value){
 const aiGuideState={stage:'',concern:'',preference:''};
 function aiGuidePlan(){
   const s=aiGuideState.stage,c=aiGuideState.concern,p=aiGuideState.preference;
-  let title='Career clarity consultation';
-  let description='Begin with a structured 1:1 session to understand the family concern, reduce confusion, and decide the right service path.';
-  let action='Book introductory session';
+  let title='Start with a clarity consultation';
+  let description='Begin with a structured 1:1 conversation to understand the concern, reduce confusion, and choose the right Lume Live path.';
+  let action='Book a structured 1:1 session';
+  let why='A first conversation gives enough context to decide whether counselling, assessment, or a focused roadmap is the right next step.';
   if(c==='Stream selection'||s==='Class 9-10'){
     title='Stream & subject clarity for parents';
     description='Best for families comparing Science, Commerce, Humanities, and emerging paths after Class 10.';
+    why='Stream decisions are easier when the child’s interests, stress level, family expectations, and realistic subject fit are discussed together.';
   }
   if(c==='Parent-child disagreement'){
     title='Joint parent-child guidance session';
     description='Best when the child and parent are seeing different futures and need a calm, structured conversation.';
+    why='A neutral counselling conversation can reduce pressure, help both sides feel heard, and turn disagreement into a practical decision process.';
   }
-  if(c==='Exam stress'){
+  if(c==='Exam stress'||c==='Emotional stress'){
     title='Separate emotional wellness support';
     description='Best when stress, anxiety, pressure, or confidence is affecting decision-making or daily functioning.';
+    why='Emotional load can make career decisions feel heavier than they are. Support should first make the situation calmer and safer to discuss.';
+  }
+  if(c==='Career switch'||s==='Working professional'){
+    title='Career direction and transition planning';
+    description='Best for graduates or professionals who need clarity on role fit, career change, interviews, or a practical next move.';
+    why='Career transitions need a realistic plan that connects strengths, current skills, constraints, and the market path ahead.';
   }
   if(p==='Take assessment'){
     action='Sign in and start the assessment suite';
     description+=' The Self-Assessment Suite can add a visual report before counselling.';
   }else if(p==='Explore services first'){
     action='Explore services, then book';
+  }else if(p==='Book session'){
+    action='Book the session and share this brief on WhatsApp';
   }
-  return {title,description,action};
+  return {title,description,action,why};
 }
 function renderAiGuide(){
   const panel=document.getElementById('aiGuideResult');
   if(!panel)return;
   const missing=!aiGuideState.stage||!aiGuideState.concern||!aiGuideState.preference;
   if(missing){
-    panel.innerHTML='<small>Recommended Path</small><h4>Start by choosing the stage and concern above.</h4><p>The guide will create a short client brief that can be sent on WhatsApp before your first conversation.</p><div class="ai-summary">No client summary yet.</div><div class="ai-actions"><a href="#services" class="btn-cta"><span>Explore Services</span></a></div>';
+    panel.innerHTML='<small>Recommended Path</small><h4>Choose all three guide options above.</h4><p>The guide will suggest the best first step and prepare a short WhatsApp brief for the counsellor.</p><div class="ai-summary">No client brief yet.</div><div class="ai-actions"><a href="#services" class="btn-cta"><span>Explore Services</span></a></div>';
     return;
   }
   const plan=aiGuidePlan();
-  const summary='Parent enquiry: '+aiGuideState.stage+' · '+aiGuideState.concern+' · Preferred next step: '+aiGuideState.preference+'.';
-  const primary=aiGuideState.preference==='Take assessment'
-    ? '<a href="#self-assessments" class="btn-cta"><span>Start Assessment</span></a>'
-    : "<a href=\"#\" class=\"btn-cta\" onclick=\"openModal('session');return false;\"><span>Book ₹49 Session</span></a>";
-  panel.innerHTML='<small>Recommended Path</small><h4>'+htmlSafe(plan.title)+'</h4><p>'+htmlSafe(plan.description)+'</p><div class="ai-summary"><strong>Client summary:</strong><br>'+htmlSafe(summary)+'</div><div class="ai-actions">'+primary+'<button class="wa-btn" type="button" onclick="sendAiGuideWA()">Send Summary on WhatsApp</button></div>';
+  const summary='Client context: '+aiGuideState.stage+' · '+aiGuideState.concern+' · Preferred next step: '+aiGuideState.preference+'.';
+  let primary="<a href=\"#\" class=\"btn-cta\" onclick=\"openModal('session');return false;\"><span>Book Session</span></a>";
+  if(aiGuideState.preference==='Take assessment'){
+    primary='<a href="#self-assessments" class="btn-cta"><span>Start Assessment</span></a>';
+  }else if(aiGuideState.preference==='Explore services first'){
+    primary='<a href="#services" class="btn-cta"><span>Explore Services</span></a>';
+  }
+  panel.innerHTML='<small>Recommended Path</small><h4>'+htmlSafe(plan.title)+'</h4><p>'+htmlSafe(plan.description)+'</p><div class="ai-summary"><strong>Client brief:</strong><br>'+htmlSafe(summary)+'<br><br><strong>Why this path:</strong><br>'+htmlSafe(plan.why)+'<br><br><strong>Suggested action:</strong> '+htmlSafe(plan.action)+'</div><div class="ai-actions">'+primary+'<button class="wa-btn" type="button" onclick="sendAiGuideWA()">Send Summary on WhatsApp</button></div>';
 }
 window.setAiGuide=function(btn,key,value){
   aiGuideState[key]=value;
@@ -4101,12 +4121,23 @@ window.sendAiGuideWA=function(){
     '',
     '🎯 Recommended path',
     '• '+plan.title,
+    '• Why: '+plan.why,
+    '• Suggested action: '+plan.action,
     '',
     'Please guide me on the next best step.'
   ]);
   window.open(waLink(msg),'_blank');
 };
 renderAiGuide();
+
+function moveClientExperienceToEnd(){
+  const section=document.getElementById('client-experience');
+  const footer=document.querySelector('footer');
+  if(section&&footer&&section.nextElementSibling!==footer){
+    footer.parentNode.insertBefore(section,footer);
+  }
+}
+moveClientExperienceToEnd();
 
 // Seven-day introductory offer countdown.
 const offerDeadlineIso='2026-06-04T23:59:59+05:30';
@@ -4493,7 +4524,7 @@ function submitQ(){
 
 // ── UPI COPY ──
 function copyUPI(){
-  navigator.clipboard.writeText('sachinbajaj284-1@oksbi').then(()=>showToast('UPI ID copied! Open any payment app.')).catch(()=>showToast('UPI: sachinbajaj284-1@oksbi'));
+  navigator.clipboard.writeText('sachinbajaj284@okaxis').then(()=>showToast('UPI ID copied! Open any payment app.')).catch(()=>showToast('UPI: sachinbajaj284@okaxis'));
 }
 
 // ── TOAST ──
@@ -4778,6 +4809,89 @@ function setMode(el, mode){
     if(e.target.closest("[data-ll-book]")){book();}
   },true);
   window.lumeOpenSelfCheck=open;
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+  var started=false;
+  var audioContext=null;
+
+  function createNoiseBuffer(ctx){
+    var length=Math.max(1,Math.floor(ctx.sampleRate*2));
+    var buffer=ctx.createBuffer(1,length,ctx.sampleRate);
+    var data=buffer.getChannelData(0);
+    for(var i=0;i<length;i++){
+      data[i]=(Math.random()*2-1)*0.28;
+    }
+    return buffer;
+  }
+
+  function connectTone(ctx,destination,frequency,gainValue,detune){
+    var osc=ctx.createOscillator();
+    var gain=ctx.createGain();
+    osc.type="sine";
+    osc.frequency.value=frequency;
+    osc.detune.value=detune||0;
+    gain.gain.value=gainValue;
+    osc.connect(gain).connect(destination);
+    osc.start();
+  }
+
+  function buildCalmSound(ctx){
+    var master=ctx.createGain();
+    var filter=ctx.createBiquadFilter();
+    var lfo=ctx.createOscillator();
+    var lfoGain=ctx.createGain();
+    var noise=ctx.createBufferSource();
+    var noiseGain=ctx.createGain();
+
+    master.gain.value=0.026;
+    filter.type="lowpass";
+    filter.frequency.value=520;
+    filter.Q.value=0.65;
+    lfo.type="sine";
+    lfo.frequency.value=0.045;
+    lfoGain.gain.value=170;
+
+    noise.buffer=createNoiseBuffer(ctx);
+    noise.loop=true;
+    noiseGain.gain.value=0.07;
+
+    lfo.connect(lfoGain).connect(filter.frequency);
+    noise.connect(noiseGain).connect(filter).connect(master).connect(ctx.destination);
+    connectTone(ctx,master,174.61,0.018,-5);
+    connectTone(ctx,master,261.63,0.009,4);
+    connectTone(ctx,master,329.63,0.004,-7);
+
+    noise.start();
+    lfo.start();
+  }
+
+  function startCalmSound(){
+    if(started)return;
+    var AudioCtor=window.AudioContext||window.webkitAudioContext;
+    if(!AudioCtor)return;
+    audioContext=audioContext||new AudioCtor();
+    var resume=audioContext.state==="suspended" ? audioContext.resume() : Promise.resolve();
+    resume.then(function(){
+      if(started)return;
+      started=true;
+      buildCalmSound(audioContext);
+    }).catch(function(){});
+  }
+
+  function armAutoStart(){
+    var events=["pointerdown","touchstart","keydown","scroll"];
+    events.forEach(function(eventName){
+      window.addEventListener(eventName,startCalmSound,{once:true,passive:true});
+    });
+    document.addEventListener("DOMContentLoaded",startCalmSound,{once:true});
+    window.addEventListener("load",startCalmSound,{once:true});
+    setTimeout(startCalmSound,800);
+  }
+
+  armAutoStart();
 })();
 </script>
 <!-- ══ FLOATING CTA ══ -->
