@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Parents | Lume Live</title>
+<meta name="description" content="Parent guidance from Lume Live for stream selection, career clarity, emotional support, and parent-child decision making.">
+<style>
+:root{--navy:#0D1B40;--navy2:#142C5A;--teal:#0A6E6E;--gold:#C9933A;--gold2:#E8B84E;--mint:#ECF7F6;--rose:#FFF1F2;--gray:#F5F7F8;--dark:#1A2C2C;--mid:#4A6060;--green:#22c55e;--white:#fff}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Arial,Helvetica,sans-serif;color:var(--dark);background:#fff;line-height:1.6}
+a{text-decoration:none;color:inherit}
+.nav{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(14px);box-shadow:0 2px 20px rgba(13,27,64,.08)}
+.nav-inner{max-width:1180px;margin:auto;padding:13px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;color:var(--navy)}
+.brand img{width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid var(--gold)}
+.nav-links{display:flex;align-items:center;gap:10px;color:var(--mid);font-size:.85rem;font-weight:800}
+.nav-links a{padding:9px 12px;border-radius:9px}
+.nav-links a:hover{background:var(--gray);color:var(--navy)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:10px;padding:12px 18px;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);box-shadow:0 10px 24px rgba(201,147,58,.24);cursor:pointer}
+.btn.secondary{background:#fff;color:var(--navy)}
+.btn.wa{background:#25D366;color:#fff}
+.hero{background:linear-gradient(135deg,#0D1B40 0%,#173463 52%,#0A6E6E 100%);color:#fff;padding:78px 20px 46px;overflow:hidden}
+.hero-inner{max-width:1180px;margin:auto;display:grid;grid-template-columns:1.03fr .97fr;gap:44px;align-items:center}
+.kicker{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(232,184,78,.42);background:rgba(201,147,58,.16);color:#FFE2A3;border-radius:999px;padding:7px 13px;font-size:.73rem;font-weight:900;letter-spacing:.7px;text-transform:uppercase;margin-bottom:18px}
+h1{font-family:Georgia,serif;font-size:clamp(2.2rem,5vw,4.5rem);line-height:1.04;margin-bottom:18px;max-width:760px}
+.hero-copy{color:rgba(255,255,255,.78);font-size:1rem;max-width:680px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+.hero-visual{display:grid;gap:16px}
+.family-map{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);border-radius:22px;padding:24px;box-shadow:0 28px 80px rgba(0,0,0,.22)}
+.map-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;color:#fff}
+.map-title b{font-size:1rem}
+.map-title span{font-size:.72rem;color:#FFE2A3;font-weight:800}
+.map-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;position:relative}
+.map-grid::before{content:'Child';position:absolute;inset:50% auto auto 50%;transform:translate(-50%,-50%);width:78px;height:78px;border-radius:50%;display:grid;place-items:center;background:#fff;color:var(--navy);font-weight:900;box-shadow:0 14px 35px rgba(0,0,0,.22);z-index:2}
+.map-node{min-height:128px;border-radius:16px;padding:16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16)}
+.map-node strong{display:block;color:#fff;font-size:.9rem;margin-bottom:5px}
+.map-node p{font-size:.75rem;color:rgba(255,255,255,.68);line-height:1.5}
+.offer-strip{display:flex;align-items:center;gap:14px;background:#fff;color:var(--dark);border-radius:16px;padding:16px 18px;box-shadow:0 14px 36px rgba(0,0,0,.16)}
+.offer-strip strong{font-size:2.2rem;color:var(--green);line-height:1}
+.offer-strip span{font-size:.82rem;color:var(--mid)}
+.section{padding:72px 20px}
+.section.alt{background:linear-gradient(180deg,#F8FBFB 0%,#fff 100%)}
+.inner{max-width:1180px;margin:auto}
+.head{text-align:center;max-width:760px;margin:0 auto 38px}
+.tag{display:inline-flex;color:var(--gold);font-weight:900;text-transform:uppercase;font-size:.72rem;letter-spacing:.8px;margin-bottom:8px}
+h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.12;color:var(--navy);margin-bottom:10px}
+.sub{color:var(--mid);font-size:.95rem}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:#fff;border:1px solid #E2E9E8;border-radius:14px;padding:24px;box-shadow:0 8px 28px rgba(13,27,64,.04);transition:.25s}
+.card:hover{transform:translateY(-5px);box-shadow:0 18px 42px rgba(10,110,110,.11)}
+.icon{font-size:2rem;display:block;margin-bottom:10px}
+.card h3{font-size:1rem;color:var(--navy);margin-bottom:8px}
+.card p{font-size:.86rem;color:var(--mid)}
+.infographic{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:stretch;margin-top:8px}
+.panel{background:#fff;border:1px solid #E2E9E8;border-radius:18px;padding:24px;box-shadow:0 16px 40px rgba(13,27,64,.06)}
+.bars{display:grid;gap:14px;margin-top:18px}
+.bar-row{display:grid;grid-template-columns:132px 1fr;gap:12px;align-items:center;font-size:.82rem;color:var(--mid);font-weight:800}
+.bar{height:12px;border-radius:999px;background:#EDF2F2;overflow:hidden}
+.bar span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--teal),var(--gold2))}
+.decision-wheel{width:min(300px,100%);aspect-ratio:1;margin:20px auto 0;border-radius:50%;background:conic-gradient(var(--teal) 0 30%,var(--gold2) 30% 55%,#EC5F67 55% 76%,#7C9A92 76% 100%);position:relative;box-shadow:inset 0 0 0 18px #fff,0 18px 42px rgba(13,27,64,.12)}
+.decision-wheel::after{content:'Balanced Decision';position:absolute;inset:50% auto auto 50%;transform:translate(-50%,-50%);width:118px;height:118px;border-radius:50%;display:grid;place-items:center;text-align:center;background:#fff;color:var(--navy);font-weight:900;font-size:.9rem;box-shadow:0 8px 24px rgba(13,27,64,.13)}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}
+.legend span{font-size:.78rem;color:var(--mid);font-weight:800}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+.timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:30px}
+.step{background:#fff;border:1px solid #E2E9E8;border-radius:14px;padding:18px}
+.step b{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--gold);color:var(--navy);margin-bottom:10px}
+.step h3{font-size:.93rem;color:var(--navy);margin-bottom:4px}
+.step p{font-size:.8rem;color:var(--mid)}
+.cta{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:22px;padding:44px 30px;text-align:center;color:#fff;overflow:hidden}
+.cta h2{color:#fff}
+.cta p{color:rgba(255,255,255,.74);max-width:680px;margin:0 auto 22px}
+.cta-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.sound-toggle{position:fixed;right:20px;bottom:20px;z-index:30;border:1px solid rgba(13,27,64,.14);background:#fff;color:var(--navy);border-radius:999px;padding:11px 15px;font-weight:900;box-shadow:0 12px 32px rgba(13,27,64,.18);cursor:pointer}
+.sound-toggle[aria-pressed="true"]{background:linear-gradient(135deg,var(--teal),var(--navy));color:#fff}
+.footer{padding:28px 20px;text-align:center;background:#08142F;color:rgba(255,255,255,.72);font-size:.82rem}
+@media(max-width:900px){.hero-inner,.cards,.infographic,.timeline{grid-template-columns:1fr}.nav-links{display:none}.hero{padding-top:54px}.map-grid::before{display:none}.map-node{min-height:auto}.legend{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><img src="logo.png" alt="Lume Live logo"><span>LUME LIVE</span></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="school-partnerships.html">Schools</a>
+      <a href="#clarity-map">Clarity Map</a>
+      <a class="btn" href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20am%20a%20parent%20and%20would%20like%20guidance%20for%20my%20child." target="_blank">WhatsApp</a>
+    </div>
+  </div>
+</nav>
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <span class="kicker">For Parents</span>
+      <h1>Helping You Guide Your Child with Confidence</h1>
+      <p class="hero-copy">A focused parent guide for stream selection, career confusion, exam pressure, emotional wellbeing, and parent-child decision making. Calm the noise, understand your child, and move with a clear next step.</p>
+      <div class="hero-actions">
+        <a class="btn" href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20want%20to%20book%20a%20parent%20guidance%20session%20with%20Lume%20Live." target="_blank">Book Parent Session</a>
+        <a class="btn secondary" href="index.html">Back to Homepage</a>
+      </div>
+    </div>
+    <div class="hero-visual" id="clarity-map">
+      <div class="family-map">
+        <div class="map-title"><b>Family Clarity Map</b><span>Infographic</span></div>
+        <div class="map-grid">
+          <div class="map-node"><strong>Interests</strong><p>What naturally pulls attention, curiosity, and effort.</p></div>
+          <div class="map-node"><strong>Emotions</strong><p>Stress, confidence, comparison, and exam pressure signals.</p></div>
+          <div class="map-node"><strong>Family Context</strong><p>Expectations, finances, location, and practical constraints.</p></div>
+          <div class="map-node"><strong>Future Fit</strong><p>Subjects, careers, skills, and realistic pathways.</p></div>
+        </div>
+      </div>
+      <div class="offer-strip"><strong>₹49</strong><span><b>Introductory clarity session</b><br><span style="text-decoration:line-through;">₹499</span> regular price · limited-time parent-friendly offer</span></div>
+    </div>
+  </div>
+</header>
+<main>
+  <section class="section">
+    <div class="inner">
+      <div class="head">
+        <span class="tag">Parent Guidance</span>
+        <h2>Support for the decisions families struggle with most</h2>
+        <p class="sub">Built for parents who want direction without pressure, panic, or one-size-fits-all advice.</p>
+      </div>
+      <div class="cards">
+        <div class="card"><span class="icon">🎯</span><h3>Understand Potential</h3><p>Discuss interests, preferences, strengths, and possible paths beyond marks and grades.</p></div>
+        <div class="card"><span class="icon">🤝</span><h3>Resolve Career Conflict</h3><p>Structured joint conversations help parents and children move from argument to clarity.</p></div>
+        <div class="card"><span class="icon">📊</span><h3>Explore Streams</h3><p>Compare Science, Commerce, Humanities, vocational options, and emerging careers calmly.</p></div>
+        <div class="card"><span class="icon">💚</span><h3>Spot Stress Early</h3><p>Recognize academic pressure, exam anxiety, comparison, and confidence concerns early.</p></div>
+        <div class="card"><span class="icon">📚</span><h3>Stay Career-Aware</h3><p>Understand newer pathways like AI, design, sports psychology, content, environment, and more.</p></div>
+        <div class="card"><span class="icon">🏠</span><h3>Support at Home</h3><p>Learn how to support your child without controlling, shaming, or increasing pressure.</p></div>
+      </div>
+    </div>
+  </section>
+  <section class="section alt">
+    <div class="inner">
+      <div class="head">
+        <span class="tag">Decision Infographics</span>
+        <h2>Make the invisible parts of a decision visible</h2>
+        <p class="sub">A good decision is not just marks plus a popular stream. It needs emotional readiness, aptitude, family reality, and future fit.</p>
+      </div>
+      <div class="infographic">
+        <div class="panel">
+          <span class="tag">Decision Balance</span>
+          <h2 style="font-size:1.7rem">What we map in session</h2>
+          <div class="bars">
+            <div class="bar-row"><span>Interest fit</span><div class="bar"><span style="width:86%"></span></div></div>
+            <div class="bar-row"><span>Stress load</span><div class="bar"><span style="width:62%"></span></div></div>
+            <div class="bar-row"><span>Subject comfort</span><div class="bar"><span style="width:74%"></span></div></div>
+            <div class="bar-row"><span>Family alignment</span><div class="bar"><span style="width:58%"></span></div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <span class="tag">Clarity Wheel</span>
+          <h2 style="font-size:1.7rem">Four inputs, one calmer choice</h2>
+          <div class="decision-wheel" aria-label="Balanced decision wheel"></div>
+          <div class="legend">
+            <span><i style="background:var(--teal)"></i>Child voice</span>
+            <span><i style="background:var(--gold2)"></i>Career options</span>
+            <span><i style="background:#EC5F67"></i>Stress signals</span>
+            <span><i style="background:#7C9A92"></i>Family reality</span>
+          </div>
+        </div>
+      </div>
+      <div class="timeline">
+        <div class="step"><b>1</b><h3>Share the concern</h3><p>Tell us what is confusing or tense right now.</p></div>
+        <div class="step"><b>2</b><h3>Book the session</h3><p>Pick WhatsApp, video, or call-based support.</p></div>
+        <div class="step"><b>3</b><h3>Discuss calmly</h3><p>We structure the conversation and reduce pressure.</p></div>
+        <div class="step"><b>4</b><h3>Leave with direction</h3><p>Get a practical next-step plan for the family.</p></div>
+      </div>
+    </div>
+  </section>
+  <section class="section">
+    <div class="inner">
+      <div class="cta">
+        <h2>Every parent wants the best for their child</h2>
+        <p>Book a parent guidance session or a joint parent-child session. Get clarity, reduce conflict, and move forward with confidence.</p>
+        <div class="cta-actions">
+          <a class="btn" href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20want%20to%20book%20a%20parent%20guidance%20session." target="_blank">Book Parent Guidance</a>
+          <a class="btn wa" href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20am%20a%20parent%20and%20would%20like%20guidance%20for%20my%20child." target="_blank">Chat on WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<button class="sound-toggle" type="button" data-calm-toggle aria-pressed="false">Play calm sound</button>
+<footer class="footer">Lume Live · Online counselling and guidance across India · +91 7015671280</footer>
+<script>
+(function(){
+  var ctx,nodesBuilt=false;
+  var button=document.querySelector('[data-calm-toggle]');
+  var fallbackAudio=null;
+  function createFallbackAudio(){
+    if(fallbackAudio)return fallbackAudio;
+    var sampleRate=22050,duration=4,samples=sampleRate*duration,dataBytes=samples*2;
+    var buffer=new ArrayBuffer(44+dataBytes),view=new DataView(buffer);
+    function writeString(offset,value){for(var i=0;i<value.length;i++)view.setUint8(offset+i,value.charCodeAt(i));}
+    writeString(0,'RIFF');view.setUint32(4,36+dataBytes,true);writeString(8,'WAVE');writeString(12,'fmt ');
+    view.setUint32(16,16,true);view.setUint16(20,1,true);view.setUint16(22,1,true);view.setUint32(24,sampleRate,true);view.setUint32(28,sampleRate*2,true);view.setUint16(32,2,true);view.setUint16(34,16,true);
+    writeString(36,'data');view.setUint32(40,dataBytes,true);
+    for(var n=0;n<samples;n++){
+      var t=n/sampleRate,fade=Math.min(1,t*.8,(duration-t)*.8);
+      var value=(Math.sin(2*Math.PI*174.61*t)*.16+Math.sin(2*Math.PI*261.63*t)*.08+Math.sin(2*Math.PI*329.63*t)*.035+(Math.random()*2-1)*.012)*fade;
+      view.setInt16(44+n*2,Math.max(-1,Math.min(1,value))*32767,true);
+    }
+    var bytes=new Uint8Array(buffer),binary='';
+    for(var j=0;j<bytes.length;j+=8192)binary+=String.fromCharCode.apply(null,bytes.subarray(j,j+8192));
+    fallbackAudio=new Audio('data:audio/wav;base64,'+btoa(binary));fallbackAudio.loop=true;fallbackAudio.volume=.28;
+    return fallbackAudio;
+  }
+  function makeNoise(context){
+    var buffer=context.createBuffer(1,context.sampleRate*2,context.sampleRate);
+    var data=buffer.getChannelData(0);
+    for(var i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*0.22;
+    return buffer;
+  }
+  function tone(context,destination,frequency,gain){
+    var osc=context.createOscillator(),amp=context.createGain();
+    osc.type='sine';osc.frequency.value=frequency;amp.gain.value=gain;
+    osc.connect(amp).connect(destination);osc.start();
+  }
+  function build(context){
+    var master=context.createGain(),filter=context.createBiquadFilter(),noise=context.createBufferSource(),noiseGain=context.createGain(),lfo=context.createOscillator(),lfoGain=context.createGain();
+    master.gain.value=.028;filter.type='lowpass';filter.frequency.value=520;filter.Q.value=.7;
+    noise.buffer=makeNoise(context);noise.loop=true;noiseGain.gain.value=.065;
+    lfo.frequency.value=.04;lfoGain.gain.value=160;lfo.connect(lfoGain).connect(filter.frequency);
+    noise.connect(noiseGain).connect(filter).connect(master).connect(context.destination);
+    tone(context,master,174.61,.018);tone(context,master,261.63,.008);tone(context,master,329.63,.004);
+    noise.start();lfo.start();nodesBuilt=true;
+  }
+  function setButton(playing){
+    button.setAttribute('aria-pressed',playing?'true':'false');
+    button.textContent=playing?'Pause calm sound':'Play calm sound';
+  }
+  button.addEventListener('click',function(){
+    var AudioCtor=window.AudioContext||window.webkitAudioContext;
+    if(!AudioCtor){
+      if(typeof Audio==='undefined'){
+        setButton(false);
+        button.textContent='Sound unavailable';
+        return;
+      }
+      var audio=createFallbackAudio();
+      if(audio.paused){audio.play().then(function(){setButton(true);}).catch(function(){setButton(false);});}
+      else{audio.pause();setButton(false);}
+      return;
+    }
+    ctx=ctx||new AudioCtor();
+    if(!nodesBuilt){
+      build(ctx);
+      ctx.resume().then(function(){setButton(true);});
+      return;
+    }
+    if(ctx.state==='running'){ctx.suspend().then(function(){setButton(false);});}
+    else{ctx.resume().then(function(){setButton(true);});}
+  });
+})();
+</script>
+</body>
+</html>

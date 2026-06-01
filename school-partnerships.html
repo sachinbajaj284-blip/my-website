@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>School Partnerships | Lume Live</title>
+<meta name="description" content="Partner with Lume Live for career guidance workshops, mental health seminars, parent orientations, and school counselling programs.">
+<style>
+:root{--navy:#0D1B40;--navy2:#142C5A;--teal:#0A6E6E;--gold:#C9933A;--gold2:#E8B84E;--sky:#DBEAFE;--mint:#ECF7F6;--gray:#F5F7F8;--dark:#1A2C2C;--mid:#4A6060;--white:#fff}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Arial,Helvetica,sans-serif;color:var(--dark);background:#fff;line-height:1.6}
+a{text-decoration:none;color:inherit}
+.nav{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(14px);box-shadow:0 2px 20px rgba(13,27,64,.08)}
+.nav-inner{max-width:1180px;margin:auto;padding:13px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;color:var(--navy)}
+.brand img{width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid var(--gold)}
+.nav-links{display:flex;align-items:center;gap:10px;color:var(--mid);font-size:.85rem;font-weight:800}
+.nav-links a{padding:9px 12px;border-radius:9px}
+.nav-links a:hover{background:var(--gray);color:var(--navy)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:10px;padding:12px 18px;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);box-shadow:0 10px 24px rgba(201,147,58,.24);cursor:pointer}
+.btn.secondary{background:#fff;color:var(--navy)}
+.hero{background:linear-gradient(135deg,#0D1B40 0%,#173463 55%,#0A6E6E 100%);color:#fff;padding:78px 20px 48px}
+.hero-inner{max-width:1180px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:42px;align-items:center}
+.kicker{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(232,184,78,.42);background:rgba(201,147,58,.16);color:#FFE2A3;border-radius:999px;padding:7px 13px;font-size:.73rem;font-weight:900;letter-spacing:.7px;text-transform:uppercase;margin-bottom:18px}
+h1{font-family:Georgia,serif;font-size:clamp(2.1rem,4.8vw,4.25rem);line-height:1.04;margin-bottom:18px}
+.hero p{color:rgba(255,255,255,.78);font-size:1rem;max-width:650px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+.photo-frame{border-radius:22px;overflow:hidden;box-shadow:0 28px 80px rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.16);background:#fff}
+.photo-frame img{width:100%;height:360px;display:block;object-fit:cover}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}
+.stat{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:17px;text-align:center}
+.stat b{display:block;color:var(--gold2);font-size:1.65rem}
+.stat span{font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.64);font-weight:800}
+.section{padding:72px 20px}
+.section.alt{background:linear-gradient(180deg,#F8FBFB 0%,#fff 100%)}
+.inner{max-width:1180px;margin:auto}
+.head{text-align:center;max-width:760px;margin:0 auto 38px}
+.tag{display:inline-flex;color:var(--gold);font-weight:900;text-transform:uppercase;font-size:.72rem;letter-spacing:.8px;margin-bottom:8px}
+h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.12;color:var(--navy);margin-bottom:10px}
+.sub{color:var(--mid);font-size:.95rem}
+.programs{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.program{background:#fff;border:1px solid #E2E9E8;border-radius:14px;padding:24px;box-shadow:0 8px 28px rgba(13,27,64,.04);transition:.25s}
+.program:hover{transform:translateY(-5px);box-shadow:0 18px 42px rgba(10,110,110,.11)}
+.program span{font-size:2rem;display:block;margin-bottom:10px}
+.program h3{font-size:1rem;color:var(--navy);margin-bottom:8px}
+.program p{font-size:.86rem;color:var(--mid)}
+.infographic{display:grid;grid-template-columns:1.05fr .95fr;gap:22px;align-items:stretch}
+.panel{background:#fff;border:1px solid #E2E9E8;border-radius:18px;padding:24px;box-shadow:0 16px 40px rgba(13,27,64,.06)}
+.ecosystem{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.eco-item{min-height:118px;border-radius:15px;padding:16px;background:linear-gradient(135deg,#F7FAF9,#EEF7FF);border:1px solid #DFEAE9}
+.eco-item strong{display:block;color:var(--navy);font-size:.94rem;margin-bottom:6px}
+.eco-item p{font-size:.78rem;color:var(--mid)}
+.impact-bars{display:grid;gap:13px;margin-top:18px}
+.impact-row{display:grid;grid-template-columns:116px 1fr auto;gap:10px;align-items:center;font-size:.8rem;color:var(--mid);font-weight:800}
+.track{height:12px;border-radius:999px;background:#EDF2F2;overflow:hidden}
+.track span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--teal),var(--gold2))}
+.pipeline{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:30px}
+.pipe-step{background:#fff;border:1px solid #E2E9E8;border-radius:14px;padding:16px;text-align:center}
+.pipe-step b{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;margin:0 auto 10px}
+.pipe-step h3{font-size:.88rem;color:var(--navy);margin-bottom:4px}
+.pipe-step p{font-size:.76rem;color:var(--mid)}
+.proposal{background:linear-gradient(135deg,#F7FAF9,#FFF8E8);border:1px solid #E8E2D0;border-radius:22px;padding:30px;display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+.form{display:grid;gap:10px}
+.form input,.form textarea{width:100%;border:1px solid #DDE7E5;background:#fff;border-radius:10px;padding:13px 14px;font:inherit;color:var(--dark);outline:none}
+.form textarea{min-height:96px;resize:vertical}
+.form input:focus,.form textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(10,110,110,.1)}
+.sound-toggle{position:fixed;right:20px;bottom:20px;z-index:30;border:1px solid rgba(13,27,64,.14);background:#fff;color:var(--navy);border-radius:999px;padding:11px 15px;font-weight:900;box-shadow:0 12px 32px rgba(13,27,64,.18);cursor:pointer}
+.sound-toggle[aria-pressed="true"]{background:linear-gradient(135deg,var(--teal),var(--navy));color:#fff}
+.footer{padding:28px 20px;text-align:center;background:#08142F;color:rgba(255,255,255,.72);font-size:.82rem}
+@media(max-width:960px){.hero-inner,.programs,.infographic,.proposal,.pipeline{grid-template-columns:1fr}.stats,.ecosystem{grid-template-columns:1fr 1fr}.nav-links{display:none}.photo-frame img{height:280px}}
+@media(max-width:560px){.stats,.ecosystem{grid-template-columns:1fr}.impact-row{grid-template-columns:1fr}.hero{padding-top:54px}}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><img src="logo.png" alt="Lume Live logo"><span>LUME LIVE</span></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="for-parents.html">For Parents</a>
+      <a href="#proposal">Invite Us</a>
+      <a class="btn" href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20want%20to%20discuss%20a%20school%20partnership%20with%20Lume%20Live." target="_blank">WhatsApp</a>
+    </div>
+  </div>
+</nav>
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <span class="kicker">School Partnerships</span>
+      <h1>Bring Career & Mental Health Guidance to Your School</h1>
+      <p>Partner with Lume Live for school workshops, parent orientations, teacher awareness, career exploration, and student counselling support that feels professional, practical, and student-friendly.</p>
+      <div class="hero-actions">
+        <a class="btn" href="#proposal">Request Proposal</a>
+        <a class="btn secondary" href="index.html">Back to Homepage</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>500+</b><span>Students Guided</span></div>
+        <div class="stat"><b>15+</b><span>School Touchpoints</span></div>
+        <div class="stat"><b>4.9★</b><span>Average Rating</span></div>
+        <div class="stat"><b>100%</b><span>Care Focus</span></div>
+      </div>
+    </div>
+    <div class="photo-frame"><img src="session7.jpg" alt="Lume Live school auditorium session"></div>
+  </div>
+</header>
+<main>
+  <section class="section">
+    <div class="inner">
+      <div class="head">
+        <span class="tag">Programs for Schools</span>
+        <h2>Structured support for students, parents, and educators</h2>
+        <p class="sub">Choose one focused workshop or build a multi-touch guidance program across the school year.</p>
+      </div>
+      <div class="programs">
+        <div class="program"><span>🎤</span><h3>Career Awareness Workshops</h3><p>Interactive sessions for Classes 9-12 covering stream selection, emerging careers, and goal setting.</p></div>
+        <div class="program"><span>📊</span><h3>Career Exploration Programs</h3><p>Structured reflection, guidance reports, and assessment tools only where separately agreed by the school.</p></div>
+        <div class="program"><span>🧠</span><h3>Mental Health Seminars</h3><p>Stress management, exam anxiety, peer pressure, confidence, and emotional wellness sessions.</p></div>
+        <div class="program"><span>👨‍🏫</span><h3>Teacher Training</h3><p>Help faculty notice early signs of distress and offer first-level student support responsibly.</p></div>
+        <div class="program"><span>📋</span><h3>Parent Orientation</h3><p>Help parents understand modern career decisions and support children without adding pressure.</p></div>
+        <div class="program"><span>🎯</span><h3>1:1 Counselling Booths</h3><p>On-campus individual counselling slots for students needing personalised guidance.</p></div>
+      </div>
+    </div>
+  </section>
+  <section class="section alt">
+    <div class="inner">
+      <div class="head">
+        <span class="tag">School Guidance Infographics</span>
+        <h2>A complete support ecosystem, not a one-off lecture</h2>
+        <p class="sub">The strongest school programs include students, parents, teachers, and follow-up pathways.</p>
+      </div>
+      <div class="infographic">
+        <div class="panel">
+          <span class="tag">Ecosystem Map</span>
+          <h2 style="font-size:1.7rem">Who the program supports</h2>
+          <div class="ecosystem">
+            <div class="eco-item"><strong>Students</strong><p>Career clarity, confidence, stress tools, and safe reflection.</p></div>
+            <div class="eco-item"><strong>Parents</strong><p>Modern career awareness and healthier decision support.</p></div>
+            <div class="eco-item"><strong>Teachers</strong><p>Early signals, classroom pressure, and referral awareness.</p></div>
+            <div class="eco-item"><strong>Counsellors</strong><p>Structured handoff for students needing deeper support.</p></div>
+            <div class="eco-item"><strong>Leadership</strong><p>Program data, engagement feedback, and next-step planning.</p></div>
+            <div class="eco-item"><strong>Community</strong><p>A culture where career and wellbeing can be discussed openly.</p></div>
+          </div>
+        </div>
+        <div class="panel">
+          <span class="tag">Impact Snapshot</span>
+          <h2 style="font-size:1.7rem">What improves after sessions</h2>
+          <div class="impact-bars">
+            <div class="impact-row"><span>Engagement</span><div class="track"><span style="width:92%"></span></div><b>92%</b></div>
+            <div class="impact-row"><span>Career clarity</span><div class="track"><span style="width:84%"></span></div><b>84%</b></div>
+            <div class="impact-row"><span>Parent awareness</span><div class="track"><span style="width:88%"></span></div><b>88%</b></div>
+            <div class="impact-row"><span>Stress literacy</span><div class="track"><span style="width:78%"></span></div><b>78%</b></div>
+          </div>
+        </div>
+      </div>
+      <div class="pipeline">
+        <div class="pipe-step"><b>1</b><h3>Briefing</h3><p>Understand school needs.</p></div>
+        <div class="pipe-step"><b>2</b><h3>Program Design</h3><p>Choose sessions and class groups.</p></div>
+        <div class="pipe-step"><b>3</b><h3>Workshop</h3><p>Run interactive school sessions.</p></div>
+        <div class="pipe-step"><b>4</b><h3>Parent Bridge</h3><p>Share guidance themes.</p></div>
+        <div class="pipe-step"><b>5</b><h3>Follow-up</h3><p>Support interested students.</p></div>
+      </div>
+    </div>
+  </section>
+  <section class="section" id="proposal">
+    <div class="inner">
+      <div class="proposal">
+        <div>
+          <span class="tag">Invite Lume Live</span>
+          <h2>Request a school partnership proposal</h2>
+          <p class="sub">Share basic details and WhatsApp will open with a ready message for Sachin sir. You can add school context, preferred dates, or event format there.</p>
+        </div>
+        <form class="form" onsubmit="sendSchoolRequest(event)">
+          <input id="schoolName" type="text" placeholder="School name *" required>
+          <input id="coordinatorName" type="text" placeholder="Coordinator name *" required>
+          <input id="phone" type="tel" placeholder="WhatsApp / phone *" required>
+          <input id="email" type="email" placeholder="School email">
+          <textarea id="notes" placeholder="Program interest, class range, preferred date"></textarea>
+          <button class="btn" type="submit">Send Proposal Request</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+<button class="sound-toggle" type="button" data-calm-toggle aria-pressed="false">Play calm sound</button>
+<footer class="footer">Lume Live · School partnerships across India · +91 7015671280</footer>
+<script>
+function sendSchoolRequest(event){
+  event.preventDefault();
+  var lines=[
+    'Hi Sachin!',
+    '',
+    'We would like to discuss a Lume Live school partnership.',
+    '',
+    'School: '+document.getElementById('schoolName').value.trim(),
+    'Coordinator: '+document.getElementById('coordinatorName').value.trim(),
+    'Phone: '+document.getElementById('phone').value.trim(),
+    'Email: '+(document.getElementById('email').value.trim()||'Not shared'),
+    'Notes: '+(document.getElementById('notes').value.trim()||'Not shared')
+  ];
+  window.open('https://wa.me/917015671280?text='+encodeURIComponent(lines.join('\n')),'_blank');
+}
+(function(){
+  var ctx,nodesBuilt=false;
+  var button=document.querySelector('[data-calm-toggle]');
+  var fallbackAudio=null;
+  function createFallbackAudio(){
+    if(fallbackAudio)return fallbackAudio;
+    var sampleRate=22050,duration=4,samples=sampleRate*duration,dataBytes=samples*2;
+    var buffer=new ArrayBuffer(44+dataBytes),view=new DataView(buffer);
+    function writeString(offset,value){for(var i=0;i<value.length;i++)view.setUint8(offset+i,value.charCodeAt(i));}
+    writeString(0,'RIFF');view.setUint32(4,36+dataBytes,true);writeString(8,'WAVE');writeString(12,'fmt ');
+    view.setUint32(16,16,true);view.setUint16(20,1,true);view.setUint16(22,1,true);view.setUint32(24,sampleRate,true);view.setUint32(28,sampleRate*2,true);view.setUint16(32,2,true);view.setUint16(34,16,true);
+    writeString(36,'data');view.setUint32(40,dataBytes,true);
+    for(var n=0;n<samples;n++){
+      var t=n/sampleRate,fade=Math.min(1,t*.8,(duration-t)*.8);
+      var value=(Math.sin(2*Math.PI*174.61*t)*.16+Math.sin(2*Math.PI*261.63*t)*.08+Math.sin(2*Math.PI*329.63*t)*.035+(Math.random()*2-1)*.012)*fade;
+      view.setInt16(44+n*2,Math.max(-1,Math.min(1,value))*32767,true);
+    }
+    var bytes=new Uint8Array(buffer),binary='';
+    for(var j=0;j<bytes.length;j+=8192)binary+=String.fromCharCode.apply(null,bytes.subarray(j,j+8192));
+    fallbackAudio=new Audio('data:audio/wav;base64,'+btoa(binary));fallbackAudio.loop=true;fallbackAudio.volume=.28;
+    return fallbackAudio;
+  }
+  function makeNoise(context){
+    var buffer=context.createBuffer(1,context.sampleRate*2,context.sampleRate);
+    var data=buffer.getChannelData(0);
+    for(var i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*0.22;
+    return buffer;
+  }
+  function tone(context,destination,frequency,gain){
+    var osc=context.createOscillator(),amp=context.createGain();
+    osc.type='sine';osc.frequency.value=frequency;amp.gain.value=gain;
+    osc.connect(amp).connect(destination);osc.start();
+  }
+  function build(context){
+    var master=context.createGain(),filter=context.createBiquadFilter(),noise=context.createBufferSource(),noiseGain=context.createGain(),lfo=context.createOscillator(),lfoGain=context.createGain();
+    master.gain.value=.028;filter.type='lowpass';filter.frequency.value=520;filter.Q.value=.7;
+    noise.buffer=makeNoise(context);noise.loop=true;noiseGain.gain.value=.065;
+    lfo.frequency.value=.04;lfoGain.gain.value=160;lfo.connect(lfoGain).connect(filter.frequency);
+    noise.connect(noiseGain).connect(filter).connect(master).connect(context.destination);
+    tone(context,master,174.61,.018);tone(context,master,261.63,.008);tone(context,master,329.63,.004);
+    noise.start();lfo.start();nodesBuilt=true;
+  }
+  function setButton(playing){
+    button.setAttribute('aria-pressed',playing?'true':'false');
+    button.textContent=playing?'Pause calm sound':'Play calm sound';
+  }
+  button.addEventListener('click',function(){
+    var AudioCtor=window.AudioContext||window.webkitAudioContext;
+    if(!AudioCtor){
+      if(typeof Audio==='undefined'){
+        setButton(false);
+        button.textContent='Sound unavailable';
+        return;
+      }
+      var audio=createFallbackAudio();
+      if(audio.paused){audio.play().then(function(){setButton(true);}).catch(function(){setButton(false);});}
+      else{audio.pause();setButton(false);}
+      return;
+    }
+    ctx=ctx||new AudioCtor();
+    if(!nodesBuilt){
+      build(ctx);
+      ctx.resume().then(function(){setButton(true);});
+      return;
+    }
+    if(ctx.state==='running'){ctx.suspend().then(function(){setButton(false);});}
+    else{ctx.resume().then(function(){setButton(true);});}
+  });
+})();
+</script>
+</body>
+</html>
