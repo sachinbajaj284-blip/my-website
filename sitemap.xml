@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://lumelive.co.in/</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en-in" href="https://lumelive.co.in/"/>
+    <xhtml:link rel="alternate" hreflang="hi-in" href="https://lumelive.co.in/index-hi.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://lumelive.co.in/"/>
+  </url>
+  <url>
+    <loc>https://lumelive.co.in/index-hi.html</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="en-in" href="https://lumelive.co.in/"/>
+    <xhtml:link rel="alternate" hreflang="hi-in" href="https://lumelive.co.in/index-hi.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://lumelive.co.in/"/>
+  </url>
+  <url>
+    <loc>https://lumelive.co.in/for-parents.html</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://lumelive.co.in/school-partnerships.html</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+</urlset>

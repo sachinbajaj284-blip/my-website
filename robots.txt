@@ -1,0 +1,9 @@
+# robots.txt - Lume Live
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /*?*utm_
+Disallow: /*?*fbclid
+
+Sitemap: https://lumelive.co.in/sitemap.xml

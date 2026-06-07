@@ -65,8 +65,6 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
 .form input,.form textarea{width:100%;border:1px solid #DDE7E5;background:#fff;border-radius:10px;padding:13px 14px;font:inherit;color:var(--dark);outline:none}
 .form textarea{min-height:96px;resize:vertical}
 .form input:focus,.form textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(10,110,110,.1)}
-.sound-toggle{position:fixed;right:20px;bottom:20px;z-index:30;border:1px solid rgba(13,27,64,.14);background:#fff;color:var(--navy);border-radius:999px;padding:11px 15px;font-weight:900;box-shadow:0 12px 32px rgba(13,27,64,.18);cursor:pointer}
-.sound-toggle[aria-pressed="true"]{background:linear-gradient(135deg,var(--teal),var(--navy));color:#fff}
 .footer{padding:28px 20px;text-align:center;background:#08142F;color:rgba(255,255,255,.72);font-size:.82rem}
 @media(max-width:960px){.hero-inner,.programs,.infographic,.proposal,.pipeline{grid-template-columns:1fr}.stats,.ecosystem{grid-template-columns:1fr 1fr}.nav-links{display:none}.photo-frame img{height:280px}}
 @media(max-width:560px){.stats,.ecosystem{grid-template-columns:1fr}.impact-row{grid-template-columns:1fr}.hero{padding-top:54px}}
@@ -182,7 +180,6 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
     </div>
   </section>
 </main>
-<button class="sound-toggle" type="button" data-calm-toggle aria-pressed="false">Play calm sound</button>
 <footer class="footer">Lume Live · School partnerships across India · +91 7015671280</footer>
 <script>
 function sendSchoolRequest(event){
@@ -200,75 +197,6 @@ function sendSchoolRequest(event){
   ];
   window.open('https://wa.me/917015671280?text='+encodeURIComponent(lines.join('\n')),'_blank');
 }
-(function(){
-  var ctx,nodesBuilt=false;
-  var button=document.querySelector('[data-calm-toggle]');
-  var fallbackAudio=null;
-  function createFallbackAudio(){
-    if(fallbackAudio)return fallbackAudio;
-    var sampleRate=22050,duration=4,samples=sampleRate*duration,dataBytes=samples*2;
-    var buffer=new ArrayBuffer(44+dataBytes),view=new DataView(buffer);
-    function writeString(offset,value){for(var i=0;i<value.length;i++)view.setUint8(offset+i,value.charCodeAt(i));}
-    writeString(0,'RIFF');view.setUint32(4,36+dataBytes,true);writeString(8,'WAVE');writeString(12,'fmt ');
-    view.setUint32(16,16,true);view.setUint16(20,1,true);view.setUint16(22,1,true);view.setUint32(24,sampleRate,true);view.setUint32(28,sampleRate*2,true);view.setUint16(32,2,true);view.setUint16(34,16,true);
-    writeString(36,'data');view.setUint32(40,dataBytes,true);
-    for(var n=0;n<samples;n++){
-      var t=n/sampleRate,fade=Math.min(1,t*.8,(duration-t)*.8);
-      var value=(Math.sin(2*Math.PI*174.61*t)*.16+Math.sin(2*Math.PI*261.63*t)*.08+Math.sin(2*Math.PI*329.63*t)*.035+(Math.random()*2-1)*.012)*fade;
-      view.setInt16(44+n*2,Math.max(-1,Math.min(1,value))*32767,true);
-    }
-    var bytes=new Uint8Array(buffer),binary='';
-    for(var j=0;j<bytes.length;j+=8192)binary+=String.fromCharCode.apply(null,bytes.subarray(j,j+8192));
-    fallbackAudio=new Audio('data:audio/wav;base64,'+btoa(binary));fallbackAudio.loop=true;fallbackAudio.volume=.28;
-    return fallbackAudio;
-  }
-  function makeNoise(context){
-    var buffer=context.createBuffer(1,context.sampleRate*2,context.sampleRate);
-    var data=buffer.getChannelData(0);
-    for(var i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*0.22;
-    return buffer;
-  }
-  function tone(context,destination,frequency,gain){
-    var osc=context.createOscillator(),amp=context.createGain();
-    osc.type='sine';osc.frequency.value=frequency;amp.gain.value=gain;
-    osc.connect(amp).connect(destination);osc.start();
-  }
-  function build(context){
-    var master=context.createGain(),filter=context.createBiquadFilter(),noise=context.createBufferSource(),noiseGain=context.createGain(),lfo=context.createOscillator(),lfoGain=context.createGain();
-    master.gain.value=.028;filter.type='lowpass';filter.frequency.value=520;filter.Q.value=.7;
-    noise.buffer=makeNoise(context);noise.loop=true;noiseGain.gain.value=.065;
-    lfo.frequency.value=.04;lfoGain.gain.value=160;lfo.connect(lfoGain).connect(filter.frequency);
-    noise.connect(noiseGain).connect(filter).connect(master).connect(context.destination);
-    tone(context,master,174.61,.018);tone(context,master,261.63,.008);tone(context,master,329.63,.004);
-    noise.start();lfo.start();nodesBuilt=true;
-  }
-  function setButton(playing){
-    button.setAttribute('aria-pressed',playing?'true':'false');
-    button.textContent=playing?'Pause calm sound':'Play calm sound';
-  }
-  button.addEventListener('click',function(){
-    var AudioCtor=window.AudioContext||window.webkitAudioContext;
-    if(!AudioCtor){
-      if(typeof Audio==='undefined'){
-        setButton(false);
-        button.textContent='Sound unavailable';
-        return;
-      }
-      var audio=createFallbackAudio();
-      if(audio.paused){audio.play().then(function(){setButton(true);}).catch(function(){setButton(false);});}
-      else{audio.pause();setButton(false);}
-      return;
-    }
-    ctx=ctx||new AudioCtor();
-    if(!nodesBuilt){
-      build(ctx);
-      ctx.resume().then(function(){setButton(true);});
-      return;
-    }
-    if(ctx.state==='running'){ctx.suspend().then(function(){setButton(false);});}
-    else{ctx.resume().then(function(){setButton(true);});}
-  });
-})();
 </script>
 </body>
 </html>
