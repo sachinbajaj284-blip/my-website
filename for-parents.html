@@ -104,9 +104,57 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
 .ec-btn.gold{background:linear-gradient(135deg,#C9933A,#E8B95A);color:#0D1B40;box-shadow:0 8px 22px rgba(201,147,58,.28);}
 .ec-btn.ghost{background:#F4FAFA;color:#0A6E6E;border:1px solid rgba(10,110,110,.18);}
 .ec-btn:hover{transform:translateY(-1px);}
+.parent-guide-pdf{background:linear-gradient(135deg,#0D1B40 0%,#173463 56%,#0A6E6E 120%);color:#fff;position:relative;overflow:hidden;}
+.parent-guide-pdf::before{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 0%,rgba(232,184,78,.12) 48%,transparent 74%);transform:translateX(-120%);animation:pgSheen 4s ease .2s both;pointer-events:none;}
+.pg-shell{max-width:1120px;margin:0 auto;position:relative;z-index:1;display:grid;grid-template-columns:1.02fr .88fr;gap:24px;align-items:center;}
+.pg-kicker{display:inline-flex;align-items:center;gap:8px;width:max-content;background:rgba(232,184,78,.14);border:1px solid rgba(232,184,78,.34);border-radius:999px;color:#FFE2A3;padding:7px 14px;font-size:.7rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
+.pg-title{font-family:Georgia,serif;font-size:clamp(1.8rem,3.9vw,3rem);line-height:1.08;color:#fff;margin-bottom:12px;}
+.pg-title em{color:#FFE2A3;font-style:italic;}
+.pg-copy{font-size:.96rem;line-height:1.75;color:rgba(255,255,255,.76);max-width:680px;}
+.pg-badges{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px;}
+.pg-badges span{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.13);border-radius:999px;padding:7px 12px;font-size:.76rem;font-weight:800;color:rgba(255,255,255,.82);}
+.pg-panel{background:#fff;color:var(--dark);border-radius:20px;padding:24px;box-shadow:0 24px 70px rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.18);}
+.pg-panel-head{display:flex;align-items:center;gap:13px;margin-bottom:16px;}
+.pg-icon{width:52px;height:52px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,#FFF1C7,#FFE7A8);font-size:1.6rem;box-shadow:0 10px 24px rgba(201,147,58,.22);}
+.pg-panel-head b{display:block;color:var(--navy);font-size:1rem;line-height:1.25;}
+.pg-panel-head span{display:block;color:var(--mid);font-size:.74rem;margin-top:3px;}
+.pg-price{display:flex;align-items:flex-end;gap:10px;margin:6px 0 16px;}
+.pg-price s{color:#7A8D8D;font-weight:800;font-size:1rem;}
+.pg-price strong{font-family:Georgia,serif;color:var(--navy);font-size:2.4rem;line-height:1;}
+.pg-fields{display:grid;gap:10px;}
+.pg-input{width:100%;border:1.5px solid #D9E3E1;border-radius:12px;padding:13px 14px;font:inherit;font-size:16px;color:var(--dark);background:#FAFCFC;outline:none;}
+.pg-input:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(10,110,110,.1);background:#fff;}
+.pg-btn{width:100%;border:0;border-radius:999px;min-height:48px;padding:13px 18px;font:inherit;font-size:.9rem;font-weight:900;cursor:pointer;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);box-shadow:0 12px 28px rgba(201,147,58,.28);transition:.22s;margin-top:4px;}
+.pg-btn:hover{transform:translateY(-1px);box-shadow:0 16px 34px rgba(201,147,58,.38);}
+.pg-note{font-size:.72rem;color:var(--mid);text-align:center;line-height:1.55;margin-top:9px;}
+.pg-list{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:16px;}
+.pg-list span{display:flex;align-items:flex-start;gap:7px;background:#F6FAFA;border:1px solid #E1EBEA;border-radius:11px;padding:10px;font-size:.74rem;font-weight:800;color:#314B4B;line-height:1.35;}
+.pg-list span::before{content:'✓';color:var(--green);font-weight:900;}
+.pg-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(5,13,28,.72);z-index:9999;padding:18px;}
+.pg-modal.active{display:flex;}
+.pg-dialog{width:min(460px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:20px;box-shadow:0 26px 80px rgba(0,0,0,.28);position:relative;}
+.pg-dialog-head{background:linear-gradient(135deg,var(--navy),var(--teal));color:#fff;padding:20px 22px;text-align:center;border-radius:20px 20px 0 0;}
+.pg-dialog-head h3{font-family:Georgia,serif;font-size:1.28rem;margin-bottom:4px;}
+.pg-dialog-head p{font-size:.82rem;color:rgba(255,255,255,.72);}
+.pg-close{position:absolute;right:12px;top:10px;width:34px;height:34px;border:0;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;font-size:1.1rem;cursor:pointer;}
+.pg-dialog-body{padding:20px;}
+.pg-product{display:flex;gap:13px;align-items:center;background:#F7FAFA;border:1px solid #E1EBEA;border-radius:14px;padding:13px;margin-bottom:15px;}
+.pg-product-icon{font-size:2rem;}
+.pg-product b{display:block;color:var(--navy);font-size:.92rem;}
+.pg-product span{display:block;color:var(--mid);font-size:.75rem;margin-top:2px;}
+.pg-upi{background:#FFF8EA;border:1px solid #F0DFBA;border-radius:14px;padding:15px;text-align:center;}
+.pg-upi h4{color:#6F4A14;font-size:.86rem;margin-bottom:10px;}
+.pg-qr{width:180px;height:180px;border-radius:14px;background:#fff;padding:10px;margin:0 auto 10px;box-shadow:0 8px 24px rgba(111,74,20,.12);}
+.pg-qr img{width:100%;height:100%;object-fit:contain;}
+.pg-upi-id{display:inline-flex;border:2px dashed var(--teal);border-radius:9px;background:#fff;color:var(--navy);font-family:monospace;font-weight:900;padding:8px 12px;cursor:pointer;}
+.pg-steps{margin:16px 0 16px;padding-left:20px;color:var(--mid);font-size:.82rem;line-height:1.7;}
+.pg-wa{display:flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:13px 18px;min-height:48px;background:#25D366;color:#fff;font-weight:900;text-decoration:none;}
+@keyframes pgSheen{0%{transform:translateX(-120%);}100%{transform:translateX(120%);}}
 @media(max-width:860px){.ec-shell{grid-template-columns:1fr;}.ec-copy{min-height:auto;}}
-@media(max-width:560px){#education-cost-calculator{padding:56px 14px;}.ec-copy,.ec-panel{padding:22px 18px;border-radius:16px;}.ec-fields{grid-template-columns:1fr;}.ec-breakdown{grid-template-columns:1fr;}.ec-actions .ec-btn{width:100%;}}
+@media(max-width:860px){.pg-shell{grid-template-columns:1fr;}.pg-panel{max-width:560px;}.pg-list{grid-template-columns:1fr 1fr;}}
+@media(max-width:560px){#education-cost-calculator{padding:56px 14px;}.ec-copy,.ec-panel{padding:22px 18px;border-radius:16px;}.ec-fields{grid-template-columns:1fr;}.ec-breakdown{grid-template-columns:1fr;}.ec-actions .ec-btn{width:100%;}.parent-guide-pdf{padding:56px 14px;}.pg-panel{padding:20px 18px;border-radius:17px;}.pg-badges span,.pg-list span{width:100%;}.pg-list{grid-template-columns:1fr;}.pg-dialog{border-radius:18px;}.pg-qr{width:158px;height:158px;}}
 @media(max-width:900px){.hero-inner,.cards,.infographic,.timeline{grid-template-columns:1fr}.nav-links{display:none}.hero{padding-top:54px}.map-grid::before{display:none}.map-node{min-height:auto}.legend{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.parent-guide-pdf::before{animation:none!important;}.pg-btn,.ec-btn,.card{transition:none!important;}.pg-btn:hover,.ec-btn:hover,.card:hover{transform:none!important;}}
 </style>
 </head>
 <body>
@@ -117,6 +165,7 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
       <a href="index.html">Home</a>
       <a href="school-partnerships.html">Schools</a>
       <a href="#clarity-map">Clarity Map</a>
+      <a href="#parents-handbook">₹199 Guide</a>
       <a class="btn" href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20am%20a%20parent%20and%20would%20like%20guidance%20for%20my%20child." target="_blank">WhatsApp</a>
     </div>
   </div>
@@ -249,8 +298,42 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
         </div>
 
         <div class="ec-actions">
-          <a class="ec-btn gold" href="index.html#free-test">View the Free Career Snapshot</a>
-          <a class="ec-btn ghost" href="index.html#self-assessments">See the ₹999 Full Report</a>
+          <a class="ec-btn gold" href="assessment.html#free-test">View the Free Career Snapshot</a>
+          <a class="ec-btn ghost" href="assessment.html#self-assessments">See the ₹999 Full Report</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="parents-handbook" class="section parent-guide-pdf" aria-labelledby="pgTitle">
+    <div class="pg-shell">
+      <div>
+        <span class="pg-kicker">₹199 parent PDF</span>
+        <h2 class="pg-title" id="pgTitle">The Parents' Guide to Stream Selection: <em>5 Mistakes to Avoid After 10th</em></h2>
+        <p class="pg-copy">Most families make at least two stream-selection mistakes and realise it only after Class 11 pressure begins. This guide gives parents a calm checklist before choosing Science, Commerce, Humanities, or applied pathways.</p>
+        <div class="pg-badges">
+          <span>Counsellor-written</span>
+          <span>Parent-friendly language</span>
+          <span>WhatsApp delivery</span>
+        </div>
+      </div>
+      <div class="pg-panel">
+        <div class="pg-panel-head">
+          <div class="pg-icon">📘</div>
+          <div><b>Parents' Stream Selection Guide</b><span>Delivered manually after payment confirmation</span></div>
+        </div>
+        <div class="pg-price"><s>₹499</s><strong>₹199</strong></div>
+        <div class="pg-fields">
+          <input class="pg-input" id="pgName" type="text" maxlength="60" placeholder="Your full name">
+          <input class="pg-input" id="pgEmail" type="email" maxlength="80" placeholder="Email address">
+          <input class="pg-input" id="pgPhone" type="tel" maxlength="15" inputmode="numeric" autocomplete="tel" placeholder="WhatsApp number">
+          <button class="pg-btn" type="button" onclick="openParentPdf()">Get Instant Access — ₹199</button>
+        </div>
+        <p class="pg-note">Scan the QR, send payment screenshot on WhatsApp, and receive the PDF within 24 hours.</p>
+        <div class="pg-list">
+          <span>5 avoidable parent mistakes</span>
+          <span>Stream-choice discussion prompts</span>
+          <span>Science, Commerce, Humanities lens</span>
+          <span>Before-you-submit checklist</span>
         </div>
       </div>
     </div>
@@ -262,12 +345,41 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
         <p>Book a parent guidance session or a joint parent-child session. Get clarity, reduce conflict, and move forward with confidence.</p>
         <div class="cta-actions">
           <a class="btn" href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20want%20to%20book%20a%20parent%20guidance%20session." target="_blank">Book Parent Guidance</a>
+          <a class="btn secondary" href="#parents-handbook">Get ₹199 Parent PDF</a>
           <a class="btn wa" href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20am%20a%20parent%20and%20would%20like%20guidance%20for%20my%20child." target="_blank">Chat on WhatsApp</a>
         </div>
       </div>
     </div>
   </section>
 </main>
+<div class="pg-modal" id="parentPdfModal" role="dialog" aria-modal="true" aria-labelledby="parentPdfTitle" onclick="if(event.target===this)closeParentPdf()">
+  <div class="pg-dialog">
+    <button class="pg-close" type="button" onclick="closeParentPdf()" aria-label="Close">×</button>
+    <div class="pg-dialog-head">
+      <h3 id="parentPdfTitle">Parents' Career Handbook</h3>
+      <p>5 Mistakes to Avoid After 10th Grade — ₹199</p>
+    </div>
+    <div class="pg-dialog-body">
+      <div class="pg-product">
+        <div class="pg-product-icon">📋</div>
+        <div><b>Parents' Stream Selection Guide</b><span>Science-backed · WhatsApp delivery · Parent checklist</span></div>
+      </div>
+      <div class="pg-upi">
+        <h4>Pay ₹199 via UPI</h4>
+        <div class="pg-qr"><img src="lume-upi-qr.png" alt="UPI QR Code - Sachin Bajaj"></div>
+        <div class="pg-upi-id" onclick="copyParentUPI()">sachinbajaj284@okaxis</div>
+        <div style="font-size:.72rem;color:#6F4A14;margin-top:8px;">Tap to copy · PhonePe, GPay, Paytm · ₹199</div>
+      </div>
+      <ol class="pg-steps">
+        <li>Scan QR or pay ₹199 to the UPI ID.</li>
+        <li>Screenshot the payment confirmation.</li>
+        <li>Send screenshot on WhatsApp with your email.</li>
+        <li>PDF is delivered manually within 24 hours.</li>
+      </ol>
+      <a id="parentPdfWa" class="pg-wa" href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20have%20paid%20Rs.199%20for%20the%20Parents%20Career%20Handbook%20PDF.%20Please%20send%20it%20to%20me." target="_blank" rel="noopener">Send Screenshot & Get PDF</a>
+    </div>
+  </div>
+</div>
 <footer class="footer">Lume Live · Online counselling and guidance across India · +91 7015671280</footer>
 <script>
 (function(){
@@ -294,6 +406,39 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
     recalc();
   });
   window.ecRecalc = recalc;
+})();
+(function(){
+  const phone = '917015671280';
+  const upi = 'sachinbajaj284@okaxis';
+  function val(id){ return (document.getElementById(id)?.value || '').trim(); }
+  function parentPdfMessage(){
+    const lines = [
+      'Hi Sachin! I have paid Rs.199 for the Parents Career Handbook PDF.',
+      val('pgName') ? 'Name: ' + val('pgName') : '',
+      val('pgPhone') ? 'WhatsApp: ' + val('pgPhone') : '',
+      val('pgEmail') ? 'Email: ' + val('pgEmail') : '',
+      'Please send it to me.'
+    ].filter(Boolean);
+    return 'https://wa.me/' + phone + '?text=' + encodeURIComponent(lines.join('\n'));
+  }
+  window.openParentPdf = function(){
+    const link = document.getElementById('parentPdfWa');
+    if(link) link.href = parentPdfMessage();
+    document.getElementById('parentPdfModal')?.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  };
+  window.closeParentPdf = function(){
+    document.getElementById('parentPdfModal')?.classList.remove('active');
+    document.body.style.overflow = '';
+  };
+  window.copyParentUPI = function(){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(upi).catch(function(){});
+    }
+  };
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') window.closeParentPdf();
+  });
 })();
 </script>
 </body>

@@ -8,17 +8,11 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-1CZ93P4P3V');
-  (function(){
-    var p = new URLSearchParams(location.search);
-    if(location.hash === '#free-test' || location.hash === '#self-assessments' || p.has('sample-report')){
-      location.replace('assessment.html' + location.search + location.hash);
-    }
-  })();
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Career Counselling Delhi-NCR & India | Clarity Report ₹999 | Lume Live</title>
-<meta name="description" content="Online career counselling and career clarity assessment for students in Delhi, Gurugram, Noida, Faridabad, Ghaziabad and across India. Free 60-second career snapshot, ₹999 report, and ₹49 introductory call.">
+<title>Free Career Snapshot and Full Clarity Report | Lume Live</title>
+<meta name="description" content="Take the free 60-second Career Snapshot or begin the Lume Live Full Clarity Report on a dedicated assessment page designed for students and parents.">
 <meta name="keywords" content="career counselling Delhi, career counselling Delhi NCR, career counsellor Gurugram, career counselling Noida, psychometric test Delhi NCR, stream selection counselling Delhi, career test for class 10, career test for class 12, online career counselling India, parent career guidance NCR, mental health counselling Delhi">
 <meta name="author" content="Lume Live">
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
@@ -28,7 +22,7 @@
 <meta name="geo.position" content="28.6139;77.2090">
 <meta name="ICBM" content="28.6139, 77.2090">
 <meta http-equiv="content-language" content="en-IN">
-<link rel="canonical" href="https://lumelive.co.in/">
+<link rel="canonical" href="https://lumelive.co.in/assessment.html">
 <link rel="alternate" hreflang="en-in" href="https://lumelive.co.in/">
 <link rel="alternate" hreflang="hi-in" href="https://lumelive.co.in/index-hi.html">
 <link rel="alternate" hreflang="x-default" href="https://lumelive.co.in/">
@@ -36,16 +30,16 @@
 <link rel="apple-touch-icon" href="logo.png">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Lume Live">
-<meta property="og:title" content="Career Counselling in Delhi-NCR & India | Lume Live">
-<meta property="og:description" content="Help your child choose the right stream, course and career with a free 60-second snapshot, ₹999 clarity report, and founder-led counselling for Delhi-NCR families and students across India.">
-<meta property="og:url" content="https://lumelive.co.in/">
+<meta property="og:title" content="Free Career Snapshot and Full Clarity Report | Lume Live">
+<meta property="og:description" content="A dedicated Lume Live assessment page for the free 60-second Career Snapshot and the full ₹999 clarity report.">
+<meta property="og:url" content="https://lumelive.co.in/assessment.html">
 <meta property="og:image" content="https://lumelive.co.in/logo.png">
 <meta property="og:image:alt" content="Lume Live career counselling and clarity report for Delhi-NCR and India">
 <meta property="og:locale" content="en_IN">
 <meta property="og:locale:alternate" content="hi_IN">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Career Counselling in Delhi-NCR & India | Lume Live">
-<meta name="twitter:description" content="Free 60-second career snapshot, ₹999 clarity report, and online counselling for Delhi-NCR families and students across India.">
+<meta name="twitter:title" content="Free Career Snapshot and Full Clarity Report | Lume Live">
+<meta name="twitter:description" content="Take the free 60-second Career Snapshot or begin the full ₹999 clarity report on a dedicated assessment page.">
 <meta name="twitter:image" content="https://lumelive.co.in/logo.png">
 <script type="application/ld+json">
 {
@@ -224,7 +218,92 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{font-family:'Montserrat',sans-serif;color:var(--dark);background:var(--white);overflow-x:hidden;}
-#free-test,#self-assessments{display:none!important;}
+body.assessment-page #hero,
+body.assessment-page #gallery,
+body.assessment-page #recognition,
+body.assessment-page #services,
+body.assessment-page #client-experience,
+body.assessment-page #two-parents,
+body.assessment-page #about,
+body.assessment-page #emotional-wellbeing,
+body.assessment-page #for-parents,
+body.assessment-page #testimonials,
+body.assessment-page #faq,
+body.assessment-page #questionnaire,
+body.assessment-page #school-partnerships,
+body.assessment-page #career-pdf,
+body.assessment-page #lead-banner,
+body.assessment-page #contact,
+body.assessment-page .side-icons,
+body.assessment-page .float-cta,
+body.assessment-page .offer-countdown,
+body.assessment-page #modal-session{display:none!important;}
+body.assessment-page{background:#F7FAF9;}
+body.assessment-page #free-test{scroll-margin-top:calc(var(--nav-h) + 10px);}
+body.assessment-page #self-assessments{scroll-margin-top:calc(var(--nav-h) + 14px);}
+.assessment-landing{display:none;}
+body.assessment-page .assessment-landing{display:block;position:relative;overflow:hidden;padding:calc(var(--header-stack-h) + 52px) 20px 58px;background:linear-gradient(135deg,#07182F 0%,#0D1B40 44%,#0A6E6E 120%);color:#fff;}
+body.assessment-page .assessment-landing::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(180deg,rgba(0,0,0,.8),transparent 92%);animation:assessmentGrid 18s linear infinite;pointer-events:none;}
+body.assessment-page .assessment-landing::after{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 0%,rgba(232,185,90,.10) 48%,transparent 72%);transform:translateX(-120%);animation:gentleSheen 3.8s ease .4s both;pointer-events:none;}
+.assessment-landing-shell{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.02fr) minmax(300px,.78fr);gap:34px;align-items:center;position:relative;z-index:1;}
+.assessment-kicker{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(232,185,90,.32);background:rgba(232,185,90,.12);color:#F8D27A;border-radius:999px;padding:7px 14px;font-size:.68rem;font-weight:900;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:18px;}
+.assessment-landing h1{font-family:'Fraunces','Playfair Display',serif;font-size:clamp(2rem,5vw,4.1rem);line-height:1.02;letter-spacing:0;margin-bottom:16px;max-width:820px;}
+.assessment-landing h1 em{color:#F8D27A;font-style:italic;}
+.assessment-landing p{font-size:clamp(.95rem,1.45vw,1.08rem);line-height:1.72;color:rgba(255,255,255,.78);max-width:690px;}
+.assessment-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;}
+.assessment-actions a{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border-radius:999px;padding:13px 22px;text-decoration:none;font-size:.86rem;font-weight:900;transition:transform .22s,box-shadow .22s,background .22s;}
+.assessment-actions .primary{background:linear-gradient(135deg,#C9933A,#E8B95A);color:#07182F;box-shadow:0 14px 34px rgba(232,185,90,.28);}
+.assessment-actions .secondary{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.22);}
+.assessment-actions a:hover{transform:translateY(-2px);}
+.assessment-flow-card{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);border-radius:22px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.22);backdrop-filter:blur(12px);position:relative;overflow:hidden;isolation:isolate;}
+.assessment-flow-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#F8D27A,transparent);transform:translateX(-100%);animation:assessmentScan 3.8s ease-in-out infinite;opacity:.9;z-index:1;pointer-events:none;}
+.assessment-flow-card h2{font-family:'Fraunces',serif;font-size:1.32rem;margin-bottom:12px;color:#fff;}
+.assessment-step{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start;padding:14px 0;border-top:1px solid rgba(255,255,255,.12);}
+.assessment-step:first-of-type{border-top:0;}
+.assessment-step b{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:rgba(232,185,90,.16);border:1px solid rgba(232,185,90,.34);color:#F8D27A;font-family:'Fraunces',serif;}
+.assessment-step strong{display:block;color:#fff;font-size:.86rem;margin-bottom:4px;}
+.assessment-step span{display:block;color:rgba(255,255,255,.68);font-size:.76rem;line-height:1.55;}
+.assessment-note{display:flex;gap:9px;align-items:flex-start;margin-top:14px;padding:13px 14px;border-radius:14px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.24);color:rgba(255,255,255,.78);font-size:.75rem;line-height:1.55;}
+.assessment-data-panel{margin-top:17px;padding:15px;border-radius:16px;background:rgba(7,24,47,.34);border:1px solid rgba(255,255,255,.14);}
+.assessment-data-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;}
+.assessment-data-head span{font-size:.62rem;font-weight:900;letter-spacing:1.3px;text-transform:uppercase;color:#F8D27A;}
+.assessment-data-head b{font-size:.7rem;color:rgba(255,255,255,.74);}
+.assessment-chip-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;}
+.assessment-chip-row span{font-size:.65rem;font-weight:800;color:#fff;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);border-radius:999px;padding:6px 9px;animation:assessmentFloat 4.8s ease-in-out infinite;}
+.assessment-chip-row span:nth-child(2){animation-delay:.4s;}
+.assessment-chip-row span:nth-child(3){animation-delay:.8s;}
+.assessment-chip-row span:nth-child(4){animation-delay:1.2s;}
+.assessment-data-line{display:grid;grid-template-columns:minmax(96px,.52fr) 1fr;gap:10px;align-items:center;margin-top:10px;}
+.assessment-data-line b{font-size:.68rem;color:rgba(255,255,255,.72);}
+.assessment-data-line i{display:block;height:8px;border-radius:999px;background:rgba(255,255,255,.11);position:relative;overflow:hidden;}
+.assessment-data-line i::before{content:'';position:absolute;inset:0 auto 0 0;width:var(--w,70%);border-radius:inherit;background:linear-gradient(90deg,#0E8C8C,#F8D27A);animation:assessmentMeter 1.25s cubic-bezier(.22,1,.36,1) both;animation-delay:var(--d,0s);}
+body.assessment-page #free-test,
+body.assessment-page #self-assessments{position:relative;overflow:hidden;}
+body.assessment-page #free-test::before,
+body.assessment-page #self-assessments::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(10,110,110,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(201,147,58,.045) 1px,transparent 1px);background-size:58px 58px;mask-image:linear-gradient(180deg,transparent,rgba(0,0,0,.8) 16%,rgba(0,0,0,.85) 82%,transparent);animation:assessmentGrid 22s linear infinite;pointer-events:none;}
+body.assessment-page #free-test > *,
+body.assessment-page #self-assessments > *{position:relative;z-index:1;}
+@keyframes assessmentGrid{from{background-position:0 0,0 0;}to{background-position:42px 42px,42px 42px;}}
+@keyframes assessmentScan{0%,22%{transform:translateX(-100%);}62%,100%{transform:translateX(100%);}}
+@keyframes assessmentFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+@keyframes assessmentMeter{from{transform:scaleX(0);transform-origin:left;}to{transform:scaleX(1);transform-origin:left;}}
+@media(max-width:860px){
+  .assessment-landing-shell{grid-template-columns:1fr;}
+  .assessment-flow-card{max-width:620px;}
+}
+@media(max-width:520px){
+  body.assessment-page .assessment-landing{padding:calc(var(--header-stack-h) + 36px) 14px 44px;}
+  .assessment-actions a{width:100%;}
+  .assessment-flow-card{border-radius:18px;padding:18px;}
+  .assessment-data-line{grid-template-columns:1fr;gap:6px;}
+}
+@media(prefers-reduced-motion:reduce){
+  .assessment-flow-card::before,
+  .assessment-chip-row span,
+  .assessment-data-line i::before,
+  body.assessment-page #free-test::before,
+  body.assessment-page #self-assessments::before{animation:none!important;}
+}
 
 /* ── ENHANCED KEYFRAMES ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(40px);}to{opacity:1;transform:translateY(0);}}
@@ -356,9 +435,7 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .hero-assessment-copy small{display:block;color:var(--gold2);font-size:.64rem;font-weight:900;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:4px;}
 .hero-assessment-copy b{display:block;color:#fff;font-family:'Playfair Display',serif;font-size:1.08rem;line-height:1.2;margin-bottom:3px;}
 .hero-assessment-copy span{display:block;color:rgba(255,255,255,.68);font-size:.76rem;line-height:1.5;}
-.hero-assessment-actions{display:flex;gap:8px;flex:none;flex-wrap:wrap;justify-content:flex-end;}
 .hero-assessment-btn{flex:none;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:11px 16px;border-radius:10px;background:#fff;color:var(--navy);font-size:.78rem;font-weight:900;text-decoration:none;box-shadow:0 8px 20px rgba(0,0,0,.18);transition:all .22s;}
-.hero-assessment-btn.secondary{background:rgba(255,255,255,.09);color:#fff;border:1px solid rgba(255,255,255,.2);box-shadow:none;}
 .hero-assessment-btn:hover{transform:translateY(-2px);background:var(--gold2);color:#102650;}
 .hero-cost-link{display:inline-flex;margin:-12px 0 24px;color:rgba(255,255,255,.68);font-size:.72rem;font-weight:700;text-decoration:underline;text-decoration-color:rgba(232,185,90,.45);text-underline-offset:4px;animation:fadeUp .8s ease .88s both;}
 .hero-cost-link:hover{color:var(--gold2);}
@@ -1031,7 +1108,7 @@ body.js-ready .anim.scale{transform:scale(.9);}
   .cd-sep{font-size:.75rem;}
   .hero-inner{padding:60px 16px;}
   .hero-assessment-card{flex-direction:column;align-items:flex-start;gap:12px;margin-top:-4px;padding:15px;}
-  .hero-assessment-actions,.hero-assessment-btn{width:100%;}
+  .hero-assessment-btn{width:100%;}
   .hero-cost-link{margin-top:-8px;}
   .footer-grid{grid-template-columns:1fr;}
   .hero-btns{flex-direction:column;}
@@ -1112,7 +1189,7 @@ button,a,.btn-cta,.btn-gold,.btn-ghost,.sa-btn,.ll-check-btn,.ll-option{touch-ac
 
 /* ── SCHOOL PARTNERSHIPS ── */
 #school-partnerships{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:80px 20px;position:relative;overflow:hidden;}
-#school-partnerships{display:none;}
+#for-parents,#school-partnerships{display:none;}
 #school-partnerships::before{content:'';position:absolute;top:-100px;right:-100px;width:300px;height:300px;background:rgba(201,147,58,.04);border-radius:50%;animation:morphBlob 14s ease-in-out infinite;}
 .sp-inner{max-width:1200px;margin:0 auto;position:relative;z-index:1;}
 .sp-header{text-align:center;max-width:640px;margin:0 auto 48px;}
@@ -1276,7 +1353,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 #hero::after,#gallery::after,#questionnaire::after,#school-partnerships::after{display:none;}
 </style>
 </head>
-<body>
+<body class="assessment-page">
 
 <!-- MOUSE GLOW -->
 <div class="mouse-glow" id="mouseGlow"></div>
@@ -1316,7 +1393,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 <!-- NAVBAR -->
 <nav id="navbar">
   <div class="nav-inner">
-    <a href="#" class="nav-logo">
+    <a href="index.html" class="nav-logo">
       <div class="nav-logo-img"><img src="logo.png" alt="Lume Live Logo"></div>
       <div>
         <div class="nav-logo-text"><span class="lume">LUME</span> <span class="live">LIVE</span></div>
@@ -1324,19 +1401,14 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
       </div>
     </a>
     <ul class="nav-links">
-      <li><a href="#gallery">Sessions</a></li>
-      <li><a href="#services">Services</a></li>
-      <li><a href="assessment.html#free-test" style="color:#0A6E6E;font-weight:800;">Career Snapshot</a></li>
-      <li><a href="assessment.html#self-assessments">Full Clarity Report</a></li>
-      <li><a href="#emotional-wellbeing">Emotional Wellbeing</a></li>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="#free-test" onclick="ftGoFree(event)" style="color:#0A6E6E;font-weight:800;">Free Snapshot</a></li>
+      <li><a href="#self-assessments">Full Clarity Report</a></li>
       <li><a href="for-parents.html">For Parents</a></li>
-      <li><a href="school-partnerships.html">Schools</a></li>
-      <li><a href="#faq">FAQ</a></li>
-      <li><a href="#testimonials">Reviews</a></li>
-      <li><a href="#questionnaire">Enquire</a></li>
-      <li><a href="#contact">Contact</a></li>
+      <li><a href="index.html#questionnaire">Support Enquiry</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
       <li><a href="#" id="navAccountLink" class="nav-auth-link" onclick="openAuth('signin');return false;">Sign In / Sign Up</a></li>
-      <li><a href="#" class="nav-cta" onclick="openModal('session');return false;" style="background:linear-gradient(135deg,#c9933a,#e8b84e);color:#0d1b40;font-weight:800;padding:8px 18px;border-radius:20px;box-shadow:0 4px 12px rgba(201,147,58,.3);transition:all .3s;">Counselling ₹49 <span style="font-size:.55rem;opacity:.7;text-decoration:line-through;margin-left:3px;">₹499</span></a></li>
+      <li><a href="index.html#questionnaire" class="nav-cta" style="background:linear-gradient(135deg,#c9933a,#e8b84e);color:#0d1b40;font-weight:800;padding:8px 18px;border-radius:20px;box-shadow:0 4px 12px rgba(201,147,58,.3);transition:all .3s;">Need Help?</a></li>
     </ul>
     <button class="hamburger" id="ham" onclick="toggleMenu()" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -1344,23 +1416,52 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
   </div>
 </nav>
 <div class="mob-menu" id="mobMenu">
-  <a href="#gallery" onclick="closeMob()">📸 Sessions Gallery</a>
-  <a href="#services" onclick="closeMob()">🛎️ Services</a>
-  <a href="assessment.html#free-test" onclick="closeMob()" style="color:#0A6E6E;font-weight:800;">🎁 Free Career Snapshot</a>
-  <a href="assessment.html#self-assessments" onclick="closeMob()">🧭 Full Clarity Report</a>
-  <a href="#emotional-wellbeing" onclick="closeMob()">🧠 Emotional Wellbeing</a>
-  <a href="for-parents.html" onclick="closeMob()">👨‍👩‍👧 For Parents</a>
-  <a href="school-partnerships.html" onclick="closeMob()">🏫 School Partnerships</a>
-  <a href="#faq" onclick="closeMob()">❓ FAQ</a>
-  <a href="#testimonials" onclick="closeMob()">⭐ Client Reviews</a>
-  <a href="#questionnaire" onclick="closeMob()">📋 Support Enquiry</a>
-  <a href="#contact" onclick="closeMob()">📍 Contact</a>
+  <a href="index.html" onclick="closeMob()">Home</a>
+  <a href="#free-test" onclick="ftGoFree(event)" style="color:#0A6E6E;font-weight:800;">Free Career Snapshot</a>
+  <a href="#self-assessments" onclick="closeMob()">Full Clarity Report</a>
+  <a href="for-parents.html" onclick="closeMob()">For Parents</a>
+  <a href="index.html#questionnaire" onclick="closeMob()">Support Enquiry</a>
+  <a href="index.html#contact" onclick="closeMob()">Contact</a>
   <a href="#" class="auth-signed-out" onclick="closeMob();openAuth('signin');return false;">Sign In</a>
   <a href="#" class="highlight auth-signed-out" onclick="closeMob();openAuth('signup');return false;">Create Account</a>
   <a href="#" class="highlight auth-signed-in" id="mobileAccountLink" onclick="closeMob();openAuth('signin');return false;" hidden>My Account</a>
-  <a href="#" onclick="openModal('session');closeMob();return false;" style="background:linear-gradient(135deg,#c9933a,#e8b84e);color:#0d1b40;font-weight:800;padding:12px 20px;border-radius:12px;margin:8px 0;display:block;text-align:center;box-shadow:0 4px 12px rgba(201,147,58,.3);text-decoration:none;">🎯 Book Session — ₹49</a>
+  <a href="index.html#questionnaire" onclick="closeMob()" style="background:linear-gradient(135deg,#c9933a,#e8b84e);color:#0d1b40;font-weight:800;padding:12px 20px;border-radius:12px;margin:8px 0;display:block;text-align:center;box-shadow:0 4px 12px rgba(201,147,58,.3);text-decoration:none;">Need Help? Send Enquiry</a>
   <a href="https://wa.me/917015671280" target="_blank" style="color:#25D366;font-weight:700;">💬 WhatsApp Us Now</a>
 </div>
+
+<section class="assessment-landing" id="assessment-start">
+  <div class="assessment-landing-shell">
+    <div class="anim">
+      <span class="assessment-kicker">Career snapshot and report</span>
+      <h1>Get a preview of your child's career direction <em>in 60 seconds.</em></h1>
+      <p>This page keeps the experience quiet and focused. Start with the free snapshot, then continue to the Full Clarity Report when you are ready.</p>
+      <div class="assessment-actions">
+        <a class="primary" href="#free-test" onclick="ftGoFree(event)">Start Free Snapshot</a>
+        <a class="secondary" href="#self-assessments">Take Full Clarity Report</a>
+        <a class="secondary" href="#" onclick="openAuth('signup');return false;">Sign Up / Save Progress</a>
+      </div>
+    </div>
+    <div class="assessment-flow-card anim scale">
+      <h2>How this page works</h2>
+      <div class="assessment-step"><b>1</b><div><strong>Free Career Snapshot</strong><span>Six quick prompts for an instant preview of likely interest themes.</span></div></div>
+      <div class="assessment-step"><b>2</b><div><strong>Full Clarity Report</strong><span>Complete the paid reflection flow and generate a counsellor-ready report.</span></div></div>
+      <div class="assessment-step"><b>3</b><div><strong>Sign up when needed</strong><span>Create an account or sign in before the full report so progress can be saved safely.</span></div></div>
+      <div class="assessment-note"><span>✓</span><span>No homepage distractions here. The rest of Lume Live stays on the main website.</span></div>
+      <div class="assessment-data-panel" aria-hidden="true">
+        <div class="assessment-data-head"><span>Report preview</span><b>Live mapping</b></div>
+        <div class="assessment-chip-row">
+          <span>Interests</span>
+          <span>Strengths</span>
+          <span>Learning style</span>
+          <span>Stream prompts</span>
+        </div>
+        <div class="assessment-data-line" style="--w:82%;--d:.05s;"><b>Direction</b><i></i></div>
+        <div class="assessment-data-line" style="--w:68%;--d:.18s;"><b>Fit Signals</b><i></i></div>
+        <div class="assessment-data-line" style="--w:76%;--d:.31s;"><b>Next Steps</b><i></i></div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- HERO -->
 <section id="hero">
@@ -1374,12 +1475,12 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
   <div class="hero-gold-bar"></div>
   <div class="hero-inner">
     <div>
-      <div class="hero-badge"><div class="dot"></div><span>100% Confidential · Founder-Led 1:1 Guidance</span></div>
+      <div class="hero-badge"><div class="dot"></div><span>Founder-Led 1:1 Counselling · Online Across India</span></div>
       <h1 class="hero-h1">Your Mind Deserves <em>Clarity.</em><br>Your Future Deserves <em>Direction.</em></h1>
       <p class="hero-sub">Professional online career counselling and mental health counselling for students, parents and young adults — blending empathy with evidence so families choose with clarity, not pressure.</p>
       <div class="hero-assurance" aria-label="Counselling session assurances">
-        <span>Private & Confidential</span>
-        <span>Founder-Led 1:1</span>
+        <span>100% Confidential</span>
+        <span>Private 1:1 Sessions</span>
         <span>Online Across India</span>
       </div>
       <div class="hero-assessment-card">
@@ -1388,10 +1489,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
           <b>Preview your career direction before paying</b>
           <span>Answer 6 quick questions, see your top career theme, then unlock the full ₹999 report when ready.</span>
         </div>
-        <div class="hero-assessment-actions">
-          <a href="assessment.html#free-test" class="hero-assessment-btn">View Free Snapshot</a>
-          <a href="assessment.html#self-assessments" class="hero-assessment-btn secondary">Take Full Report</a>
-        </div>
+        <a href="#free-test" class="hero-assessment-btn" onclick="ftGoFree(event)">View Free Snapshot</a>
       </div>
       <a class="hero-cost-link" href="for-parents.html#education-cost-calculator">What is the real cost of one wrong stream choice?</a>
 
@@ -2217,7 +2315,7 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
     </div>
 
     <div class="tp-cta-row">
-      <a href="assessment.html#free-test">Start with the Free Career Snapshot →</a>
+      <a href="#free-test" onclick="ftGoFree(event)">Start with the Free Career Snapshot →</a>
       <div class="tp-cta-note">No payment to start · See your child's top theme in under a minute</div>
     </div>
   </div>
@@ -2485,7 +2583,7 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
 
           <div class="ft-secondary">
             <button class="ft-sec-btn" type="button" onclick="ftRestart()">↻ Retake snapshot</button>
-            <a class="ft-sec-btn" href="#" onclick="openModal('session');return false;">📞 Talk to a counsellor (₹49)</a>
+            <a class="ft-sec-btn" href="https://wa.me/917015671280?text=Hi%20Lume%20Live!%20I%20just%20took%20the%20free%20career%20snapshot%20and%20would%20like%20to%20talk%20to%20a%20counsellor." target="_blank" rel="noopener">Talk to a counsellor</a>
             <a class="ft-sec-btn wa" href="https://wa.me/917015671280?text=Hi%20Lume%20Live!%20I%20just%20took%20the%20free%20career%20snapshot%20and%20would%20like%20to%20know%20more." target="_blank" rel="noopener">💬 Ask on WhatsApp</a>
           </div>
         </div>
@@ -4967,17 +5065,17 @@ if(new URLSearchParams(window.location.search).has("sample-report")){window.saSh
       </div>
       <div class="f-col">
         <h4>Services</h4>
-        <a href="#" onclick="openModal('session');return false;">1:1 Wellness Session</a>
-        <a href="#" onclick="openModal('session');return false;">High School Guidance</a>
-        <a href="#" onclick="openModal('session');return false;">Career Counselling</a>
+        <a href="index.html#services">1:1 Wellness Session</a>
+        <a href="index.html#services">High School Guidance</a>
+        <a href="index.html#services">Career Counselling</a>
         <a href="for-parents.html">For Parents</a>
         <a href="school-partnerships.html">School Partnerships</a>
         <a href="#" onclick="openPDF();return false;">Parents' Handbook ₹199</a>
       </div>
       <div class="f-col">
         <h4>Company</h4>
-        <a href="#gallery">Sessions Gallery</a>
-        <a href="#faq">FAQ</a>
+        <a href="index.html#gallery">Sessions Gallery</a>
+        <a href="index.html#faq">FAQ</a>
         </div>
       <div class="f-col">
         <h4>Contact</h4>
@@ -5605,7 +5703,16 @@ function downloadUPIQR(){
 }
 
 // ── MODALS ──
-function openModal(id){document.getElementById('modal-'+id).classList.add('open');document.body.style.overflow='hidden';}
+function openModal(id){
+  if(document.body.classList.contains('assessment-page') && id==='session'){
+    if(typeof showToast==='function')showToast('Please use Support Enquiry or WhatsApp from this assessment page.');
+    return;
+  }
+  const modal=document.getElementById('modal-'+id);
+  if(!modal)return;
+  modal.classList.add('open');
+  document.body.style.overflow='hidden';
+}
 function closeModal(id){document.getElementById('modal-'+id).classList.remove('open');document.body.style.overflow='';}
 document.querySelectorAll('.modal-overlay').forEach(el=>{
   el.addEventListener('click',function(e){if(e.target===this){this.classList.remove('open');document.body.style.overflow='';}});
@@ -6279,7 +6386,7 @@ function setMode(el, mode){
     banner.className = 'seasonal-banner';
     banner.innerHTML =
       '<div class="seasonal-copy"><span>'+copy.tag+'</span><b>'+copy.msg+'</b></div>'+
-      '<a class="seasonal-cta" href="assessment.html#free-test">'+copy.cta+' →</a>'+
+      '<a class="seasonal-cta" href="#free-test">'+copy.cta+' →</a>'+
       '<button class="seasonal-close" type="button" aria-label="Dismiss seasonal reminder">×</button>';
     document.body.appendChild(banner);
 
