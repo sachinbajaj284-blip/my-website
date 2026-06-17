@@ -1,0 +1,11 @@
+{
+  "name": "lume-live-website",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node vercel-build.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,17 @@
+# Secrets
+.env
+.env.*
+APIKey.csv
+*APIKey*.csv
+*.pem
+*.key
+
+# Local/runtime output
+work/
+node_modules/
+.vercel/
+public/
+
+# OS/editor noise
+Thumbs.db
+.DS_Store
