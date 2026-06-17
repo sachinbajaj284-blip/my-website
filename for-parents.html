@@ -149,6 +149,14 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
 .pg-upi-id{display:inline-flex;border:2px dashed var(--teal);border-radius:9px;background:#fff;color:var(--navy);font-family:monospace;font-weight:900;padding:8px 12px;cursor:pointer;}
 .pg-steps{margin:16px 0 16px;padding-left:20px;color:var(--mid);font-size:.82rem;line-height:1.7;}
 .pg-wa{display:flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:13px 18px;min-height:48px;background:#25D366;color:#fff;font-weight:900;text-decoration:none;}
+.pg-cashfree{border:0;width:100%;cursor:pointer;background:linear-gradient(135deg,#123A7A,#0A8D87);margin-bottom:10px;}
+.pg-cashfree:hover{filter:brightness(.96);box-shadow:0 8px 24px rgba(10,141,135,.24);}
+.pg-fallback{margin-top:10px;border:1px solid #E1EBEA;border-radius:14px;background:#fff;overflow:hidden;}
+.pg-fallback summary{cursor:pointer;list-style:none;padding:12px 14px;color:var(--teal);font-size:.78rem;font-weight:900;display:flex;justify-content:space-between;gap:12px;align-items:center;}
+.pg-fallback summary::-webkit-details-marker{display:none;}
+.pg-fallback summary::after{content:'+';width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#ECF7F6;color:var(--teal);font-weight:900;flex:none;}
+.pg-fallback[open] summary::after{content:'-';}
+.pg-fallback-body{padding:0 14px 14px;}
 @keyframes pgSheen{0%{transform:translateX(-120%);}100%{transform:translateX(120%);}}
 @media(max-width:860px){.ec-shell{grid-template-columns:1fr;}.ec-copy{min-height:auto;}}
 @media(max-width:860px){.pg-shell{grid-template-columns:1fr;}.pg-panel{max-width:560px;}.pg-list{grid-template-columns:1fr 1fr;}}
@@ -164,6 +172,7 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
     <div class="nav-links">
       <a href="index.html">Home</a>
       <a href="school-partnerships.html">Schools</a>
+      <a href="for-working-professionals.html">Professionals</a>
       <a href="#clarity-map">Clarity Map</a>
       <a href="#parents-handbook">₹199 Guide</a>
       <a class="btn" href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20am%20a%20parent%20and%20would%20like%20guidance%20for%20my%20child." target="_blank">WhatsApp</a>
@@ -328,7 +337,7 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
           <input class="pg-input" id="pgPhone" type="tel" maxlength="15" inputmode="numeric" autocomplete="tel" placeholder="WhatsApp number">
           <button class="pg-btn" type="button" onclick="openParentPdf()">Get Instant Access — ₹199</button>
         </div>
-        <p class="pg-note">Scan the QR, send payment screenshot on WhatsApp, and receive the PDF within 24 hours.</p>
+        <p class="pg-note">Pay securely with Cashfree when checkout is active, or use QR/WhatsApp backup and receive the PDF within 24 hours.</p>
         <div class="pg-list">
           <span>5 avoidable parent mistakes</span>
           <span>Stream-choice discussion prompts</span>
@@ -364,19 +373,23 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
         <div class="pg-product-icon">📋</div>
         <div><b>Parents' Stream Selection Guide</b><span>Science-backed · WhatsApp delivery · Parent checklist</span></div>
       </div>
-      <div class="pg-upi">
-        <h4>Pay ₹199 via UPI</h4>
-        <div class="pg-qr"><img src="lume-upi-qr.png" alt="UPI QR Code - Sachin Bajaj"></div>
-        <div class="pg-upi-id" onclick="copyParentUPI()">sachinbajaj284@okaxis</div>
-        <div style="font-size:.72rem;color:#6F4A14;margin-top:8px;">Tap to copy · PhonePe, GPay, Paytm · ₹199</div>
-      </div>
-      <ol class="pg-steps">
-        <li>Scan QR or pay ₹199 to the UPI ID.</li>
-        <li>Screenshot the payment confirmation.</li>
-        <li>Send screenshot on WhatsApp with your email.</li>
-        <li>PDF is delivered manually within 24 hours.</li>
-      </ol>
-      <a id="parentPdfWa" class="pg-wa" href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20have%20paid%20Rs.199%20for%20the%20Parents%20Career%20Handbook%20PDF.%20Please%20send%20it%20to%20me." target="_blank" rel="noopener">Send Screenshot & Get PDF</a>
+      <button class="pg-wa pg-cashfree" type="button" onclick="startParentPdfCashfree(event)">Pay Securely with Cashfree</button>
+      <details class="pg-fallback">
+        <summary>UPI / WhatsApp backup</summary>
+        <div class="pg-fallback-body">
+          <div class="pg-upi">
+            <h4>Pay ₹199 via UPI — backup option</h4>
+            <div class="pg-qr"><img src="lume-upi-qr.png" alt="UPI QR Code - Sachin Bajaj"></div>
+            <div class="pg-upi-id" onclick="copyParentUPI()">sachinbajaj284@okaxis</div>
+            <div style="font-size:.72rem;color:#6F4A14;margin-top:8px;">Tap to copy · PhonePe, GPay, Paytm · ₹199</div>
+          </div>
+          <ol class="pg-steps">
+            <li>Use this only if Cashfree checkout is unavailable.</li>
+            <li>Send WhatsApp confirmation with your email.</li>
+          </ol>
+          <a id="parentPdfWa" class="pg-wa" href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20have%20paid%20Rs.199%20for%20the%20Parents%20Career%20Handbook%20PDF.%20Please%20send%20it%20to%20me." target="_blank" rel="noopener">WhatsApp PDF Support</a>
+        </div>
+      </details>
     </div>
   </div>
 </div>
@@ -436,10 +449,28 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
       navigator.clipboard.writeText(upi).catch(function(){});
     }
   };
+  window.startParentPdfCashfree = function(e){
+    if(e) e.preventDefault();
+    const link = document.getElementById('parentPdfWa');
+    if(link) link.href = parentPdfMessage();
+    const fallback = function(){ if(link && link.href) window.open(link.href, '_blank', 'noopener'); };
+    if(typeof window.lumeCashfreePay !== 'function'){ fallback(); return; }
+    window.lumeCashfreePay({
+      sku: 'parents-handbook',
+      amount: 199,
+      label: 'Parents Career Handbook',
+      customerName: val('pgName'),
+      customerPhone: val('pgPhone'),
+      customerEmail: val('pgEmail'),
+      onFallback: fallback
+    });
+  };
   document.addEventListener('keydown', function(e){
     if(e.key === 'Escape') window.closeParentPdf();
   });
 })();
 </script>
+<script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+<script src="cashfree-payments.js"></script>
 </body>
 </html>
