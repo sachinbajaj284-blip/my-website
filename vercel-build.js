@@ -2,26 +2,69 @@ const fs = require("fs");
 const path = require("path");
 
 const root = __dirname;
-const source = path.join(root, "outputs");
 const target = path.join(root, "public");
 
-function copyDir(from, to){
+const skipDirs = new Set([
+  ".git",
+  ".vercel",
+  "api",
+  "godaddy-cashfree-node-app",
+  "node_modules",
+  "previews",
+  "public",
+  "work"
+]);
+
+const skipFiles = new Set([
+  ".env",
+  ".env.local",
+  "APIKey.csv",
+  "package.json",
+  "package-lock.json",
+  "vercel-build.js",
+  "vercel.json",
+  "GITHUB_PAGES_CASHFREE_SETUP.md",
+  "GODADDY_CASHFREE_SETUP.md",
+  "CASHFREE_SETUP.md",
+  "LUMELENS_BACKEND_SETUP.md"
+]);
+
+function shouldCopyFile(name){
+  if(skipFiles.has(name)) return false;
+  if(name.startsWith(".env")) return false;
+  if(/apikey/i.test(name)) return false;
+  if(/\.(zip|psd|ai)$/i.test(name)) return false;
+  return true;
+}
+
+function copyDir(from, to, isRootSource){
   fs.mkdirSync(to, { recursive: true });
   for(const entry of fs.readdirSync(from, { withFileTypes: true })){
+    if(entry.isDirectory() && isRootSource && skipDirs.has(entry.name)) continue;
+    if(entry.isFile() && isRootSource && !shouldCopyFile(entry.name)) continue;
+
     const src = path.join(from, entry.name);
     const dest = path.join(to, entry.name);
     if(entry.isDirectory()){
-      copyDir(src, dest);
+      copyDir(src, dest, false);
     }else{
       fs.copyFileSync(src, dest);
     }
   }
 }
 
-if(!fs.existsSync(source)){
-  throw new Error("Missing outputs folder. The website files must be inside outputs/.");
+function findSource(){
+  const outputs = path.join(root, "outputs");
+  if(fs.existsSync(path.join(outputs, "index.html"))){
+    return { path: outputs, isRootSource: false, label: "outputs/" };
+  }
+  if(fs.existsSync(path.join(root, "index.html"))){
+    return { path: root, isRootSource: true, label: "repository root" };
+  }
+  throw new Error("Could not find index.html in outputs/ or repository root.");
 }
 
+const source = findSource();
 fs.rmSync(target, { recursive: true, force: true });
-copyDir(source, target);
-console.log("Copied outputs/ to public/ for Vercel.");
+copyDir(source.path, target, source.isRootSource);
+console.log("Copied website files from " + source.label + " to public/ for Vercel.");
