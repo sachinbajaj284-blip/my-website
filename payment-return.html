@@ -6,8 +6,9 @@
 <meta name="robots" content="noindex,nofollow">
 <title>Payment Received | Lume Live</title>
 <style>
-body{margin:0;min-height:100vh;display:grid;place-items:center;background:linear-gradient(135deg,#0D1B40,#0A6E6E);font-family:Arial,sans-serif;color:#102033;padding:18px}
-.card{width:min(520px,100%);background:#fff;border-radius:20px;padding:28px;box-shadow:0 24px 80px rgba(0,0,0,.28);text-align:center}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at 18% 12%,rgba(232,185,90,.24),transparent 28%),radial-gradient(circle at 86% 20%,rgba(255,255,255,.18),transparent 30%),linear-gradient(135deg,#0D1B40,#0A6E6E);font-family:Arial,sans-serif;color:#102033;padding:18px}
+.card{width:min(520px,100%);background:linear-gradient(145deg,rgba(255,255,255,.86),rgba(247,252,251,.72));border:1px solid rgba(255,255,255,.78);border-radius:28px;padding:30px;box-shadow:0 28px 90px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.82);text-align:center;backdrop-filter:blur(24px) saturate(1.16);-webkit-backdrop-filter:blur(24px) saturate(1.16)}
 img{width:74px;height:74px;object-fit:contain;margin-bottom:10px}
 h1{font-family:Georgia,serif;color:#0D1B40;margin:0 0 10px;font-size:2rem}
 p{color:#55706D;line-height:1.6;margin:0 0 18px}
@@ -72,6 +73,14 @@ a{display:flex;align-items:center;justify-content:center;min-height:46px;border-
     statusBox.textContent = message;
   }
 
+  function autoContinue(){
+    var href = continueLink.getAttribute("href") || "";
+    if(!href)return;
+    returnCopy.textContent = "Cashfree has confirmed your payment. Opening your assessment now...";
+    showStatus("","Payment verified. Redirecting you to the start area now.");
+    setTimeout(function(){ window.location.href = href; }, 900);
+  }
+
   if(!orderId || !/^[A-Za-z0-9_-]{3,45}$/.test(orderId)){
     showStatus("fail","We could not read a valid Cashfree order reference. Please message Lume Live if payment was debited.");
     return;
@@ -97,8 +106,7 @@ a{display:flex;align-items:center;justify-content:center;min-height:46px;border-
           returnTitle.textContent = skuTargets[sku].title;
           continueLink.textContent = skuTargets[sku].label;
         }
-        returnCopy.textContent = "Cashfree has confirmed your payment. Your access is ready on this device.";
-        showStatus("","Payment verified. Your access is ready on this device.");
+        autoContinue();
       }else{
         showStatus("wait","Cashfree status is "+(status || "pending")+". If money was debited, wait a minute and refresh this page.");
       }

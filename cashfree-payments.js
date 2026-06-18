@@ -50,7 +50,7 @@
   }
 
   function paymentUnavailable(message, options, detail){
-    var suffix = " Please try again from the live website. The UPI / WhatsApp backup stays available below if you need manual support.";
+    var suffix = " Please try again from the live website. The WhatsApp Pay backup stays available below if you need manual support.";
     notify(message + suffix);
     if(options && (options.allowWhatsappFallback === true || options.autoWhatsappFallback === true)){
       fallback(options);
