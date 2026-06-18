@@ -96,7 +96,7 @@ module.exports = async function handler(req, res){
 
   const customer = body.customer || {};
   const phone = String(customer.phone || "").replace(/\D/g, "").slice(-10);
-  const email = String(customer.email || "care@lumelive.co.in").slice(0, 120);
+  const email = String(customer.email || "hello@lumelive.co.in").slice(0, 120);
   const name = String(customer.name || "Lume Live Customer").slice(0, 80);
   if(!phone && sku !== "parents-handbook" && sku !== "intro-session"){
     return json(res, 400, { error: "Customer phone is required." });
