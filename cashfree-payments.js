@@ -49,6 +49,17 @@
     safeOpen("https://wa.me/" + cfg.whatsappNumber + "?text=" + encodeURIComponent(waMessage(options || {})));
   }
 
+  function paymentUnavailable(message, options, detail){
+    var suffix = " Please try again from the live website. The UPI / WhatsApp backup stays available below if you need manual support.";
+    notify(message + suffix);
+    if(options && (options.allowWhatsappFallback === true || options.autoWhatsappFallback === true)){
+      fallback(options);
+      markPaymentStarted(options, { fallback: true, error: String(detail && detail.message || detail || "") }, {});
+      return Promise.resolve({ ok: false, fallback: true, error: detail || null });
+    }
+    return Promise.resolve({ ok: false, fallback: false, error: detail || null });
+  }
+
   function browserCanUseBackend(cfg){
     if(!cfg.createOrderEndpoint){ return false; }
     if(window.location.protocol === "file:"){ return false; }
@@ -59,7 +70,7 @@
     if(options.returnUrl){ return options.returnUrl; }
     var cfg = getConfig();
     if(cfg.returnUrl){ return cfg.returnUrl; }
-    var origin = window.location.origin && window.location.origin !== "null" ? window.location.origin : "https://lumelive.co.in";
+    var origin = cfg.publicBaseUrl || cfg.publicBase || "https://lumelive.co.in";
     var continuePath = encodeURIComponent((window.location.pathname || "/assessment.html") + (window.location.search || "") + (window.location.hash || ""));
     var sku = encodeURIComponent(options.sku || "");
     return origin + "/payment-return.html?order_id={order_id}&sku=" + sku + "&continue=" + continuePath;
@@ -100,17 +111,11 @@
     var cfg = getConfig();
 
     if(!browserCanUseBackend(cfg)){
-      notify("Cashfree checkout needs the live payment backend. Opening WhatsApp payment support for now.");
-      fallback(options);
-      markPaymentStarted(options, { fallback: true }, {});
-      return Promise.resolve({ ok: false, fallback: true });
+      return paymentUnavailable("Cashfree checkout needs the live payment backend.", options, "backend-unavailable");
     }
 
     if(typeof window.Cashfree !== "function"){
-      notify("Cashfree checkout is still loading. Opening WhatsApp payment support for now.");
-      fallback(options);
-      markPaymentStarted(options, { fallback: true }, {});
-      return Promise.resolve({ ok: false, fallback: true });
+      return paymentUnavailable("Cashfree checkout is still loading.", options, "sdk-unavailable");
     }
 
     var payload = {
@@ -151,10 +156,7 @@
     })
     .catch(function(err){
       console.warn("[Lume Cashfree]", err);
-      notify("Cashfree checkout could not start. Opening WhatsApp payment support instead.");
-      fallback(options);
-      markPaymentStarted(options, { fallback: true, error: String(err && err.message || err) }, {});
-      return { ok: false, fallback: true, error: err };
+      return paymentUnavailable("Cashfree checkout could not start.", options, err);
     });
   };
 

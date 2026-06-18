@@ -145,8 +145,8 @@
           },
           {
             "@type": "Offer",
-            "name": "Lume Career Intelligence India",
-            "description": "India's first assessment-linked Career Intelligence experience with salary ranges, qualifications, entrance exams, Class 10 and Class 12 routes, skills, risks, AI impact and future scope.",
+            "name": "Lume Career Intelligence Preview",
+            "description": "Free preview of India's first assessment-linked Career Intelligence experience. Full search, comparison, route builder and detailed roadmap options unlock after a Lume Live assessment.",
             "price": "0",
             "priceCurrency": "INR",
             "availability": "https://schema.org/InStock",
@@ -590,25 +590,6 @@ section{padding:80px 20px;}
 .svc-price{font-size:.77rem;color:var(--mid);margin-bottom:12px;}
 .svc-price strong{color:var(--navy);font-size:.93rem;font-weight:800;}
 
-/* ── PREMIUM CLIENT EXPERIENCE ── */
-#client-experience{background:linear-gradient(135deg,#0D1B40 0%,#142C5A 48%,#0A6E6E 100%);padding:82px 20px;position:relative;overflow:hidden;color:#fff;}
-#client-experience::before{content:'';position:absolute;inset:-35% auto auto -15%;width:420px;height:420px;background:radial-gradient(circle,rgba(201,147,58,.18),transparent 68%);border-radius:50%;animation:softPulse 8s ease-in-out infinite;}
-#client-experience::after{content:'';position:absolute;right:-120px;bottom:-140px;width:360px;height:360px;background:rgba(255,255,255,.05);border-radius:50%;animation:morphBlob 14s ease-in-out infinite;}
-.experience-head{text-align:center;max-width:680px;margin:0 auto 36px;position:relative;z-index:1;}
-.experience-head .s-tag{background:rgba(255,255,255,.1);border-color:rgba(201,147,58,.35);color:var(--gold2);}
-.experience-head .s-title{color:#fff;}
-.experience-head .s-sub{color:rgba(255,255,255,.74);}
-.experience-grid{display:grid;grid-template-columns:1fr;gap:24px;max-width:760px;margin:0 auto;position:relative;z-index:1;}
-.booking-flow{width:100%;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.15);border-radius:22px;padding:28px;box-shadow:0 24px 60px rgba(0,0,0,.18);backdrop-filter:blur(12px);}
-.booking-flow h3{font-family:'Playfair Display',serif;font-size:1.22rem;margin-bottom:8px;color:#fff;}
-.booking-flow p{font-size:.84rem;line-height:1.7;color:rgba(255,255,255,.72);}
-.experience-note{display:inline-flex;align-items:center;gap:7px;background:rgba(201,147,58,.16);border:1px solid rgba(201,147,58,.35);color:#FFE2A3;border-radius:20px;padding:6px 12px;font-size:.68rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px;}
-.booking-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px;}
-.booking-step{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:flex-start;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:15px;padding:15px;}
-.booking-step b{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-size:.86rem;}
-.booking-step h4{font-size:.86rem;color:#fff;margin-bottom:3px;}
-.booking-step span{font-size:.76rem;color:rgba(255,255,255,.68);line-height:1.55;}
-.booking-flow .flow-foot{margin-top:18px;background:rgba(255,255,255,.08);border-left:3px solid var(--gold);border-radius:12px;padding:14px 15px;font-size:.78rem;color:rgba(255,255,255,.76);line-height:1.65;}
 .chip{position:absolute;top:16px;right:16px;font-size:.6rem;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.5px;text-transform:uppercase;animation:fadeScale .5s ease both;}
 .chip-live{background:#dcfce7;color:#166534;}
 .chip-soon{background:#fef9c3;color:#854d0e;}
@@ -1662,29 +1643,6 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
   </div>
 </section>
 
-<section id="client-experience">
-  <div class="s-inner">
-    <div class="experience-head">
-      <span class="s-tag">Client Experience</span>
-      <h2 class="s-title">Need Help Choosing the Right Support?</h2>
-      <p class="s-sub">Book a calm first conversation and receive a clear next-step plan after your slot is confirmed.</p>
-    </div>
-    <div class="experience-grid">
-      <div class="booking-flow anim stagger-2">
-        <span class="experience-note">After Booking</span>
-        <h3>What happens after booking?</h3>
-        <p>This process keeps the first conversation calm, structured, and professional once the booking payment is complete.</p>
-        <div class="booking-steps">
-          <div class="booking-step"><b>1</b><div><h4>Pay the introductory booking fee</h4><span>Use secure Cashfree checkout first. A compact UPI backup is available only if needed.</span></div></div>
-          <div class="booking-step"><b>2</b><div><h4>Confirm your slot on WhatsApp</h4><span>The WhatsApp message opens with your preferred date, time, and session mode.</span></div></div>
-          <div class="booking-step"><b>3</b><div><h4>Receive confirmation</h4><span>Your slot and joining link are confirmed manually, usually within 2 hours.</span></div></div>
-          <div class="booking-step"><b>4</b><div><h4>Get a clear next-step plan</h4><span>The first session focuses on career confusion, family concerns, and the most suitable service path.</span></div></div>
-        </div>
-        <div class="flow-foot">Assessment progress is saved only after sign-in, so accidental refreshes are safer for clients who create an account before starting.</div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- ══════════ SELF-ASSESSMENT SUITE (added) ══════════ -->
 <style>
@@ -1728,7 +1686,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 .sa-error{color:#dc2626;font-size:.8rem;font-weight:600;margin-top:10px;min-height:1em;}
 
 /* ── GATE: overview + payment ── */
-.sa-gate-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:26px;align-items:start;}
+.sa-gate-grid{display:grid;grid-template-columns:1fr;gap:22px;align-items:start;max-width:920px;margin:0 auto;}
 .sa-gate-grid h3{font-family:'Playfair Display',serif;color:var(--navy);font-size:1.42rem;margin-bottom:9px;}
 .sa-gate-grid p{color:var(--mid);font-size:.86rem;line-height:1.72;}
 .sa-list{display:grid;gap:11px;margin:18px 0;}
@@ -1758,7 +1716,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 .sa-save-actions .sa-btn{padding:9px 14px;min-height:39px;font-size:.76rem;}
 .sa-saved-badge{font-size:.75rem;font-weight:700;color:var(--teal);background:#fff;border:1px solid #D6EAE7;border-radius:20px;padding:9px 13px;}
 
-.sa-pay{background:#fff;border:1px solid #E2E9E8;border-radius:20px;box-shadow:0 14px 44px rgba(13,27,64,.07);padding:24px;position:sticky;top:calc(var(--nav-h) + 16px);}
+.sa-pay{background:#fff;border:1px solid #E2E9E8;border-radius:20px;box-shadow:0 14px 44px rgba(13,27,64,.07);padding:24px;position:relative;top:auto;}
 .sa-pay-label{font-size:.7rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);}
 .sa-pay-price{display:flex;align-items:baseline;gap:9px;margin:6px 0 4px;flex-wrap:wrap;}
 .sa-pay-price strong{font-family:'Playfair Display',serif;font-size:2.3rem;color:var(--navy);}
@@ -3323,11 +3281,12 @@ window.saStartCashfreePayment=function(){
   persistAssessmentProgress();
   toast("Cashfree checkout is opening. After payment, you will return here to continue.");
  };
- if(typeof window.lumeCashfreePay!=="function"){saSendPayment();return;}
+ if(typeof window.lumeCashfreePay!=="function"){toast("Cashfree checkout is still loading. Please wait a few seconds and tap Pay Securely with Cashfree again.");return;}
  window.lumeCashfreePay({
   sku:"student-full-report",
   amount:999,
   label:"Lume Live Full Clarity Report",
+  returnUrl:"https://lumelive.co.in/payment-return.html?order_id={order_id}&sku=student-full-report&continue=%2Fassessment.html%23self-assessments",
   customerName:S.name,
   customerPhone:S.phone,
   notes:{age:S.age,stage:S.stage,course:S.course,city:S.city,concern:S.concern},
@@ -5581,14 +5540,6 @@ if(document.readyState==='loading'){
   document.addEventListener('DOMContentLoaded',applyStaticWhatsAppMessages);
 }
 
-function moveClientExperienceToEnd(){
-  const section=document.getElementById('client-experience');
-  const footer=document.querySelector('footer');
-  if(section&&footer&&section.nextElementSibling!==footer){
-    footer.parentNode.insertBefore(section,footer);
-  }
-}
-moveClientExperienceToEnd();
 
 // Seven-day introductory offer countdown.
 const offerDeadlineIso='2026-06-04T23:59:59+05:30';
@@ -5831,7 +5782,7 @@ function startPdfCashfree(e){
     const link=document.querySelector('#modal-pdf a.m-wa-btn');
     if(link&&link.href)window.open(link.href,'_blank','noopener');
   };
-  if(typeof window.lumeCashfreePay!=="function"){fallback();return;}
+  if(typeof window.lumeCashfreePay!=="function"){showToast('Cashfree checkout is still loading. Please wait a few seconds and tap Pay Securely with Cashfree again.');return;}
   window.lumeCashfreePay({
     sku:"parents-handbook",
     amount:199,
@@ -5849,7 +5800,7 @@ function startSessionCashfree(e){
     const btn=document.getElementById('sessionWaBtn');
     if(btn&&btn.href)window.open(btn.href,'_blank','noopener');
   };
-  if(typeof window.lumeCashfreePay!=="function"){fallback();return;}
+  if(typeof window.lumeCashfreePay!=="function"){showToast('Cashfree checkout is still loading. Please wait a few seconds and tap Pay Securely with Cashfree again.');return;}
   window.lumeCashfreePay({
     sku:"intro-session",
     amount:49,

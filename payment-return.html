@@ -23,11 +23,11 @@ a{display:flex;align-items:center;justify-content:center;min-height:46px;border-
 <body>
   <main class="card">
     <img src="logo.png" alt="Lume Live">
-    <h1>Payment Step Complete</h1>
-    <p>Thank you. We are checking the payment status now. Once Cashfree confirms it, you can continue without sending a screenshot.</p>
+    <h1 id="returnTitle">Payment Step Complete</h1>
+    <p id="returnCopy">Thank you. We are checking the payment status now. Once Cashfree confirms it, you can continue without sending a screenshot.</p>
     <div class="status wait" id="statusBox">Checking Cashfree payment status...</div>
     <div class="actions">
-      <a class="primary" id="continueLink" href="assessment.html#self-assessments">Continue Assessment</a>
+      <a class="primary" id="continueLink" href="assessment.html#self-assessments">Start Assessment Now</a>
       <a class="ghost" href="https://wa.me/917015671280?text=Hi%20Lume%20Live!%20I%20have%20completed%20my%20Cashfree%20payment.%20Please%20confirm%20my%20access." target="_blank" rel="noopener">Confirm On WhatsApp</a>
       <a class="ghost" href="index.html">Back To Home</a>
     </div>
@@ -41,6 +41,19 @@ a{display:flex;align-items:center;justify-content:center;min-height:46px;border-
   var sku = params.get("sku") || "";
   var statusBox = document.getElementById("statusBox");
   var continueLink = document.getElementById("continueLink");
+  var returnTitle = document.getElementById("returnTitle");
+  var returnCopy = document.getElementById("returnCopy");
+  var skuTargets = {
+    "student-full-report": { href:"assessment.html#self-assessments", label:"Start Assessment Now", title:"Payment Verified" },
+    "lume-lens-working-profile": { href:"for-working-professionals.html#self-assessments", label:"Start Lume Lens Now", title:"Payment Verified" },
+    "career-intelligence-roadmap": { href:"career-intelligence.html?access=assessment#career-intelligence", label:"Open Career Intelligence", title:"Payment Verified" },
+    "parents-handbook": { href:"for-parents.html#parents-handbook", label:"Return To Parent Guide", title:"Payment Received" },
+    "intro-session": { href:"index.html#contact", label:"Return To Booking", title:"Payment Received" }
+  };
+  if(skuTargets[sku]){
+    continueLink.href = skuTargets[sku].href;
+    continueLink.textContent = skuTargets[sku].label;
+  }
   if(target && /^[\w\-./#?=&%]+$/.test(target)){
     continueLink.href = decodeURIComponent(target);
   }
@@ -80,6 +93,11 @@ a{display:flex;align-items:center;justify-content:center;min-height:46px;border-
       var status = String(data.order_status || "").toUpperCase();
       if(status === "PAID"){
         grantAccess({cf_order_id:data.cf_order_id||"",amount:data.order_amount||"",customer:data.customer||{}});
+        if(skuTargets[sku]){
+          returnTitle.textContent = skuTargets[sku].title;
+          continueLink.textContent = skuTargets[sku].label;
+        }
+        returnCopy.textContent = "Cashfree has confirmed your payment. Your access is ready on this device.";
         showStatus("","Payment verified. Your access is ready on this device.");
       }else{
         showStatus("wait","Cashfree status is "+(status || "pending")+". If money was debited, wait a minute and refresh this page.");

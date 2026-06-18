@@ -77,8 +77,12 @@ button,input,select{font:inherit}
 .ca-nav-links a{font-size:.78rem;font-weight:800;color:var(--muted);text-decoration:none;border:1px solid transparent;border-radius:999px;padding:9px 12px;transition:.2s}
 .ca-nav-links a:hover,.ca-nav-links a.active{color:var(--teal);background:#EEF7F5;border-color:#D7EAE6}
 .ca-nav-links .gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#102650;border-color:transparent;box-shadow:0 9px 22px rgba(201,147,58,.22)}
-.atlas-locked .ca-hero,.atlas-locked .ca-shell,.atlas-locked .ca-compare-bar{display:none}
+.atlas-locked .ca-hero,.atlas-locked .ca-compare-bar,.atlas-locked .ca-search-card,.atlas-locked .ca-side,.atlas-locked .gov-section,.atlas-locked .ca-sources{display:none}
 .atlas-locked .ca-nav-links a[href^="#"]{display:none}
+.atlas-locked .ca-main{display:block}
+.atlas-locked .ca-content-head{align-items:flex-start}
+.atlas-locked .career-actions{grid-template-columns:1fr}
+.atlas-locked .career-actions [data-compare]{display:none}
 .atlas-unlocked .ca-access-gate{display:none}
 .ca-access-gate{position:relative;overflow:hidden;background:
   linear-gradient(120deg,rgba(7,24,47,.95),rgba(13,27,64,.92),rgba(10,110,110,.9)),
@@ -261,23 +265,23 @@ button,input,select{font:inherit}
   <section class="ca-access-gate" id="access-gate">
     <div class="ca-gate-inner">
       <div class="ca-gate-copy">
-        <span class="ca-gate-kicker">Assessment access required</span>
-        <h1>Unlock <em>Career Intelligence</em> after your assessment.</h1>
-        <p>This career intelligence experience is designed to work with your Lume Live Career Snapshot or Full Clarity Report. Complete the assessment first, then explore careers, government-job pathways, salary ranges, qualifications and roadmap options that match the student's profile.</p>
+        <span class="ca-gate-kicker">Career Intelligence Preview</span>
+        <h1>Preview <em>India's first Career Intelligence</em> for families.</h1>
+        <p>Explore a small free preview of India-relevant career cards with salary bands and qualification teasers. Complete the Career Snapshot or Full Clarity Report to unlock the full search, comparison, route builder, government jobs explorer and counsellor-reviewed roadmap options.</p>
         <div class="ca-gate-actions">
           <a class="ca-btn gold" href="assessment.html#free-test">Take Career Snapshot First</a>
           <a class="ca-btn light" href="assessment.html#self-assessments">Start Full Clarity Report</a>
         </div>
       </div>
       <aside class="ca-gate-panel" aria-label="Career intelligence features">
-        <h2>What unlocks inside</h2>
+        <h2>What unlocks after assessment</h2>
         <div class="ca-gate-features">
           <div class="ca-gate-feature"><b>1</b><div><strong>97 India-relevant careers</strong><span>Search by stream, class, salary, work style, qualifications and future scope.</span></div></div>
           <div class="ca-gate-feature"><b>2</b><div><strong>51 government-job pathways</strong><span>Explore UPSC, SSC, railways, banking, defence, teaching, healthcare, PSU and state routes.</span></div></div>
           <div class="ca-gate-feature"><b>3</b><div><strong>Compare and build routes</strong><span>Compare 3 careers and build a route from Class 9, 10, 11 or 12 without pressure.</span></div></div>
           <div class="ca-gate-feature"><b>4</b><div><strong>Source-backed salary bands</strong><span>Ranges are shown with confidence levels, not promises.</span></div></div>
         </div>
-        <div class="ca-gate-note">Detailed counsellor-reviewed roadmap: Rs 1499 via secure Cashfree checkout. Career Intelligence opens after assessment so the advice starts from the student's real profile, not random browsing.</div>
+        <div class="ca-gate-note">Free preview below. Full Career Intelligence opens after assessment so the advice starts from the student's real profile, not random browsing. Detailed counsellor-reviewed roadmap: Rs 1499.</div>
       </aside>
     </div>
   </section>
@@ -433,14 +437,19 @@ function hasAtlasAccess(){
   const token=String(p.get("access")||p.get("unlock")||p.get("from")||"").toLowerCase();
   const fromAssessment=["assessment","snapshot","report","paid-report"].includes(token);
   let stored=false;
+  let paidAccess=false;
   try{stored=localStorage.getItem(ATLAS_ACCESS_KEY)==="1";}catch(e){}
+  try{
+    const paid=JSON.parse(localStorage.getItem("lumeCashfreeAccess")||"{}")||{};
+    paidAccess=["student-full-report","lume-lens-working-profile","career-intelligence-roadmap"].some(k=>paid[k]&&String(paid[k].status||"").toUpperCase()==="PAID");
+  }catch(e){}
   if(fromAssessment){
     try{
       localStorage.setItem(ATLAS_ACCESS_KEY,"1");
       localStorage.setItem("lumeCareerAtlasUnlockedAt",new Date().toISOString());
     }catch(e){}
   }
-  return fromAssessment||stored;
+  return fromAssessment||stored||paidAccess;
 }
 function initAtlasAccess(){
   const unlocked=hasAtlasAccess();
@@ -631,6 +640,7 @@ const els={grid:document.getElementById("careerGrid"),count:document.getElementB
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
 function parseEntry(s){const m=String(s).match(/Rs\s*([\d.]+)\s*k/i);return m?Math.round(Number(m[1])*1000):0;}
 function confidenceClass(c){return String(c).toLowerCase().replace(/\s+/g,"-");}
+function isAtlasUnlocked(){return document.body.classList.contains("atlas-unlocked");}
 function matches(c){
   const hay=[c.title,c.sector,c.work,c.qualifications,c.exams,c.skills.join(" "),c.streams.join(" "),c.paths.join(" "),c.setting,c.future].join(" ").toLowerCase();
   if(state.query && !hay.includes(state.query.toLowerCase()))return false;
@@ -654,12 +664,13 @@ function govMatches(j){
 }
 function card(c){
   const selected=state.compare.includes(c.id);
+  const locked=!isAtlasUnlocked();
   return `<article class="career-card" data-id="${esc(c.id)}">
     <div class="career-top"><div><h3 class="career-title">${esc(c.title)}</h3><div class="career-sector">${esc(c.sector)}</div></div><span class="confidence ${confidenceClass(c.salary.confidence)}">${esc(c.salary.confidence)}</span></div>
     <p class="career-work">${esc(c.work)}</p>
     <div class="salary-box"><small>Indicative India salary</small><b>Entry: ${esc(c.salary.entry)}<br>Mid: ${esc(c.salary.mid)}</b></div>
     <div class="chipline">${c.streams.slice(0,2).map(x=>`<span>${esc(x)}</span>`).join("")}${c.paths.slice(0,2).map(x=>`<span>${esc(x)}</span>`).join("")}</div>
-    <div class="career-actions"><button type="button" data-detail="${esc(c.id)}">Open Card</button><button type="button" class="compare-btn ${selected?"selected":""}" data-compare="${esc(c.id)}">${selected?"Selected":"Compare"}</button></div>
+    <div class="career-actions"><button type="button" data-detail="${esc(c.id)}">${locked?"Preview Card":"Open Card"}</button><button type="button" class="compare-btn ${selected?"selected":""}" data-compare="${esc(c.id)}">${selected?"Selected":"Compare"}</button></div>
   </article>`;
 }
 function govCard(j){
@@ -675,6 +686,7 @@ function govCard(j){
   </article>`;
 }
 function toggleCompare(id){
+  if(!isAtlasUnlocked()){location.href="assessment.html#free-test";return;}
   if(state.compare.includes(id))state.compare=state.compare.filter(x=>x!==id);
   else if(state.compare.length<3)state.compare.push(id);
   render();
@@ -706,10 +718,12 @@ function bindGovActions(){
   });
 }
 function render(){
+  const unlocked=isAtlasUnlocked();
   const list=CAREERS.filter(matches);
-  els.grid.innerHTML=list.map(card).join("");
+  const visible=unlocked?list:list.slice(0,6);
+  els.grid.innerHTML=visible.map(card).join("");
   els.empty.style.display=list.length?"none":"block";
-  els.count.textContent=`Showing ${list.length} of ${CAREERS.length} careers`;
+  els.count.textContent=unlocked?`Showing ${list.length} of ${CAREERS.length} careers`:`Previewing ${visible.length} sample careers. Take the Career Snapshot to unlock all ${CAREERS.length} careers, comparison and routes.`;
   document.getElementById("statCount").textContent=CAREERS.length;
   bindCareerActions();
   renderCompare();
@@ -736,6 +750,17 @@ function renderCompare(){
 function openDetail(id){
   const c=CAREERS.find(x=>x.id===id); if(!c)return;
   document.getElementById("detailTitle").textContent=c.title;
+  if(!isAtlasUnlocked()){
+    document.getElementById("detailBody").innerHTML=`<div class="detail-grid"><div>
+      <div class="detail-section"><h4>What The Work Is</h4><p>${esc(c.work)}</p></div>
+      <div class="detail-section"><h4>Salary Preview</h4><p><strong>Entry:</strong> ${esc(c.salary.entry)}<br><strong>Mid:</strong> ${esc(c.salary.mid)}<br><strong>Confidence:</strong> ${esc(c.salary.confidence)}. Salary ranges are indicative, not promises.</p></div>
+      <div class="detail-section"><h4>Qualification Preview</h4><p>${esc(c.qualifications)}</p></div>
+    </div><div>
+      <div class="detail-section"><h4>Unlock Full Career Intelligence</h4><p>Take the Career Snapshot or Full Clarity Report to unlock full search, compare 3 careers, build class-wise routes, explore government jobs, understand risks, AI impact, parent notes and detailed roadmap options.</p><div style="display:grid;gap:8px;margin-top:12px;"><a class="ca-btn gold" href="assessment.html#free-test">Take Career Snapshot First</a><a class="ca-btn ghost" href="assessment.html#self-assessments">Start Full Clarity Report</a></div></div>
+    </div></div>`;
+    openModal("detailModal");
+    return;
+  }
   document.getElementById("detailBody").innerHTML=`<div class="detail-grid"><div>
     <div class="detail-section"><h4>What The Work Is</h4><p>${esc(c.work)}</p></div>
     <div class="detail-section"><h4>Salary Expectations</h4><p><strong>Entry:</strong> ${esc(c.salary.entry)}<br><strong>Mid:</strong> ${esc(c.salary.mid)}<br><strong>Confidence:</strong> ${esc(c.salary.confidence)}. Ranges vary by city, employer, portfolio, marks, internships, language ability and family mobility.</p></div>
@@ -851,20 +876,20 @@ function startCareerRoadmapPayment(e, careerId){
     const text=`Hi Lume Live!\nI have unlocked Career Intelligence through the assessment and want the Rs 1499 detailed roadmap${item ? " for "+item.title : ""}.\nPlease help me complete payment and start the roadmap.`;
     window.open("https://wa.me/917015671280?text="+encodeURIComponent(text),"_blank","noopener");
   };
-  if(typeof window.lumeCashfreePay!=="function"){fallback();return;}
+  if(typeof window.lumeCashfreePay!=="function"){alert("Cashfree checkout is still loading. Please wait a few seconds and tap Pay Securely With Cashfree again.");return;}
   window.lumeCashfreePay({
     sku:"career-intelligence-roadmap",
     amount:1499,
     label:label,
+    returnUrl:"https://lumelive.co.in/payment-return.html?order_id={order_id}&sku=career-intelligence-roadmap&continue=%2Fcareer-intelligence.html%3Faccess%3Dassessment%23career-intelligence",
     notes:{career:item?item.title:String(careerId||"general")},
     onFallback:fallback
   });
 }
 window.addEventListener("hashchange",()=>[40,220,520].forEach(t=>setTimeout(scrollToHashTarget,t)));
 const atlasUnlocked=initAtlasAccess();
-if(atlasUnlocked){
-  initFromUrl(); renderSources(); renderGovLinks(); render(); renderGov(); [80,320,760].forEach(t=>setTimeout(scrollToHashTarget,t));
-}
+initFromUrl(); renderSources(); renderGovLinks(); render(); renderGov();
+if(atlasUnlocked){[80,320,760].forEach(t=>setTimeout(scrollToHashTarget,t));}
 </script>
 <footer style="padding:28px 20px;text-align:center;background:#08142F;color:rgba(255,255,255,.72);font:500 .82rem Montserrat,Arial,sans-serif;line-height:1.8">
   Lume Live · Career Intelligence across India · +91 7015671280 · hello@lumelive.co.in<br>
