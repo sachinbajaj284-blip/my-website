@@ -334,7 +334,8 @@ body{
   background:linear-gradient(135deg,#1a3060,#2a4a8a);
   border:3px solid var(--gold);
   display:flex;align-items:center;justify-content:center;
-  font-size:2rem;color:var(--gold-lt);
+  font-family:'Playfair Display',Georgia,serif;
+  font-size:1.9rem;font-weight:800;letter-spacing:.02em;color:var(--gold-lt);
   flex-shrink:0;
 }
 .lrt-counsellor-text{}
@@ -781,9 +782,7 @@ window.LUME_REPORT_DATA = {
     return '<div class="lrt-counsellor">'+
       '<div class="lrt-counsellor-inner">'+
         '<div class="lrt-counsellor-photo-wrap">'+
-          '<img class="lrt-counsellor-photo" src="sachin.jpeg" alt="Sachin Bajaj, Counselling Psychologist" '+
-            'onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'+
-          '<div class="lrt-counsellor-photo-fallback" style="display:none;">🧑‍💼</div>'+
+          '<div class="lrt-counsellor-photo-fallback">SB</div>'+
         '</div>'+
         '<div class="lrt-counsellor-text">'+
           '<span class="lrt-counsellor-eyebrow">A Note from Your Counsellor</span>'+
