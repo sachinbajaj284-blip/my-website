@@ -3221,19 +3221,8 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
               <button class="sa-btn primary" type="button" onclick="saStartCashfreePayment()">Pay Securely with Cashfree</button>
               <p class="sa-pay-note">Checkout opens securely and returns you here after payment.</p>
             </div>
-            <details class="sa-upi-fallback">
-              <summary>WhatsApp Pay backup</summary>
-              <div class="sa-upi-body">
-                <div class="sa-qr"><img src="lume-upi-qr.png" alt="UPI QR code — pay to Sachin Bajaj (UPI ID sachinbajaj284@okaxis)"></div>
-                <div class="sa-upi" onclick="copyUPI()">sachinbajaj284@okaxis</div>
-                <a class="sa-dl-qr" href="lume-upi-qr.png" download="Lume-Live-UPI-QR.png">Download QR Code</a>
-                <button class="sa-btn gold" type="button" onclick="saSendPayment()">Open WhatsApp Pay Support</button>
-              </div>
-            </details>
-            <label class="sa-check sa-check-highlight"><input type="checkbox" id="saPaid">
-              <span>Manual WhatsApp Pay backup is complete for this profile.</span></label>
             <button class="sa-btn primary" type="button" onclick="saBegin()">Begin Lume Lens &rarr;</button>
-            <p class="sa-pay-note">Cashfree payments verify automatically. Use WhatsApp Pay backup only if checkout is unavailable. <a class="sa-help-link" href="https://wa.me/917015671280?text=Hi%20Lume%20Live!%20I%20need%20help%20with%20the%20assessment%20payment%20or%20report." target="_blank" rel="noopener">Need help? Message Lume Live.</a></p>
+            <p class="sa-pay-note">Cashfree payments verify automatically and return you here to begin. <a class="sa-help-link" href="https://wa.me/917015671280?text=Hi%20Lume%20Live!%20I%20need%20help%20with%20the%20assessment%20payment%20or%20report." target="_blank" rel="noopener">Need help? Message Lume Live.</a></p>
           </aside>
         </div>
       </div>
@@ -3647,7 +3636,6 @@ window.saStartCashfreePayment=function(){
   customerName:S.name,
   customerPhone:S.phone,
   notes:{age:S.age,currentRole:S.course,industry:S.stage,city:S.city},
-  onFallback:saSendPayment,
   onStarted:done
  });
 };
@@ -3657,9 +3645,8 @@ window.saBegin=function(){
  if(!validateGate())return;
  var verified=applyVerifiedCashfreeAccess();
  if(!verified&&(!S.handoff||S.identity!==profileIdentity())){
-  err.textContent="Please complete the payment with Cashfree or WhatsApp Pay backup before starting.";return;
+  err.textContent="Please complete the payment with Cashfree before starting.";return;
  }
- if(!verified&&!el("saPaid").checked){err.textContent="Please tick the manual backup confirmation only after using WhatsApp Pay support.";return;}
  S.paid=true;persistAssessmentProgress();
  show("saTest");renderPart();el("saTest").scrollIntoView({behavior:"smooth",block:"start"});
  toast("You are in. One honest answer at a time.");
@@ -5174,26 +5161,6 @@ if(new URLSearchParams(window.location.search).has("sample-report")){window.saSh
         </div>
       </div>
       <button class="m-wa-btn cashfree-pay-btn" type="button" onclick="startSessionCashfree(event)">Pay Securely with Cashfree</button>
-      <details class="m-payment-fallback">
-        <summary>WhatsApp Pay backup</summary>
-        <div class="m-payment-fallback-body">
-          <div class="upi-sec">
-            <div class="ttl">Pay ₹49 through WhatsApp Pay backup</div>
-            <div class="upi-qr"><img src="lume-upi-qr.png" alt="UPI QR Code - Sachin Bajaj"></div>
-            <div class="upi-id" onclick="copyUPI()">sachinbajaj284@okaxis</div>
-            <div class="upi-hint">Tap to copy · PhonePe, GPay, Paytm · <strong style="color:var(--green);">₹49</strong> <span style="text-decoration:line-through;opacity:.5;">₹499</span></div>
-            <a href="#" class="upi-download" onclick="downloadUPIQR();return false;">Download QR Code</a>
-          </div>
-          <ol class="m-steps">
-            <li>Use this only if Cashfree checkout is unavailable.</li>
-            <li>Send WhatsApp confirmation with your chosen date & time.</li>
-          </ol>
-          <a id="sessionWaBtn" href="#" target="_blank" class="m-wa-btn">
-        <svg viewBox="0 0 24 24" width="17" height="17" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.556 4.121 1.528 5.856L.057 23.215a.75.75 0 00.922.921l5.344-1.47A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.663-.523-5.183-1.432l-.37-.219-3.171.871.884-3.175-.237-.386A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-            WhatsApp Pay Support
-          </a>
-        </div>
-      </details>
       <p class="sess-closing">You do not have to solve career confusion alone — we will turn the concern into a clear next step. 💛</p>
     </div>
   </div>
@@ -5218,22 +5185,6 @@ if(new URLSearchParams(window.location.search).has("sample-report")){window.saSh
         </div>
       </div>
       <button class="m-wa-btn cashfree-pay-btn" type="button" onclick="startPdfCashfree(event)">Pay Securely with Cashfree</button>
-      <details class="m-payment-fallback">
-        <summary>WhatsApp Pay backup</summary>
-        <div class="m-payment-fallback-body">
-          <div class="upi-sec">
-            <div class="ttl">Pay ₹199 through WhatsApp Pay backup</div>
-            <div class="upi-qr"><img src="lume-upi-qr.png" alt="UPI QR Code - Sachin Bajaj"></div>
-            <div class="upi-id" onclick="copyUPI()">sachinbajaj284@okaxis</div>
-            <div class="upi-hint">Tap to copy · PhonePe, GPay, Paytm · ₹199</div>
-          </div>
-          <ol class="m-steps">
-            <li>Use this only if Cashfree checkout is unavailable.</li>
-            <li>Send WhatsApp confirmation with your email for PDF delivery.</li>
-          </ol>
-          <a href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20have%20paid%20Rs.199%20for%20the%20Parents%20Career%20Handbook%20PDF.%20Please%20send%20it%20to%20me." target="_blank" class="m-wa-btn">WhatsApp Pay PDF Support</a>
-        </div>
-      </details>
     </div>
   </div>
 </div>
@@ -5741,57 +5692,29 @@ function submitNotify(){
 function openPDF(){openModal('pdf');}
 function startPdfCashfree(e){
   if(e)e.preventDefault();
-  const fallback=function(){
-    const link=document.querySelector('#modal-pdf a.m-wa-btn');
-    if(link&&link.href)window.open(link.href,'_blank','noopener');
-  };
   if(typeof window.lumeCashfreePay!=="function"){showToast('Cashfree checkout is still loading. Please wait a few seconds and tap Pay Securely with Cashfree again.');return;}
   window.lumeCashfreePay({
     sku:"parents-handbook",
     amount:199,
-    label:"Parents Career Handbook",
-    onFallback:fallback
+    label:"Parents Career Handbook"
   });
 }
 
 function startSessionCashfree(e){
   if(e)e.preventDefault();
-  updateSessionWA();
   const d=document.getElementById('sessionDate').value;
   const t=document.getElementById('sessionTime').value;
-  const fallback=function(){
-    const btn=document.getElementById('sessionWaBtn');
-    if(btn&&btn.href)window.open(btn.href,'_blank','noopener');
-  };
   if(typeof window.lumeCashfreePay!=="function"){showToast('Cashfree checkout is still loading. Please wait a few seconds and tap Pay Securely with Cashfree again.');return;}
   window.lumeCashfreePay({
     sku:"intro-session",
     amount:49,
     label:"Introductory Guidance Session",
-    notes:{preferredDate:d,preferredTime:t,sessionMode:sessionMode},
-    onFallback:fallback
+    notes:{preferredDate:d,preferredTime:t,sessionMode:sessionMode}
   });
 }
 
-// ── SESSION WA LINK (with date) ──
-function updateSessionWA(){
-  const d=document.getElementById('sessionDate').value;
-  const t=document.getElementById('sessionTime').value;
-  const msg=waMessage([
-    '👋 Hi Sachin!',
-    '',
-    '🎯 I have made the ₹49 introductory payment for my first wellness session.',
-    '',
-    '🧾 Booking Details',
-    '• Preferred date: '+(d||'Not selected yet'),
-    '• Preferred time: '+(t?formatTime(t):'Not selected yet'),
-    '• Session mode: '+sessionMode,
-    '',
-    '📎 I will attach my payment screenshot here.',
-    'Please confirm my booking.'
-  ]);
-  document.getElementById('sessionWaBtn').href=waLink(msg);
-}
+// WhatsApp Pay backup removed — kept as a no-op so date/time/mode handlers stay safe.
+function updateSessionWA(){}
 function formatTime(t){
   if(!t)return'';
   const[h,m]=t.split(':');

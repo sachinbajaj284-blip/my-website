@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Full Clarity Report | Lume Live</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   LUME LIVE — FULL CLARITY REPORT TEMPLATE
+   Renders from window.LUME_REPORT_DATA (see bottom of file)
+   Print-ready A4 | RIASEC colour-coded | Warm, strengths-based
+═══════════════════════════════════════════════════════════════ */
+
+/* ─── Tokens ─── */
+:root{
+  --navy:#0D1B40;
+  --navy-mid:#13306b;
+  --gold:#C9933A;
+  --gold-lt:#E8B95A;
+  --cream:#FFFEF9;
+  --ink:#1A2C3D;
+  --ink-soft:#4A5568;
+  --ink-mute:#7A8899;
+  --line:#E2E8F0;
+  --card:#F8FAFC;
+
+  /* RIASEC colours */
+  --r-color:#2563EB; --r-bg:#EEF4FF;
+  --i-color:#16A34A; --i-bg:#F0FDF4;
+  --a-color:#EA580C; --a-bg:#FFF7ED;
+  --s-color:#DC2626; --s-bg:#FEF2F2;
+  --e-color:#7C3AED; --e-bg:#F5F3FF;
+  --c-color:#0D9488; --c-bg:#F0FDFA;
+
+  /* VARK colours */
+  --v-color:#0284C7; --v-bg:#E0F2FE;
+  --ak-color:#D97706; --ak-bg:#FEF3C7;
+  --rr-color:#7C3AED; --rr-bg:#F5F3FF;
+  --k-color:#059669; --k-bg:#D1FAE5;
+
+  /* Anchor */
+  --anchor-color:#B45309; --anchor-bg:#FEF3C7;
+}
+
+/* ─── Reset ─── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:15px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+body{
+  font-family:'Inter',system-ui,Arial,sans-serif;
+  background:#E8ECF3;
+  color:var(--ink);
+  line-height:1.6;
+  min-height:100vh;
+}
+
+/* ─── Screen wrapper ─── */
+#report-root{
+  max-width:860px;
+  margin:32px auto;
+  background:var(--cream);
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 24px 80px rgba(0,0,0,.18);
+}
+
+/* ─── Helpers ─── */
+.lrt-tag{
+  display:inline-block;
+  font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:3px 9px;border-radius:99px;
+  background:var(--card);color:var(--ink-mute);border:1px solid var(--line);
+}
+.lrt-chip{
+  display:inline-block;
+  font-size:.76rem;font-weight:600;
+  padding:4px 11px;border-radius:99px;
+  background:var(--card);color:var(--ink-soft);border:1px solid var(--line);
+  margin:3px 3px 3px 0;
+}
+
+/* ═══════════════════════════════════════════════
+   COVER / HEADER
+═══════════════════════════════════════════════ */
+.lrt-cover{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 60%,#1a4a8a 100%);
+  padding:48px 52px 44px;
+  position:relative;
+  overflow:hidden;
+}
+.lrt-cover::before{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 60% at 80% 20%,rgba(232,185,90,.15),transparent 55%),
+             radial-gradient(ellipse 50% 80% at 10% 90%,rgba(255,255,255,.05),transparent 50%);
+}
+.lrt-cover-top{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  position:relative;z-index:1;margin-bottom:36px;
+}
+.lrt-brand{display:flex;align-items:center;gap:11px;}
+.lrt-brand img{width:48px;height:48px;object-fit:contain;border-radius:10px;background:rgba(255,255,255,.12);padding:6px;}
+.lrt-brand-text b{display:block;color:#fff;font-size:1rem;font-weight:800;letter-spacing:-.01em;}
+.lrt-brand-text span{display:block;color:rgba(255,255,255,.6);font-size:.72rem;margin-top:1px;}
+.lrt-cover-meta{text-align:right;}
+.lrt-cover-meta span{display:block;color:rgba(255,255,255,.55);font-size:.72rem;line-height:1.6;}
+.lrt-cover-meta b{display:block;color:rgba(255,255,255,.85);font-size:.76rem;font-weight:700;margin-bottom:2px;}
+
+.lrt-cover-hero{position:relative;z-index:1;}
+.lrt-cover-eyebrow{
+  display:inline-block;
+  color:var(--gold-lt);font-size:.76rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  margin-bottom:10px;
+}
+.lrt-cover-name{
+  font-family:'Playfair Display',Georgia,serif;
+  font-size:clamp(2rem,5vw,3rem);font-weight:800;line-height:1.15;
+  color:#fff;margin-bottom:14px;
+}
+.lrt-cover-name em{color:var(--gold-lt);font-style:normal;}
+.lrt-cover-tagline{
+  color:rgba(255,255,255,.7);font-size:.95rem;line-height:1.6;max-width:480px;
+  margin-bottom:24px;
+}
+.lrt-cover-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.lrt-cover-chips span{
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  color:rgba(255,255,255,.85);font-size:.76rem;font-weight:600;
+  padding:5px 13px;border-radius:99px;
+}
+
+/* Code badges */
+.lrt-code-badges{
+  display:flex;gap:10px;margin-top:28px;position:relative;z-index:1;flex-wrap:wrap;
+}
+.lrt-code-badge{
+  display:flex;align-items:center;gap:7px;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  border-radius:12px;padding:10px 14px;
+}
+.lrt-code-badge-letter{
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:1rem;color:#fff;flex-shrink:0;
+}
+.lrt-code-badge-text b{display:block;color:#fff;font-size:.84rem;font-weight:700;line-height:1.2;}
+.lrt-code-badge-text span{display:block;color:rgba(255,255,255,.55);font-size:.68rem;}
+
+/* ═══════════════════════════════════════════════
+   WARM GREETING
+═══════════════════════════════════════════════ */
+.lrt-greeting{
+  background:linear-gradient(135deg,#FFF9F0,#FFFEF9);
+  border-bottom:1px solid var(--line);
+  padding:36px 52px;
+}
+.lrt-greeting p{
+  font-size:1.04rem;line-height:1.75;color:var(--ink-soft);max-width:620px;
+}
+.lrt-greeting p strong{color:var(--navy);font-weight:700;}
+.lrt-greeting-highlight{
+  margin-top:20px;padding:18px 22px;
+  background:#fff;border-left:4px solid var(--gold);
+  border-radius:0 12px 12px 0;
+  font-size:.94rem;line-height:1.7;color:var(--ink);
+  box-shadow:0 2px 12px rgba(0,0,0,.05);
+}
+
+/* ═══════════════════════════════════════════════
+   INSIGHT MAP (4-card summary)
+═══════════════════════════════════════════════ */
+.lrt-insight-map{padding:40px 52px;border-bottom:1px solid var(--line);}
+.lrt-section-label{
+  font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:6px;
+}
+.lrt-section-title{
+  font-family:'Playfair Display',Georgia,serif;
+  font-size:1.5rem;font-weight:700;color:var(--navy);margin-bottom:4px;
+}
+.lrt-section-sub{font-size:.88rem;color:var(--ink-mute);margin-bottom:24px;}
+.lrt-map-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:14px;
+}
+.lrt-map-card{
+  background:#fff;border:1px solid var(--line);border-radius:16px;
+  padding:18px;position:relative;overflow:hidden;
+}
+.lrt-map-card::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:4px;
+  background:var(--card-accent,var(--gold));border-radius:4px 4px 0 0;
+}
+.lrt-map-card small{font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-mute);display:block;margin-bottom:6px;}
+.lrt-map-card b{display:block;font-size:1.14rem;font-weight:800;color:var(--navy);line-height:1.2;margin-bottom:4px;}
+.lrt-map-card span{display:block;font-size:.76rem;color:var(--ink-mute);line-height:1.4;}
+.lrt-map-meter{height:5px;background:var(--line);border-radius:99px;margin-top:12px;overflow:hidden;}
+.lrt-map-meter-fill{height:100%;border-radius:99px;background:var(--card-accent,var(--gold));transition:width 1s ease;}
+
+/* ═══════════════════════════════════════════════
+   SECTION WRAPPER
+═══════════════════════════════════════════════ */
+.lrt-section{
+  padding:40px 52px;border-bottom:1px solid var(--line);
+  break-inside:avoid;page-break-inside:avoid;
+}
+.lrt-section:last-child{border-bottom:none;}
+.lrt-section-hd{
+  display:flex;align-items:flex-start;gap:14px;margin-bottom:28px;
+  padding-bottom:20px;border-bottom:1px solid var(--line);
+}
+.lrt-section-num{
+  width:40px;height:40px;border-radius:12px;flex-shrink:0;
+  background:var(--navy);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.84rem;font-weight:800;letter-spacing:-.01em;
+  margin-top:2px;
+}
+.lrt-section-hd-text{}
+.lrt-section-hd h2{font-size:1.28rem;font-weight:800;color:var(--navy);line-height:1.25;}
+.lrt-section-hd p{font-size:.82rem;color:var(--ink-mute);margin-top:3px;}
+
+/* ─── Score bar ─── */
+.lrt-score-bar{
+  display:flex;align-items:center;gap:10px;
+  background:var(--score-bg,var(--card));
+  border:1px solid var(--line);border-radius:12px;
+  padding:12px 16px;margin-bottom:8px;
+}
+.lrt-score-badge{
+  width:46px;height:46px;border-radius:10px;flex-shrink:0;
+  background:var(--score-color,var(--navy));
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;font-weight:800;color:#fff;letter-spacing:-.02em;
+}
+.lrt-score-info{flex:1;min-width:0;}
+.lrt-score-info b{display:block;font-size:.94rem;font-weight:700;color:var(--navy);line-height:1.25;}
+.lrt-score-info span{display:block;font-size:.75rem;color:var(--ink-mute);margin-top:1px;}
+.lrt-score-track{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:8px;}
+.lrt-score-fill{height:100%;border-radius:99px;background:var(--score-color,var(--navy));transition:width 1.1s cubic-bezier(.22,1,.36,1);}
+.lrt-score-pct{font-size:.8rem;font-weight:700;color:var(--score-color,var(--navy));flex-shrink:0;min-width:38px;text-align:right;}
+
+/* ─── Row layout inside section ─── */
+.lrt-theme-card{
+  background:#fff;border:1px solid var(--line);border-radius:18px;
+  overflow:hidden;margin-bottom:20px;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+.lrt-theme-card:last-child{margin-bottom:0;}
+.lrt-theme-header{
+  display:flex;align-items:center;gap:14px;
+  padding:18px 22px 16px;
+  background:var(--theme-bg,var(--card));
+  border-bottom:1px solid var(--line);
+}
+.lrt-theme-letter{
+  width:48px;height:48px;flex-shrink:0;border-radius:12px;
+  background:var(--theme-color,var(--navy));
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;font-weight:800;color:#fff;
+}
+.lrt-theme-title{flex:1;}
+.lrt-theme-title b{display:block;font-size:1rem;font-weight:800;color:var(--navy);}
+.lrt-theme-title span{display:block;font-size:.75rem;color:var(--ink-mute);margin-top:2px;}
+.lrt-theme-score-wrap{text-align:right;flex-shrink:0;}
+.lrt-theme-score-wrap b{display:block;font-size:1.6rem;font-weight:800;color:var(--theme-color,var(--navy));line-height:1;}
+.lrt-theme-score-wrap span{display:block;font-size:.68rem;color:var(--ink-mute);margin-top:1px;}
+.lrt-theme-bar{height:6px;background:var(--line);}
+.lrt-theme-bar-fill{height:100%;background:var(--theme-color,var(--navy));transition:width 1.1s ease;}
+
+.lrt-theme-body{padding:20px 22px;}
+.lrt-quadrant{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.lrt-quad{background:var(--card);border-radius:12px;padding:14px 16px;}
+.lrt-quad-icon{font-size:1.1rem;margin-bottom:6px;display:block;}
+.lrt-quad-label{font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--theme-color,var(--navy));margin-bottom:5px;display:block;}
+.lrt-quad p{font-size:.82rem;line-height:1.6;color:var(--ink-soft);margin:0;}
+
+/* ─── Next Step callout ─── */
+.lrt-next-step{
+  display:flex;gap:12px;align-items:flex-start;
+  background:linear-gradient(135deg,#FFF8EE,#FFFEF9);
+  border:1.5px solid var(--gold-lt);border-radius:12px;
+  padding:14px 16px;margin-top:14px;
+}
+.lrt-next-step-icon{font-size:1.3rem;flex-shrink:0;margin-top:1px;}
+.lrt-next-step-body b{display:block;font-size:.8rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+.lrt-next-step-body p{font-size:.84rem;line-height:1.6;color:var(--ink);margin:0;}
+
+/* ─── Compact rank list ─── */
+.lrt-rank-list{display:flex;flex-direction:column;gap:10px;}
+.lrt-rank-row{
+  display:grid;grid-template-columns:28px 1fr auto;
+  align-items:center;gap:12px;
+  background:#fff;border:1px solid var(--line);
+  border-radius:12px;padding:12px 16px;
+}
+.lrt-rank-row.top{border-color:var(--gold);background:linear-gradient(135deg,#FFFBF2,#fff);}
+.lrt-rank-num{
+  width:26px;height:26px;border-radius:6px;
+  background:var(--line);color:var(--ink-mute);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.78rem;font-weight:700;flex-shrink:0;
+}
+.lrt-rank-row.top .lrt-rank-num{background:var(--gold);color:#fff;}
+.lrt-rank-info b{display:block;font-size:.9rem;font-weight:700;color:var(--navy);}
+.lrt-rank-info span{display:block;font-size:.75rem;color:var(--ink-mute);margin-top:1px;}
+.lrt-rank-score{font-size:1.1rem;font-weight:800;color:var(--ink-soft);}
+.lrt-rank-row.top .lrt-rank-score{color:var(--gold);}
+.lrt-rank-track{height:4px;background:var(--line);border-radius:99px;margin-top:8px;overflow:hidden;grid-column:2/-1;}
+.lrt-rank-fill{height:100%;border-radius:99px;background:var(--line);transition:width 1s ease;}
+.lrt-rank-row.top .lrt-rank-fill{background:var(--gold);}
+
+/* ═══════════════════════════════════════════════
+   COUNSELLOR'S NOTE
+═══════════════════════════════════════════════ */
+.lrt-counsellor{
+  padding:40px 52px;
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);
+  break-inside:avoid;page-break-inside:avoid;
+}
+.lrt-counsellor-inner{
+  display:flex;gap:28px;align-items:flex-start;
+}
+.lrt-counsellor-photo-wrap{flex-shrink:0;}
+.lrt-counsellor-photo{
+  width:88px;height:88px;border-radius:50%;object-fit:cover;
+  border:3px solid var(--gold);
+  background:#1a3060;
+  display:block;
+}
+.lrt-counsellor-photo-fallback{
+  width:88px;height:88px;border-radius:50%;
+  background:linear-gradient(135deg,#1a3060,#2a4a8a);
+  border:3px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',Georgia,serif;
+  font-size:1.9rem;font-weight:800;letter-spacing:.02em;color:var(--gold-lt);
+  flex-shrink:0;
+}
+.lrt-counsellor-text{}
+.lrt-counsellor-eyebrow{
+  font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gold-lt);margin-bottom:8px;display:block;
+}
+.lrt-counsellor-text p{
+  font-size:.92rem;line-height:1.75;color:rgba(255,255,255,.85);margin-bottom:14px;
+}
+.lrt-counsellor-text p:last-child{margin-bottom:0;}
+.lrt-counsellor-sig{
+  margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.15);
+}
+.lrt-counsellor-sig b{display:block;color:#fff;font-size:.88rem;font-weight:700;}
+.lrt-counsellor-sig span{display:block;color:rgba(255,255,255,.55);font-size:.76rem;margin-top:2px;}
+
+/* ═══════════════════════════════════════════════
+   DISCLAIMER
+═══════════════════════════════════════════════ */
+.lrt-disclaimer{
+  padding:24px 52px;
+  background:#F1F5F9;
+  border-top:1px solid var(--line);
+}
+.lrt-disclaimer-inner{
+  display:flex;gap:12px;align-items:flex-start;
+}
+.lrt-disclaimer-icon{font-size:1.1rem;flex-shrink:0;margin-top:2px;}
+.lrt-disclaimer p{font-size:.76rem;line-height:1.65;color:var(--ink-mute);}
+.lrt-disclaimer p strong{color:var(--ink-soft);}
+
+/* ═══════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════ */
+.lrt-footer{
+  padding:24px 52px;
+  background:var(--navy);
+  display:flex;align-items:center;justify-content:space-between;
+  gap:20px;flex-wrap:wrap;
+}
+.lrt-footer-brand{display:flex;align-items:center;gap:10px;}
+.lrt-footer-brand img{width:34px;height:34px;object-fit:contain;opacity:.9;}
+.lrt-footer-brand b{color:#fff;font-size:.88rem;}
+.lrt-footer-links{display:flex;gap:18px;flex-wrap:wrap;}
+.lrt-footer-links a{color:rgba(255,255,255,.55);font-size:.74rem;text-decoration:none;}
+.lrt-footer-links a:hover{color:#fff;}
+
+/* ═══════════════════════════════════════════════
+   PRINT ACTIONS (screen only)
+═══════════════════════════════════════════════ */
+.lrt-actions{
+  padding:28px 52px;
+  background:var(--cream);
+  border-top:1px solid var(--line);
+  display:flex;gap:12px;flex-wrap:wrap;align-items:center;
+}
+.lrt-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:12px 22px;border-radius:99px;font-size:.88rem;font-weight:700;
+  text-decoration:none;cursor:pointer;border:none;transition:transform .12s,box-shadow .12s;
+}
+.lrt-btn:active{transform:scale(.97);}
+.lrt-btn.gold{background:linear-gradient(135deg,var(--gold),var(--gold-lt));color:var(--navy);}
+.lrt-btn.navy{background:var(--navy);color:#fff;}
+.lrt-btn.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--line);}
+.lrt-btn.wa{background:#25D366;color:#fff;}
+
+/* ═══════════════════════════════════════════════
+   PRINT STYLES
+═══════════════════════════════════════════════ */
+@media print{
+  body{background:#fff;}
+  #report-root{max-width:none;margin:0;border-radius:0;box-shadow:none;}
+  .lrt-actions{display:none;}
+  .lrt-cover,.lrt-counsellor,.lrt-footer{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .lrt-section,.lrt-theme-card,.lrt-counsellor,.lrt-disclaimer{
+    break-inside:avoid;page-break-inside:avoid;
+  }
+  @page{size:A4;margin:0;}
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════ */
+@media(max-width:640px){
+  .lrt-cover,.lrt-greeting,.lrt-insight-map,.lrt-section,
+  .lrt-counsellor,.lrt-disclaimer,.lrt-footer,.lrt-actions{
+    padding-left:22px;padding-right:22px;
+  }
+  .lrt-cover{padding-top:32px;padding-bottom:32px;}
+  .lrt-quadrant{grid-template-columns:1fr;}
+  .lrt-counsellor-inner{flex-direction:column;align-items:center;text-align:center;}
+  .lrt-map-grid{grid-template-columns:1fr 1fr;}
+  .lrt-cover-name{font-size:1.9rem;}
+  .lrt-footer{flex-direction:column;gap:12px;text-align:center;}
+  .lrt-footer-links{justify-content:center;}
+}
+</style>
+</head>
+<body>
+
+<div id="report-root">
+  <!-- JS fills this -->
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SAMPLE DATA — replace with real scores from assessment.html
+     In production, inject window.LUME_REPORT_DATA before this script
+═══════════════════════════════════════════════ -->
+<script>
+window.LUME_REPORT_DATA = {
+  // Student info
+  name: "Priya Sharma",
+  age: "17",
+  stage: "Class 12 Science",
+  city: "Delhi",
+  concern: "Confused about college streams",
+  generatedAt: new Date().toISOString(),
+
+  // Holland RIASEC — score out of 7 each
+  riasec: [
+    { key:"I", name:"Investigative", tag:"the Thinker",
+      score:6, max:7,
+      meaning:"You have a natural pull toward understanding how and why things work. You prefer observation, analysis and evidence-based thinking over guesswork.",
+      realLife:[
+        "Students like Priya often excel at subjects like Chemistry, Biology or Mathematics because the challenge of solving an unseen problem feels rewarding, not stressful.",
+        "A career as a research scientist, doctor, data analyst, or engineer often suits Investigative types who enjoy deep thinking and problem-solving."
+      ],
+      nextStep:"This week, make a list of 3 questions about your current subjects that you'd love to research further. Bring it to your counselling session — it often reveals your real area of interest."
+    },
+    { key:"S", name:"Social", tag:"the Helper",
+      score:5, max:7,
+      meaning:"You genuinely enjoy supporting, teaching and connecting with other people. Working in groups energises you, and you feel most fulfilled when you've helped someone.",
+      realLife:[
+        "Priya would thrive in team-based projects or roles that involve direct interaction — like a doctor-patient conversation, teaching, or social work.",
+        "Social types often find that even technical careers (like medicine or psychology) feel more meaningful when they involve helping real people."
+      ],
+      nextStep:"Volunteer to explain one difficult topic to a classmate this week. Notice how it feels — if it energises you, Social interests are likely a core strength."
+    },
+    { key:"A", name:"Artistic", tag:"the Creator",
+      score:4, max:7,
+      meaning:"You have a creative side that values self-expression, originality and unconventional thinking. You may not fit neatly into rigid structures and often bring fresh perspectives.",
+      realLife:[
+        "This doesn't mean you must pursue art or design — many Artistic types become architects, UX designers, science communicators, writers or advertising professionals.",
+        "Even in science or medicine, the ability to think creatively helps in research, patient communication and problem-solving in unusual situations."
+      ],
+      nextStep:"Try a creative expression activity unrelated to studies this week — sketching, writing or photography. It refreshes your mind and often clarifies what you actually enjoy."
+    },
+    { key:"R", name:"Realistic", tag:"the Doer",  score:3, max:7, meaning:"", realLife:[], nextStep:"" },
+    { key:"E", name:"Enterprising", tag:"the Persuader", score:2, max:7, meaning:"", realLife:[], nextStep:"" },
+    { key:"C", name:"Conventional", tag:"the Organiser", score:2, max:7, meaning:"", realLife:[], nextStep:"" }
+  ],
+
+  // Career Values / Work Anchors — sorted by score, max 42
+  anchors: [
+    { key:"SV", name:"Service & Impact", short:"Service",
+      score:36, max:42,
+      desc:"You are driven by usefulness and human impact. Work feels meaningful when it supports people, communities, wellbeing or causes that matter to you.",
+      nextStep:"Explore careers where 'impact' is measurable — medicine, public health, education, counselling or social entrepreneurship. Ask: Who will I serve, and how will I know I've helped?"
+    },
+    { key:"CH", name:"Challenge & Growth", short:"Challenge",
+      score:31, max:42,
+      desc:"You are driven by stretch. Complex problems, high standards and visible growth keep you engaged — especially when the answer isn't obvious at first.",
+      nextStep:"Look for academic programs that have a competitive entrance but a genuinely rigorous curriculum — this suits your growth orientation."
+    },
+    { key:"MA", name:"Mastery & Expertise", short:"Mastery",
+      score:28, max:42,
+      desc:"You are driven by becoming genuinely capable. Growth feels strongest when you can deepen skill, earn trust for quality, and keep improving your craft.",
+      nextStep:""
+    },
+    { key:"AU", name:"Autonomy", short:"Autonomy", score:21, max:42, desc:"", nextStep:"" },
+    { key:"IN", name:"Influence & Direction", short:"Influence", score:19, max:42, desc:"", nextStep:"" },
+    { key:"WF", name:"Work-Life Fit", short:"Work-Life Fit", score:17, max:42, desc:"", nextStep:"" },
+    { key:"ST", name:"Stability & Security", short:"Stability", score:14, max:42, desc:"", nextStep:"" },
+    { key:"EN", name:"Enterprise & Creation", short:"Enterprise", score:11, max:42, desc:"", nextStep:"" }
+  ],
+
+  // VARK Learning — max 16 each
+  vark: [
+    { key:"R", name:"Written Notes", desc:"You learn well from precise words, lists, definitions, summaries and written examples you can revisit.",
+      score:10, max:16,
+      nextStep:"Rewrite your class notes in your own words every evening. This one habit improves both understanding and recall significantly."
+    },
+    { key:"V", name:"Visual Structure", desc:"You learn well when ideas are arranged in clear layouts, diagrams, charts, timelines or maps.",
+      score:8, max:16, nextStep:"Create a mind-map or flow chart before each exam. It reveals gaps in your understanding that plain reading misses."
+    },
+    { key:"K", name:"Hands-On Practice", desc:"You learn well by trying, applying, testing and connecting ideas to real examples or practical tasks.",
+      score:5, max:16, nextStep:""
+    },
+    { key:"A", name:"Spoken Discussion", desc:"You learn well through explanation, dialogue, questions and hearing ideas in words.",
+      score:3, max:16, nextStep:""
+    }
+  ],
+
+  // Career directions from top RIASEC
+  careerDirections: ["Medicine & Healthcare","Research & Science","Psychology & Counselling","Public Health","Science Communication","Teaching & Education"],
+
+  // Personality headline (from Big Five / personality section)
+  personality: { name:"Open-Minded", word:"High", score:34, max:40,
+    desc:"You are curious, imaginative and open to new ideas. You enjoy exploring possibilities and often see connections others miss." }
+};
+</script>
+
+<script>
+(function(){
+  "use strict";
+
+  // ── RIASEC colours ──
+  var RIASEC_COLOR = { R:"#2563EB",I:"#16A34A",A:"#EA580C",S:"#DC2626",E:"#7C3AED",C:"#0D9488" };
+  var RIASEC_BG    = { R:"#EEF4FF",I:"#F0FDF4",A:"#FFF7ED",S:"#FEF2F2",E:"#F5F3FF",C:"#F0FDFA" };
+
+  // ── VARK colours ──
+  var VARK_COLOR   = { V:"#0284C7",A:"#D97706",R:"#7C3AED",K:"#059669" };
+  var VARK_BG      = { V:"#E0F2FE",A:"#FEF3C7",R:"#F5F3FF",K:"#D1FAE5" };
+
+  function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+  function pct(v,m){ return Math.round((+v||0)/(+m||1)*100); }
+
+  var D = window.LUME_REPORT_DATA || {};
+  var topR = (D.riasec||[]).slice().sort(function(a,b){return b.score-a.score;});
+  var top3 = topR.slice(0,3);
+  var code = top3.map(function(r){return r.key;}).join("");
+  var topAnchor = (D.anchors||[])[0] || {};
+  var topVark = (D.vark||[])[0] || {};
+  var multiVark = (D.vark||[]).filter(function(r){ return topVark.score && topVark.score - r.score <= 1; });
+  var learnLabel = multiVark.length > 1 ? "Multimodal Learner" : (topVark.name || "");
+
+  var date = new Intl.DateTimeFormat("en-IN",{dateStyle:"long"}).format(
+    D.generatedAt ? new Date(D.generatedAt) : new Date()
+  );
+
+  var nameParts = (D.name||"").trim().split(/\s+/);
+  var firstName = nameParts[0] || "there";
+
+  // ─────────────────────────────────────────────
+  // BUILD HTML
+  // ─────────────────────────────────────────────
+
+  function codeBadges(){
+    return top3.map(function(r){
+      return '<div class="lrt-code-badge">'+
+        '<div class="lrt-code-badge-letter" style="background:'+esc(RIASEC_COLOR[r.key])+'">'+esc(r.key)+'</div>'+
+        '<div class="lrt-code-badge-text"><b>'+esc(r.name)+'</b><span>'+esc(r.tag)+'</span></div>'+
+      '</div>';
+    }).join("");
+  }
+
+  function coverHtml(){
+    var profileBits = [D.age ? "Age "+D.age : "", D.stage, D.city, D.concern].filter(Boolean);
+    var chips = profileBits.map(function(b){ return '<span>'+esc(b)+'</span>'; }).join("");
+    return '<div class="lrt-cover">'+
+      '<div class="lrt-cover-top">'+
+        '<div class="lrt-brand">'+
+          '<img src="logo.png" alt="Lume Live" onerror="this.style.display=\'none\'">'+
+          '<div class="lrt-brand-text"><b>Lume Live</b><span>Mental Health & Career Guidance</span></div>'+
+        '</div>'+
+        '<div class="lrt-cover-meta">'+
+          '<b>Full Clarity Report</b>'+
+          '<span>Generated '+esc(date)+'</span>'+
+          '<span>4 assessments · 148 items</span>'+
+        '</div>'+
+      '</div>'+
+      '<div class="lrt-cover-hero">'+
+        '<span class="lrt-cover-eyebrow">Your Personal Report</span>'+
+        '<h1 class="lrt-cover-name">'+esc(D.name||"Your Report")+'</h1>'+
+        '<p class="lrt-cover-tagline">A combined clarity report for career reflection, counselling discussion, and practical next steps.</p>'+
+        (chips ? '<div class="lrt-cover-chips">'+chips+'</div>' : '')+
+      '</div>'+
+      '<div class="lrt-code-badges">'+codeBadges()+'</div>'+
+    '</div>';
+  }
+
+  function greetingHtml(){
+    var topName = top3[0] ? top3[0].name.toLowerCase() : "";
+    var anchorShort = topAnchor.short || "";
+    return '<div class="lrt-greeting">'+
+      '<p>Hi <strong>'+esc(firstName)+'</strong>, here is what your responses across four reflection tools reveal about your interests, values, personality and learning preferences.</p>'+
+      '<p style="margin-top:10px;">This report is not a verdict. It is a starting point — a structured mirror that helps you and your counsellor have a more focused conversation about the directions that actually fit <em>you</em>.</p>'+
+      '<div class="lrt-greeting-highlight">'+
+        'Your career-interest profile is <strong>'+esc(code)+'</strong>, led by '+
+        '<strong>'+esc(top3[0]?top3[0].name:'')+', '+esc(top3[1]?top3[1].name:'')+' and '+esc(top3[2]?top3[2].name:'')+'</strong> interests. '+
+        'Your strongest work value is <strong>'+esc(anchorShort)+'</strong>, and you learn best through <strong>'+esc(learnLabel)+'</strong> approaches. '+
+        'These patterns, taken together, point toward the career directions listed in Section 01.'+
+      '</div>'+
+    '</div>';
+  }
+
+  function insightMapHtml(){
+    function card(label, value, sub, scoreV, maxV, accentColor){
+      var fillPct = pct(scoreV, maxV);
+      return '<div class="lrt-map-card" style="--card-accent:'+accentColor+'">'+
+        '<small>'+esc(label)+'</small><b>'+esc(value)+'</b><span>'+esc(sub)+'</span>'+
+        '<div class="lrt-map-meter"><div class="lrt-map-meter-fill" data-w="'+fillPct+'" style="width:0%"></div></div>'+
+      '</div>';
+    }
+    return '<div class="lrt-insight-map">'+
+      '<div class="lrt-section-label">Your 4 Signals at a Glance</div>'+
+      '<h2 class="lrt-section-title">Insight Map</h2>'+
+      '<p class="lrt-section-sub">Four tools, one picture of you.</p>'+
+      '<div class="lrt-map-grid">'+
+        card("Career Interests", code, top3[0] ? top3[0].name+" led" : "", top3[0]?top3[0].score:0, 7, "#C9933A")+
+        card("Personality", D.personality?D.personality.name:"—", D.personality?D.personality.word+" band":"", D.personality?D.personality.score:0, 40, "#0284C7")+
+        card("Work Driver", topAnchor.short||"—", "Primary value", topAnchor.score||0, 42, "#B45309")+
+        card("Learning Style", learnLabel||"—", topVark.name||"", topVark.score||0, 16, "#7C3AED")+
+      '</div>'+
+    '</div>';
+  }
+
+  // ─── Section 01: Career Directions ───
+  function section01Html(){
+    var dirs = (D.careerDirections||[]).map(function(d){ return '<span class="lrt-chip">'+esc(d)+'</span>'; }).join("");
+    return sectionWrap("01","Career Directions to Explore","Based on your interest + personality pattern",
+      '<p style="font-size:.88rem;line-height:1.7;color:var(--ink-soft);margin-bottom:16px;">These directions come from combining your top RIASEC themes (<strong>'+esc(code)+'</strong>), your work values and your personality pattern. They are starting points for research, not final choices.</p>'+
+      '<div style="margin-bottom:20px;">'+dirs+'</div>'+
+      nextStep("Look up 2–3 of these directions on the Lume Career Intelligence tool. For each one, find the entrance exam, the typical qualification path, and one professional you can speak to or follow online.")
+    );
+  }
+
+  // ─── Section 02: Holland RIASEC ───
+  function riasecThemeCard(r){
+    if(!r.meaning){ return ''; } // skip low-detail themes
+    var color = RIASEC_COLOR[r.key] || "#0D1B40";
+    var bg    = RIASEC_BG[r.key]    || "#F8FAFC";
+    var fillW = pct(r.score, r.max||7);
+    var examples = (r.realLife||[]).map(function(ex){ return '<li style="margin-bottom:6px;">'+esc(ex)+'</li>'; }).join("");
+    return '<div class="lrt-theme-card" style="--theme-color:'+color+';--theme-bg:'+bg+'">'+
+      '<div class="lrt-theme-header">'+
+        '<div class="lrt-theme-letter">'+esc(r.key)+'</div>'+
+        '<div class="lrt-theme-title"><b>'+esc(r.name)+' — '+esc(r.tag)+'</b><span>Score '+r.score+' out of '+r.max+'</span></div>'+
+        '<div class="lrt-theme-score-wrap"><b>'+r.score+'</b><span>/ '+r.max+'</span></div>'+
+      '</div>'+
+      '<div class="lrt-theme-bar"><div class="lrt-theme-bar-fill" data-w="'+fillW+'" style="width:0%"></div></div>'+
+      '<div class="lrt-theme-body">'+
+        '<div class="lrt-quadrant">'+
+          '<div class="lrt-quad" style="grid-column:1/-1;">'+
+            '<span class="lrt-quad-icon">📖</span>'+
+            '<span class="lrt-quad-label">What this means</span>'+
+            '<p>'+esc(r.meaning)+'</p>'+
+          '</div>'+
+          (examples ? '<div class="lrt-quad" style="grid-column:1/-1;">'+
+            '<span class="lrt-quad-icon">🌍</span>'+
+            '<span class="lrt-quad-label">In real life</span>'+
+            '<ul style="padding-left:1.1em;margin:0;list-style:disc;">'+examples+'</ul>'+
+          '</div>' : '')+
+        '</div>'+
+        (r.nextStep ? nextStep(r.nextStep) : '')+
+      '</div>'+
+    '</div>';
+  }
+
+  function section02Html(){
+    var allBars = topR.map(function(r){
+      var color = RIASEC_COLOR[r.key]||"#0D1B40";
+      var bg    = RIASEC_BG[r.key]||"#F8FAFC";
+      var fillW = pct(r.score, r.max||7);
+      var isTop = top3.some(function(t){ return t.key===r.key; });
+      return '<div class="lrt-score-bar" style="--score-color:'+color+';--score-bg:'+bg+'">'+
+        '<div class="lrt-score-badge" style="background:'+color+';opacity:'+(isTop?'1':'.55')+';font-size:1.1rem;">'+esc(r.key)+'</div>'+
+        '<div class="lrt-score-info"><b>'+esc(r.name)+'</b><span>'+esc(r.tag)+'</span>'+
+          '<div class="lrt-score-track"><div class="lrt-score-fill" data-w="'+fillW+'" style="background:'+color+';width:0%"></div></div>'+
+        '</div>'+
+        '<div class="lrt-score-pct" style="color:'+color+'">'+r.score+'/'+r.max+'</div>'+
+      '</div>';
+    }).join("");
+
+    var cards = top3.map(riasecThemeCard).join("");
+
+    return sectionWrap("02","Career Interest Themes (Holland RIASEC)","42 items · scored 0–7 per theme",
+      '<p style="font-size:.84rem;line-height:1.7;color:var(--ink-mute);margin-bottom:20px;">Your three highest-scoring themes form your Holland Code. The larger the score, the stronger that type of interest. This profile describes what <em>interests</em> you — not necessarily what you are already good at.</p>'+
+      '<div style="margin-bottom:28px;">'+allBars+'</div>'+
+      '<h3 style="font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:14px;">Your Top 3 Themes — In Depth</h3>'+
+      cards
+    );
+  }
+
+  // ─── Section 03: Career Values / Anchors ───
+  function section03Html(){
+    var rows = (D.anchors||[]).map(function(r,i){
+      var isTop = i < 3;
+      var fillW = pct(r.score, r.max||42);
+      return '<div class="lrt-rank-row '+(i===0?'top':'')+'">'+
+        '<div class="lrt-rank-num">'+(i+1)+'</div>'+
+        '<div class="lrt-rank-info"><b>'+esc(r.name)+'</b><span>'+esc(r.desc||"")+'</span>'+
+          '<div class="lrt-rank-track"><div class="lrt-rank-fill" data-w="'+fillW+'" style="width:0%"></div></div>'+
+        '</div>'+
+        '<div class="lrt-rank-score">'+r.score+'</div>'+
+      '</div>';
+    }).join("");
+
+    var topDesc = (D.anchors||[])[0] ? (D.anchors[0].desc||"") : "";
+    var topNS   = (D.anchors||[])[0] ? (D.anchors[0].nextStep||"") : "";
+
+    return sectionWrap("03","Career Values & Work Drivers","40 items · 8 drivers ranked",
+      '<p style="font-size:.84rem;line-height:1.7;color:var(--ink-mute);margin-bottom:16px;">These are the conditions and values that make work feel meaningful to you. Your top driver is especially important when choosing between two careers that both interest you.</p>'+
+      (topDesc ? '<div style="background:linear-gradient(135deg,#FFF8EE,#FFFEF9);border-left:4px solid var(--gold);border-radius:0 12px 12px 0;padding:16px 18px;margin-bottom:20px;font-size:.88rem;line-height:1.7;color:var(--ink);">'+
+        '<b style="display:block;font-size:.8rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">🎯 Primary Work Driver — '+esc(topAnchor.short||"")+'</b>'+
+        esc(topDesc)+
+      '</div>' : '')+
+      '<div class="lrt-rank-list">'+rows+'</div>'+
+      (topNS ? nextStep(topNS) : '')
+    );
+  }
+
+  // ─── Section 04: VARK Learning ───
+  function section04Html(){
+    var total = (D.vark||[]).reduce(function(s,r){ return s+(+r.score||0); }, 0)||1;
+    var rows = (D.vark||[]).map(function(r,i){
+      var color = VARK_COLOR[r.key]||"#0D1B40";
+      var bg    = VARK_BG[r.key]||"#F8FAFC";
+      var pc    = Math.round(r.score/total*100);
+      var fillW = pct(r.score, r.max||16);
+      return '<div class="lrt-score-bar" style="--score-color:'+color+';--score-bg:'+bg+'">'+
+        '<div class="lrt-score-badge" style="background:'+color+';font-size:1.1rem;">'+esc(r.key)+'</div>'+
+        '<div class="lrt-score-info"><b>'+esc(r.name)+'</b><span>'+esc(r.desc||"")+'</span>'+
+          '<div class="lrt-score-track"><div class="lrt-score-fill" data-w="'+fillW+'" style="background:'+color+';width:0%"></div></div>'+
+        '</div>'+
+        '<div class="lrt-score-pct" style="color:'+color+'">'+pc+'%</div>'+
+      '</div>';
+    }).join("");
+
+    var tipCards = (D.vark||[]).slice(0,2).filter(function(r){ return r.nextStep; }).map(function(r){
+      var color = VARK_COLOR[r.key]||"#0D1B40";
+      return '<div style="background:'+VARK_BG[r.key]||"#F8FAFC"+';border-radius:12px;padding:14px 16px;margin-bottom:12px;">'+
+        '<b style="display:block;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;color:'+color+'">'+esc(r.name)+'</b>'+
+        '<p style="font-size:.84rem;line-height:1.6;color:var(--ink);margin:0;">'+esc(r.nextStep)+'</p>'+
+      '</div>';
+    }).join("");
+
+    var learnNote = multiVark.length > 1
+      ? "You have similar strength across "+multiVark.map(function(r){return r.name;}).join(" and ")+". Use a blended study plan rather than relying on just one approach."
+      : "Your strongest mode is <strong>"+esc(topVark.name||"")+"</strong>. Lean into this when preparing for tough exams.";
+
+    return sectionWrap("04","Learning Preferences (VARK)","16 items · shows how you absorb and process information best",
+      '<p style="font-size:.84rem;line-height:1.7;color:var(--ink-mute);margin-bottom:16px;">This is not about how smart you are — it is about <em>how</em> your brain prefers to take in and process new information. Using your preferred style can reduce study time and increase what you actually retain.</p>'+
+      '<p style="font-size:.88rem;line-height:1.7;color:var(--ink);margin-bottom:20px;">'+learnNote+'</p>'+
+      '<div style="margin-bottom:20px;">'+rows+'</div>'+
+      (tipCards ? '<h3 style="font-size:.9rem;font-weight:700;color:var(--navy);margin-bottom:12px;">⚡ Study Strategies for Your Profile</h3>'+tipCards : '')
+    );
+  }
+
+  // ─── Counsellor's Note ───
+  function counsellorHtml(){
+    return '<div class="lrt-counsellor">'+
+      '<div class="lrt-counsellor-inner">'+
+        '<div class="lrt-counsellor-photo-wrap">'+
+          '<div class="lrt-counsellor-photo-fallback">SB</div>'+
+        '</div>'+
+        '<div class="lrt-counsellor-text">'+
+          '<span class="lrt-counsellor-eyebrow">A Note from Your Counsellor</span>'+
+          '<p>Hi '+esc(firstName)+', thank you for completing all four assessments. Reading your responses carefully, I can see a genuine, thoughtful pattern emerging — especially your strong pull toward service and your investigative curiosity.</p>'+
+          '<p>These results are not a label or a limitation. They are a mirror. In our upcoming session, we will look at the patterns that surprised you, the ones that felt deeply true, and the ones you are still questioning — and we will use those to narrow down your next concrete step.</p>'+
+          '<p>Remember: career clarity is rarely a single "aha" moment. It is a series of small, honest conversations — and this report is a great foundation for ours.</p>'+
+          '<div class="lrt-counsellor-sig">'+
+            '<b>Sachin Bajaj</b>'+
+            '<span>Counselling Psychologist · Founder, Lume Live</span>'+
+            '<span style="margin-top:4px;display:block;color:rgba(255,255,255,.4);font-size:.72rem;">M.A. Psychology · Rohtak, Haryana · hello@lumelive.co.in</span>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }
+
+  // ─── Disclaimer ───
+  function disclaimerHtml(){
+    return '<div class="lrt-disclaimer">'+
+      '<div class="lrt-disclaimer-inner">'+
+        '<div class="lrt-disclaimer-icon">ℹ️</div>'+
+        '<p><strong>Important note:</strong> These results describe your <strong>self-reported preferences today</strong>. They are a starting point for your counselling conversation — not a psychological diagnosis, an aptitude measurement, or a selection or admissions decision. The four tools used are educational self-reflection instruments used for reflective counselling purposes only. Preferences change over time and may not capture all aspects of your personality or abilities. Please discuss these results with a qualified counsellor before making any major academic or career decision.</p>'+
+      '</div>'+
+    '</div>';
+  }
+
+  // ─── Footer ───
+  function footerHtml(){
+    return '<div class="lrt-footer">'+
+      '<div class="lrt-footer-brand">'+
+        '<img src="logo.png" alt="Lume Live" onerror="this.style.display=\'none\'">'+
+        '<b>Lume Live</b>'+
+      '</div>'+
+      '<div class="lrt-footer-links">'+
+        '<a href="https://lumelive.co.in">lumelive.co.in</a>'+
+        '<a href="mailto:hello@lumelive.co.in">hello@lumelive.co.in</a>'+
+        '<a href="https://wa.me/917015671280">+91 70156 71280</a>'+
+      '</div>'+
+    '</div>';
+  }
+
+  // ─── Print actions (screen only) ───
+  function actionsHtml(){
+    var waMsg = "Hi Sachin! I have completed the Lume Live Full Clarity Report.\n\nName: "+(D.name||"")+"\nInterest Code: "+code+"\nTop Value: "+(topAnchor.short||"")+"\nPlease help me understand my results.";
+    return '<div class="lrt-actions">'+
+      '<button class="lrt-btn gold" onclick="window.print()">🖨️ Print / Save PDF</button>'+
+      '<a class="lrt-btn wa" href="https://wa.me/917015671280?text='+encodeURIComponent(waMsg)+'" target="_blank" rel="noopener">'+
+        '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.556 4.121 1.528 5.856L.057 23.215a.75.75 0 00.922.921l5.344-1.47A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.663-.523-5.183-1.432l-.37-.219-3.171.871.884-3.175-.237-.386A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>'+
+        ' Discuss on WhatsApp'+
+      '</a>'+
+      '<a class="lrt-btn ghost" href="career-intelligence.html?access=assessment&theme='+encodeURIComponent(code)+'">Explore Matching Careers →</a>'+
+    '</div>';
+  }
+
+  // ─── Shared helpers ───
+  function sectionWrap(num, title, sub, body){
+    return '<div class="lrt-section">'+
+      '<div class="lrt-section-hd">'+
+        '<div class="lrt-section-num">'+esc(num)+'</div>'+
+        '<div class="lrt-section-hd-text"><h2>'+esc(title)+'</h2><p>'+esc(sub)+'</p></div>'+
+      '</div>'+
+      body+
+    '</div>';
+  }
+  function nextStep(text){
+    return '<div class="lrt-next-step">'+
+      '<div class="lrt-next-step-icon">⚡</div>'+
+      '<div class="lrt-next-step-body"><b>Your Next Step</b><p>'+esc(text)+'</p></div>'+
+    '</div>';
+  }
+
+  // ─── Render everything ───
+  function render(){
+    var root = document.getElementById("report-root");
+    if(!root){ return; }
+    root.innerHTML =
+      coverHtml()+
+      greetingHtml()+
+      insightMapHtml()+
+      section01Html()+
+      section02Html()+
+      section03Html()+
+      section04Html()+
+      counsellorHtml()+
+      disclaimerHtml()+
+      footerHtml()+
+      actionsHtml();
+
+    // Animate bars/meters after render
+    requestAnimationFrame(function(){
+      setTimeout(function(){
+        document.querySelectorAll("[data-w]").forEach(function(el){
+          el.style.width = (el.getAttribute("data-w")||"0") + "%";
+        });
+      }, 100);
+    });
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", render);
+  } else {
+    render();
+  }
+})();
+</script>
+</body>
+</html>
