@@ -337,7 +337,7 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
           <input class="pg-input" id="pgPhone" type="tel" maxlength="15" inputmode="numeric" autocomplete="tel" placeholder="WhatsApp number">
           <button class="pg-btn" type="button" onclick="openParentPdf()">Get Instant Access — ₹199</button>
         </div>
-        <p class="pg-note">Pay securely with Cashfree when checkout is active, or use WhatsApp Pay backup and receive the PDF within 24 hours.</p>
+        <p class="pg-note">Pay securely with Cashfree and receive the PDF on WhatsApp within 24 hours.</p>
         <div class="pg-list">
           <span>5 avoidable parent mistakes</span>
           <span>Stream-choice discussion prompts</span>
@@ -374,22 +374,6 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
         <div><b>Parents' Stream Selection Guide</b><span>Science-backed · WhatsApp delivery · Parent checklist</span></div>
       </div>
       <button class="pg-wa pg-cashfree" type="button" onclick="startParentPdfCashfree(event)">Pay Securely with Cashfree</button>
-      <details class="pg-fallback">
-        <summary>WhatsApp Pay backup</summary>
-        <div class="pg-fallback-body">
-          <div class="pg-upi">
-            <h4>Pay ₹199 through WhatsApp Pay backup</h4>
-            <div class="pg-qr"><img src="lume-upi-qr.png" alt="UPI QR Code - Sachin Bajaj"></div>
-            <div class="pg-upi-id" onclick="copyParentUPI()">sachinbajaj284@okaxis</div>
-            <div style="font-size:.72rem;color:#6F4A14;margin-top:8px;">Tap to copy · PhonePe, GPay, Paytm · ₹199</div>
-          </div>
-          <ol class="pg-steps">
-            <li>Use this only if Cashfree checkout is unavailable.</li>
-            <li>Send WhatsApp confirmation with your email.</li>
-          </ol>
-          <a id="parentPdfWa" class="pg-wa" href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20have%20paid%20Rs.199%20for%20the%20Parents%20Career%20Handbook%20PDF.%20Please%20send%20it%20to%20me." target="_blank" rel="noopener">WhatsApp Pay PDF Support</a>
-        </div>
-      </details>
     </div>
   </div>
 </div>
@@ -457,9 +441,6 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
   };
   window.startParentPdfCashfree = function(e){
     if(e) e.preventDefault();
-    const link = document.getElementById('parentPdfWa');
-    if(link) link.href = parentPdfMessage();
-    const fallback = function(){ if(link && link.href) window.open(link.href, '_blank', 'noopener'); };
     if(typeof window.lumeCashfreePay !== 'function'){
       alert('Cashfree checkout is still loading. Please wait a few seconds and tap Pay Securely with Cashfree again.');
       return;
@@ -470,8 +451,7 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
       label: 'Parents Career Handbook',
       customerName: val('pgName'),
       customerPhone: val('pgPhone'),
-      customerEmail: val('pgEmail'),
-      onFallback: fallback
+      customerEmail: val('pgEmail')
     });
   };
   document.addEventListener('keydown', function(e){
