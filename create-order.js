@@ -19,7 +19,9 @@ const SKU_PRICES = {
   "lume-lens-working-profile": { amount: 1999, label: "Lume Lens Working Profile", alias: "lens1999" },
   "intro-session": { amount: 49, label: "Introductory Guidance Session", alias: "intro49" },
   "parents-handbook": { amount: 199, label: "Parents Career Handbook", alias: "parents199" },
-  "career-intelligence-roadmap": { amount: 1499, label: "Career Intelligence Detailed Roadmap", alias: "roadmap1499" }
+  "career-intelligence-roadmap": { amount: 1499, label: "Career Intelligence Detailed Roadmap", alias: "roadmap1499" },
+  "stream-clarity-session": { amount: 999, label: "Stream Clarity Counselling Session", alias: "stream999" },
+  "career-direction-session": { amount: 1499, label: "Career Direction Counselling Session", alias: "careerdir1499" }
 };
 
 function json(res, status, body){
