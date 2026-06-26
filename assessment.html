@@ -4383,6 +4383,8 @@ function saBuildPdfDoc(){
  var doc=new jsPDF({unit:'mm',format:'a4',compress:true});
  var W=210,H=297,M=14,TOP=25,BOT=29,y=TOP;
  var INK=[26,31,46],INK_SOFT=[58,66,84],MUTE=[107,115,133],PAPER=[245,239,228],CARD=[251,247,238],PAPER3=[227,217,194],SAFF=[201,122,43],SAFF_SOFT=[224,161,96],SAGE=[107,138,122],TERRA=[184,92,60],PLUM=[125,92,126],LINE=[216,205,180],DARK=[26,31,46];
+ var NAVY=[13,27,64],GOLD=[201,147,58],GOLD_LT=[232,185,90];
+ var RPDF={R:[37,99,235],I:[22,163,74],A:[234,88,12],S:[220,38,38],E:[124,58,237],C:[13,148,136]};
  function rgb(c){doc.setTextColor(c[0],c[1],c[2]);}
  function fill(c){doc.setFillColor(c[0],c[1],c[2]);}
  function stroke(c){doc.setDrawColor(c[0],c[1],c[2]);}
@@ -4413,28 +4415,31 @@ function saBuildPdfDoc(){
  function section(num,title,sub){
   ensure(30);
   if(y>TOP+2)y+=4;
-  lineText(num,M,y,18,SAFF,'times','italic');
-  doc.setFont('times','bold');doc.setFontSize(17.4);rgb(INK);
-  var titleLines=doc.splitTextToSize(safe(title),112);
-  titleLines.forEach(function(l,i){doc.text(l,M+20,y+(i*6.8));});
+  fill(NAVY);doc.roundedRect(M,y-5.6,8.5,8.5,1.8,1.8,'F');
+  lineText(num,M+4.25,y+.6,8,[255,255,255],'helvetica','bold',{align:'center'});
+  doc.setFont('times','bold');doc.setFontSize(17.4);rgb(NAVY);
+  var titleLines=doc.splitTextToSize(safe(title),108);
+  titleLines.forEach(function(l,i){doc.text(l,M+13,y+(i*6.8));});
   lineText(sub,W-M,y,7.2,MUTE,'helvetica','bold',{align:'right',maxWidth:44});
   y+=Math.max(7,titleLines.length*6.8)+1.5;
-  stroke(LINE);doc.setLineWidth(.35);doc.line(M,y,W-M,y);y+=8.5;
+  stroke(GOLD);doc.setLineWidth(.5);doc.line(M,y,M+24,y);
+  stroke(LINE);doc.setLineWidth(.35);doc.line(M+26,y,W-M,y);y+=8.5;
  }
  function bar(x,yy,w,pct,color){
   fill(PAPER3);doc.roundedRect(x,yy,w,4,2,2,'F');
   fill(color);doc.roundedRect(x,yy,Math.max(2,w*Math.max(0,Math.min(100,pct))/100),4,2,2,'F');
  }
- function scoreRow(label,key,score,max,band,word){
+ function scoreRow(label,key,score,max,band,word,colorOverride){
+  var col=colorOverride||tone(band);
   doc.setFont('helvetica','bold');doc.setFontSize(9.8);
   var labelLines=doc.splitTextToSize(safe(label),51);
   var rowH=Math.max(17,labelLines.length*4.6+8.2);
   ensure(rowH);
   labelLines.forEach(function(l,i){lineText(l,M,y+(i*4.6),9.8,INK,'helvetica','bold');});
   if(key)lineText(key,M,y+(labelLines.length*4.6)+.2,6.8,MUTE,'helvetica','bold');
-  bar(M+62,y-2,78,Math.round(score/max*100),tone(band));
+  bar(M+62,y-2,78,Math.round(score/max*100),col);
   lineText(score+' / '+max,W-M,y,12.6,INK,'times','bold',{align:'right'});
-  lineText(word||bandName(band),W-M,y+5.2,6.7,tone(band),'helvetica','bold',{align:'right'});
+  lineText(word||bandName(band),W-M,y+5.2,6.7,col,'helvetica','bold',{align:'right'});
   y+=rowH;
  }
  function card(x,yy,w,h,border){
@@ -4478,23 +4483,33 @@ function saBuildPdfDoc(){
  var profilePdf=[S.age?'Age '+S.age:'',S.stage||'',S.city||'',S.concern||''].filter(Boolean).join('  |  ');
  var narrative='Your career-interest profile is '+code+', led by '+top3[0].name.toLowerCase()+', '+top3[1].name.toLowerCase()+' and '+top3[2].name.toLowerCase()+' interests. Your most pronounced personality pattern is '+topP.name.toLowerCase()+', and your strongest work driver is '+anchor.short+'. You tend to learn best through '+(multiV.length>1?'several modes combined':topV.name.toLowerCase()+' approaches')+'.';
 
- /* hero */
- fill(SAFF);doc.circle(M+2.5,12,1.5,'F');
- lineText('LUME LIVE',M+7,13,8.4,INK,'helvetica','bold');
- lineText('Mental Health and Career Guidance',M+7,17.2,6.4,MUTE,'helvetica','bold');
- lineText(date,W-M,13,7.2,MUTE,'helvetica','bold',{align:'right'});
- lineText('Full Clarity Report',W-M,17.2,6.2,MUTE,'helvetica','bold',{align:'right'});
- lineText('YOUR PERSONAL REPORT',M,33,8.2,SAFF,'helvetica','bold');
- doc.setDrawColor(SAFF[0],SAFF[1],SAFF[2]);doc.line(M,27,M+22,27);
- doc.setFont('times','bold');doc.setFontSize(35);rgb(INK);doc.text(safe(S.name||'Personal Report'),M,50,{maxWidth:166});
- y=62;
+ /* hero — navy cover band with gold accents */
+ var coverH=56;
+ fill(NAVY);doc.rect(0,0,W,coverH,'F');
+ fill(GOLD);doc.roundedRect(M,9,3.4,3.4,1,1,'F');
+ lineText('LUME LIVE',M+5.4,12,8.6,[255,255,255],'helvetica','bold');
+ lineText('Mental Health and Career Guidance',M+5.4,16.2,6.2,[182,194,214],'helvetica','bold');
+ lineText('Full Clarity Report',W-M,12,7,[218,226,238],'helvetica','bold',{align:'right'});
+ lineText('Generated '+date,W-M,16.2,6.2,[150,164,190],'helvetica','normal',{align:'right'});
+ lineText('YOUR PERSONAL REPORT',M,30,7.6,GOLD_LT,'helvetica','bold');
+ doc.setFont('times','bold');doc.setFontSize(32);rgb([255,255,255]);doc.text(safe(S.name||'Personal Report'),M,45,{maxWidth:182});
+ /* RIASEC code badges */
+ var bx=M;top3.forEach(function(r){
+  var c=RPDF[r.key]||GOLD,bw=42;
+  fill([255,255,255]);doc.setGState&&doc.setGState(new doc.GState({opacity:.12}));doc.roundedRect(bx,49.5,bw,4.6,1.2,1.2,'F');doc.setGState&&doc.setGState(new doc.GState({opacity:1}));
+  fill(c);doc.roundedRect(bx+1.4,50.4,2.8,2.8,.6,.6,'F');
+  lineText(r.key+' · '+r.name,bx+6,52.8,6.2,[230,236,246],'helvetica','bold');
+  bx+=bw+3;
+ });
+ y=coverH+10;
  para('A combined clarity report for career reflection, counselling discussion, and practical next steps.',M,150,10.6,INK_SOFT,profilePdf?2:5);
  if(profilePdf){lineText(profilePdf,M,y,8.2,MUTE,'helvetica','bold');y+=6.5;}
  var idY=y,idGap=4,idH=31,idW=(W-2*M-idGap)/2;
  [['Interest Profile',code,top3.map(function(r){return r.name;}).join(' + ')],['Personality Pattern',topP.name,topP.word+' band'],['Work Driver',anchor.short,anchor.score+' points'],['Learning Preferences',learnLabel,multiV.length>1?'Blended':topV.name]].forEach(function(c,i){
+  var idCols=[GOLD,NAVY,GOLD,NAVY],ic=idCols[i];
   var x=M+(i%2)*(idW+idGap),yy=idY+Math.floor(i/2)*(idH+4);
-  card(x,yy,idW,idH,[i===0?SAFF[0]:i===1?SAGE[0]:i===2?TERRA[0]:PLUM[0],i===0?SAFF[1]:i===1?SAGE[1]:i===2?TERRA[1]:PLUM[1],i===0?SAFF[2]:i===1?SAGE[2]:i===2?TERRA[2]:PLUM[2]]);
-  fill(i===0?SAFF:i===1?SAGE:i===2?TERRA:PLUM);doc.rect(x,yy,idW,2,'F');
+  card(x,yy,idW,idH,ic);
+  fill(ic);doc.rect(x,yy,idW,2,'F');
   lineText(c[0],x+4,yy+8,6.8,MUTE,'helvetica','bold');
   lineText(c[1],x+4,yy+18,14.2,INK,'times','bold');
   textAt(c[2],x+4,yy+24,idW-8,7.3,INK_SOFT,3.8);
@@ -4506,60 +4521,83 @@ function saBuildPdfDoc(){
  var qLines=doc.splitTextToSize(safe(narrative),W-2*M-18);
  var qChipItems=dirs.slice(0,5),qChipH=chipFlowHeight(qChipItems,M+8,W-M-8);
  var qH=Math.max(60,22+(qLines.length*6.8)+9+qChipH);
- ensure(qH+8);fill(DARK);doc.roundedRect(M,y,W-2*M,qH,2.8,2.8,'F');
+ ensure(qH+8);fill(NAVY);doc.roundedRect(M,y,W-2*M,qH,2.8,2.8,'F');
  var quoteY=y+12;doc.setFont('times','normal');doc.setFontSize(15.2);doc.setTextColor(255,255,255);
  qLines.forEach(function(l,i){doc.text(l,M+8,quoteY+i*6.8);});
  var qRuleY=quoteY+(qLines.length*6.8)+3;
  stroke([82,86,99]);doc.line(M+8,qRuleY,W-M-8,qRuleY);
- lineText('CAREER DIRECTIONS TO EXPLORE',M+8,qRuleY+8,6.8,SAFF_SOFT,'helvetica','bold');
+ lineText('CAREER DIRECTIONS TO EXPLORE',M+8,qRuleY+8,6.8,GOLD_LT,'helvetica','bold');
  drawChipFlow(qChipItems,M+8,qRuleY+11,W-M-8);
  y+=qH+9;
  ensure(24);
  fill([246,250,248]);stroke([221,232,229]);doc.roundedRect(M,y,W-2*M,18,2.8,2.8,'FD');
- lineText('Lume Career Intelligence India',M+6,y+7.2,8.2,SAFF,'helvetica','bold');
+ lineText('Lume Career Intelligence India',M+6,y+7.2,8.2,NAVY,'helvetica','bold');
  textAt('Explore matching careers, salary ranges, qualifications and route options: https://lumelive.co.in/career-intelligence.html?access=assessment&theme='+code,M+6,y+12.5,W-2*M-12,7.8,INK_SOFT,4.2);
  y+=24;
 
  section('01','Personality Patterns','0 to 40 preference scale');
  P.forEach(function(r){scoreRow(r.name,r.key,r.score,40,r.band,r.word);});
 
- section('02','Career Interest Themes','0 to 7 interest scale');
+ section('02','Career Interest Themes (Holland RIASEC)','0 to 7 interest scale');
  R.slice().sort(function(a,b){return 'RIASEC'.indexOf(a.key)-'RIASEC'.indexOf(b.key);}).forEach(function(r){
   var top=top3.map(function(x){return x.key;}).indexOf(r.key)>-1;
-  scoreRow(r.name,r.key,r.score,7,top?'hi':'mid',top?'Top 3':'Score');
+  scoreRow(r.name,r.key,r.score,7,top?'hi':'mid',top?'Top 3':'Score',RPDF[r.key]);
  });
- top3.forEach(function(r,i){
-  doc.setFont('helvetica','normal');doc.setFontSize(9.1);
-  var descLines=doc.splitTextToSize(safe(r.desc),W-2*M-14);
-  var cH=Math.max(36,18+(descLines.length*4.8));
-  ensure(cH+5);card(M,y,W-2*M,cH,i===0?SAFF:(i===1?TERRA:PLUM));
-  lineText(r.name+' - '+r.tag,M+6,y+9,12.2,INK,'times','bold');
-  descLines.forEach(function(l,li){lineText(l,M+6,y+17+(li*4.8),9.1,INK_SOFT,'helvetica','normal');});
-  y+=cH+5;
+ top3.forEach(function(r){
+  var col=RPDF[r.key]||GOLD,copy=(saReportCopy.riasec[r.key]||{});
+  doc.setFont('helvetica','normal');doc.setFontSize(9);
+  var meanLines=doc.splitTextToSize(safe('What this means: '+r.desc),W-2*M-16);
+  var realText=(copy.realLife||[]).join('  ');
+  var realLines=realText?doc.splitTextToSize(safe('In real life: '+realText),W-2*M-16):[];
+  doc.setFontSize(8.8);
+  var nextLines=copy.next?doc.splitTextToSize(safe(copy.next),W-2*M-16):[];
+  var cH=20+(meanLines.length*4.6)+(realLines.length?4+realLines.length*4.6:0);
+  ensure(cH+(nextLines.length?nextLines.length*4.6+9:0)+5);
+  card(M,y,W-2*M,cH,col);
+  fill(col);doc.roundedRect(M,y,2.4,cH,1,1,'F');
+  fill(col);doc.roundedRect(M+6,y+5,8,8,1.6,1.6,'F');lineText(r.key,M+10,y+10.6,8,[255,255,255],'helvetica','bold',{align:'center'});
+  lineText(r.name+' — '+r.tag,M+18,y+8.4,11.6,INK,'times','bold');
+  lineText('Score '+r.score+' / 7',M+18,y+13,6.8,MUTE,'helvetica','bold');
+  var ty=y+19;
+  meanLines.forEach(function(l,li){lineText(l,M+6,ty+(li*4.6),9,INK_SOFT,'helvetica','normal');});
+  ty+=meanLines.length*4.6;
+  if(realLines.length){ty+=3;realLines.forEach(function(l,li){lineText(l,M+6,ty+(li*4.6),9,INK_SOFT,'helvetica','normal');});ty+=realLines.length*4.6;}
+  y+=cH+4;
+  if(nextLines.length){
+   var nH=nextLines.length*4.6+8;
+   ensure(nH+4);fill([255,248,238]);stroke(GOLD_LT);doc.roundedRect(M,y,W-2*M,nH,2.4,2.4,'FD');
+   lineText('YOUR NEXT STEP',M+6,y+6,6.4,GOLD,'helvetica','bold');
+   nextLines.forEach(function(l,li){lineText(l,M+6,y+11+(li*4.6),8.8,INK,'helvetica','normal');});
+   y+=nH+5;
+  }else{y+=1;}
  });
 
  section('03','Career Values & Work Drivers','Ranked drivers');
  doc.setFont('helvetica','normal');doc.setFontSize(9.2);
  var anchorLines=doc.splitTextToSize(safe(anchor.desc),W-2*M-38);
  var anchorH=Math.max(36,22+(anchorLines.length*4.8));
- ensure(anchorH+6);card(M,y,W-2*M,anchorH,SAFF);fill(SAFF);doc.circle(M+12,y+anchorH/2,8,'F');lineText(anchor.short.charAt(0),M+12,y+anchorH/2+3.8,17,[255,255,255],'times','bold',{align:'center'});
+ ensure(anchorH+6);card(M,y,W-2*M,anchorH,GOLD);fill(GOLD);doc.circle(M+12,y+anchorH/2,8,'F');lineText(anchor.short.charAt(0),M+12,y+anchorH/2+3.8,17,[255,255,255],'times','bold',{align:'center'});
   lineText('Primary Work Driver',M+27,y+9,6.8,MUTE,'helvetica','bold');lineText(anchor.name,M+27,y+18,13.2,INK,'times','bold');
  anchorLines.forEach(function(l,li){lineText(l,M+27,y+26+(li*4.8),9.2,INK_SOFT,'helvetica','normal');});
  y+=anchorH+7;
- A.forEach(function(r,i){scoreRow((i+1)+'. '+r.name,'',r.score,42,i===0?'hi':(i<3?'mid':'lo'),i===0?'Primary':(i<3?'Strong':'Lower'));});
+ A.forEach(function(r,i){scoreRow((i+1)+'. '+r.name,'',r.score,42,i===0?'hi':(i<3?'mid':'lo'),i===0?'Primary':(i<3?'Strong':'Lower'),i===0?GOLD:(i<3?NAVY:MUTE));});
+ var aNext=saReportCopy.anchor[anchor.key];
+ if(aNext){doc.setFont('helvetica','normal');doc.setFontSize(8.8);var anLines=doc.splitTextToSize(safe(aNext),W-2*M-16),anH=anLines.length*4.6+8;ensure(anH+4);fill([255,248,238]);stroke(GOLD_LT);doc.roundedRect(M,y,W-2*M,anH,2.4,2.4,'FD');lineText('YOUR NEXT STEP',M+6,y+6,6.4,GOLD,'helvetica','bold');anLines.forEach(function(l,li){lineText(l,M+6,y+11+(li*4.6),8.8,INK,'helvetica','normal');});y+=anH+5;}
 
- section('04','Learning Preferences','Study support mix');
- var learnTip=multiV.length>1?'Use a blended study plan that combines the strongest modes.':topV.tip;
+ section('04','Learning Preferences (VARK)','How you absorb information best');
+ var VPDF={V:[2,132,199],A:[217,119,6],R:[124,58,237],K:[5,150,105]};
+ var vCol=VPDF[topV.key]||NAVY;
+ var learnTip=multiV.length>1?'Use a blended study plan that combines your strongest modes.':(saReportCopy.vark[topV.key]||topV.tip);
  doc.setFont('helvetica','normal');doc.setFontSize(10);
  var learnLines=doc.splitTextToSize(safe(learnTip),W-2*M-62);
  var learnH=Math.max(44,25+(learnLines.length*5.1));
- ensure(learnH+7);fill(TERRA);doc.roundedRect(M,y,W-2*M,learnH,2.8,2.8,'F');
-  lineText('STRONGEST PREFERENCE',M+7,y+10,7,[255,238,229],'helvetica','bold');
+ ensure(learnH+7);fill(vCol);doc.roundedRect(M,y,W-2*M,learnH,2.8,2.8,'F');
+  lineText('STRONGEST PREFERENCE',M+7,y+10,7,[235,242,250],'helvetica','bold');
  lineText(learnLabel,M+7,y+22,17,[255,255,255],'times','bold');
- learnLines.forEach(function(l,li){lineText(l,M+7,y+32+(li*5.1),10,[255,244,238],'helvetica','normal');});
- doc.setFont('times','bold');doc.setFontSize(60);doc.setTextColor(232,180,160);doc.text(topV.key,W-M-8,y+learnH-8,{align:'right'});
+ learnLines.forEach(function(l,li){lineText(l,M+7,y+32+(li*5.1),10,[238,244,252],'helvetica','normal');});
+ doc.setFont('times','bold');doc.setFontSize(60);doc.setTextColor(255,255,255);doc.setGState&&doc.setGState(new doc.GState({opacity:.22}));doc.text(topV.key,W-M-8,y+learnH-8,{align:'right'});doc.setGState&&doc.setGState(new doc.GState({opacity:1}));
  var oldY=y;y=oldY+learnH+8;
- V.forEach(function(r){scoreRow(r.name,r.key,r.score,16,r.score===topV.score?'hi':'mid',r.score===topV.score?'Strongest':'Mix');});
+ V.forEach(function(r){scoreRow(r.name,r.key,r.score,16,r.score===topV.score?'hi':'mid',r.score===topV.score?'Strongest':'Mix',VPDF[r.key]);});
  y=Math.max(y,oldY+learnH+8);
 
  if(saIsStreamStage()){
@@ -4579,12 +4617,32 @@ function saBuildPdfDoc(){
   para('This section supports a counselling conversation. It does not automatically assign Science, Commerce, Humanities or any other stream.',M,W-2*M,8.7,MUTE,3);
  }
 
- var noteText='This combined report brings together four educational self-assessment questionnaires for personal reflection and counselling discussion. It is not a psychological diagnosis, aptitude test, or selection/admissions decision tool.';
+ /* Counsellor's note */
+ var firstName=(S.name||'').trim().split(/\s+/)[0]||'there';
+ var cnPara=[
+  'Hi '+firstName+', thank you for completing all four assessments. Reading your responses carefully, I can see a genuine, thoughtful pattern emerging — and that is exactly what makes a good counselling conversation possible.',
+  'These results are not a label or a limitation. They are a mirror. In our session, we will look at the patterns that surprised you, the ones that felt deeply true, and the ones you are still questioning — and use those to narrow down your next concrete step.',
+  'Remember: career clarity is rarely a single moment. It is a series of small, honest conversations — and this report is a great foundation for ours.'
+ ].join(' ');
+ doc.setFont('helvetica','normal');doc.setFontSize(9.2);
+ var cnLines=doc.splitTextToSize(safe(cnPara),W-2*M-34);
+ var cnH=Math.max(40,20+(cnLines.length*4.7));
+ ensure(cnH+6);fill(NAVY);doc.roundedRect(M,y,W-2*M,cnH,2.8,2.8,'F');
+ fill([26,48,96]);doc.circle(M+13,y+15,8.5,'F');stroke(GOLD);doc.setLineWidth(.6);doc.circle(M+13,y+15,8.5,'S');
+ lineText('SB',M+13,y+18,12,GOLD_LT,'times','bold',{align:'center'});
+ lineText("A NOTE FROM YOUR COUNSELLOR",M+26,y+8,6.6,GOLD_LT,'helvetica','bold');
+ cnLines.forEach(function(l,li){lineText(l,M+26,y+14+(li*4.7),9,[222,230,242],'helvetica','normal');});
+ var sigY=y+14+(cnLines.length*4.7)+2;
+ lineText('Sachin Bajaj',M+26,sigY,9.4,[255,255,255],'helvetica','bold');
+ lineText('Counselling Psychologist · Founder, Lume Live · Rohtak, Haryana',M+26,sigY+4.4,6.6,[160,174,200],'helvetica','normal');
+ y+=cnH+6;
+
+ var noteText='These results describe your self-reported preferences today. They are a starting point for your counselling conversation, not a psychological diagnosis or selection decision. The four tools are educational self-reflection instruments. Preferences change over time and may not capture all of your personality or abilities. Please discuss these results with a qualified counsellor before any major academic or career decision.';
  doc.setFont('helvetica','normal');doc.setFontSize(9.2);
  var noteLines=doc.splitTextToSize(safe(noteText),W-2*M-14);
  var noteH=Math.max(32,18+(noteLines.length*4.9));
  ensure(noteH+4);fill([255,247,233]);stroke([240,223,186]);doc.roundedRect(M,y,W-2*M,noteH,2.8,2.8,'FD');
- lineText('Important note',M+6,y+9,9.2,SAFF,'helvetica','bold');
+ lineText('Important note',M+6,y+9,9.2,GOLD,'helvetica','bold');
  noteLines.forEach(function(l,li){lineText(l,M+6,y+18+(li*4.9),9.2,[117,83,29],'helvetica','normal');});
  y+=noteH+3;
 
