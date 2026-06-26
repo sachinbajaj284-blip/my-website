@@ -1634,7 +1634,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
       <p class="s-sub" style="margin:0 auto;">Structured support that meets students, families and professionals exactly where they are.</p>
     </div>
     <div class="svc-grid">
-      <div class="svc-card hs anim stagger-1" onclick="openModal('session')">
+      <div class="svc-card hs anim stagger-1" onclick="openSessionModal('stream-clarity')">
         <div class="svc-head">
           <span class="chip chip-live">✅ Live Now</span>
           <div class="svc-icon">🏫</div>
@@ -1657,7 +1657,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
           <button class="btn-teal">Book Your Session Now →</button>
         </div>
       </div>
-      <div class="svc-card cc anim stagger-2" onclick="openModal('session')">
+      <div class="svc-card cc anim stagger-2" onclick="openSessionModal('career-direction')">
         <div class="svc-head">
           <span class="chip chip-live">✅ Live Now</span>
           <div class="svc-icon">🎓</div>
@@ -1700,7 +1700,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
           <span class="btn-navy" style="display:inline-flex;text-decoration:none;">Open Lume Lens →</span>
         </div>
       </a>
-      <div class="svc-card ew anim stagger-4" onclick="openModal('session')">
+      <div class="svc-card ew anim stagger-4" onclick="openSessionModal('wellness')">
         <div class="svc-head">
           <span class="chip chip-live">✅ Live Now</span>
           <div class="svc-icon">🧠</div>
@@ -4715,7 +4715,7 @@ if(new URLSearchParams(window.location.search).has("sample-report")){window.saSh
       <h3>Take the First Step Toward Clarity</h3>
       <p>Your journey to emotional balance starts with a single conversation. Whether you want to solve a specific problem or just understand yourself better, we are here for you.</p>
       <div class="ewb-btns">
-        <a href="#" class="btn-ewb-gold" onclick="openModal('session');return false;">🎯 Book Your Emotional Wellness Session</a>
+        <a href="#" class="btn-ewb-gold" onclick="openSessionModal('wellness');return false;">🎯 Book Your Emotional Wellness Session</a>
         <a href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20would%20like%20to%20know%20more%20about%20Emotional%20Wellness%20Counselling%20at%20Lume%20Live." target="_blank" class="btn-ewb-wa">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.556 4.121 1.528 5.856L.057 23.215a.75.75 0 00.922.921l5.344-1.47A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.663-.523-5.183-1.432l-.37-.219-3.171.871.884-3.175-.237-.386A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
           Connect via WhatsApp
@@ -5235,8 +5235,8 @@ if(new URLSearchParams(window.location.search).has("sample-report")){window.saSh
     <button class="modal-x" onclick="closeModal('session')">✕</button>
     <div class="modal-hdr">
       <div class="modal-hdr-logo"><img src="logo.png" alt="Lume Live"></div>
-      <h2>Book Your Introductory Guidance Session</h2>
-      <p>For parents, students & families · Online across India</p>
+      <h2 id="sessTitle">Book Your Introductory Guidance Session</h2>
+      <p id="sessSub">For parents, students & families · Online across India</p>
     </div>
     <div class="modal-body">
       <div class="modal-countdown offer-countdown" hidden>
@@ -5254,8 +5254,8 @@ if(new URLSearchParams(window.location.search).has("sample-report")){window.saSh
         <div class="sr-points"><span>🔒 100% confidential</span><span>👨‍👩‍👧 Parent-friendly</span><span>🧭 Clear next steps</span></div>
       </div>
       <div class="price-row">
-        <div class="amt" style="color:var(--green);">₹49</div>
-        <div class="detail">Introductory session<br><span style="color:var(--grayM);text-decoration:line-through;">₹499</span> regular price</div>
+        <div class="amt" id="sessAmt" style="color:var(--green);">₹49</div>
+        <div class="detail" id="sessDetail">Introductory session<br><span style="color:var(--grayM);text-decoration:line-through;">₹499</span> regular price</div>
       </div>
       <!-- Date & Time Picker -->
       <div class="date-section">
@@ -5309,10 +5309,10 @@ if(new URLSearchParams(window.location.search).has("sample-report")){window.saSh
         <summary>WhatsApp Pay backup</summary>
         <div class="m-payment-fallback-body">
           <div class="upi-sec">
-            <div class="ttl">Pay ₹49 through WhatsApp Pay backup</div>
+            <div class="ttl" id="sessUpiTtl">Pay ₹49 through WhatsApp Pay backup</div>
             <div class="upi-qr"><img src="lume-upi-qr.png" alt="UPI QR Code - Sachin Bajaj"></div>
             <div class="upi-id" onclick="copyUPI()">sachinbajaj284@okaxis</div>
-            <div class="upi-hint">Tap to copy · PhonePe, GPay, Paytm · <strong style="color:var(--green);">₹49</strong> <span style="text-decoration:line-through;opacity:.5;">₹499</span></div>
+            <div class="upi-hint" id="sessUpiHint">Tap to copy · PhonePe, GPay, Paytm · <strong style="color:var(--green);">₹49</strong> <span style="text-decoration:line-through;opacity:.5;">₹499</span></div>
             <a href="#" class="upi-download" onclick="downloadUPIQR();return false;">Download QR Code</a>
           </div>
           <ol class="m-steps">
@@ -5648,7 +5648,12 @@ function updateOfferCountdown(){
   const mins=Math.floor((diff%3600000)/60000);
   const secs=Math.floor((diff%60000)/1000);
   document.documentElement.style.setProperty('--countdown-h',window.innerWidth<=640?'34px':'38px');
-  offerNodes.forEach(el=>{el.hidden=false;});
+  var planIsOffer=(typeof currentSessionPlan!=='undefined'&&currentSessionPlan&&currentSessionPlan.offer);
+  offerNodes.forEach(el=>{
+    // The booking-modal countdown only applies to ₹49 offer plans, not paid sessions
+    if(el.closest('#modal-session')&&!planIsOffer){el.hidden=true;return;}
+    el.hidden=false;
+  });
   document.querySelectorAll('[data-offer-days]').forEach(el=>{el.textContent=padOffer(days);});
   document.querySelectorAll('[data-offer-hours]').forEach(el=>{el.textContent=padOffer(hours);});
   document.querySelectorAll('[data-offer-mins]').forEach(el=>{el.textContent=padOffer(mins);});
@@ -5804,7 +5809,30 @@ function downloadUPIQR(){
 }
 
 // ── MODALS ──
-function openModal(id){document.getElementById('modal-'+id).classList.add('open');document.body.style.overflow='hidden';}
+/* ── Session plans: each entry drives the booking modal's price + copy ── */
+var SESSION_PLANS={
+  intro:{sku:"intro-session",amount:49,regular:499,title:"Book Your Introductory Guidance Session",sub:"For parents, students & families · Online across India",detail:"Introductory session",label:"Introductory Guidance Session",offer:true},
+  wellness:{sku:"intro-session",amount:49,regular:499,title:"Book Your Emotional Wellness Session",sub:"1:1 confidential support · Online across India",detail:"First wellness session",label:"Emotional Wellness Session",offer:true},
+  'stream-clarity':{sku:"stream-clarity-session",amount:999,regular:null,title:"Book Your Stream Clarity Session",sub:"For parents of Grade 9–12 students · Online across India",detail:"Career Confusion & Stream Clarity session",label:"Career Confusion & Stream Clarity Session",offer:false},
+  'career-direction':{sku:"career-direction-session",amount:1499,regular:null,title:"Book Your Career Direction Session",sub:"For older students & young adults · Online across India",detail:"Career Direction & First-Job Readiness session",label:"Career Direction & First-Job Readiness Session",offer:false}
+};
+var currentSessionPlan=SESSION_PLANS.intro;
+function fmtINR(n){return '₹'+Number(n||0).toLocaleString('en-IN');}
+function applySessionPlan(key){
+  var p=SESSION_PLANS[key]||SESSION_PLANS.intro;
+  currentSessionPlan=p;
+  var set=function(id,html){var n=document.getElementById(id);if(n)n.innerHTML=html;};
+  set('sessTitle',p.title);
+  set('sessSub',p.sub);
+  set('sessAmt',fmtINR(p.amount));
+  set('sessDetail',p.detail+(p.regular?'<br><span style="color:var(--grayM);text-decoration:line-through;">'+fmtINR(p.regular)+'</span> regular price':''));
+  set('sessUpiTtl','Pay '+fmtINR(p.amount)+' through WhatsApp Pay backup');
+  set('sessUpiHint','Tap to copy · PhonePe, GPay, Paytm · <strong style="color:var(--green);">'+fmtINR(p.amount)+'</strong>'+(p.regular?' <span style="text-decoration:line-through;opacity:.5;">'+fmtINR(p.regular)+'</span>':''));
+  var cd=document.querySelector('#modal-session .offer-countdown');
+  if(cd){ if(p.offer){cd.removeAttribute('hidden');} else {cd.setAttribute('hidden','');} }
+}
+function openModal(id){if(id==='session'){applySessionPlan('intro');}document.getElementById('modal-'+id).classList.add('open');document.body.style.overflow='hidden';}
+function openSessionModal(key){applySessionPlan(key);document.getElementById('modal-session').classList.add('open');document.body.style.overflow='hidden';}
 function closeModal(id){document.getElementById('modal-'+id).classList.remove('open');document.body.style.overflow='';}
 document.querySelectorAll('.modal-overlay').forEach(el=>{
   el.addEventListener('click',function(e){if(e.target===this){this.classList.remove('open');document.body.style.overflow='';}});
@@ -5891,10 +5919,11 @@ function startSessionCashfree(e){
     if(btn&&btn.href)window.open(btn.href,'_blank','noopener');
   };
   if(typeof window.lumeCashfreePay!=="function"){showToast('Cashfree checkout is still loading. Please wait a few seconds and tap Pay Securely with Cashfree again.');return;}
+  var plan=currentSessionPlan||SESSION_PLANS.intro;
   window.lumeCashfreePay({
-    sku:"intro-session",
-    amount:49,
-    label:"Introductory Guidance Session",
+    sku:plan.sku,
+    amount:plan.amount,
+    label:plan.label,
     notes:{preferredDate:d,preferredTime:t,sessionMode:sessionMode},
     onFallback:fallback
   });
@@ -5904,12 +5933,15 @@ function startSessionCashfree(e){
 function updateSessionWA(){
   const d=document.getElementById('sessionDate').value;
   const t=document.getElementById('sessionTime').value;
+  const plan=currentSessionPlan||SESSION_PLANS.intro;
   const msg=waMessage([
     '👋 Hi Sachin!',
     '',
-    '🎯 I have made the ₹49 introductory payment for my first wellness session.',
+    '🎯 I have made the '+fmtINR(plan.amount)+' payment for: '+plan.label+'.',
     '',
     '🧾 Booking Details',
+    '• Service: '+plan.label,
+    '• Amount: '+fmtINR(plan.amount),
     '• Preferred date: '+(d||'Not selected yet'),
     '• Preferred time: '+(t?formatTime(t):'Not selected yet'),
     '• Session mode: '+sessionMode,
