@@ -4204,6 +4204,20 @@ function saBuildPdfDoc(){
   });
   y+=boxH+3;
  }
+ /* Radar chart for a set of dimensions (e.g. Big Five) */
+ function radarChart(cx,cy,radius,rows,max,accent){
+  var n=rows.length,ang=function(i){return -Math.PI/2+i*(2*Math.PI/n);};
+  stroke([221,210,186]);doc.setLineWidth(.25);
+  [0.34,0.67,1].forEach(function(f){for(var i=0;i<n;i++){var a1=ang(i),a2=ang((i+1)%n);
+   doc.line(cx+radius*f*Math.cos(a1),cy+radius*f*Math.sin(a1),cx+radius*f*Math.cos(a2),cy+radius*f*Math.sin(a2));}});
+  for(var i=0;i<n;i++){doc.line(cx,cy,cx+radius*Math.cos(ang(i)),cy+radius*Math.sin(ang(i)));}
+  var sp=[];for(var i=0;i<n;i++){var sc=Math.max(0,Math.min(1,(rows[i].score||0)/max));sp.push([cx+radius*sc*Math.cos(ang(i)),cy+radius*sc*Math.sin(ang(i))]);}
+  stroke(accent||SAFF);doc.setLineWidth(.9);
+  for(var i=0;i<n;i++){doc.line(sp[i][0],sp[i][1],sp[(i+1)%n][0],sp[(i+1)%n][1]);}
+  for(var i=0;i<n;i++){fill(accent||SAFF);doc.circle(sp[i][0],sp[i][1],1.1,"F");}
+  for(var i=0;i<n;i++){var lx=cx+(radius+6)*Math.cos(ang(i)),ly=cy+(radius+6)*Math.sin(ang(i));
+   lineText(rows[i].key,lx,ly+1.5,8,accent||SAFF,"helvetica","bold",{align:"center"});}
+ }
  function card(x,yy,w,h,border){fill(CARD);stroke(border||LINE);doc.setLineWidth(.25);doc.roundedRect(x,yy,w,h,2.2,2.2,"FD");}
 
  paint();
@@ -4321,8 +4335,47 @@ function saBuildPdfDoc(){
  }
 
  /* SECTIONS */
+ /* How to read this report */
+ doc.addPage();paint();y=TOP+1;
+ fill(NAVY);doc.roundedRect(M,y-5.6,8.5,8.5,1.8,1.8,"F");
+ lineText("i",M+4.25,y+.6,8,[255,255,255],"times","bold",{align:"center"});
+ doc.setFont("times","bold");doc.setFontSize(17);rgb(NAVY);doc.text(safe("How to Read This Report"),M+13,y);
+ y+=9;stroke(GOLD);doc.setLineWidth(.6);doc.line(M,y,M+24,y);stroke(LINE);doc.setLineWidth(.35);doc.line(M+26,y,W-M,y);y+=10;
+ var ptoc=[["01","Personality Patterns","How you engage with work and people"],
+  ["02","What Drives You","Where your energy at work comes from"],
+  ["03","How You Decide","Your default route to a choice"],
+  ["04","Handling Disagreement","What you do when interests collide"],
+  ["05","Reading & Managing Emotion","Working with feeling at work"],
+  ["06","Reading the Mosaic","How your patterns intersect"],
+  ["F","Where You'll Do Your Best Work","Environments and roles that fit you"],
+  ["07","Your Next 30 Days","A short, concrete action plan"]];
+ ptoc.forEach(function(t){
+  ensure(13.5);
+  fill(CARD);stroke(LINE);doc.setLineWidth(.25);doc.roundedRect(M,y,W-2*M,11.5,2.2,2.2,"FD");
+  fill(NAVY);doc.roundedRect(M+3,y+2.2,7.5,7.5,1.5,1.5,"F");lineText(t[0],M+6.75,y+7.2,6.4,[255,255,255],"helvetica","bold",{align:"center"});
+  lineText(t[1],M+15,y+5,9.4,INK,"helvetica","bold");
+  lineText(t[2],M+15,y+9.4,7.4,MUTE,"helvetica","normal");
+  y+=13.5;
+ });
+ y+=3;
+ doc.setFont("helvetica","normal");doc.setFontSize(8.7);
+ var phrTxt=doc.splitTextToSize(safe('Scores are on a 0-100 scale and describe your preferences, not your ability - a higher score is not "better", only different. They are descriptive, not a percentile against a norm group. Treat this as decision intelligence for reflection and coaching, not a verdict.'),W-2*M-12);
+ var phrH=18+phrTxt.length*4.6;ensure(phrH);
+ fill([255,248,238]);stroke(GOLD_LT);doc.roundedRect(M,y,W-2*M,phrH,2.6,2.6,"FD");
+ lineText("HOW TO READ YOUR SCORES",M+6,y+8,7,GOLD,"helvetica","bold");
+ doc.setFont("helvetica","normal");doc.setFontSize(8.7);rgb(INK_SOFT);
+ phrTxt.forEach(function(l,i){doc.text(l,M+6,y+14.5+i*4.6);});
+ y+=phrH+4;
+
  section("01","Part 1 \u00B7 Personality Patterns","How you engage with work and people",PLUM);
  W_.forEach(dimRow);
+ ensure(70);y+=3;
+ radarChart(M+32,y+28,24,W_,100,PLUM);
+ lineText("YOUR PERSONALITY SHAPE",M+70,y+12,7.4,PLUM,"helvetica","bold");
+ doc.setFont("helvetica","normal");doc.setFontSize(8.8);rgb(INK_SOFT);
+ var pshape=doc.splitTextToSize(safe("Each corner is one of the Big Five traits (O, C, E, A, S). The further a point reaches out, the stronger that trait - the overall shape is your personality at a glance."),W-M-(M+70));
+ pshape.forEach(function(l,i){doc.text(l,M+70,y+19+i*4.7);});
+ y+=62;
  meaningList(W_,DIMS.wsp);
  reflectBox(["Which of these patterns feels most like you at work - and did any of them surprise you?","Where does your strongest trait help you most, and where might it quietly cost you?"],PLUM);
  y+=2;para("A higher score on any dimension is not better than a lower one - only different. These describe your natural style, not your ability.",M,W-2*M,8.2,MUTE);
@@ -4446,6 +4499,29 @@ function saBuildPdfDoc(){
   lines.forEach(function(l,li){doc.text(l,M+18,y+7+li*4.8);});
   y+=h+4;
  });
+
+ /* Your strengths & growth areas */
+ doc.addPage();paint();y=TOP+1;
+ fill(SAGE);doc.roundedRect(M,y-5.6,8.5,8.5,1.8,1.8,"F");
+ lineText("+",M+4.25,y+1,10,[255,255,255],"helvetica","bold",{align:"center"});
+ doc.setFont("times","bold");doc.setFontSize(17);rgb(NAVY);doc.text(safe("Your Strengths & Growth Areas"),M+13,y);
+ y+=9;stroke(SAGE);doc.setLineWidth(.6);doc.line(M,y,M+24,y);stroke(LINE);doc.setLineWidth(.35);doc.line(M+26,y,W-M,y);y+=10;
+ var allDims=W_.concat(D,C,H_,E);
+ var pStr=allDims.filter(function(r){return r.band==="hi";}).sort(function(a,b){return b.score-a.score;}).slice(0,5);
+ if(pStr.length<3) pStr=allDims.slice().sort(function(a,b){return b.score-a.score;}).slice(0,4);
+ var pStrengths=pStr.map(function(r){return "Strong "+r.name.toLowerCase();});
+ var eLow=E.slice().sort(function(a,b){return a.score-b.score;}).slice(0,2);
+ var pGrowth=eLow.map(function(r){return "Developing: "+r.name.toLowerCase()+" emotion - where the most growth is available right now";});
+ pGrowth.push("Look hardest at any score that disagreed with how you see yourself - that gap is the most useful conversation");
+ var pcolW=(W-2*M-6)/2,plX=M,prX=M+pcolW+6,pcY=y;
+ fill([237,247,241]);stroke([197,221,205]);doc.setLineWidth(.3);doc.roundedRect(plX,pcY,pcolW,10,2.2,2.2,"FD");
+ lineText("YOUR STRENGTHS",plX+5,pcY+6.6,8,[39,116,76],"helvetica","bold");
+ fill([255,248,238]);stroke(GOLD_LT);doc.roundedRect(prX,pcY,pcolW,10,2.2,2.2,"FD");
+ lineText("AREAS TO DEVELOP",prX+5,pcY+6.6,8,GOLD,"helvetica","bold");
+ var plyy=pcY+16,pryy=pcY+16;
+ pStrengths.forEach(function(s){var lines=doc.splitTextToSize(safe(s),pcolW-9);fill(SAGE);doc.circle(plX+3,plyy-1.3,1,"F");rgb(INK_SOFT);doc.setFont("helvetica","normal");doc.setFontSize(8.9);lines.forEach(function(l,i){doc.text(l,plX+6,plyy+i*4.5);});plyy+=lines.length*4.5+3.4;});
+ pGrowth.forEach(function(s){var lines=doc.splitTextToSize(safe(s),pcolW-9);fill(GOLD);doc.circle(prX+3,pryy-1.3,1,"F");rgb(INK_SOFT);doc.setFont("helvetica","normal");doc.setFontSize(8.9);lines.forEach(function(l,i){doc.text(l,prX+6,pryy+i*4.5);});pryy+=lines.length*4.5+3.4;});
+ y=Math.max(plyy,pryy)+5;
 
  /* Counsellor's note — own closing page */
  doc.addPage();paint();y=TOP+1;
