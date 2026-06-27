@@ -4462,6 +4462,22 @@ function saBuildPdfDoc(){
   });
   return cy+rowH-yy;
  }
+ /* Holland RIASEC hexagon — the classic interest-profile visual */
+ function hollandHexagon(cx,cy,radius,rmap){
+  var order=['R','I','A','S','E','C'],ang=function(i){return -Math.PI/2+i*(Math.PI/3);};
+  stroke([221,210,186]);doc.setLineWidth(.25);
+  [0.34,0.67,1].forEach(function(f){
+   for(var i=0;i<6;i++){var a1=ang(i),a2=ang((i+1)%6);
+    doc.line(cx+radius*f*Math.cos(a1),cy+radius*f*Math.sin(a1),cx+radius*f*Math.cos(a2),cy+radius*f*Math.sin(a2));}
+  });
+  for(var i=0;i<6;i++){doc.line(cx,cy,cx+radius*Math.cos(ang(i)),cy+radius*Math.sin(ang(i)));}
+  var sp=[];for(var i=0;i<6;i++){var sc=Math.max(0,Math.min(1,(rmap[order[i]]||0)/7));sp.push([cx+radius*sc*Math.cos(ang(i)),cy+radius*sc*Math.sin(ang(i))]);}
+  stroke(SAFF);doc.setLineWidth(.9);
+  for(var i=0;i<6;i++){doc.line(sp[i][0],sp[i][1],sp[(i+1)%6][0],sp[(i+1)%6][1]);}
+  for(var i=0;i<6;i++){fill(RPDF[order[i]]);doc.circle(sp[i][0],sp[i][1],1.2,'F');}
+  for(var i=0;i<6;i++){var lx=cx+(radius+6)*Math.cos(ang(i)),ly=cy+(radius+6)*Math.sin(ang(i));
+   lineText(order[i],lx,ly+2,9,RPDF[order[i]],'helvetica','bold',{align:'center'});}
+ }
  paint();
  var P=scorePersonality(),R=scoreRiasec(),A=scoreAnchors(),V=scoreVark();
  var topP=P.slice().sort(function(a,b){return b.score-a.score;})[0];
@@ -4471,6 +4487,22 @@ function saBuildPdfDoc(){
  var date=new Intl.DateTimeFormat('en-IN',{dateStyle:'long'}).format(new Date());
  var dirs=[];top3.forEach(function(r){r.pathways.forEach(function(p){if(dirs.indexOf(p)===-1)dirs.push(p);});});
  var fields=[];top3.slice(0,2).forEach(function(r){r.majors.slice(0,4).forEach(function(m){if(fields.indexOf(m)===-1)fields.push(m);});});
+ /* Holland-congruence career matches — honest fit % from interest overlap */
+ var SA_CAREERS=[
+  {n:"Doctor / Physician",c:"ISR"},{n:"Software Developer",c:"IRC"},{n:"Data Analyst / Scientist",c:"ICR"},
+  {n:"Mechanical / Civil Engineer",c:"RIE"},{n:"Psychologist / Counsellor",c:"SIA"},{n:"Teacher / Educator",c:"SAE"},
+  {n:"Nurse / Allied Health",c:"SIR"},{n:"Chartered Accountant",c:"CEI"},{n:"Banking & Finance",c:"CES"},
+  {n:"Lawyer",c:"ESA"},{n:"Entrepreneur / Business",c:"ESC"},{n:"Marketing & Sales",c:"ECS"},
+  {n:"Graphic / UX Designer",c:"AIE"},{n:"Architect",c:"AIR"},{n:"Journalist / Media",c:"AES"},
+  {n:"Civil Services / Administration",c:"SEC"},{n:"Research Scientist",c:"IRA"},{n:"Hospitality & Tourism",c:"ESR"},
+  {n:"Social Worker / NGO",c:"SEA"},{n:"Product / Project Manager",c:"EIC"}
+ ];
+ var saStuLetters=top3.map(function(r){return r.key;}),saStuW=[1,0.66,0.33],saCarW=[1,0.6,0.3];
+ var saMaxRaw=1*1+0.6*0.66+0.3*0.33;
+ var careerMatches=SA_CAREERS.map(function(cc){
+  var raw=0;for(var i=0;i<cc.c.length;i++){var j=saStuLetters.indexOf(cc.c[i]);if(j>-1)raw+=saCarW[i]*saStuW[j];}
+  return {n:cc.n,c:cc.c,fit:Math.round(45+(raw/saMaxRaw)*50)};
+ }).sort(function(a,b){return b.fit-a.fit;}).slice(0,7);
  var profilePdf=[S.age?'Age '+S.age:'',S.stage||'',S.city||'',S.concern||''].filter(Boolean).join('  |  ');
  var narrative='Your career-interest profile is '+code+', led by '+top3[0].name.toLowerCase()+', '+top3[1].name.toLowerCase()+' and '+top3[2].name.toLowerCase()+' interests. Your most pronounced personality pattern is '+topP.name.toLowerCase()+', and your strongest work driver is '+anchor.short+'. You tend to learn best through '+(multiV.length>1?'several modes combined':topV.name.toLowerCase()+' approaches')+'.';
 
@@ -4543,6 +4575,13 @@ function saBuildPdfDoc(){
   var top=top3.map(function(x){return x.key;}).indexOf(r.key)>-1;
   scoreRow(r.name,r.key,r.score,7,top?'hi':'mid',top?'Top 3':'Score',RPDF[r.key]);
  });
+ /* Holland hexagon visual */
+ ensure(74);y+=4;
+ var rmapHex={};R.forEach(function(r){rmapHex[r.key]=r.score;});
+ hollandHexagon(M+34,y+30,26,rmapHex);
+ lineText('YOUR INTEREST SHAPE',M+74,y+10,7.4,SAFF,'helvetica','bold');
+ textAt('The further a point reaches toward a corner, the stronger that interest. Your three biggest corners — '+top3.map(function(r){return r.name;}).join(', ')+' — form your '+code+' code, and shape the career matches on the next page.',M+74,y+17,W-M-(M+74),9,INK_SOFT,4.6);
+ y+=66;
  top3.forEach(function(r){
   var col=RPDF[r.key]||GOLD,copy=(saReportCopy.riasec[r.key]||{});
   doc.setFont('helvetica','normal');doc.setFontSize(9);
@@ -4572,7 +4611,20 @@ function saBuildPdfDoc(){
   }else{y+=1;}
  });
 
- section('03','Career Values & Work Drivers','Ranked drivers',SAGE);
+ section('03','Top Career Matches','Best-fit careers for your '+code+' profile',NAVY);
+ para('These careers are ranked by how closely their interest profile matches your top three themes ('+code+'). Fit is a starting point for exploration in counselling — not a fixed verdict, and not the only careers open to you.',M,W-2*M,9.2,INK_SOFT,6);
+ careerMatches.forEach(function(m){
+  var rowH=14;ensure(rowH);
+  lineText(m.n,M,y+4,10.2,INK,'helvetica','bold');
+  lineText('Holland code '+m.c,M,y+9.2,6.6,MUTE,'helvetica','bold');
+  var mc=m.fit>=80?SAGE:(m.fit>=66?SAFF:PLUM);
+  bar(M+98,y+1.5,68,m.fit,mc);
+  lineText(m.fit+'%',W-M,y+6,12,INK,'times','bold',{align:'right'});
+  y+=rowH;
+ });
+ y+=3;para('See detailed matches, salary ranges and entry routes at lumelive.co.in/career-intelligence (interest theme '+code+').',M,W-2*M,8.4,MUTE,3);
+
+ section('04','Career Values & Work Drivers','Ranked drivers',SAGE);
  doc.setFont('helvetica','normal');doc.setFontSize(9.2);
  var anchorLines=doc.splitTextToSize(safe(anchor.desc),W-2*M-38);
  var anchorH=Math.max(36,22+(anchorLines.length*4.8));
@@ -4584,7 +4636,7 @@ function saBuildPdfDoc(){
  var aNext=saReportCopy.anchor[anchor.key];
  if(aNext){doc.setFont('helvetica','normal');doc.setFontSize(8.8);var anLines=doc.splitTextToSize(safe(aNext),W-2*M-16),anH=anLines.length*4.6+8;ensure(anH+4);fill([255,248,238]);stroke(GOLD_LT);doc.roundedRect(M,y,W-2*M,anH,2.4,2.4,'FD');lineText('YOUR NEXT STEP',M+6,y+6,6.4,GOLD,'helvetica','bold');anLines.forEach(function(l,li){lineText(l,M+6,y+11+(li*4.6),8.8,INK,'helvetica','normal');});y+=anH+5;}
 
- section('04','Learning Preferences (VARK)','How you absorb information best',TERRA);
+ section('05','Learning Preferences (VARK)','How you absorb information best',TERRA);
  var VPDF={V:[2,132,199],A:[217,119,6],R:[124,58,237],K:[5,150,105]};
  var vCol=VPDF[topV.key]||NAVY;
  var learnTip=multiV.length>1?'Use a blended study plan that combines your strongest modes.':(saReportCopy.vark[topV.key]||topV.tip);
@@ -4619,7 +4671,7 @@ function saBuildPdfDoc(){
 
  if(saIsStreamStage()){
   var guide=saStreamGuide(top3,anchor,topP,learnLabel);
-  section('05','Stream Decision Starter','Class 9-12 guidance',NAVY);
+  section('06','Stream Decision Starter','Class 9-12 guidance',NAVY);
   para(guide.why,M,W-2*M,9.6,INK_SOFT,3);
   guide.lanes.forEach(function(l,i){
    var lines=doc.splitTextToSize(safe(l.detail),W-2*M-14);
