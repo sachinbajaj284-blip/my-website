@@ -4561,6 +4561,32 @@ function saBuildPdfDoc(){
  ciLines.forEach(function(l,i){doc.text(l,M+8,ciY+11+i*4.3);});
  y+=qH+9;
 
+ /* How to read this report */
+ doc.addPage();paint();y=TOP+1;
+ fill(NAVY);doc.roundedRect(M,y-5.6,8.5,8.5,1.8,1.8,'F');
+ lineText('i',M+4.25,y+.6,8,[255,255,255],'times','bold',{align:'center'});
+ doc.setFont('times','bold');doc.setFontSize(17.4);rgb(NAVY);doc.text(safe('How to Read This Report'),M+13,y);
+ y+=9;stroke(GOLD);doc.setLineWidth(.6);doc.line(M,y,M+24,y);stroke(LINE);doc.setLineWidth(.35);doc.line(M+26,y,W-M,y);y+=10;
+ var toc=[['01','Personality Patterns','How you tend to think, feel and work'],
+  ['02','Career Interest Themes','Your Holland RIASEC interest shape'],
+  ['03','Top Career Matches','Careers that fit your interest profile'],
+  ['04','Career Values & Work Drivers','What matters most to you in work'],
+  ['05','Learning Preferences','How you absorb information best']];
+ if(saIsStreamStage())toc.push(['06','Stream Decision Starter','Subjects and streams to weigh up']);
+ toc.forEach(function(t){
+  ensure(15);
+  fill(CARD);stroke(LINE);doc.setLineWidth(.25);doc.roundedRect(M,y,W-2*M,12.5,2.2,2.2,'FD');
+  fill(NAVY);doc.roundedRect(M+3,y+2.6,7.5,7.5,1.5,1.5,'F');lineText(t[0],M+6.75,y+7.7,6.6,[255,255,255],'helvetica','bold',{align:'center'});
+  lineText(t[1],M+15,y+5.6,9.6,INK,'helvetica','bold');
+  lineText(t[2],M+15,y+10,7.6,MUTE,'helvetica','normal');
+  y+=14.5;
+ });
+ y+=4;
+ var hrH=36;ensure(hrH);fill([255,248,238]);stroke(GOLD_LT);doc.roundedRect(M,y,W-2*M,hrH,2.6,2.6,'FD');
+ lineText('HOW TO READ YOUR SCORES',M+6,y+8,7,GOLD,'helvetica','bold');
+ textAt('These scores describe your preferences today, not your abilities - a higher score is not "better", only different. Think of this as a snapshot, not a label: interests and strengths grow over time. Use it as the starting point for an honest conversation with your counsellor, not as a final decision.',M+6,y+14,W-2*M-12,8.9,INK_SOFT,4.7);
+ y+=hrH+4;
+
  section('01','Personality Patterns','0 to 40 preference scale',PLUM);
  P.forEach(function(r){scoreRow(r.name,r.key,r.score,40,r.band,r.word);});
  y+=2;
@@ -4685,6 +4711,42 @@ function saBuildPdfDoc(){
   guide.prompts.forEach(function(p){para('- '+p,M,W-2*M,8.9,INK_SOFT,1.6);});
   para('This section supports a counselling conversation. It does not automatically assign Science, Commerce, Humanities or any other stream.',M,W-2*M,8.7,MUTE,3);
  }
+
+ /* Your strengths & growth areas */
+ doc.addPage();paint();y=TOP+1;
+ fill(SAGE);doc.roundedRect(M,y-5.6,8.5,8.5,1.8,1.8,'F');
+ lineText('+',M+4.25,y+1,10,[255,255,255],'helvetica','bold',{align:'center'});
+ doc.setFont('times','bold');doc.setFontSize(17.4);rgb(NAVY);doc.text(safe('Your Strengths & Growth Areas'),M+13,y);
+ y+=9;stroke(SAGE);doc.setLineWidth(.6);doc.line(M,y,M+24,y);stroke(LINE);doc.setLineWidth(.35);doc.line(M+26,y,W-M,y);y+=10;
+ var strengths=[];
+ P.filter(function(r){return r.band==='hi';}).slice(0,2).forEach(function(r){strengths.push('Strong '+r.name.toLowerCase());});
+ strengths.push('Clear top interests: '+top3.map(function(r){return r.name;}).join(', '));
+ strengths.push('Motivated by '+anchor.name.toLowerCase());
+ strengths.push('Learns well through '+learnLabel.toLowerCase());
+ var lowR=R.slice().sort(function(a,b){return a.score-b.score;}).slice(0,2);
+ var growth=['Less drawn to '+lowR.map(function(r){return r.name.toLowerCase();}).join(' and ')+' work - explore these briefly before ruling them out'];
+ if(P.filter(function(r){return r.key==='C'&&r.band==='lo';})[0]) growth.push('Building steady study structure and consistency will help you turn plans into results');
+ if(P.filter(function(r){return r.key==='N'&&r.band==='hi';})[0]) growth.push('Simple stress-management habits will help you stay steady under exam pressure');
+ growth.push('Try a backup learning mode beyond '+learnLabel.toLowerCase()+' so you can adapt to any subject');
+ var colW=(W-2*M-6)/2,leftX=M,rightX=M+colW+6,colY=y;
+ fill([237,247,241]);stroke([197,221,205]);doc.setLineWidth(.3);doc.roundedRect(leftX,colY,colW,10,2.2,2.2,'FD');
+ lineText('YOUR STRENGTHS',leftX+5,colY+6.6,8,[39,116,76],'helvetica','bold');
+ fill([255,248,238]);stroke(GOLD_LT);doc.roundedRect(rightX,colY,colW,10,2.2,2.2,'FD');
+ lineText('AREAS TO EXPLORE & DEVELOP',rightX+5,colY+6.6,7.2,GOLD,'helvetica','bold');
+ var lyy=colY+16,ryy=colY+16;
+ strengths.forEach(function(s){
+  var lines=doc.splitTextToSize(safe(s),colW-9);
+  fill(SAGE);doc.circle(leftX+3,lyy-1.3,1,'F');
+  rgb(INK_SOFT);doc.setFont('helvetica','normal');doc.setFontSize(8.9);
+  lines.forEach(function(l,i){doc.text(l,leftX+6,lyy+i*4.5);});lyy+=lines.length*4.5+3.4;
+ });
+ growth.forEach(function(s){
+  var lines=doc.splitTextToSize(safe(s),colW-9);
+  fill(GOLD);doc.circle(rightX+3,ryy-1.3,1,'F');
+  rgb(INK_SOFT);doc.setFont('helvetica','normal');doc.setFontSize(8.9);
+  lines.forEach(function(l,i){doc.text(l,rightX+6,ryy+i*4.5);});ryy+=lines.length*4.5+3.4;
+ });
+ y=Math.max(lyy,ryy)+5;
 
  /* Counsellor's note — own closing page */
  doc.addPage();paint();y=TOP+1;
