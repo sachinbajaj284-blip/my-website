@@ -4583,7 +4583,7 @@ function saBuildPdfDoc(){
  }
  return doc;
 }
-function saLoadJsPDF(cb){if(window.jspdf&&window.jspdf.jsPDF)return cb();var s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";s.onload=cb;document.head.appendChild(s);}
+function saLoadJsPDF(cb){if(window.jspdf&&window.jspdf.jsPDF)return cb();var s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/jspdf@4.2.1/dist/jspdf.umd.min.js";s.onload=cb;s.onerror=function(){toast("Could not load the PDF tool — please check your internet connection and try again.");};document.head.appendChild(s);}
 function saMakeDoc(cb){saLoadJsPDF(function(){try{cb(saBuildPdfDoc());}catch(e){console.error(e);toast("Sorry, the PDF could not be built.");}});}
 window.saDownloadPDF=function(){saMakeDoc(function(doc){doc.save(saPdfName());toast("Your Lume Lens report PDF has been downloaded.");});};
 window.saSharePDF=function(){
