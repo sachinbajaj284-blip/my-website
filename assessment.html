@@ -10,7 +10,7 @@
   gtag('config', 'G-1CZ93P4P3V');
 </script>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' sdk.cashfree.com www.gstatic.com cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' api.cashfree.com sandbox.cashfree.com *.googleapis.com *.firebaseio.com firebaseapp.com www.gstatic.com; frame-src *.cashfree.com; object-src 'none'; base-uri 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' sdk.cashfree.com www.gstatic.com cdn.jsdelivr.net www.googletagmanager.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com; img-src 'self' data: blob: www.google-analytics.com www.googletagmanager.com; connect-src 'self' api.cashfree.com sandbox.cashfree.com *.googleapis.com *.firebaseio.com firebaseapp.com www.gstatic.com www.googletagmanager.com *.google-analytics.com *.analytics.google.com; frame-src *.cashfree.com; object-src 'none'; base-uri 'self';">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Free Career Snapshot and Full Clarity Report | Lume Live</title>
 <meta name="description" content="Take the free 60-second Career Snapshot or begin the Lume Live Full Clarity Report on a dedicated assessment page designed for students and parents.">
@@ -1777,6 +1777,13 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 .sa-pay-steps li b{width:22px;height:22px;border-radius:50%;background:var(--teal);color:#fff;font-size:.72rem;display:flex;align-items:center;justify-content:center;flex:none;}
 .sa-pay .sa-btn{width:100%;margin-top:8px;}
 .sa-pay-note{font-size:.69rem;color:var(--mid);line-height:1.55;margin-top:10px;}.sa-help-link{color:var(--teal);font-weight:800;text-decoration:none;border-bottom:1px solid rgba(10,110,110,.28);}.sa-help-link:hover{color:var(--navy);border-color:var(--gold);}
+.sa-pay-trust{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0;}
+.sa-pay-trust div{background:rgba(255,255,255,.55);border:1px solid rgba(10,110,110,.14);border-radius:12px;padding:9px 6px;text-align:center;}
+.sa-pay-trust b{display:block;font-family:'Playfair Display',serif;font-size:1.18rem;color:var(--navy);line-height:1;}
+.sa-pay-trust span{display:block;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--mid);margin-top:3px;}
+.sa-pay-assure{display:flex;flex-direction:column;gap:7px;margin:14px 0 4px;padding:12px 13px;background:rgba(236,247,246,.6);border:1px solid rgba(10,110,110,.14);border-radius:13px;}
+.sa-pay-assure span{position:relative;padding-left:24px;font-size:.74rem;color:var(--dark);line-height:1.45;font-weight:600;}
+.sa-pay-assure span i{position:absolute;left:0;top:0;font-style:normal;}
 .sa-cashfree-panel{margin:16px 0 12px;border:1px solid rgba(255,255,255,.74);border-radius:22px;padding:18px;background:linear-gradient(145deg,rgba(255,255,255,.72),rgba(236,247,246,.58));box-shadow:0 18px 48px rgba(10,110,110,.10),inset 0 1px 0 rgba(255,255,255,.82);-webkit-backdrop-filter:blur(18px) saturate(1.18);backdrop-filter:blur(18px) saturate(1.18);}
 .sa-cashfree-top{display:grid;grid-template-columns:52px 1fr;gap:14px;align-items:center;margin-bottom:14px;}
 .sa-cashfree-mark{width:52px;height:52px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(145deg,rgba(255,255,255,.94),rgba(10,110,110,.12));color:var(--teal);font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:900;border:1px solid rgba(255,255,255,.82);box-shadow:0 14px 30px rgba(10,110,110,.14),inset 0 1px 0 rgba(255,255,255,.9);}
@@ -3132,6 +3139,16 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
             <span class="sa-pay-label">Full Clarity Report</span>
             <div class="sa-pay-price"><strong>&#8377;999</strong><s>&#8377;1999</s><span>one-time fee</span></div>
             <p style="font-size:.78rem;color:var(--mid);line-height:1.55;">Payable once before you begin &mdash; covers all five assessments and your combined report.</p>
+            <div class="sa-pay-trust" aria-label="Why families trust Lume Live">
+              <div><b>500+</b><span>Guided</span></div>
+              <div><b>4.9&#9733;</b><span>Avg Rating</span></div>
+              <div><b>100%</b><span>Confidential</span></div>
+            </div>
+            <div class="sa-pay-assure">
+              <span><i>&#128274;</i> Secure Cashfree checkout &mdash; pay by UPI, card, net-banking or wallet.</span>
+              <span><i>&#129309;</i> Founder-led 1:1 guidance &mdash; reviewed personally by Sachin Bajaj.</span>
+              <span><i>&#8617;&#65039;</i> Eligible refunds processed within 7 working days &mdash; see our <a class="sa-help-link" href="refund-policy.html" target="_blank" rel="noopener">refund policy</a>.</span>
+            </div>
             <div class="sa-cashfree-panel">
               <div class="sa-cashfree-top">
                 <div class="sa-cashfree-mark" aria-hidden="true">&#8377;</div>
@@ -3843,7 +3860,7 @@ function donut(items){
 function partInstructions(t){
  var steps=t.howto.steps.map(function(x){return '<li>'+esc(x)+'</li>';}).join("");
  var scale="";
- if(t.type!=="multi"){
+ if(t.scale){
   scale='<div class="sa-howto-scale"><span class="lbl">What the buttons mean:</span>'+
    t.scale.map(function(x){return '<span class="sc"><b>'+x[0]+'</b> '+esc(x[1])+'</span>';}).join("")+'</div>';
  }
