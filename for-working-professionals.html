@@ -4164,6 +4164,26 @@ function saBuildPdfDoc(){
   lineText(bandName(r.band),W-M,y+5.2,6.7,tone(r.band),"helvetica","bold",{align:"right"});
   y+=rowH;
  }
+ /* Plain-language meaning for every dimension in a section — fills the page and explains the scores */
+ function meaningList(rows,dmap){
+  y+=5;
+  lineText("WHAT YOUR SCORES MEAN — IN PLAIN WORDS",M,y,7.6,SAFF,"helvetica","bold");y+=2.5;
+  stroke(LINE);doc.setLineWidth(.3);doc.line(M,y,W-M,y);y+=7;
+  rows.slice().sort(function(a,b){return b.score-a.score;}).forEach(function(r){
+   var meta=dmap[r.key]||{};
+   var txt=(r.score>=50?meta.hi:meta.lo)||"";
+   if(!txt)return;
+   doc.setFont("helvetica","normal");doc.setFontSize(8.9);
+   var lines=doc.splitTextToSize(safe(txt),W-2*M-7);
+   ensure(6+lines.length*4.5+3);
+   fill(tone(r.band));doc.circle(M+1.7,y-1.4,1.1,"F");
+   lineText(r.name+"  ("+bandName(r.band)+")",M+5,y,9,INK,"helvetica","bold");
+   y+=4.8;
+   rgb(INK_SOFT);doc.setFont("helvetica","normal");doc.setFontSize(8.9);
+   lines.forEach(function(l,i){doc.text(l,M+5,y+i*4.5);});
+   y+=lines.length*4.5+3.2;
+  });
+ }
  function card(x,yy,w,h,border){fill(CARD);stroke(border||LINE);doc.setLineWidth(.25);doc.roundedRect(x,yy,w,h,2.2,2.2,"FD");}
 
  paint();
@@ -4283,23 +4303,28 @@ function saBuildPdfDoc(){
  /* SECTIONS */
  section("01","Part 1 \u00B7 Personality Patterns","How you engage with work and people",PLUM);
  W_.forEach(dimRow);
- y+=2;para("This part looked at how you typically engage with work and people. A higher score on any dimension is not better than a lower one - only different.",M,W-2*M,8.2,MUTE);
+ meaningList(W_,DIMS.wsp);
+ y+=2;para("A higher score on any dimension is not better than a lower one - only different. These describe your natural style, not your ability.",M,W-2*M,8.2,MUTE);
 
  section("02","Part 2 \u00B7 What Drives You","Where your energy at work comes from",SAFF);
  D.forEach(dimRow);
- y+=2;para("This part looked at where your energy for work actually comes from. Most people work for several reasons at once; one is not better than another.",M,W-2*M,8.2,MUTE);
+ meaningList(D,DIMS.drv);
+ y+=2;para("Most people work for several reasons at once; one is not better than another. The aim is to protect the drivers that keep you energised.",M,W-2*M,8.2,MUTE);
 
  section("03","Part 3 \u00B7 How You Decide","Your default route to a choice",SAGE);
  C.forEach(dimRow);
- y+=2;para("This part looked at how you typically reach a choice. Style varies by stake; the score shows your most common default.",M,W-2*M,8.2,MUTE);
+ meaningList(C,DIMS.dec);
+ y+=2;para("Your style shifts with how much is at stake; the score shows your most common default when you are not thinking about it.",M,W-2*M,8.2,MUTE);
 
  section("04","Part 4 \u00B7 Handling Disagreement","When interests collide",TERRA);
  H_.forEach(dimRow);
- y+=2;para("This part looked at what you do when interests collide. Style shifts with relationship and stakes; this is your most common default.",M,W-2*M,8.2,MUTE);
+ meaningList(H_,DIMS.hdg);
+ y+=2;para("Your approach changes with the relationship and the stakes; this is simply the move you reach for first.",M,W-2*M,8.2,MUTE);
 
  section("05","Part 5 \u00B7 Reading and Managing Emotion","Working with feeling at work",INK);
  E.forEach(dimRow);
- y+=2;para("This part looked at how you read, use, understand, and manage emotion at work. Lower scores point to where the most growth is available.",M,W-2*M,8.2,MUTE);
+ meaningList(E,DIMS.emo);
+ y+=2;para("Lower scores are not weaknesses - they simply point to where the most growth is available, and every one of these skills can be learned.",M,W-2*M,8.2,MUTE);
 
  /* Integration page */
  doc.addPage();paint();y=TOP;
