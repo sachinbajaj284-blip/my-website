@@ -4165,8 +4165,6 @@ function buildReport(){
  var sec_apt=sectionWrap('06','Aptitude Snapshot','20 questions · relative strengths across four reasoning areas',
   '<p style="font-size:.84rem;line-height:1.7;color:var(--lrt-ink-mute);margin-bottom:16px;">Unlike the other parts, these questions had a correct answer. This is a short, untimed snapshot of your <em>relative</em> strengths across four reasoning areas — not an IQ score or a norm-referenced (percentile) result.</p><div style="margin-bottom:16px;">'+aptRows+'</div><div style="background:#F0F4FA;border-left:3px solid #4E79A7;border-radius:12px;padding:14px 16px;"><b style="display:block;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;color:#4E79A7">What this means for you</b><p style="font-size:.84rem;line-height:1.6;color:var(--lrt-ink);margin:0;">Your strongest area here is '+esc(APT.top.name.toLowerCase())+' ('+APT.top.score+' of '+APT.top.max+'). Aptitude can be built with practice — a lower area is a chance to grow, not a ceiling.</p></div>');
 
- /* 07 Stream (optional) */
- var sec06=saIsStreamStage()?sectionWrap('07','Stream Decision Starter','Class 9–12 guidance',saStreamGuideHtml(top3,anchor,topP,learnLabel)):'';
 
  /* Counsellor's note */
  var counsellor='<div class="lrt-counsellor"><div class="lrt-counsellor-inner"><div class="lrt-counsellor-photo-fallback">SB</div><div class="lrt-counsellor-text"><span class="lrt-counsellor-eyebrow">A Note from Your Counsellor</span><p>Hi '+esc(firstName)+', thank you for completing all five assessments. Reading your responses carefully, I can see a genuine, thoughtful pattern emerging — and that is exactly what makes a good counselling conversation possible.</p><p>These results are not a label or a limitation. They are a mirror. In our session, we will look at the patterns that surprised you, the ones that felt deeply true, and the ones you are still questioning — and use those to narrow down your next concrete step.</p><p>Remember: career clarity is rarely a single "aha" moment. It is a series of small, honest conversations — and this report is a great foundation for ours.</p><div class="lrt-counsellor-sig"><b>Sachin Bajaj</b><span>Counselling Psychologist · Founder, Lume Live</span><span style="margin-top:4px;display:block;color:rgba(255,255,255,.4);font-size:.72rem;">Rohtak, Haryana · hello@lumelive.co.in</span></div></div></div></div>';
@@ -4177,7 +4175,7 @@ function buildReport(){
  /* Footer */
  var footer='<div class="lrt-footer"><div class="lrt-footer-brand"><img src="logo.png" alt="Lume Live" onerror="this.style.display=\'none\'"><b>Lume Live</b></div><div class="lrt-footer-links"><a href="https://lumelive.co.in">lumelive.co.in</a><a href="https://wa.me/917015671280">+91 70156 71280</a><a href="mailto:hello@lumelive.co.in">hello@lumelive.co.in</a></div></div>';
 
- var doc='<div class="lrt-doc">'+cover+greeting+insightMap+sec01+sec02+sec03+sec04+sec05+sec_apt+sec06+counsellor+disclaimer+footer+'</div>';
+ var doc='<div class="lrt-doc">'+cover+greeting+insightMap+sec01+sec02+sec03+sec04+sec05+sec_apt+counsellor+disclaimer+footer+'</div>';
 
  /* Existing share/download actions (PDF + WhatsApp) preserved */
  var actions='<div class="sa-report-actions"><h4>Save &amp; Share Your Report</h4><p>Download the full PDF report, open matching careers in Lume Career Intelligence India, or send it to a Lume Live counsellor on WhatsApp. <a class="sa-help-link" href="https://wa.me/917015671280?text=Hi%20Lume%20Live!%20I%20need%20help%20understanding%20my%20assessment%20report." target="_blank" rel="noopener">Need help reading this?</a></p><label class="sa-check"><input type="checkbox" id="saShareConsent"><span>I consent to share my report with a Lume Live counsellor on WhatsApp.</span></label><p class="sa-error" id="saShareError"></p><div class="sa-actions"><a class="sa-btn ghost" href="'+atlasHref+'" style="text-decoration:none;">Explore Matching Careers</a><button class="sa-btn gold" type="button" onclick="saSharePDF()">Send Report PDF on WhatsApp</button><button class="sa-btn ghost" type="button" onclick="saDownloadPDF()">Download Report PDF</button></div><p class="sa-pay-note" style="margin-top:11px;">On a phone, this opens your share menu. On a computer, the PDF downloads and WhatsApp opens so you can attach it.</p></div>';
@@ -4642,7 +4640,6 @@ function saBuildPdfDoc(){
   ['04','Career Values & Work Drivers','What matters most to you in work'],
   ['05','Learning Preferences','How you absorb information best'],
   ['06','Aptitude Snapshot','Numerical, verbal, logical and spatial reasoning']];
- if(saIsStreamStage())toc.push(['07','Stream Decision Starter','Subjects and streams to weigh up']);
  toc.forEach(function(t){
   ensure(15);
   fill(CARD);stroke(LINE);doc.setLineWidth(.25);doc.roundedRect(M,y,W-2*M,12.5,2.2,2.2,'FD');
@@ -4782,23 +4779,6 @@ function saBuildPdfDoc(){
  lineText('WHAT THIS MEANS FOR YOU',M+7,y+8,6.8,[78,121,167],'helvetica','bold');
  textAt('Your strongest area here is '+APT.top.name.toLowerCase()+' ('+APT.top.score+' of '+APT.top.max+'). Aptitude can be built with practice - a lower area is a chance to grow, not a ceiling. Bring this to your counselling session to weigh alongside your interests and personality.',M+7,y+14,W-2*M-14,8.8,INK_SOFT,4.6);
  y+=aptH+4;
-
- if(saIsStreamStage()){
-  var guide=saStreamGuide(top3,anchor,topP,learnLabel);
-  section('07','Stream Decision Starter','Class 9-12 guidance',NAVY);
-  para(guide.why,M,W-2*M,9.6,INK_SOFT,3);
-  guide.lanes.forEach(function(l,i){
-   var lines=doc.splitTextToSize(safe(l.detail),W-2*M-14);
-   var h=Math.max(28,15+(lines.length*4.8));
-   ensure(h+4);card(M,y,W-2*M,h,i===0?SAFF:(i===1?SAGE:TERRA));
-   lineText((i+1)+'. '+l.title,M+6,y+9.5,11.6,INK,'times','bold');
-   lines.forEach(function(line,li){lineText(line,M+6,y+18+(li*4.8),9.1,INK_SOFT,'helvetica','normal');});
-   y+=h+5;
-  });
-  lineText('Before locking the stream, discuss',M,y+2,9.2,SAFF,'helvetica','bold');y+=8;
-  guide.prompts.forEach(function(p){para('- '+p,M,W-2*M,8.9,INK_SOFT,1.6);});
-  para('This section supports a counselling conversation. It does not automatically assign Science, Commerce, Humanities or any other stream.',M,W-2*M,8.7,MUTE,3);
- }
 
  /* Your strengths & growth areas */
  doc.addPage();paint();y=TOP+1;
