@@ -4136,8 +4136,9 @@ function saBuildPdfDoc(){
  }
  function section(num,title,sub,accent){
   accent=accent||SAFF;
-  /* one section per page: each section starts on a fresh page */
-  doc.addPage();paint();y=TOP+1;
+  /* one section per page: start a fresh page, but reuse the current one if it is already blank */
+  if(y>TOP+4){doc.addPage();paint();}
+  y=TOP+1;
   fill(accent);doc.roundedRect(M,y-5.6,8.5,8.5,1.8,1.8,"F");
   lineText(num,M+4.25,y+.6,8,[255,255,255],"helvetica","bold",{align:"center"});
   doc.setFont("times","bold");doc.setFontSize(17);rgb(INK);
@@ -4405,7 +4406,6 @@ function saBuildPdfDoc(){
  y+=2;para("Lower scores are not weaknesses - they simply point to where the most growth is available, and every one of these skills can be learned.",M,W-2*M,8.2,MUTE);
 
  /* Integration page */
- doc.addPage();paint();y=TOP;
  section("06","Reading the Mosaic","Three intersections worth noticing",SAFF);
  var wMap={};W_.forEach(function(r){wMap[r.key]=r.score;});
  var cMap={};C.forEach(function(r){cMap[r.key]=r.score;});
@@ -4545,7 +4545,6 @@ function saBuildPdfDoc(){
  y+=cnH+6;
 
  /* Method & Limitations */
- doc.addPage();paint();y=TOP;
  section("M","Method & Limitations","How this profile was built",MUTE);
  para("Lume Lens uses 119 self-report statements across five short scales. Each scale is built on an established public-domain framework in psychology:",M,W-2*M,10.4,INK_SOFT,5);
  para("- Personality: the Five Factor Model, measured with markers from the International Personality Item Pool (IPIP).",M,W-2*M,9.8,INK_SOFT,3);
