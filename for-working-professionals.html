@@ -4117,6 +4117,7 @@ function saBuildPdfDoc(){
  var doc=new jsPDF({unit:"mm",format:"a4",compress:true});
  var W=210,H=297,M=14,TOP=25,BOT=29,y=TOP;
  var INK=[26,31,46],INK_SOFT=[58,66,84],MUTE=[107,115,133],PAPER=[245,239,228],CARD=[251,247,238],PAPER3=[227,217,194],SAFF=[201,122,43],SAGE=[107,138,122],TERRA=[184,92,60],PLUM=[125,92,126],LINE=[216,205,180];
+ var NAVY=[13,27,64],GOLD=[201,147,58],GOLD_LT=[232,185,90];
  function rgb(c){doc.setTextColor(c[0],c[1],c[2]);}
  function fill(c){doc.setFillColor(c[0],c[1],c[2]);}
  function stroke(c){doc.setDrawColor(c[0],c[1],c[2]);}
@@ -4163,7 +4164,7 @@ function saBuildPdfDoc(){
   lineText(bandName(r.band),W-M,y+5.2,6.7,tone(r.band),"helvetica","bold",{align:"right"});
   y+=rowH;
  }
- function card(x,yy,w,h){fill(CARD);stroke(LINE);doc.setLineWidth(.25);doc.roundedRect(x,yy,w,h,2.2,2.2,"FD");}
+ function card(x,yy,w,h,border){fill(CARD);stroke(border||LINE);doc.setLineWidth(.25);doc.roundedRect(x,yy,w,h,2.2,2.2,"FD");}
 
  paint();
 
@@ -4177,18 +4178,28 @@ function saBuildPdfDoc(){
  var date=new Intl.DateTimeFormat("en-IN",{dateStyle:"long"}).format(new Date());
  var profile=[S.course||"",S.stage||"",S.city||"",S.age?"Age "+S.age:""].filter(Boolean).join("  |  ");
 
- /* hero */
- fill(SAFF);doc.circle(M+2.5,12,1.5,"F");
- lineText("LUME LIVE",M+7,13,8.4,INK,"helvetica","bold");
- lineText("Mental Health and Career Guidance",M+7,17.2,6.4,MUTE,"helvetica","bold");
- lineText(date,W-M,13,7.2,MUTE,"helvetica","bold",{align:"right"});
- lineText("Lume Lens \u00B7 Working Profile",W-M,17.2,6.2,MUTE,"helvetica","bold",{align:"right"});
- lineText("YOUR WORKING PROFILE",M,33,8.2,SAFF,"helvetica","bold");
- stroke(SAFF);doc.line(M,27,M+22,27);
- y=42;
+ /* hero \u2014 navy cover band with gold accents (matches Full Clarity Report) */
+ var coverH=56;
+ fill(NAVY);doc.rect(0,0,W,coverH,"F");
+ fill(GOLD);doc.roundedRect(M,9,3.4,3.4,1,1,"F");
+ lineText("LUME LIVE",M+5.4,12,8.6,[255,255,255],"helvetica","bold");
+ lineText("Mental Health and Career Guidance",M+5.4,16.2,6.2,[182,194,214],"helvetica","bold");
+ lineText("Lume Lens Working Profile",W-M,12,7,[218,226,238],"helvetica","bold",{align:"right"});
+ lineText("Generated "+date,W-M,16.2,6.2,[150,164,190],"helvetica","normal",{align:"right"});
+ lineText("YOUR WORKING PROFILE",M,30,7.6,GOLD_LT,"helvetica","bold");
  var hname=(S.name||"Personal Report").length>40?(S.name||"Personal Report").slice(0,38)+"...":(S.name||"Personal Report");
- lineText(hname,M,y,26,INK,"times","bold");
- y+=10;
+ doc.setFont("times","bold");doc.setFontSize(30);rgb([255,255,255]);doc.text(safe(hname),M,45,{maxWidth:182});
+ /* top-dimension badges */
+ var insAcc=[PLUM,SAFF,SAGE,TERRA,[78,121,167]];
+ var badges=[topW.name,topD.name,topC.name];
+ var bx=M;badges.forEach(function(nm,bi){
+  var c=insAcc[bi]||GOLD,bw=Math.min(58,doc.getTextWidth(safe(nm))*0+ (nm.length*2.6)+12);
+  fill([255,255,255]);doc.setGState&&doc.setGState(new doc.GState({opacity:.12}));doc.roundedRect(bx,49.5,bw,4.6,1.2,1.2,"F");doc.setGState&&doc.setGState(new doc.GState({opacity:1}));
+  fill(c);doc.roundedRect(bx+1.4,50.4,2.8,2.8,.6,.6,"F");
+  lineText(nm,bx+6,52.8,6.2,[230,236,246],"helvetica","bold");
+  bx+=bw+3;
+ });
+ y=coverH+10;
  lineText("Lume Lens - a working profile for how you work",M,y,11,INK_SOFT,"times","italic");
  y+=8;
  if(profile){lineText(profile,M,y,8.2,MUTE,"helvetica","bold");y+=8;}
@@ -4202,35 +4213,45 @@ function saBuildPdfDoc(){
  para("This profile is decision intelligence, not a verdict. Use it to make clearer career choices, ask sharper questions, and design work that respects your energy as well as your ambition.",M+4,W-2*M-8,8.5,INK_SOFT,0);
  y=affirmY+29;
 
- /* Narrative pull-quote */
- ensure(40);
- card(M,y,W-2*M,38);
+ /* Narrative pull-quote — navy panel sized to content, with a next step */
  var Dmap2={};D.forEach(function(r){Dmap2[r.key]=r.score;});
  var auto=Math.round(((Dmap2.INT||0)+(Dmap2.IDE||0))/2);
  var ctrl=Math.round(((Dmap2.INJ||0)+(Dmap2.EXT||0))/2);
  var motTag=auto>ctrl+10?"largely autonomous":ctrl>auto+10?"largely controlled":"mixed";
  var narrPdf="Your strongest personality pattern is "+topW.name.toLowerCase()+", and your motivation is "+motTag+". You default to "+topC.name.toLowerCase()+" decision-making, "+topH.name.toLowerCase()+" in disagreement, and your strongest emotional intelligence branch is "+topE.name.toLowerCase()+".";
- var nlines=doc.splitTextToSize(safe(narrPdf),W-2*M-8);
- doc.setFont("times","italic");doc.setFontSize(10.5);rgb(INK);
- for(var i=0;i<nlines.length;i++)doc.text(nlines[i],M+4,y+8+i*5.2);
- y+=42;
+ doc.setFont("times","italic");doc.setFontSize(11.4);
+ var nlines=doc.splitTextToSize(safe(narrPdf),W-2*M-16);
+ var nsText="Bring this profile to a 1:1 debrief to turn it into concrete career moves — WhatsApp +91 70156 71280 or hello@lumelive.co.in.";
+ doc.setFont("helvetica","normal");doc.setFontSize(8.2);
+ var nsLines=doc.splitTextToSize(safe(nsText),W-2*M-16);
+ var qH=Math.max(40,16+nlines.length*6.4+10+nsLines.length*4.3);
+ ensure(qH+6);fill(NAVY);doc.roundedRect(M,y,W-2*M,qH,2.8,2.8,"F");
+ doc.setFont("times","italic");doc.setFontSize(11.4);rgb([255,255,255]);
+ for(var i=0;i<nlines.length;i++)doc.text(nlines[i],M+8,y+12+i*6.4);
+ var nsY=y+12+nlines.length*6.4+3;
+ stroke([82,86,99]);doc.line(M+8,nsY,W-M-8,nsY);
+ lineText("YOUR NEXT STEP",M+8,nsY+6,6.6,GOLD_LT,"helvetica","bold");
+ doc.setFont("helvetica","normal");doc.setFontSize(8.2);rgb([214,222,236]);
+ nsLines.forEach(function(l,i){doc.text(l,M+8,nsY+11+i*4.3);});
+ y+=qH+6;
 
- /* Insight cards */
- var ins=[{l:"Personality",v:topW.name,s:topW.score,c:tone(topW.band)},
-          {l:"Drive",v:topD.name,s:topD.score,c:tone(topD.band)},
-          {l:"Decisions",v:topC.name,s:topC.score,c:tone(topC.band)},
-          {l:"Conflict",v:topH.name,s:topH.score,c:tone(topH.band)},
-          {l:"Emotion",v:topE.name,s:topE.score,c:tone(topE.band)}];
+ /* Insight cards — per-dimension accent colour + top bar */
+ var ins=[{l:"Personality",v:topW.name,s:topW.score,a:PLUM},
+          {l:"Drive",v:topD.name,s:topD.score,a:SAFF},
+          {l:"Decisions",v:topC.name,s:topC.score,a:SAGE},
+          {l:"Conflict",v:topH.name,s:topH.score,a:TERRA},
+          {l:"Emotion",v:topE.name,s:topE.score,a:[78,121,167]}];
  ensure(86);
  var iw=(W-2*M-5)/2, insightStartY=y;
  ins.forEach(function(it,idx){
   var ix=M+(idx%2)*(iw+5),iy=insightStartY+Math.floor(idx/2)*27;
-  card(ix,iy,iw,23);
-  lineText(it.l.toUpperCase(),ix+4,iy+5.6,6.7,MUTE,"helvetica","bold");
-  lineText(it.v,ix+4,iy+12,9.4,INK,"helvetica","bold",{maxWidth:iw-8});
-  lineText(it.s+"/100",ix+4,iy+18.2,8,it.c,"helvetica","bold");
-  fill(PAPER3);doc.roundedRect(ix+30,iy+16,iw-36,2.4,1.2,1.2,"F");
-  fill(it.c);doc.roundedRect(ix+30,iy+16,(iw-36)*it.s/100,2.4,1.2,1.2,"F");
+  card(ix,iy,iw,23,it.a);
+  fill(it.a);doc.rect(ix,iy,iw,2,"F");
+  lineText(it.l.toUpperCase(),ix+4,iy+6.8,6.7,MUTE,"helvetica","bold");
+  lineText(it.v,ix+4,iy+13,9.4,INK,"helvetica","bold",{maxWidth:iw-8});
+  lineText(it.s+"/100",ix+4,iy+19.2,8,it.a,"helvetica","bold");
+  fill(PAPER3);doc.roundedRect(ix+30,iy+17,iw-36,2.4,1.2,1.2,"F");
+  fill(it.a);doc.roundedRect(ix+30,iy+17,(iw-36)*it.s/100,2.4,1.2,1.2,"F");
  });
  y=insightStartY+(Math.ceil(ins.length/2)*27)+3;
 
