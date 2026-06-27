@@ -282,7 +282,7 @@ body.assessment-page .assessment-landing::after{content:'';position:absolute;ins
 .ll-affirmations{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:24px 0 0;max-width:760px;}
 .ll-affirmation{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.075);border-radius:15px;padding:12px 13px;color:rgba(255,255,255,.78);font-size:.75rem;line-height:1.55;box-shadow:0 12px 28px rgba(0,0,0,.12);}
 .ll-affirmation b{display:block;color:#F8D27A;font-size:.66rem;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;}
-.assessment-flow-card{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);border-radius:22px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.22);backdrop-filter:blur(12px);position:relative;overflow:hidden;isolation:isolate;}
+.assessment-flow-card{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);border-radius:22px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.22);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);position:relative;overflow:hidden;isolation:isolate;}
 .assessment-flow-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#F8D27A,transparent);transform:translateX(-100%);animation:assessmentScan 3.8s ease-in-out infinite;opacity:.9;z-index:1;pointer-events:none;}
 .assessment-flow-card h2{font-family:'Fraunces',serif;font-size:1.32rem;margin-bottom:12px;color:#fff;}
 .ll-hero-preview{display:block;border-radius:18px;overflow:hidden;margin:0 0 16px;border:1px solid rgba(248,210,122,.24);box-shadow:0 18px 48px rgba(0,0,0,.24);background:#0D1B40;}
@@ -382,9 +382,7 @@ body.edge-page #navbar{
   background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(255,255,255,.64));
   border-bottom:1px solid rgba(255,255,255,.7);
   box-shadow:0 12px 42px rgba(7,24,47,.12);
-  -webkit-backdrop-filter:blur(22px) saturate(1.25);
-  backdrop-filter:blur(22px) saturate(1.25);
-}
+  -webkit-backdrop-filter:blur(22px) saturate(1.25);backdrop-filter:blur(22px) saturate(1.25);}
 body.edge-page .assessment-landing{
   background:
     linear-gradient(125deg,rgba(7,24,47,1) 0%,rgba(13,27,64,.98) 42%,rgba(11,101,103,.95) 100%),
@@ -401,9 +399,7 @@ body.edge-page .sa-pay,
 body.edge-page .sa-list-item,
 body.edge-page .sa-save-prompt,
 body.edge-page .sa-affirm-panel{
-  -webkit-backdrop-filter:blur(22px) saturate(1.32);
-  backdrop-filter:blur(22px) saturate(1.32);
-}
+  -webkit-backdrop-filter:blur(22px) saturate(1.32);backdrop-filter:blur(22px) saturate(1.32);}
 body.edge-page .ll-affirmation{
   background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.065));
   border-color:rgba(255,255,255,.23);
@@ -516,7 +512,7 @@ body.edge-page .sa-btn.gold{
 .countdown-bar .cd-cta:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.2);}
 
 /* Hero countdown */
-.hero-countdown{background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.4);border-radius:12px;padding:14px 18px;margin-bottom:22px;display:inline-flex;align-items:center;gap:14px;flex-wrap:wrap;animation:fadeUp .8s ease 1s both;backdrop-filter:blur(8px);}
+.hero-countdown{background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.4);border-radius:12px;padding:14px 18px;margin-bottom:22px;display:inline-flex;align-items:center;gap:14px;flex-wrap:wrap;animation:fadeUp .8s ease 1s both;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);}
 .hero-countdown .hcd-label{font-size:.72rem;font-weight:800;color:#fca5a5;text-transform:uppercase;letter-spacing:.8px;display:flex;align-items:center;gap:6px;}
 .hero-countdown .hcd-label .pulse-dot{width:7px;height:7px;background:#ef4444;border-radius:50%;animation:livePulse 1.5s infinite;}
 .hero-cd-timer{display:flex;gap:6px;}
@@ -538,7 +534,7 @@ body.edge-page .sa-btn.gold{
 
 
 /* ── NAVBAR ── */
-nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:rgba(255,255,255,.97);backdrop-filter:blur(14px);box-shadow:0 2px 20px rgba(10,110,110,.08);transition:.3s;}
+nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:rgba(255,255,255,.97);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 2px 20px rgba(10,110,110,.08);transition:.3s;}
 .nav-inner{max-width:1280px;margin:0 auto;padding:0 clamp(16px,2vw,28px);height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:16px;}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
 .nav-logo-img{width:48px;height:48px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 2px var(--gold);flex-shrink:0;transition:transform .3s;}
@@ -596,7 +592,7 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .hero-assurance{display:flex;flex-wrap:wrap;gap:8px;margin:-14px 0 24px;animation:fadeUp .8s ease .8s both;}
 .hero-assurance span{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:6px 12px;color:rgba(255,255,255,.88);font-size:.7rem;font-weight:700;letter-spacing:.2px;white-space:nowrap;}
 .hero-assurance span:first-child{background:rgba(34,197,94,.13);border-color:rgba(34,197,94,.4);color:var(--green2);}
-.hero-assessment-card{display:flex;align-items:center;justify-content:space-between;gap:16px;max-width:620px;margin:-8px 0 22px;padding:16px 18px;background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.06));border:1px solid rgba(232,185,90,.34);border-left:4px solid var(--gold2);border-radius:16px;box-shadow:0 18px 46px rgba(0,0,0,.16);backdrop-filter:blur(12px);animation:fadeUp .8s ease .85s both;}
+.hero-assessment-card{display:flex;align-items:center;justify-content:space-between;gap:16px;max-width:620px;margin:-8px 0 22px;padding:16px 18px;background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.06));border:1px solid rgba(232,185,90,.34);border-left:4px solid var(--gold2);border-radius:16px;box-shadow:0 18px 46px rgba(0,0,0,.16);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);animation:fadeUp .8s ease .85s both;}
 .hero-assessment-copy small{display:block;color:var(--gold2);font-size:.64rem;font-weight:900;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:4px;}
 .hero-assessment-copy b{display:block;color:#fff;font-family:'Playfair Display',serif;font-size:1.08rem;line-height:1.2;margin-bottom:3px;}
 .hero-assessment-copy span{display:block;color:rgba(255,255,255,.68);font-size:.76rem;line-height:1.5;}
@@ -620,7 +616,7 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .hero-coin{width:240px;height:240px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 4px rgba(201,147,58,.4),0 24px 60px rgba(0,0,0,.5);animation:coinSpin 5s ease-in-out infinite;flex-shrink:0;transition:transform .4s;}
 .hero-coin:hover{transform:scale(1.05);}
 .hero-coin img{width:100%;height:100%;object-fit:cover;}
-.hero-tag-card{background:rgba(255,255,255,.07);border:1px solid rgba(201,147,58,.25);border-radius:14px;padding:16px 22px;text-align:center;backdrop-filter:blur(10px);width:100%;transition:all .3s;}
+.hero-tag-card{background:rgba(255,255,255,.07);border:1px solid rgba(201,147,58,.25);border-radius:14px;padding:16px 22px;text-align:center;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);width:100%;transition:all .3s;}
 .hero-tag-card:hover{border-color:rgba(201,147,58,.5);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.2);}
 .hero-tag-card .quote{font-family:'Playfair Display',serif;font-size:.95rem;font-style:italic;color:var(--gold2);line-height:1.55;}
 .hero-live{display:inline-flex;align-items:center;gap:6px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.4);border-radius:20px;padding:5px 12px;transition:all .3s;}
@@ -650,7 +646,7 @@ section{padding:80px 20px;}
 .gallery-item:hover img{filter:brightness(1.1) saturate(1.1);transform:scale(1.08);}
 .gallery-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(13,27,64,.7) 0%,transparent 60%);opacity:0;transition:opacity .4s;display:flex;align-items:flex-end;justify-content:center;padding-bottom:16px;}
 .gallery-item:hover .gallery-overlay{opacity:1;}
-.gallery-zoom{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);width:48px;height:48px;background:rgba(255,255,255,.15);backdrop-filter:blur(10px);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .3s .1s;border:1px solid rgba(255,255,255,.2);}
+.gallery-zoom{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);width:48px;height:48px;background:rgba(255,255,255,.15);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .3s .1s;border:1px solid rgba(255,255,255,.2);}
 .gallery-zoom svg{width:20px;height:20px;fill:#fff;}
 .gallery-item:hover .gallery-zoom{transform:translate(-50%,-50%) scale(1);}
 
@@ -698,7 +694,7 @@ section{padding:80px 20px;}
 .ll-check-btn:hover,.ll-check-btn:focus{background:var(--teal);color:#fff;box-shadow:0 8px 22px rgba(10,110,110,.18);transform:translateY(-1px);outline:none;}
 .ll-check-row,.svc-check-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
 .svc-check-row .ll-check-btn{background:#fff;margin-top:0;}
-.ll-check-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(13,27,64,.58);backdrop-filter:blur(7px);}
+.ll-check-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(13,27,64,.58);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);}
 .ll-check-modal.open{display:flex;}
 .ll-check-dialog{width:min(680px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:12px;box-shadow:0 28px 80px rgba(0,0,0,.28);position:relative;border:1px solid rgba(255,255,255,.5);}
 .ll-check-head{padding:22px 24px 15px;border-bottom:1px solid #E6EDEC;}
@@ -1044,7 +1040,7 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
 .float-wa svg{width:26px;height:26px;fill:#fff;}
 
 /* ── MODALS ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:2000;display:none;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(5px);}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:2000;display:none;align-items:center;justify-content:center;padding:16px;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);}
 .modal-overlay.open{display:flex;}
 .modal{background:#fff;border-radius:20px;max-width:500px;width:100%;max-height:92vh;overflow-y:auto;position:relative;animation:fadeUp .3s ease;box-shadow:0 24px 80px rgba(0,0,0,.3);}
 .modal-x{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.18);border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;z-index:1;color:#fff;transition:all .2s;}
@@ -1129,7 +1125,7 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
 .auth-signout:hover{background:var(--gray);}
 
 /* ── POPUP ── */
-.popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:3000;display:none;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(5px);}
+.popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:3000;display:none;align-items:center;justify-content:center;padding:16px;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);}
 .popup-overlay.open{display:flex;}
 .popup{background:#fff;border-radius:20px;max-width:430px;width:100%;overflow:hidden;animation:fadeUp .3s ease;position:relative;box-shadow:0 24px 80px rgba(0,0,0,.25);}
 .popup-x{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.18);border:none;border-radius:50%;width:27px;height:27px;cursor:pointer;font-size:.85rem;color:#fff;display:flex;align-items:center;justify-content:center;z-index:1;transition:all .2s;}
@@ -1381,7 +1377,7 @@ button,a,.btn-cta,.btn-gold,.btn-ghost,.sa-btn,.ll-check-btn,.ll-option{touch-ac
 @media(max-width:640px){.sp-stats{grid-template-columns:1fr 1fr;}}
 
 /* ── EXIT INTENT POPUP ── */
-.exit-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:5000;display:none;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(6px);}
+.exit-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:5000;display:none;align-items:center;justify-content:center;padding:16px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);}
 .exit-overlay.open{display:flex;}
 .exit-popup{background:#fff;border-radius:20px;max-width:480px;width:100%;overflow:hidden;animation:fadeUp .35s ease;position:relative;box-shadow:0 24px 80px rgba(0,0,0,.3);}
 .exit-hdr{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:28px 28px 22px;text-align:center;position:relative;overflow:hidden;}
@@ -1508,8 +1504,8 @@ nav.scrolled{box-shadow:0 4px 30px rgba(10,110,110,.15)!important;}
 .side-icon:hover{width:60px;transform:scale(1.12);}
 
 /* Modal backdrop blur enhancement */
-.modal-overlay{backdrop-filter:blur(8px);}
-.popup-overlay{backdrop-filter:blur(8px);}
+.modal-overlay{-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);}
+.popup-overlay{-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);}
 
 /* Toast slide-in smoother */
 .toast{transition:.5s cubic-bezier(.25,.46,.45,.94);}
@@ -1922,7 +1918,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 .sa-save-actions .sa-btn{padding:9px 14px;min-height:39px;font-size:.76rem;}
 .sa-saved-badge{font-size:.75rem;font-weight:700;color:var(--teal);background:#fff;border:1px solid #D6EAE7;border-radius:20px;padding:9px 13px;}
 
-.sa-pay{background:linear-gradient(145deg,rgba(255,255,255,.84),rgba(248,252,251,.68));border:1px solid rgba(255,255,255,.76);border-radius:26px;box-shadow:0 26px 70px rgba(13,27,64,.10),inset 0 1px 0 rgba(255,255,255,.78);padding:26px;position:relative;top:auto;overflow:hidden;backdrop-filter:blur(22px) saturate(1.18);-webkit-backdrop-filter:blur(22px) saturate(1.18);}.sa-pay::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(255,255,255,.58),rgba(255,255,255,.08) 42%,rgba(232,185,90,.09));pointer-events:none;}.sa-pay>*{position:relative;z-index:1;}
+.sa-pay{background:linear-gradient(145deg,rgba(255,255,255,.84),rgba(248,252,251,.68));border:1px solid rgba(255,255,255,.76);border-radius:26px;box-shadow:0 26px 70px rgba(13,27,64,.10),inset 0 1px 0 rgba(255,255,255,.78);padding:26px;position:relative;top:auto;overflow:hidden;-webkit-backdrop-filter:blur(22px) saturate(1.18);backdrop-filter:blur(22px) saturate(1.18);}.sa-pay::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(255,255,255,.58),rgba(255,255,255,.08) 42%,rgba(232,185,90,.09));pointer-events:none;}.sa-pay>*{position:relative;z-index:1;}
 .sa-pay-label{font-size:.7rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);}
 .sa-pay-price{display:flex;align-items:baseline;gap:9px;margin:6px 0 4px;flex-wrap:wrap;}
 .sa-pay-price strong{font-family:'Playfair Display',serif;font-size:2.3rem;color:var(--navy);}
@@ -1938,12 +1934,12 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 .sa-pay-steps li b{width:22px;height:22px;border-radius:50%;background:var(--teal);color:#fff;font-size:.72rem;display:flex;align-items:center;justify-content:center;flex:none;}
 .sa-pay .sa-btn{width:100%;margin-top:8px;}
 .sa-pay-note{font-size:.69rem;color:var(--mid);line-height:1.55;margin-top:10px;}.sa-help-link{color:var(--teal);font-weight:800;text-decoration:none;border-bottom:1px solid rgba(10,110,110,.28);}.sa-help-link:hover{color:var(--navy);border-color:var(--gold);}
-.sa-cashfree-panel{margin:16px 0 12px;border:1px solid rgba(255,255,255,.74);border-radius:22px;padding:18px;background:linear-gradient(145deg,rgba(255,255,255,.72),rgba(236,247,246,.58));box-shadow:0 18px 48px rgba(10,110,110,.10),inset 0 1px 0 rgba(255,255,255,.82);backdrop-filter:blur(18px) saturate(1.18);-webkit-backdrop-filter:blur(18px) saturate(1.18);}
+.sa-cashfree-panel{margin:16px 0 12px;border:1px solid rgba(255,255,255,.74);border-radius:22px;padding:18px;background:linear-gradient(145deg,rgba(255,255,255,.72),rgba(236,247,246,.58));box-shadow:0 18px 48px rgba(10,110,110,.10),inset 0 1px 0 rgba(255,255,255,.82);-webkit-backdrop-filter:blur(18px) saturate(1.18);backdrop-filter:blur(18px) saturate(1.18);}
 .sa-cashfree-top{display:grid;grid-template-columns:52px 1fr;gap:14px;align-items:center;margin-bottom:14px;}
 .sa-cashfree-mark{width:52px;height:52px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(145deg,rgba(255,255,255,.94),rgba(10,110,110,.12));color:var(--teal);font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:900;border:1px solid rgba(255,255,255,.82);box-shadow:0 14px 30px rgba(10,110,110,.14),inset 0 1px 0 rgba(255,255,255,.9);}
 .sa-cashfree-top b{display:block;color:var(--navy);font-size:clamp(1rem,2.4vw,1.18rem);line-height:1.2;margin-bottom:4px;}
 .sa-cashfree-top span{display:block;color:var(--mid);font-size:.84rem;line-height:1.45;}
-.sa-upi-fallback{margin:12px 0 12px;border:1px solid rgba(255,255,255,.72);border-radius:18px;background:rgba(255,255,255,.66);overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 12px 28px rgba(13,27,64,.05);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);}
+.sa-upi-fallback{margin:12px 0 12px;border:1px solid rgba(255,255,255,.72);border-radius:18px;background:rgba(255,255,255,.66);overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 12px 28px rgba(13,27,64,.05);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);}
 .sa-upi-fallback summary{cursor:pointer;list-style:none;padding:12px 14px;color:var(--teal);font-size:.78rem;font-weight:900;display:flex;justify-content:space-between;gap:12px;align-items:center;}
 .sa-upi-fallback summary::-webkit-details-marker{display:none;}
 .sa-upi-fallback summary::after{content:'+';width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#ECF7F6;color:var(--teal);font-weight:900;flex:none;}
@@ -2108,7 +2104,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 .sa-cover p{font-size:.85rem;color:rgba(255,255,255,.78);}
 .sa-cover-grid{display:grid;grid-template-columns:1fr 210px;gap:24px;align-items:center;position:relative;z-index:1;}
 .sa-cover-main{min-width:0;}
-.sa-cover-score{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:18px;padding:18px 16px;text-align:center;backdrop-filter:blur(10px);}
+.sa-cover-score{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:18px;padding:18px 16px;text-align:center;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}
 .sa-score-ring{width:112px;height:112px;margin:0 auto 10px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--gold2) 0 100%,rgba(255,255,255,.16) 0);box-shadow:inset 0 0 0 10px rgba(255,255,255,.12),0 16px 34px rgba(0,0,0,.18);}
 .sa-score-ring span{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:800;line-height:1;color:#fff;}
 .sa-score-ring small{display:block;font-size:.58rem;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.68);margin-top:4px;}
@@ -2215,7 +2211,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 .sa-insight span{font-size:.74rem;color:var(--mid);line-height:1.55;}
 .sa-rlist{list-style:none;display:grid;gap:8px;margin:8px 0;}
 .sa-rlist li{font-size:.82rem;color:var(--dark);line-height:1.6;padding-left:19px;position:relative;}
-.sa-rlist li::before{content:'â–¸';position:absolute;left:0;color:var(--gold);font-weight:800;}
+.sa-rlist li::before{content:'\25B8';position:absolute;left:0;color:var(--gold);font-weight:800;}
 .sa-tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;}
 .sa-tags span{font-size:.71rem;font-weight:700;color:var(--teal);background:#ECF7F6;border-radius:20px;padding:6px 12px;}
 .sa-typecard{border:1px solid #E2E9E8;border-radius:14px;padding:15px 17px;margin:10px 0;background:#FCFDFD;}
@@ -2492,7 +2488,7 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
 .tp-title em{color:#E8B95A;font-style:italic;}
 .tp-sub{font-size:clamp(.92rem,1.5vw,1.05rem);color:rgba(255,255,255,.7);max-width:600px;margin:0 auto;line-height:1.6;}
 .tp-split{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:stretch;}
-.tp-card{background:rgba(255,255,255,.03);border:1.5px solid rgba(255,255,255,.08);border-radius:20px;padding:30px 26px;backdrop-filter:blur(8px);transition:all .3s ease;position:relative;overflow:hidden;}
+.tp-card{background:rgba(255,255,255,.03);border:1.5px solid rgba(255,255,255,.08);border-radius:20px;padding:30px 26px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:all .3s ease;position:relative;overflow:hidden;}
 .tp-card.regret{border-color:rgba(220,38,38,.25);background:linear-gradient(180deg,rgba(220,38,38,.06),rgba(220,38,38,.02));}
 .tp-card.clarity{border-color:rgba(34,197,94,.30);background:linear-gradient(180deg,rgba(34,197,94,.08),rgba(34,197,94,.03));box-shadow:0 24px 60px rgba(34,197,94,.10);}
 .tp-card-tag{display:inline-flex;align-items:center;gap:7px;font-size:.65rem;font-weight:900;letter-spacing:1.4px;text-transform:uppercase;padding:5px 12px;border-radius:999px;margin-bottom:18px;}
@@ -3072,7 +3068,7 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
 
     // Optional: open WhatsApp if a phone was provided so the lead is captured manually
     if(phone){
-      const msg = encodeURIComponent(`Hi Lume Live! I just took the free Career Snapshot.\nName: ${state.name}\nWhatsApp: ${phone}\nMy top theme: ${t.name} (${t.full})\nPlease send me the snapshot summary and tell me more about the ₹999 full report.`);
+      const msg = encodeURIComponent(`👋 Hi Lume Live!\n\nI just took the free Career Snapshot 📋\n\n👤 My Details\n• Name: ${state.name}\n• WhatsApp: ${phone}\n\n🎯 My Top Theme\n• ${t.name} (${t.full})\n\n🙏 Please send my snapshot summary and tell me more about the ₹999 Full Clarity Report.`);
       // Open in new tab so they don't lose their result
       window.open(`https://wa.me/917015671280?text=${msg}`,'_blank','noopener');
     }
@@ -4121,6 +4117,7 @@ function saBuildPdfDoc(){
  var doc=new jsPDF({unit:"mm",format:"a4",compress:true});
  var W=210,H=297,M=14,TOP=25,BOT=29,y=TOP;
  var INK=[26,31,46],INK_SOFT=[58,66,84],MUTE=[107,115,133],PAPER=[245,239,228],CARD=[251,247,238],PAPER3=[227,217,194],SAFF=[201,122,43],SAGE=[107,138,122],TERRA=[184,92,60],PLUM=[125,92,126],LINE=[216,205,180];
+ var NAVY=[13,27,64],GOLD=[201,147,58],GOLD_LT=[232,185,90];
  function rgb(c){doc.setTextColor(c[0],c[1],c[2]);}
  function fill(c){doc.setFillColor(c[0],c[1],c[2]);}
  function stroke(c){doc.setDrawColor(c[0],c[1],c[2]);}
@@ -4137,15 +4134,20 @@ function saBuildPdfDoc(){
   for(var i=0;i<lines.length;i++){ensure(lh+.8);doc.text(lines[i],x,y);y+=lh;}
   y+=(after===undefined?3.2:after);
  }
- function section(num,title,sub){
-  ensure(30);if(y>TOP+2)y+=4;
-  lineText(num,M,y,18,SAFF,"times","italic");
+ function section(num,title,sub,accent){
+  accent=accent||SAFF;
+  /* one section per page: start a fresh page, but reuse the current one if it is already blank */
+  if(y>TOP+4){doc.addPage();paint();}
+  y=TOP+1;
+  fill(accent);doc.roundedRect(M,y-5.6,8.5,8.5,1.8,1.8,"F");
+  lineText(num,M+4.25,y+.6,8,[255,255,255],"helvetica","bold",{align:"center"});
   doc.setFont("times","bold");doc.setFontSize(17);rgb(INK);
-  var titleLines=doc.splitTextToSize(safe(title),112);
-  titleLines.forEach(function(l,i){doc.text(l,M+20,y+(i*6.8));});
+  var titleLines=doc.splitTextToSize(safe(title),108);
+  titleLines.forEach(function(l,i){doc.text(l,M+13,y+(i*6.8));});
   lineText(sub,W-M,y,7.2,MUTE,"helvetica","bold",{align:"right",maxWidth:44});
   y+=Math.max(7,titleLines.length*6.8)+1.5;
-  stroke(LINE);doc.setLineWidth(.35);doc.line(M,y,W-M,y);y+=8.5;
+  stroke(accent);doc.setLineWidth(.6);doc.line(M,y,M+24,y);
+  stroke(LINE);doc.setLineWidth(.35);doc.line(M+26,y,W-M,y);y+=8.5;
  }
  function bar(x,yy,w,pct,color){
   fill(PAPER3);doc.roundedRect(x,yy,w,4,2,2,"F");
@@ -4163,7 +4165,61 @@ function saBuildPdfDoc(){
   lineText(bandName(r.band),W-M,y+5.2,6.7,tone(r.band),"helvetica","bold",{align:"right"});
   y+=rowH;
  }
- function card(x,yy,w,h){fill(CARD);stroke(LINE);doc.setLineWidth(.25);doc.roundedRect(x,yy,w,h,2.2,2.2,"FD");}
+ /* Plain-language meaning for every dimension in a section — fills the page and explains the scores */
+ function meaningList(rows,dmap){
+  y+=5;
+  lineText("WHAT YOUR SCORES MEAN — IN PLAIN WORDS",M,y,7.6,SAFF,"helvetica","bold");y+=2.5;
+  stroke(LINE);doc.setLineWidth(.3);doc.line(M,y,W-M,y);y+=7;
+  rows.slice().sort(function(a,b){return b.score-a.score;}).forEach(function(r){
+   var meta=dmap[r.key]||{};
+   var txt=(r.score>=50?meta.hi:meta.lo)||"";
+   if(!txt)return;
+   doc.setFont("helvetica","normal");doc.setFontSize(8.9);
+   var lines=doc.splitTextToSize(safe(txt),W-2*M-7);
+   ensure(6+lines.length*4.5+3);
+   fill(tone(r.band));doc.circle(M+1.7,y-1.4,1.1,"F");
+   lineText(r.name+"  ("+bandName(r.band)+")",M+5,y,9,INK,"helvetica","bold");
+   y+=4.8;
+   rgb(INK_SOFT);doc.setFont("helvetica","normal");doc.setFontSize(8.9);
+   lines.forEach(function(l,i){doc.text(l,M+5,y+i*4.5);});
+   y+=lines.length*4.5+3.2;
+  });
+ }
+ /* Reflection prompts — makes each section a conversation tool and fills the page */
+ function reflectBox(prompts,accent){
+  accent=accent||SAFF;
+  var inner=W-2*M-14;
+  doc.setFont("helvetica","normal");doc.setFontSize(8.9);
+  var wrapped=prompts.map(function(p){return doc.splitTextToSize(safe(p),inner-4);});
+  var boxH=11;wrapped.forEach(function(l){boxH+=l.length*4.5+2.4;});
+  y+=5;ensure(boxH+3);
+  fill([247,249,252]);stroke([216,224,236]);doc.setLineWidth(.3);doc.roundedRect(M,y,W-2*M,boxH,2.6,2.6,"FD");
+  fill(accent);doc.rect(M,y,2,boxH,"F");
+  lineText("REFLECT ON THIS",M+8,y+7,7,accent,"helvetica","bold");
+  var ry=y+13.5;
+  wrapped.forEach(function(l){
+   fill(accent);doc.circle(M+9,ry-1.4,.9,"F");
+   rgb(INK_SOFT);doc.setFont("helvetica","normal");doc.setFontSize(8.9);
+   l.forEach(function(ln,i){doc.text(ln,M+12,ry+i*4.5);});
+   ry+=l.length*4.5+2.4;
+  });
+  y+=boxH+3;
+ }
+ /* Radar chart for a set of dimensions (e.g. Big Five) */
+ function radarChart(cx,cy,radius,rows,max,accent){
+  var n=rows.length,ang=function(i){return -Math.PI/2+i*(2*Math.PI/n);};
+  stroke([221,210,186]);doc.setLineWidth(.25);
+  [0.34,0.67,1].forEach(function(f){for(var i=0;i<n;i++){var a1=ang(i),a2=ang((i+1)%n);
+   doc.line(cx+radius*f*Math.cos(a1),cy+radius*f*Math.sin(a1),cx+radius*f*Math.cos(a2),cy+radius*f*Math.sin(a2));}});
+  for(var i=0;i<n;i++){doc.line(cx,cy,cx+radius*Math.cos(ang(i)),cy+radius*Math.sin(ang(i)));}
+  var sp=[];for(var i=0;i<n;i++){var sc=Math.max(0,Math.min(1,(rows[i].score||0)/max));sp.push([cx+radius*sc*Math.cos(ang(i)),cy+radius*sc*Math.sin(ang(i))]);}
+  stroke(accent||SAFF);doc.setLineWidth(.9);
+  for(var i=0;i<n;i++){doc.line(sp[i][0],sp[i][1],sp[(i+1)%n][0],sp[(i+1)%n][1]);}
+  for(var i=0;i<n;i++){fill(accent||SAFF);doc.circle(sp[i][0],sp[i][1],1.1,"F");}
+  for(var i=0;i<n;i++){var lx=cx+(radius+6)*Math.cos(ang(i)),ly=cy+(radius+6)*Math.sin(ang(i));
+   lineText(rows[i].key,lx,ly+1.5,8,accent||SAFF,"helvetica","bold",{align:"center"});}
+ }
+ function card(x,yy,w,h,border){fill(CARD);stroke(border||LINE);doc.setLineWidth(.25);doc.roundedRect(x,yy,w,h,2.2,2.2,"FD");}
 
  paint();
 
@@ -4177,18 +4233,28 @@ function saBuildPdfDoc(){
  var date=new Intl.DateTimeFormat("en-IN",{dateStyle:"long"}).format(new Date());
  var profile=[S.course||"",S.stage||"",S.city||"",S.age?"Age "+S.age:""].filter(Boolean).join("  |  ");
 
- /* hero */
- fill(SAFF);doc.circle(M+2.5,12,1.5,"F");
- lineText("LUME LIVE",M+7,13,8.4,INK,"helvetica","bold");
- lineText("Mental Health and Career Guidance",M+7,17.2,6.4,MUTE,"helvetica","bold");
- lineText(date,W-M,13,7.2,MUTE,"helvetica","bold",{align:"right"});
- lineText("Lume Lens \u00B7 Working Profile",W-M,17.2,6.2,MUTE,"helvetica","bold",{align:"right"});
- lineText("YOUR WORKING PROFILE",M,33,8.2,SAFF,"helvetica","bold");
- stroke(SAFF);doc.line(M,27,M+22,27);
- y=42;
+ /* hero \u2014 navy cover band with gold accents (matches Full Clarity Report) */
+ var coverH=56;
+ fill(NAVY);doc.rect(0,0,W,coverH,"F");
+ fill(GOLD);doc.roundedRect(M,9,3.4,3.4,1,1,"F");
+ lineText("LUME LIVE",M+5.4,12,8.6,[255,255,255],"helvetica","bold");
+ lineText("Mental Health and Career Guidance",M+5.4,16.2,6.2,[182,194,214],"helvetica","bold");
+ lineText("Lume Lens Working Profile",W-M,12,7,[218,226,238],"helvetica","bold",{align:"right"});
+ lineText("Generated "+date,W-M,16.2,6.2,[150,164,190],"helvetica","normal",{align:"right"});
+ lineText("YOUR WORKING PROFILE",M,30,7.6,GOLD_LT,"helvetica","bold");
  var hname=(S.name||"Personal Report").length>40?(S.name||"Personal Report").slice(0,38)+"...":(S.name||"Personal Report");
- lineText(hname,M,y,26,INK,"times","bold");
- y+=10;
+ doc.setFont("times","bold");doc.setFontSize(30);rgb([255,255,255]);doc.text(safe(hname),M,45,{maxWidth:182});
+ /* top-dimension badges */
+ var insAcc=[PLUM,SAFF,SAGE,TERRA,[78,121,167]];
+ var badges=[topW.name,topD.name,topC.name];
+ var bx=M;badges.forEach(function(nm,bi){
+  var c=insAcc[bi]||GOLD,bw=Math.min(58,doc.getTextWidth(safe(nm))*0+ (nm.length*2.6)+12);
+  fill([255,255,255]);doc.setGState&&doc.setGState(new doc.GState({opacity:.12}));doc.roundedRect(bx,49.5,bw,4.6,1.2,1.2,"F");doc.setGState&&doc.setGState(new doc.GState({opacity:1}));
+  fill(c);doc.roundedRect(bx+1.4,50.4,2.8,2.8,.6,.6,"F");
+  lineText(nm,bx+6,52.8,6.2,[230,236,246],"helvetica","bold");
+  bx+=bw+3;
+ });
+ y=coverH+10;
  lineText("Lume Lens - a working profile for how you work",M,y,11,INK_SOFT,"times","italic");
  y+=8;
  if(profile){lineText(profile,M,y,8.2,MUTE,"helvetica","bold");y+=8;}
@@ -4202,42 +4268,52 @@ function saBuildPdfDoc(){
  para("This profile is decision intelligence, not a verdict. Use it to make clearer career choices, ask sharper questions, and design work that respects your energy as well as your ambition.",M+4,W-2*M-8,8.5,INK_SOFT,0);
  y=affirmY+29;
 
- /* Narrative pull-quote */
- ensure(40);
- card(M,y,W-2*M,38);
+ /* Narrative pull-quote — navy panel sized to content, with a next step */
  var Dmap2={};D.forEach(function(r){Dmap2[r.key]=r.score;});
  var auto=Math.round(((Dmap2.INT||0)+(Dmap2.IDE||0))/2);
  var ctrl=Math.round(((Dmap2.INJ||0)+(Dmap2.EXT||0))/2);
  var motTag=auto>ctrl+10?"largely autonomous":ctrl>auto+10?"largely controlled":"mixed";
  var narrPdf="Your strongest personality pattern is "+topW.name.toLowerCase()+", and your motivation is "+motTag+". You default to "+topC.name.toLowerCase()+" decision-making, "+topH.name.toLowerCase()+" in disagreement, and your strongest emotional intelligence branch is "+topE.name.toLowerCase()+".";
- var nlines=doc.splitTextToSize(safe(narrPdf),W-2*M-8);
- doc.setFont("times","italic");doc.setFontSize(10.5);rgb(INK);
- for(var i=0;i<nlines.length;i++)doc.text(nlines[i],M+4,y+8+i*5.2);
- y+=42;
+ doc.setFont("times","italic");doc.setFontSize(11.4);
+ var nlines=doc.splitTextToSize(safe(narrPdf),W-2*M-16);
+ var nsText="Bring this profile to a 1:1 debrief to turn it into concrete career moves — WhatsApp +91 70156 71280 or hello@lumelive.co.in.";
+ doc.setFont("helvetica","normal");doc.setFontSize(8.2);
+ var nsLines=doc.splitTextToSize(safe(nsText),W-2*M-16);
+ var qH=Math.max(40,16+nlines.length*6.4+10+nsLines.length*4.3);
+ ensure(qH+6);fill(NAVY);doc.roundedRect(M,y,W-2*M,qH,2.8,2.8,"F");
+ doc.setFont("times","italic");doc.setFontSize(11.4);rgb([255,255,255]);
+ for(var i=0;i<nlines.length;i++)doc.text(nlines[i],M+8,y+12+i*6.4);
+ var nsY=y+12+nlines.length*6.4+3;
+ stroke([82,86,99]);doc.line(M+8,nsY,W-M-8,nsY);
+ lineText("YOUR NEXT STEP",M+8,nsY+6,6.6,GOLD_LT,"helvetica","bold");
+ doc.setFont("helvetica","normal");doc.setFontSize(8.2);rgb([214,222,236]);
+ nsLines.forEach(function(l,i){doc.text(l,M+8,nsY+11+i*4.3);});
+ y+=qH+6;
 
- /* Insight cards */
- var ins=[{l:"Personality",v:topW.name,s:topW.score,c:tone(topW.band)},
-          {l:"Drive",v:topD.name,s:topD.score,c:tone(topD.band)},
-          {l:"Decisions",v:topC.name,s:topC.score,c:tone(topC.band)},
-          {l:"Conflict",v:topH.name,s:topH.score,c:tone(topH.band)},
-          {l:"Emotion",v:topE.name,s:topE.score,c:tone(topE.band)}];
+ /* Insight cards — per-dimension accent colour + top bar */
+ var ins=[{l:"Personality",v:topW.name,s:topW.score,a:PLUM},
+          {l:"Drive",v:topD.name,s:topD.score,a:SAFF},
+          {l:"Decisions",v:topC.name,s:topC.score,a:SAGE},
+          {l:"Conflict",v:topH.name,s:topH.score,a:TERRA},
+          {l:"Emotion",v:topE.name,s:topE.score,a:[78,121,167]}];
  ensure(86);
  var iw=(W-2*M-5)/2, insightStartY=y;
  ins.forEach(function(it,idx){
   var ix=M+(idx%2)*(iw+5),iy=insightStartY+Math.floor(idx/2)*27;
-  card(ix,iy,iw,23);
-  lineText(it.l.toUpperCase(),ix+4,iy+5.6,6.7,MUTE,"helvetica","bold");
-  lineText(it.v,ix+4,iy+12,9.4,INK,"helvetica","bold",{maxWidth:iw-8});
-  lineText(it.s+"/100",ix+4,iy+18.2,8,it.c,"helvetica","bold");
-  fill(PAPER3);doc.roundedRect(ix+30,iy+16,iw-36,2.4,1.2,1.2,"F");
-  fill(it.c);doc.roundedRect(ix+30,iy+16,(iw-36)*it.s/100,2.4,1.2,1.2,"F");
+  card(ix,iy,iw,23,it.a);
+  fill(it.a);doc.rect(ix,iy,iw,2,"F");
+  lineText(it.l.toUpperCase(),ix+4,iy+6.8,6.7,MUTE,"helvetica","bold");
+  lineText(it.v,ix+4,iy+13,9.4,INK,"helvetica","bold",{maxWidth:iw-8});
+  lineText(it.s+"/100",ix+4,iy+19.2,8,it.a,"helvetica","bold");
+  fill(PAPER3);doc.roundedRect(ix+30,iy+17,iw-36,2.4,1.2,1.2,"F");
+  fill(it.a);doc.roundedRect(ix+30,iy+17,(iw-36)*it.s/100,2.4,1.2,1.2,"F");
  });
  y=insightStartY+(Math.ceil(ins.length/2)*27)+3;
 
  /* Wellbeing check — printed if any red flags detected */
  if(pdfFlags.length){
   ensure(30);
-  section("\u26A0","Wellbeing Check","Signals worth noticing");
+  section("\u26A0","Wellbeing Check","Signals worth noticing",TERRA);
   pdfFlags.forEach(function(f){
    ensure(28);
    var color=f.severity==="critical"?[220,38,38]:f.severity==="high"?[217,119,6]:f.severity==="medium"?[37,99,235]:[8,145,178];
@@ -4260,29 +4336,77 @@ function saBuildPdfDoc(){
  }
 
  /* SECTIONS */
- section("01","Part 1 \u00B7 Personality Patterns","How you engage with work and people");
+ /* How to read this report */
+ doc.addPage();paint();y=TOP+1;
+ fill(NAVY);doc.roundedRect(M,y-5.6,8.5,8.5,1.8,1.8,"F");
+ lineText("i",M+4.25,y+.6,8,[255,255,255],"times","bold",{align:"center"});
+ doc.setFont("times","bold");doc.setFontSize(17);rgb(NAVY);doc.text(safe("How to Read This Report"),M+13,y);
+ y+=9;stroke(GOLD);doc.setLineWidth(.6);doc.line(M,y,M+24,y);stroke(LINE);doc.setLineWidth(.35);doc.line(M+26,y,W-M,y);y+=10;
+ var ptoc=[["01","Personality Patterns","How you engage with work and people"],
+  ["02","What Drives You","Where your energy at work comes from"],
+  ["03","How You Decide","Your default route to a choice"],
+  ["04","Handling Disagreement","What you do when interests collide"],
+  ["05","Reading & Managing Emotion","Working with feeling at work"],
+  ["06","Reading the Mosaic","How your patterns intersect"],
+  ["F","Where You'll Do Your Best Work","Environments and roles that fit you"],
+  ["07","Your Next 30 Days","A short, concrete action plan"]];
+ ptoc.forEach(function(t){
+  ensure(13.5);
+  fill(CARD);stroke(LINE);doc.setLineWidth(.25);doc.roundedRect(M,y,W-2*M,11.5,2.2,2.2,"FD");
+  fill(NAVY);doc.roundedRect(M+3,y+2.2,7.5,7.5,1.5,1.5,"F");lineText(t[0],M+6.75,y+7.2,6.4,[255,255,255],"helvetica","bold",{align:"center"});
+  lineText(t[1],M+15,y+5,9.4,INK,"helvetica","bold");
+  lineText(t[2],M+15,y+9.4,7.4,MUTE,"helvetica","normal");
+  y+=13.5;
+ });
+ y+=3;
+ doc.setFont("helvetica","normal");doc.setFontSize(8.7);
+ var phrTxt=doc.splitTextToSize(safe('Scores are on a 0-100 scale and describe your preferences, not your ability - a higher score is not "better", only different. They are descriptive, not a percentile against a norm group. Treat this as decision intelligence for reflection and coaching, not a verdict.'),W-2*M-12);
+ var phrH=18+phrTxt.length*4.6;ensure(phrH);
+ fill([255,248,238]);stroke(GOLD_LT);doc.roundedRect(M,y,W-2*M,phrH,2.6,2.6,"FD");
+ lineText("HOW TO READ YOUR SCORES",M+6,y+8,7,GOLD,"helvetica","bold");
+ doc.setFont("helvetica","normal");doc.setFontSize(8.7);rgb(INK_SOFT);
+ phrTxt.forEach(function(l,i){doc.text(l,M+6,y+14.5+i*4.6);});
+ y+=phrH+4;
+
+ section("01","Part 1 \u00B7 Personality Patterns","How you engage with work and people",PLUM);
  W_.forEach(dimRow);
- y+=2;para("This part looked at how you typically engage with work and people. A higher score on any dimension is not better than a lower one - only different.",M,W-2*M,8.2,MUTE);
+ ensure(70);y+=3;
+ radarChart(M+32,y+28,24,W_,100,PLUM);
+ lineText("YOUR PERSONALITY SHAPE",M+70,y+12,7.4,PLUM,"helvetica","bold");
+ doc.setFont("helvetica","normal");doc.setFontSize(8.8);rgb(INK_SOFT);
+ var pshape=doc.splitTextToSize(safe("Each corner is one of the Big Five traits (O, C, E, A, S). The further a point reaches out, the stronger that trait - the overall shape is your personality at a glance."),W-M-(M+70));
+ pshape.forEach(function(l,i){doc.text(l,M+70,y+19+i*4.7);});
+ y+=62;
+ meaningList(W_,DIMS.wsp);
+ reflectBox(["Which of these patterns feels most like you at work - and did any of them surprise you?","Where does your strongest trait help you most, and where might it quietly cost you?"],PLUM);
+ y+=2;para("A higher score on any dimension is not better than a lower one - only different. These describe your natural style, not your ability.",M,W-2*M,8.2,MUTE);
 
- section("02","Part 2 \u00B7 What Drives You","Where your energy at work comes from");
+ section("02","Part 2 \u00B7 What Drives You","Where your energy at work comes from",SAFF);
  D.forEach(dimRow);
- y+=2;para("This part looked at where your energy for work actually comes from. Most people work for several reasons at once; one is not better than another.",M,W-2*M,8.2,MUTE);
+ meaningList(D,DIMS.drv);
+ reflectBox(["On a hard day, which of these reasons actually keeps you going?","Is your current role feeding your strongest driver - or slowly starving it?"],SAFF);
+ y+=2;para("Most people work for several reasons at once; one is not better than another. The aim is to protect the drivers that keep you energised.",M,W-2*M,8.2,MUTE);
 
- section("03","Part 3 \u00B7 How You Decide","Your default route to a choice");
+ section("03","Part 3 \u00B7 How You Decide","Your default route to a choice",SAGE);
  C.forEach(dimRow);
- y+=2;para("This part looked at how you typically reach a choice. Style varies by stake; the score shows your most common default.",M,W-2*M,8.2,MUTE);
+ meaningList(C,DIMS.dec);
+ reflectBox(["Think of a recent big decision - did you use your default style, or borrow a different one?","Which kinds of decisions do you tend to put off or sidestep?"],SAGE);
+ y+=2;para("Your style shifts with how much is at stake; the score shows your most common default when you are not thinking about it.",M,W-2*M,8.2,MUTE);
 
- section("04","Part 4 \u00B7 Handling Disagreement","When interests collide");
+ section("04","Part 4 \u00B7 Handling Disagreement","When interests collide",TERRA);
  H_.forEach(dimRow);
- y+=2;para("This part looked at what you do when interests collide. Style shifts with relationship and stakes; this is your most common default.",M,W-2*M,8.2,MUTE);
+ meaningList(H_,DIMS.hdg);
+ reflectBox(["In your last disagreement at work, which move did you reach for first?","Is there a relationship where a different approach would serve you better?"],TERRA);
+ y+=2;para("Your approach changes with the relationship and the stakes; this is simply the move you reach for first.",M,W-2*M,8.2,MUTE);
 
- section("05","Part 5 \u00B7 Reading and Managing Emotion","Working with feeling at work");
+ section("05","Part 5 \u00B7 Reading and Managing Emotion","Working with feeling at work",INK);
  E.forEach(dimRow);
- y+=2;para("This part looked at how you read, use, understand, and manage emotion at work. Lower scores point to where the most growth is available.",M,W-2*M,8.2,MUTE);
+ meaningList(E,DIMS.emo);
+ reflectBox(["Which branch - noticing, using, understanding, or managing emotion - is easiest for you, and which is hardest?","When you are under pressure, what actually helps you steady yourself?"],[78,121,167]);
+ y+=2;para("Lower scores are not weaknesses - they simply point to where the most growth is available, and every one of these skills can be learned.",M,W-2*M,8.2,MUTE);
 
  /* Integration page */
- doc.addPage();paint();y=TOP;
- section("06","Reading the Mosaic","Three intersections worth noticing");
+ section("06","Reading the Mosaic","Three intersections worth noticing",SAFF);
  var wMap={};W_.forEach(function(r){wMap[r.key]=r.score;});
  var cMap={};C.forEach(function(r){cMap[r.key]=r.score;});
  var hMap={};H_.forEach(function(r){hMap[r.key]=r.score;});
@@ -4312,16 +4436,116 @@ function saBuildPdfDoc(){
   y+=h+6;
  });
 
- /* What to do with this report */
- ensure(60);y+=4;
- section("07","What to do with this report","Three practical moves");
- para("1. Share two dimensions you were surprised by with someone who knows you well - and ask whether they recognise that pattern in you.",M,W-2*M,10.4,INK_SOFT,4);
- para("2. Pick one dimension where your score is at an extreme (very high or very low). Identify one situation in the last month where that tendency helped, and one where it cost you.",M,W-2*M,10.4,INK_SOFT,4);
- para("3. If you came to this expecting confirmation of how you see yourself, look hardest at the score that disagrees with you.",M,W-2*M,10.4,INK_SOFT,4);
+ /* Where you'll do your best work — environments & role types that fit the profile */
+ section("F","Where You'll Do Your Best Work","Environments and roles that fit your profile",[78,121,167]);
+ para("These are drawn from your own scores - the conditions where this profile tends to thrive. Treat them as a starting point for exploration, not a fixed recommendation.",M,W-2*M,9.4,INK_SOFT,5);
+ var env=[];
+ if((Dmap2.INT||0)>=55) env.push(["Autonomy & meaningful problems","You do your best work when you own the problem and the work itself is genuinely interesting."]);
+ if((wMap.O||0)>=55) env.push(["Variety & room to experiment","Novel challenges and freedom to try new approaches energise you; rigid routine drains you."]);
+ if((wMap.C||0)>=55) env.push(["Clear ownership & follow-through","You thrive where commitments are clear and you can be trusted to deliver end to end."]);
+ if((cMap.RAT||0)>=55) env.push(["Evidence & structured thinking","Roles that reward analysis, structure and well-reasoned decisions suit how you think."]);
+ if((hMap.COL||0)>=55 || (wMap.A||0)>=55) env.push(["Collaborative, trust-based teams","You are at your best in cooperative teams that solve problems together rather than compete."]);
+ if((wMap.E||0)>=55) env.push(["Regular people contact","Interaction and group work give you energy - protect a people-facing element in any role."]);
+ if((wMap.E||0)<45) env.push(["Focus time & low noise","You replenish through quieter, focused work; guard solo time around collaboration."]);
+ if((eMap.MAN||0)>=55 || (eMap.UND||0)>=55) env.push(["Emotionally mature cultures","Teams that handle feeling and conflict well let your people skills compound."]);
+ if(env.length<3) env.push(["Clear expectations & feedback","Any role is easier for you when goals are explicit and feedback is regular and honest."]);
+ env=env.slice(0,6);
+ var ecol=[PLUM,SAFF,SAGE,TERRA,[78,121,167],GOLD];
+ env.forEach(function(e,i){
+  doc.setFont("helvetica","normal");doc.setFontSize(9);
+  var lines=doc.splitTextToSize(safe(e[1]),W-2*M-12);
+  var h=Math.max(17,10.5+lines.length*4.5);
+  ensure(h+4);
+  fill(CARD);stroke(ecol[i%ecol.length]);doc.setLineWidth(.3);doc.roundedRect(M,y,W-2*M,h,2.4,2.4,"FD");
+  fill(ecol[i%ecol.length]);doc.rect(M,y,2.4,h,"F");
+  lineText(e[0],M+7,y+7.5,9.6,INK,"helvetica","bold");
+  rgb(INK_SOFT);doc.setFont("helvetica","normal");doc.setFontSize(9);
+  lines.forEach(function(l,li){doc.text(l,M+7,y+13+li*4.5);});
+  y+=h+4;
+ });
+ var roleHints=[];
+ if((cMap.RAT||0)>=55 && (wMap.C||0)>=55) roleHints.push("analysis- and ownership-led roles (product, strategy, operations, data/analytics, consulting)");
+ if((wMap.O||0)>=55) roleHints.push("build-and-create roles (design, R&D, early-stage or founding work)");
+ if((wMap.E||0)>=55 || (hMap.COL||0)>=55) roleHints.push("people- and partnership-led roles (program/people management, customer success, business development)");
+ if(!roleHints.length) roleHints.push("roles that combine clear ownership with steady, well-defined goals");
+ var roleText="Example directions to explore in your debrief: "+roleHints.join("; ")+".";
+ y+=2;
+ doc.setFont("helvetica","normal");doc.setFontSize(9.2);
+ var rlines=doc.splitTextToSize(safe(roleText),W-2*M-12);
+ var rh=10+rlines.length*4.6;ensure(rh+3);
+ fill([255,248,238]);stroke(GOLD_LT);doc.roundedRect(M,y,W-2*M,rh,2.4,2.4,"FD");
+ lineText("EXAMPLE ROLE TYPES TO EXPLORE",M+6,y+6.5,6.6,GOLD,"helvetica","bold");
+ rgb(INK);doc.setFont("helvetica","normal");doc.setFontSize(9.2);rlines.forEach(function(l,i){doc.text(l,M+6,y+12+i*4.6);});
+ y+=rh+4;
+
+ /* Your next 30 days — action plan */
+ section("07","Your Next 30 Days","A short, concrete action plan",SAGE);
+ para("Small, specific moves turn a profile into real change. Work through these over the next month.",M,W-2*M,9.6,INK_SOFT,5);
+ var actions=[
+  "Share two dimensions that surprised you with someone who knows you well, and ask whether they recognise the pattern in you.",
+  "Pick one dimension at an extreme (very high or very low). Note one moment this month it helped you, and one where it cost you.",
+  "Choose your lowest emotional-intelligence branch and practise it once this week in a real situation.",
+  "Protect one condition that feeds your strongest driver - block focus time, or take on a problem you find genuinely interesting.",
+  "Book a 1:1 debrief to turn this profile into two or three specific career moves."
+ ];
+ actions.forEach(function(a){
+  doc.setFont("helvetica","normal");doc.setFontSize(9.4);
+  var lines=doc.splitTextToSize(safe(a),W-2*M-24);
+  var h=Math.max(15,8+lines.length*4.8);
+  ensure(h+4);
+  fill(CARD);stroke(LINE);doc.setLineWidth(.25);doc.roundedRect(M,y,W-2*M,h,2.4,2.4,"FD");
+  stroke(SAGE);doc.setLineWidth(.6);doc.roundedRect(M+6,y+h/2-3,6,6,1,1,"S");
+  rgb(INK_SOFT);doc.setFont("helvetica","normal");doc.setFontSize(9.4);
+  lines.forEach(function(l,li){doc.text(l,M+18,y+7+li*4.8);});
+  y+=h+4;
+ });
+
+ /* Your strengths & growth areas */
+ doc.addPage();paint();y=TOP+1;
+ fill(SAGE);doc.roundedRect(M,y-5.6,8.5,8.5,1.8,1.8,"F");
+ lineText("+",M+4.25,y+1,10,[255,255,255],"helvetica","bold",{align:"center"});
+ doc.setFont("times","bold");doc.setFontSize(17);rgb(NAVY);doc.text(safe("Your Strengths & Growth Areas"),M+13,y);
+ y+=9;stroke(SAGE);doc.setLineWidth(.6);doc.line(M,y,M+24,y);stroke(LINE);doc.setLineWidth(.35);doc.line(M+26,y,W-M,y);y+=10;
+ var allDims=W_.concat(D,C,H_,E);
+ var pStr=allDims.filter(function(r){return r.band==="hi";}).sort(function(a,b){return b.score-a.score;}).slice(0,5);
+ if(pStr.length<3) pStr=allDims.slice().sort(function(a,b){return b.score-a.score;}).slice(0,4);
+ var pStrengths=pStr.map(function(r){return "Strong "+r.name.toLowerCase();});
+ var eLow=E.slice().sort(function(a,b){return a.score-b.score;}).slice(0,2);
+ var pGrowth=eLow.map(function(r){return "Developing: "+r.name.toLowerCase()+" emotion - where the most growth is available right now";});
+ pGrowth.push("Look hardest at any score that disagreed with how you see yourself - that gap is the most useful conversation");
+ var pcolW=(W-2*M-6)/2,plX=M,prX=M+pcolW+6,pcY=y;
+ fill([237,247,241]);stroke([197,221,205]);doc.setLineWidth(.3);doc.roundedRect(plX,pcY,pcolW,10,2.2,2.2,"FD");
+ lineText("YOUR STRENGTHS",plX+5,pcY+6.6,8,[39,116,76],"helvetica","bold");
+ fill([255,248,238]);stroke(GOLD_LT);doc.roundedRect(prX,pcY,pcolW,10,2.2,2.2,"FD");
+ lineText("AREAS TO DEVELOP",prX+5,pcY+6.6,8,GOLD,"helvetica","bold");
+ var plyy=pcY+16,pryy=pcY+16;
+ pStrengths.forEach(function(s){var lines=doc.splitTextToSize(safe(s),pcolW-9);fill(SAGE);doc.circle(plX+3,plyy-1.3,1,"F");rgb(INK_SOFT);doc.setFont("helvetica","normal");doc.setFontSize(8.9);lines.forEach(function(l,i){doc.text(l,plX+6,plyy+i*4.5);});plyy+=lines.length*4.5+3.4;});
+ pGrowth.forEach(function(s){var lines=doc.splitTextToSize(safe(s),pcolW-9);fill(GOLD);doc.circle(prX+3,pryy-1.3,1,"F");rgb(INK_SOFT);doc.setFont("helvetica","normal");doc.setFontSize(8.9);lines.forEach(function(l,i){doc.text(l,prX+6,pryy+i*4.5);});pryy+=lines.length*4.5+3.4;});
+ y=Math.max(plyy,pryy)+5;
+
+ /* Counsellor's note — own closing page */
+ doc.addPage();paint();y=TOP+1;
+ var firstName=(S.name||"").trim().split(/\s+/)[0]||"there";
+ var cnPara=[
+  "Hi "+firstName+", thank you for completing Lume Lens. A working profile like this earns its value in conversation - when we connect these patterns to the real decisions in front of you: a role change, a difficult relationship at work, or simply protecting the conditions that keep you doing your best work.",
+  "These scores are a mirror, not a verdict. If something here resonated - or quietly puzzled you - that is exactly where a debrief helps.",
+  "Let us turn this into two or three concrete next moves you can actually act on."
+ ].join(" ");
+ doc.setFont("helvetica","normal");doc.setFontSize(9.2);
+ var cnLines=doc.splitTextToSize(safe(cnPara),W-2*M-34);
+ var cnH=Math.max(48,27+(cnLines.length*4.7));
+ ensure(cnH+6);fill(NAVY);doc.roundedRect(M,y,W-2*M,cnH,2.8,2.8,"F");
+ fill([26,48,96]);doc.circle(M+13,y+15,8.5,"F");stroke(GOLD);doc.setLineWidth(.6);doc.circle(M+13,y+15,8.5,"S");
+ lineText("SB",M+13,y+18,12,GOLD_LT,"times","bold",{align:"center"});
+ lineText("A NOTE FROM YOUR COUNSELLOR",M+26,y+8,6.6,GOLD_LT,"helvetica","bold");
+ cnLines.forEach(function(l,li){lineText(l,M+26,y+14+(li*4.7),9,[222,230,242],"helvetica","normal");});
+ var sigY=y+14+(cnLines.length*4.7)+2;
+ lineText("Sachin Bajaj",M+26,sigY,9.4,[255,255,255],"helvetica","bold");
+ lineText("Counselling Psychologist · Founder, Lume Live · Rohtak, Haryana",M+26,sigY+4.4,6.6,[160,174,200],"helvetica","normal");
+ y+=cnH+6;
 
  /* Method & Limitations */
- doc.addPage();paint();y=TOP;
- section("M","Method & Limitations","How this profile was built");
+ section("M","Method & Limitations","How this profile was built",MUTE);
  para("Lume Lens uses 119 self-report statements across five short scales. Each scale is built on an established public-domain framework in psychology:",M,W-2*M,10.4,INK_SOFT,5);
  para("- Personality: the Five Factor Model, measured with markers from the International Personality Item Pool (IPIP).",M,W-2*M,9.8,INK_SOFT,3);
  para("- Motivation: Self-Determination Theory (Deci & Ryan), distinguishing intrinsic, identified, introjected, and external regulation, plus amotivation.",M,W-2*M,9.8,INK_SOFT,3);
@@ -4351,7 +4575,7 @@ window.saSharePDF=function(){
  el("saShareError").textContent="";
  saMakeDoc(function(doc){
   var blob=doc.output("blob"),fname=saPdfName();
-  var msg="Hi Sachin! I have completed Lume Lens - Working Profile - and would like a debrief.\nName: "+(S.name||"Not given")+(S.course?"\nRole: "+S.course:"")+(S.stage?"\nIndustry: "+S.stage:"")+"\n\nMy report PDF is attached.";
+  var msg="👋 Hi Sachin!\n\nI have completed Lume Lens — Working Profile and would like a debrief. 📋\n\n👤 My Details\n• Name: "+(S.name||"Not given")+(S.course?"\n• Role: "+S.course:"")+(S.stage?"\n• Industry: "+S.stage:"")+"\n\n📎 My report PDF is attached.";
   if(navigator.share && navigator.canShare && navigator.canShare({files:[new File([blob],fname,{type:"application/pdf"})]})){
    navigator.share({files:[new File([blob],fname,{type:"application/pdf"})],title:fname,text:msg}).catch(function(){saShareFallback(doc,fname,msg);});
   } else { saShareFallback(doc,fname,msg); }
@@ -5925,7 +6149,7 @@ document.querySelectorAll('.gallery-item').forEach(item=>{
   item.addEventListener('click',()=>{
     const img=item.querySelector('img').src;
     const overlay=document.createElement('div');
-    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:20px;backdrop-filter:blur(5px);animation:fadeUp .3s ease;';
+    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:20px;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);animation:fadeUp .3s ease;';
     overlay.innerHTML='<img src="'+img+'" style="max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain;box-shadow:0 24px 80px rgba(0,0,0,.5);">';
     overlay.addEventListener('click',()=>{overlay.style.opacity='0';setTimeout(()=>overlay.remove(),300);});
     document.body.appendChild(overlay);
@@ -6127,7 +6351,7 @@ function setMode(el, mode){
   function book(){
     if(!currentResult)return;
     var note=document.getElementById("llCheckNote");
-    var msg=["Hi Sachin!","I completed a Lume Live self-check and would like to book the Rs 49 introductory session.","","Test: "+currentResult.test,"Result band: "+currentResult.result.band,"Score: "+currentResult.result.scoreLabel];
+    var msg=["👋 Hi Sachin!","","I completed a Lume Live self-check and would like to book the ₹49 introductory session. 💛","","🧭 My Self-Check","• Test: "+currentResult.test,"• Result band: "+currentResult.result.band,"• Score: "+currentResult.result.scoreLabel];
     if(note&&note.value.trim())msg.push("Message: "+note.value.trim());
     window.open("https://wa.me/"+WA_PHONE+"?text="+encodeURIComponent(msg.join("\n")),"_blank","noopener");
   }

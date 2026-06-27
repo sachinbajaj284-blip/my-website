@@ -66,7 +66,7 @@ button,input,select{font:inherit}
   linear-gradient(90deg,rgba(10,110,110,.055) 1px,transparent 1px),
   linear-gradient(rgba(201,147,58,.05) 1px,transparent 1px),
   linear-gradient(180deg,#F8FCFA 0%,#EFF7F4 100%);background-size:56px 56px,56px 56px,auto}
-.ca-nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.93);backdrop-filter:blur(14px);border-bottom:1px solid rgba(221,232,229,.84)}
+.ca-nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.93);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid rgba(221,232,229,.84)}
 .ca-nav-inner{max-width:1240px;margin:0 auto;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:14px}
 .ca-logo{display:flex;align-items:center;gap:10px;text-decoration:none;min-width:0;flex:0 0 auto}
 .ca-logo-mark{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#fff,#EEF7F5);border:2px solid var(--gold);box-shadow:0 10px 24px rgba(13,27,64,.12);overflow:hidden;flex:none}
@@ -95,7 +95,8 @@ button,input,select{font:inherit}
 .ca-gate-copy h1 em{font-style:italic;color:#F8D27A}
 .ca-gate-copy p{max-width:760px;color:rgba(255,255,255,.78);font-size:1rem;line-height:1.75}
 .ca-gate-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
-.ca-gate-panel{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.17);border-radius:22px;padding:20px;box-shadow:0 26px 70px rgba(0,0,0,.24);backdrop-filter:blur(14px)}
+.ca-gate-panel{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.17);border-radius:22px;padding:20px;box-shadow:0 26px 70px rgba(0,0,0,.24);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);}
+.ca-gate-panel h2{font-family:Fraunces,serif;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);}
 .ca-gate-panel h2{font-family:Fraunces,serif;font-size:1.45rem;margin-bottom:14px}
 .ca-gate-features{display:grid;gap:10px}
 .ca-gate-feature{display:grid;grid-template-columns:36px 1fr;gap:10px;align-items:start;padding:11px 0;border-top:1px solid rgba(255,255,255,.12)}
@@ -120,7 +121,7 @@ button,input,select{font:inherit}
 .ca-btn.light{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)}
 .ca-btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
 .ca-btn:hover{transform:translateY(-2px)}
-.ca-hero-panel{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);border-radius:22px;padding:20px;box-shadow:0 26px 70px rgba(0,0,0,.22);backdrop-filter:blur(12px);position:relative;overflow:hidden}
+.ca-hero-panel{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);border-radius:22px;padding:20px;box-shadow:0 26px 70px rgba(0,0,0,.22);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);position:relative;overflow:hidden}
 .ca-hero-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#F8D27A,transparent);animation:caScan 4s ease-in-out infinite}
 .ca-panel-title{font-family:Fraunces,serif;font-size:1.35rem;margin-bottom:14px}
 .ca-signal{display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:start;border-top:1px solid rgba(255,255,255,.12);padding:14px 0}
@@ -179,11 +180,15 @@ button,input,select{font:inherit}
 .compare-btn.selected{background:var(--gold);color:#07182F}
 .ca-empty{display:none;background:#fff;border:1px dashed #BFD5D0;border-radius:16px;padding:30px;text-align:center;color:var(--muted);line-height:1.6}
 .ca-empty b{display:block;color:var(--navy);font-family:Fraunces,serif;font-size:1.35rem;margin-bottom:6px}
-.ca-compare-bar{position:fixed;left:18px;right:18px;bottom:calc(14px + var(--safe));z-index:60;max-width:940px;margin:auto;background:rgba(13,27,64,.96);color:#fff;border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 60px rgba(0,0,0,.24);border-radius:18px;padding:12px;display:none;align-items:center;justify-content:space-between;gap:12px;backdrop-filter:blur(14px)}
+.ca-compare-bar{position:fixed;left:18px;right:18px;bottom:calc(14px + var(--safe));z-index:60;max-width:940px;margin:auto;background:rgba(13,27,64,.96);color:#fff;border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 60px rgba(0,0,0,.24);border-radius:18px;padding:12px;display:none;align-items:center;justify-content:space-between;gap:12px;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);}
+.ca-compare-bar.show{display:flex}
+.ca-compare-list{display:flex;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);}
 .ca-compare-bar.show{display:flex}
 .ca-compare-list{display:flex;gap:8px;flex-wrap:wrap;font-size:.74rem;font-weight:800;color:rgba(255,255,255,.78)}
 .ca-compare-list span{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:7px 10px}
-.ca-modal{position:fixed;inset:0;background:rgba(7,24,47,.68);z-index:90;display:none;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(7px)}
+.ca-modal{position:fixed;inset:0;background:rgba(7,24,47,.68);z-index:90;display:none;align-items:center;justify-content:center;padding:16px;-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);}
+.ca-modal.open{display:flex}
+.ca-modal-card{background:#fff;-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);}
 .ca-modal.open{display:flex}
 .ca-modal-card{background:#fff;border-radius:20px;max-width:1020px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 28px 90px rgba(0,0,0,.35)}
 .ca-modal-head{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);z-index:2;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -789,10 +794,10 @@ function openGovDetail(id){
   openModal("detailModal");
 }
 function wa(c){
-  return "https://wa.me/917015671280?text="+encodeURIComponent(`Hi Lume Live!\nI have unlocked Career Intelligence through the assessment and I am exploring ${c.title}.\nPlease help me understand suitability and the Rs 1499 detailed roadmap.`);
+  return "https://wa.me/917015671280?text="+encodeURIComponent(`👋 Hi Lume Live!\n\nI have unlocked Career Intelligence through the assessment 🔓\n\n🎯 Exploring\n• ${c.title}\n\n🙏 Please help me understand suitability and the ₹1,499 detailed roadmap.`);
 }
 function govWa(j){
-  return "https://wa.me/917015671280?text="+encodeURIComponent(`Hi Lume Live!\nI have unlocked Career Intelligence through the assessment and I am exploring ${j.title} in the Government Jobs Explorer.\nPlease help me understand eligibility, preparation timeline, backup options and whether this route suits the student.`);
+  return "https://wa.me/917015671280?text="+encodeURIComponent(`👋 Hi Lume Live!\n\nI have unlocked Career Intelligence through the assessment 🔓\n\n🏛️ Government Jobs Explorer\n• ${j.title}\n\n🙏 Please help me understand eligibility, preparation timeline, backup options and whether this route suits the student.`);
 }
 function openModal(id){document.getElementById(id).classList.add("open");document.body.style.overflow="hidden";}
 function closeModal(id){document.getElementById(id).classList.remove("open");document.body.style.overflow="";}
@@ -873,7 +878,7 @@ function startCareerRoadmapPayment(e, careerId){
   const item=CAREERS.find(c=>c.id===careerId);
   const label=item ? "Career Intelligence Detailed Roadmap - "+item.title : "Career Intelligence Detailed Roadmap";
   const fallback=function(){
-    const text=`Hi Lume Live!\nI have unlocked Career Intelligence through the assessment and want the Rs 1499 detailed roadmap${item ? " for "+item.title : ""}.\nPlease help me complete payment and start the roadmap.`;
+    const text=`👋 Hi Lume Live!\n\nI have unlocked Career Intelligence through the assessment 🔓\n\n🗺️ I want the ₹1,499 detailed roadmap${item ? " for "+item.title : ""}.\n\n🙏 Please help me complete payment and start the roadmap.`;
     window.open("https://wa.me/917015671280?text="+encodeURIComponent(text),"_blank","noopener");
   };
   if(typeof window.lumeCashfreePay!=="function"){alert("Cashfree checkout is still loading. Please wait a few seconds and tap Pay Securely With Cashfree again.");return;}

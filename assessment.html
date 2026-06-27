@@ -273,7 +273,7 @@ body.assessment-page .assessment-landing::after{content:'';position:absolute;ins
 .assessment-actions .primary{background:linear-gradient(135deg,#C9933A,#E8B95A);color:#07182F;box-shadow:0 14px 34px rgba(232,185,90,.28);}
 .assessment-actions .secondary{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.22);}
 .assessment-actions a:hover{transform:translateY(-2px);}
-.assessment-flow-card{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);border-radius:22px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.22);backdrop-filter:blur(12px);position:relative;overflow:hidden;isolation:isolate;}
+.assessment-flow-card{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);border-radius:22px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.22);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);position:relative;overflow:hidden;isolation:isolate;}
 .assessment-flow-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#F8D27A,transparent);transform:translateX(-100%);animation:assessmentScan 3.8s ease-in-out infinite;opacity:.9;z-index:1;pointer-events:none;}
 .assessment-flow-card h2{font-family:'Fraunces',serif;font-size:1.32rem;margin-bottom:12px;color:#fff;}
 .assessment-step{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start;padding:14px 0;border-top:1px solid rgba(255,255,255,.12);}
@@ -369,7 +369,7 @@ body.assessment-page #self-assessments > *{position:relative;z-index:1;}
 .countdown-bar .cd-cta:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.2);}
 
 /* Hero countdown */
-.hero-countdown{background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.4);border-radius:12px;padding:14px 18px;margin-bottom:22px;display:inline-flex;align-items:center;gap:14px;flex-wrap:wrap;animation:fadeUp .8s ease 1s both;backdrop-filter:blur(8px);}
+.hero-countdown{background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.4);border-radius:12px;padding:14px 18px;margin-bottom:22px;display:inline-flex;align-items:center;gap:14px;flex-wrap:wrap;animation:fadeUp .8s ease 1s both;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);}
 .hero-countdown .hcd-label{font-size:.72rem;font-weight:800;color:#fca5a5;text-transform:uppercase;letter-spacing:.8px;display:flex;align-items:center;gap:6px;}
 .hero-countdown .hcd-label .pulse-dot{width:7px;height:7px;background:#ef4444;border-radius:50%;animation:livePulse 1.5s infinite;}
 .hero-cd-timer{display:flex;gap:6px;}
@@ -391,7 +391,7 @@ body.assessment-page #self-assessments > *{position:relative;z-index:1;}
 
 
 /* ── NAVBAR ── */
-nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:rgba(255,255,255,.97);backdrop-filter:blur(14px);box-shadow:0 2px 20px rgba(10,110,110,.08);transition:.3s;}
+nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:rgba(255,255,255,.97);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 2px 20px rgba(10,110,110,.08);transition:.3s;}
 .nav-inner{max-width:1280px;margin:0 auto;padding:0 clamp(16px,2vw,28px);height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:16px;}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
 .nav-logo-img{width:48px;height:48px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 2px var(--gold);flex-shrink:0;transition:transform .3s;}
@@ -449,7 +449,7 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .hero-assurance{display:flex;flex-wrap:wrap;gap:8px;margin:-14px 0 24px;animation:fadeUp .8s ease .8s both;}
 .hero-assurance span{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:6px 12px;color:rgba(255,255,255,.88);font-size:.7rem;font-weight:700;letter-spacing:.2px;white-space:nowrap;}
 .hero-assurance span:first-child{background:rgba(34,197,94,.13);border-color:rgba(34,197,94,.4);color:var(--green2);}
-.hero-assessment-card{display:flex;align-items:center;justify-content:space-between;gap:16px;max-width:620px;margin:-8px 0 22px;padding:16px 18px;background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.06));border:1px solid rgba(232,185,90,.34);border-left:4px solid var(--gold2);border-radius:16px;box-shadow:0 18px 46px rgba(0,0,0,.16);backdrop-filter:blur(12px);animation:fadeUp .8s ease .85s both;}
+.hero-assessment-card{display:flex;align-items:center;justify-content:space-between;gap:16px;max-width:620px;margin:-8px 0 22px;padding:16px 18px;background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.06));border:1px solid rgba(232,185,90,.34);border-left:4px solid var(--gold2);border-radius:16px;box-shadow:0 18px 46px rgba(0,0,0,.16);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);animation:fadeUp .8s ease .85s both;}
 .hero-assessment-copy small{display:block;color:var(--gold2);font-size:.64rem;font-weight:900;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:4px;}
 .hero-assessment-copy b{display:block;color:#fff;font-family:'Playfair Display',serif;font-size:1.08rem;line-height:1.2;margin-bottom:3px;}
 .hero-assessment-copy span{display:block;color:rgba(255,255,255,.68);font-size:.76rem;line-height:1.5;}
@@ -473,7 +473,7 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .hero-coin{width:240px;height:240px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 4px rgba(201,147,58,.4),0 24px 60px rgba(0,0,0,.5);animation:coinSpin 5s ease-in-out infinite;flex-shrink:0;transition:transform .4s;}
 .hero-coin:hover{transform:scale(1.05);}
 .hero-coin img{width:100%;height:100%;object-fit:cover;}
-.hero-tag-card{background:rgba(255,255,255,.07);border:1px solid rgba(201,147,58,.25);border-radius:14px;padding:16px 22px;text-align:center;backdrop-filter:blur(10px);width:100%;transition:all .3s;}
+.hero-tag-card{background:rgba(255,255,255,.07);border:1px solid rgba(201,147,58,.25);border-radius:14px;padding:16px 22px;text-align:center;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);width:100%;transition:all .3s;}
 .hero-tag-card:hover{border-color:rgba(201,147,58,.5);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.2);}
 .hero-tag-card .quote{font-family:'Playfair Display',serif;font-size:.95rem;font-style:italic;color:var(--gold2);line-height:1.55;}
 .hero-live{display:inline-flex;align-items:center;gap:6px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.4);border-radius:20px;padding:5px 12px;transition:all .3s;}
@@ -503,7 +503,7 @@ section{padding:80px 20px;}
 .gallery-item:hover img{filter:brightness(1.1) saturate(1.1);transform:scale(1.08);}
 .gallery-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(13,27,64,.7) 0%,transparent 60%);opacity:0;transition:opacity .4s;display:flex;align-items:flex-end;justify-content:center;padding-bottom:16px;}
 .gallery-item:hover .gallery-overlay{opacity:1;}
-.gallery-zoom{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);width:48px;height:48px;background:rgba(255,255,255,.15);backdrop-filter:blur(10px);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .3s .1s;border:1px solid rgba(255,255,255,.2);}
+.gallery-zoom{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);width:48px;height:48px;background:rgba(255,255,255,.15);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .3s .1s;border:1px solid rgba(255,255,255,.2);}
 .gallery-zoom svg{width:20px;height:20px;fill:#fff;}
 .gallery-item:hover .gallery-zoom{transform:translate(-50%,-50%) scale(1);}
 
@@ -551,7 +551,7 @@ section{padding:80px 20px;}
 .ll-check-btn:hover,.ll-check-btn:focus{background:var(--teal);color:#fff;box-shadow:0 8px 22px rgba(10,110,110,.18);transform:translateY(-1px);outline:none;}
 .ll-check-row,.svc-check-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
 .svc-check-row .ll-check-btn{background:#fff;margin-top:0;}
-.ll-check-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(13,27,64,.58);backdrop-filter:blur(7px);}
+.ll-check-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(13,27,64,.58);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);}
 .ll-check-modal.open{display:flex;}
 .ll-check-dialog{width:min(680px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:12px;box-shadow:0 28px 80px rgba(0,0,0,.28);position:relative;border:1px solid rgba(255,255,255,.5);}
 .ll-check-head{padding:22px 24px 15px;border-bottom:1px solid #E6EDEC;}
@@ -897,7 +897,7 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
 .float-wa svg{width:26px;height:26px;fill:#fff;}
 
 /* ── MODALS ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:2000;display:none;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(5px);}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:2000;display:none;align-items:center;justify-content:center;padding:16px;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);}
 .modal-overlay.open{display:flex;}
 .modal{background:#fff;border-radius:20px;max-width:500px;width:100%;max-height:92vh;overflow-y:auto;position:relative;animation:fadeUp .3s ease;box-shadow:0 24px 80px rgba(0,0,0,.3);}
 .modal-x{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.18);border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;z-index:1;color:#fff;transition:all .2s;}
@@ -982,7 +982,7 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
 .auth-signout:hover{background:var(--gray);}
 
 /* ── POPUP ── */
-.popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:3000;display:none;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(5px);}
+.popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:3000;display:none;align-items:center;justify-content:center;padding:16px;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);}
 .popup-overlay.open{display:flex;}
 .popup{background:#fff;border-radius:20px;max-width:430px;width:100%;overflow:hidden;animation:fadeUp .3s ease;position:relative;box-shadow:0 24px 80px rgba(0,0,0,.25);}
 .popup-x{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.18);border:none;border-radius:50%;width:27px;height:27px;cursor:pointer;font-size:.85rem;color:#fff;display:flex;align-items:center;justify-content:center;z-index:1;transition:all .2s;}
@@ -1226,7 +1226,7 @@ button,a,.btn-cta,.btn-gold,.btn-ghost,.sa-btn,.ll-check-btn,.ll-option{touch-ac
 @media(max-width:640px){.sp-stats{grid-template-columns:1fr 1fr;}}
 
 /* ── EXIT INTENT POPUP ── */
-.exit-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:5000;display:none;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(6px);}
+.exit-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:5000;display:none;align-items:center;justify-content:center;padding:16px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);}
 .exit-overlay.open{display:flex;}
 .exit-popup{background:#fff;border-radius:20px;max-width:480px;width:100%;overflow:hidden;animation:fadeUp .35s ease;position:relative;box-shadow:0 24px 80px rgba(0,0,0,.3);}
 .exit-hdr{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:28px 28px 22px;text-align:center;position:relative;overflow:hidden;}
@@ -1353,8 +1353,8 @@ nav.scrolled{box-shadow:0 4px 30px rgba(10,110,110,.15)!important;}
 .side-icon:hover{width:60px;transform:scale(1.12);}
 
 /* Modal backdrop blur enhancement */
-.modal-overlay{backdrop-filter:blur(8px);}
-.popup-overlay{backdrop-filter:blur(8px);}
+.modal-overlay{-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);}
+.popup-overlay{-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);}
 
 /* Toast slide-in smoother */
 .toast{transition:.5s cubic-bezier(.25,.46,.45,.94);}
@@ -1761,7 +1761,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 .sa-save-actions .sa-btn{padding:9px 14px;min-height:39px;font-size:.76rem;}
 .sa-saved-badge{font-size:.75rem;font-weight:700;color:var(--teal);background:#fff;border:1px solid #D6EAE7;border-radius:20px;padding:9px 13px;}
 
-.sa-pay{background:linear-gradient(145deg,rgba(255,255,255,.84),rgba(248,252,251,.68));border:1px solid rgba(255,255,255,.76);border-radius:26px;box-shadow:0 26px 70px rgba(13,27,64,.10),inset 0 1px 0 rgba(255,255,255,.78);padding:26px;position:relative;top:auto;overflow:hidden;backdrop-filter:blur(22px) saturate(1.18);-webkit-backdrop-filter:blur(22px) saturate(1.18);}.sa-pay::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(255,255,255,.58),rgba(255,255,255,.08) 42%,rgba(232,185,90,.09));pointer-events:none;}.sa-pay>*{position:relative;z-index:1;}
+.sa-pay{background:linear-gradient(145deg,rgba(255,255,255,.84),rgba(248,252,251,.68));border:1px solid rgba(255,255,255,.76);border-radius:26px;box-shadow:0 26px 70px rgba(13,27,64,.10),inset 0 1px 0 rgba(255,255,255,.78);padding:26px;position:relative;top:auto;overflow:hidden;-webkit-backdrop-filter:blur(22px) saturate(1.18);backdrop-filter:blur(22px) saturate(1.18);}.sa-pay::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(255,255,255,.58),rgba(255,255,255,.08) 42%,rgba(232,185,90,.09));pointer-events:none;}.sa-pay>*{position:relative;z-index:1;}
 .sa-pay-label{font-size:.7rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);}
 .sa-pay-price{display:flex;align-items:baseline;gap:9px;margin:6px 0 4px;flex-wrap:wrap;}
 .sa-pay-price strong{font-family:'Playfair Display',serif;font-size:2.3rem;color:var(--navy);}
@@ -1777,12 +1777,12 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 .sa-pay-steps li b{width:22px;height:22px;border-radius:50%;background:var(--teal);color:#fff;font-size:.72rem;display:flex;align-items:center;justify-content:center;flex:none;}
 .sa-pay .sa-btn{width:100%;margin-top:8px;}
 .sa-pay-note{font-size:.69rem;color:var(--mid);line-height:1.55;margin-top:10px;}.sa-help-link{color:var(--teal);font-weight:800;text-decoration:none;border-bottom:1px solid rgba(10,110,110,.28);}.sa-help-link:hover{color:var(--navy);border-color:var(--gold);}
-.sa-cashfree-panel{margin:16px 0 12px;border:1px solid rgba(255,255,255,.74);border-radius:22px;padding:18px;background:linear-gradient(145deg,rgba(255,255,255,.72),rgba(236,247,246,.58));box-shadow:0 18px 48px rgba(10,110,110,.10),inset 0 1px 0 rgba(255,255,255,.82);backdrop-filter:blur(18px) saturate(1.18);-webkit-backdrop-filter:blur(18px) saturate(1.18);}
+.sa-cashfree-panel{margin:16px 0 12px;border:1px solid rgba(255,255,255,.74);border-radius:22px;padding:18px;background:linear-gradient(145deg,rgba(255,255,255,.72),rgba(236,247,246,.58));box-shadow:0 18px 48px rgba(10,110,110,.10),inset 0 1px 0 rgba(255,255,255,.82);-webkit-backdrop-filter:blur(18px) saturate(1.18);backdrop-filter:blur(18px) saturate(1.18);}
 .sa-cashfree-top{display:grid;grid-template-columns:52px 1fr;gap:14px;align-items:center;margin-bottom:14px;}
 .sa-cashfree-mark{width:52px;height:52px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(145deg,rgba(255,255,255,.94),rgba(10,110,110,.12));color:var(--teal);font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:900;border:1px solid rgba(255,255,255,.82);box-shadow:0 14px 30px rgba(10,110,110,.14),inset 0 1px 0 rgba(255,255,255,.9);}
 .sa-cashfree-top b{display:block;color:var(--navy);font-size:clamp(1rem,2.4vw,1.18rem);line-height:1.2;margin-bottom:4px;}
 .sa-cashfree-top span{display:block;color:var(--mid);font-size:.84rem;line-height:1.45;}
-.sa-upi-fallback{margin:12px 0 12px;border:1px solid rgba(255,255,255,.72);border-radius:18px;background:rgba(255,255,255,.66);overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 12px 28px rgba(13,27,64,.05);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);}
+.sa-upi-fallback{margin:12px 0 12px;border:1px solid rgba(255,255,255,.72);border-radius:18px;background:rgba(255,255,255,.66);overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 12px 28px rgba(13,27,64,.05);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);}
 .sa-upi-fallback summary{cursor:pointer;list-style:none;padding:12px 14px;color:var(--teal);font-size:.78rem;font-weight:900;display:flex;justify-content:space-between;gap:12px;align-items:center;}
 .sa-upi-fallback summary::-webkit-details-marker{display:none;}
 .sa-upi-fallback summary::after{content:'+';width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#ECF7F6;color:var(--teal);font-weight:900;flex:none;}
@@ -1862,7 +1862,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 .sa-cover p{font-size:.85rem;color:rgba(255,255,255,.78);}
 .sa-cover-grid{display:grid;grid-template-columns:1fr 210px;gap:24px;align-items:center;position:relative;z-index:1;}
 .sa-cover-main{min-width:0;}
-.sa-cover-score{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:18px;padding:18px 16px;text-align:center;backdrop-filter:blur(10px);}
+.sa-cover-score{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:18px;padding:18px 16px;text-align:center;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}
 .sa-score-ring{width:112px;height:112px;margin:0 auto 10px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--gold2) 0 100%,rgba(255,255,255,.16) 0);box-shadow:inset 0 0 0 10px rgba(255,255,255,.12),0 16px 34px rgba(0,0,0,.18);}
 .sa-score-ring span{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:800;line-height:1;color:#fff;}
 .sa-score-ring small{display:block;font-size:.58rem;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.68);margin-top:4px;}
@@ -1969,7 +1969,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 .sa-insight span{font-size:.74rem;color:var(--mid);line-height:1.55;}
 .sa-rlist{list-style:none;display:grid;gap:8px;margin:8px 0;}
 .sa-rlist li{font-size:.82rem;color:var(--dark);line-height:1.6;padding-left:19px;position:relative;}
-.sa-rlist li::before{content:'â–¸';position:absolute;left:0;color:var(--gold);font-weight:800;}
+.sa-rlist li::before{content:'\25B8';position:absolute;left:0;color:var(--gold);font-weight:800;}
 .sa-tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;}
 .sa-tags span{font-size:.71rem;font-weight:700;color:var(--teal);background:#ECF7F6;border-radius:20px;padding:6px 12px;}
 .sa-typecard{border:1px solid #E2E9E8;border-radius:14px;padding:15px 17px;margin:10px 0;background:#FCFDFD;}
@@ -2385,7 +2385,7 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
 .tp-title em{color:#E8B95A;font-style:italic;}
 .tp-sub{font-size:clamp(.92rem,1.5vw,1.05rem);color:rgba(255,255,255,.7);max-width:600px;margin:0 auto;line-height:1.6;}
 .tp-split{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:stretch;}
-.tp-card{background:rgba(255,255,255,.03);border:1.5px solid rgba(255,255,255,.08);border-radius:20px;padding:30px 26px;backdrop-filter:blur(8px);transition:all .3s ease;position:relative;overflow:hidden;}
+.tp-card{background:rgba(255,255,255,.03);border:1.5px solid rgba(255,255,255,.08);border-radius:20px;padding:30px 26px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:all .3s ease;position:relative;overflow:hidden;}
 .tp-card.regret{border-color:rgba(220,38,38,.25);background:linear-gradient(180deg,rgba(220,38,38,.06),rgba(220,38,38,.02));}
 .tp-card.clarity{border-color:rgba(34,197,94,.30);background:linear-gradient(180deg,rgba(34,197,94,.08),rgba(34,197,94,.03));box-shadow:0 24px 60px rgba(34,197,94,.10);}
 .tp-card-tag{display:inline-flex;align-items:center;gap:7px;font-size:.65rem;font-weight:900;letter-spacing:1.4px;text-transform:uppercase;padding:5px 12px;border-radius:999px;margin-bottom:18px;}
@@ -2974,7 +2974,7 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
 
     // Optional: open WhatsApp if a phone was provided so the lead is captured manually
     if(phone){
-      const msg = encodeURIComponent(`Hi Lume Live! I just took the free Career Snapshot.\nName: ${state.name}\nWhatsApp: ${phone}\nMy top theme: ${t.name} (${t.full})\nPlease send me the snapshot summary and tell me more about the ₹999 full report.`);
+      const msg = encodeURIComponent(`👋 Hi Lume Live!\n\nI just took the free Career Snapshot 📋\n\n👤 My Details\n• Name: ${state.name}\n• WhatsApp: ${phone}\n\n🎯 My Top Theme\n• ${t.name} (${t.full})\n\n🙏 Please send my snapshot summary and tell me more about the ₹999 Full Clarity Report.`);
       // Open in new tab so they don't lose their result
       window.open(`https://wa.me/917015671280?text=${msg}`,'_blank','noopener');
     }
@@ -3131,7 +3131,7 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
           <aside class="sa-pay">
             <span class="sa-pay-label">Full Clarity Report</span>
             <div class="sa-pay-price"><strong>&#8377;999</strong><s>&#8377;1999</s><span>one-time fee</span></div>
-            <p style="font-size:.78rem;color:var(--mid);line-height:1.55;">Payable once before you begin &mdash; covers all four assessments and your combined report.</p>
+            <p style="font-size:.78rem;color:var(--mid);line-height:1.55;">Payable once before you begin &mdash; covers all five assessments and your combined report.</p>
             <div class="sa-cashfree-panel">
               <div class="sa-cashfree-top">
                 <div class="sa-cashfree-mark" aria-hidden="true">&#8377;</div>
@@ -3282,6 +3282,30 @@ var varkItems=[
  {q:"I feel most confident after learning when I have:",o:["a visual map of the topic in my mind.","talked through the idea and answered questions.","written the key points in my own words.","used the idea in a real or simulated task."],map:["V","A","R","K"]},
  {q:"When a topic is abstract, I make it clearer by:",o:["turning it into a diagram or comparison table.","discussing the idea until it sounds simpler.","reading and rewriting definitions carefully.","connecting it to an example, activity or case."],map:["V","A","R","K"]}
 ];
+/* ─── Aptitude (ability test — single correct answer per item) ─── */
+var aptitudeAreas={NUM:"Numerical Reasoning",VER:"Verbal Reasoning",LOG:"Logical Reasoning",SPA:"Spatial Reasoning"};
+var aptitudeItems=[
+ {area:"NUM",q:"What is 15% of 200?",o:["20","30","45","25"],a:1},
+ {area:"NUM",q:"Find the next number: 2, 6, 12, 20, ?",o:["28","30","26","32"],a:1},
+ {area:"NUM",q:"If 5 pens cost ₹60, how much do 8 pens cost?",o:["₹84","₹96","₹108","₹90"],a:1},
+ {area:"NUM",q:"A shirt priced ₹800 is sold at a 25% discount. What is the final price?",o:["₹600","₹650","₹575","₹620"],a:0},
+ {area:"NUM",q:"What is the average of 10, 20 and 30?",o:["15","25","20","30"],a:2},
+ {area:"VER",q:"Choose the word closest in meaning to ABUNDANT:",o:["scarce","plentiful","tiny","weak"],a:1},
+ {area:"VER",q:"Choose the OPPOSITE of GENEROUS:",o:["kind","selfish","wealthy","cheerful"],a:1},
+ {area:"VER",q:"Pen is to Write as Knife is to ___:",o:["cook","cut","sharp","metal"],a:1},
+ {area:"VER",q:"Find the odd word out:",o:["rose","lily","oak","jasmine"],a:2},
+ {area:"VER",q:"Complete the sentence: She was so tired that she could ___ keep her eyes open.",o:["hardly","easily","never","always"],a:0},
+ {area:"LOG",q:"Find the next number in the series: 1, 4, 9, 16, ?",o:["20","25","24","30"],a:1},
+ {area:"LOG",q:"All roses are flowers. Which statement is definitely true?",o:["All roses fade quickly","Some roses are flowers","No roses are flowers","All flowers are roses"],a:1},
+ {area:"LOG",q:"Which number is the odd one out: 3, 5, 7, 9, 11?",o:["5","7","9","11"],a:2},
+ {area:"LOG",q:"Complete the pattern: A, C, E, G, ?",o:["H","I","J","K"],a:1},
+ {area:"LOG",q:"If MONDAY is coded as NPOEBZ (each letter moves +1), how is FRIDAY coded?",o:["GSJEBZ","GSJECZ","ESJECZ","GTJEBZ"],a:0},
+ {area:"SPA",q:"How many faces does a cube have?",o:["4","6","8","12"],a:1},
+ {area:"SPA",q:"If you turn the letter 'b' upside down (rotate it 180°), which letter does it most resemble?",o:["d","p","q","b"],a:2},
+ {area:"SPA",q:"A cube has 6 faces and 8 corners. How many edges does it have?",o:["10","12","8","14"],a:1},
+ {area:"SPA",q:"Which shape has more sides — a hexagon or a pentagon?",o:["pentagon","hexagon","both equal","cannot say"],a:1},
+ {area:"SPA",q:"If you stack 3 identical cubes into a vertical tower, how many cube faces are hidden where they touch?",o:["2","4","6","3"],a:1}
+];
 var varkMeta={
  V:{name:"Visual Structure",desc:"You learn well when ideas are arranged in clear layouts, diagrams, charts, timelines or maps.",tip:"Turn notes into charts, mind maps, comparison tables and colour-coded structures."},
  A:{name:"Spoken Discussion",desc:"You learn well through explanation, dialogue, questions, teaching back and hearing ideas in words.",tip:"Talk topics through, explain them aloud, use study conversations and record short verbal summaries."},
@@ -3336,9 +3360,12 @@ var tools={
    howto:{steps:["Read each statement about what matters to you in your work and career.","Tap one button from 1 to 6 to show how true it is for you.","After the questions, you will pick the three statements that feel most true."],note:"Work quickly and honestly — avoid the extreme ends unless you truly feel strongly."}},
  vark:{id:"vark",icon:"📚",name:"Learning Preferences",tag:"Study Supports — 16 questions",type:"multi",items:varkItems,
    blurb:"Shows which study supports make learning feel more workable.",
-   howto:{steps:["Read each everyday situation.","Tap the option or options you would really choose — you can pick more than one.","If none of the options fit you, you may leave that question blank."],note:"Choose what you would genuinely do in real life."}}
+   howto:{steps:["Read each everyday situation.","Tap the option or options you would really choose — you can pick more than one.","If none of the options fit you, you may leave that question blank."],note:"Choose what you would genuinely do in real life."}},
+ aptitude:{id:"aptitude",icon:"🧩",name:"Aptitude Snapshot",tag:"20 ability questions",type:"aptitude",items:aptitudeItems,
+   blurb:"A short look at numerical, verbal, logical and spatial reasoning.",
+   howto:{steps:["Read each question and pick the one best answer.","Unlike the other parts, these questions have a correct answer.","Take your time — there is no timer — and skip nothing; give your best attempt."],note:"This is a short snapshot of relative strengths across four reasoning areas, not a formal IQ or selection test."}}
 };
-var order=["personality","riasec","anchors","vark"];
+var order=["personality","riasec","anchors","vark","aptitude"];
 var TOTAL=order.reduce(function(t,k){return t+tools[k].items.length;},0);
 
 /* ─── State ─── */
@@ -3569,7 +3596,18 @@ function renderPart(){
  el("saQMeta").innerHTML=partInstructions(t);
  el("saTestError").textContent="";
  var html;
- if(t.type==="likert"||t.type==="binary"){
+ if(t.type==="aptitude"){
+  html=t.items.map(function(item,i){
+   var qid=i+1,cur=S.answers[k][qid];
+   return '<div class="sa-q" id="saQ'+qid+'"><div class="sa-q-num">Q'+qid+'</div>'+
+    '<div class="sa-q-text">'+esc(item.q)+'</div>'+
+    '<div class="sa-opts">'+item.o.map(function(opt,oi){
+      var ck=(cur===oi)?" checked":"";
+      return '<label class="sa-opt"><input type="radio" name="sa_'+k+'_'+qid+'" value="'+oi+'"'+ck+
+        ' onchange="saSetApt(\''+k+'\','+qid+','+oi+')"><span>'+esc(opt)+'</span></label>';
+     }).join("")+'</div></div>';
+  }).join("");
+ }else if(t.type==="likert"||t.type==="binary"){
   html=t.items.map(function(text,i){
    var qid=i+1,cur=S.answers[k][qid];
    return '<div class="sa-q" id="saQ'+qid+'"><div class="sa-q-num">Q'+qid+'</div>'+
@@ -3619,6 +3657,12 @@ window.saSetRadio=function(k,qid,v){
  persistAssessmentProgress();
  renderSteps();updateProgress();
 };
+window.saSetApt=function(k,qid,oi){
+ S.answers[k][qid]=Number(oi);
+ var q=el("saQ"+qid);if(q)q.classList.remove("flag");
+ persistAssessmentProgress();
+ renderSteps();updateProgress();
+};
 window.saSetMulti=function(k,qid,oi,checked){
  if(!S.answers[k][qid])S.answers[k][qid]=[];
  var arr=S.answers[k][qid],p=arr.indexOf(oi);
@@ -3660,7 +3704,7 @@ window.saGenerate=function(){
    var t=tools[k];
    if(t.type!=="multi"){
     for(var q=1;q<=t.items.length;q++){
-     if(!S.answers[k][q]){var qe=el("saQ"+q);if(qe)qe.classList.add("flag");}
+     if(S.answers[k][q]===undefined){var qe=el("saQ"+q);if(qe)qe.classList.add("flag");}
     }
    }
    var msg=t.type==="multi"?"Please answer at least 10 questions in this part for a meaningful result.":
@@ -3699,6 +3743,20 @@ function scoreRiasec(){
  });
  rows.sort(function(x,y){return y.score-x.score;});
  return rows;
+}
+function scoreAptitude(){
+ var a=S.answers.aptitude||{},by={};
+ Object.keys(aptitudeAreas).forEach(function(k){by[k]={correct:0,total:0};});
+ aptitudeItems.forEach(function(item,i){
+  by[item.area].total++;
+  if(S.answers.aptitude&&S.answers.aptitude[i+1]===item.a)by[item.area].correct++;
+ });
+ var rows=Object.keys(aptitudeAreas).map(function(k){
+  var c=by[k].correct,t=by[k].total;
+  return {key:k,name:aptitudeAreas[k],score:c,max:t,pct:t?Math.round(c/t*100):0};
+ }).sort(function(x,y){return y.score-x.score;});
+ var totalC=rows.reduce(function(s,r){return s+r.score;},0),totalM=rows.reduce(function(s,r){return s+r.max;},0);
+ return {rows:rows,total:totalC,max:totalM,top:rows[0],band:function(p){return p>=70?"hi":(p>=40?"mid":"lo");}};
 }
 function scoreAnchors(){
  var tot={},a=S.answers.anchors;anchorOrder.forEach(function(x){tot[x]=0;});
@@ -3992,7 +4050,7 @@ function buildReportLegacy(){
   '<nav class="sa-rtabs">'+tabs+'</nav>'+
   '<div class="sa-rbody"><div id="saRPanels">'+panels+'</div>'+
    '<p style="font-size:.74rem;color:var(--mid);margin-top:18px;">Report generated '+date+' for '+disp+'.</p>'+
-   '<div class="sa-disclaim"><strong>Important note</strong>This combined report brings together four educational self-assessment questionnaires completed for personal reflection and as a starting point for a counselling discussion. It is not a psychological diagnosis, an aptitude test, or a selection or admissions decision tool. Results describe self-reported preferences on the day the assessment was completed and can change over time.</div>'+
+   '<div class="sa-disclaim"><strong>Important note</strong>This combined report brings together five short assessments completed for personal reflection and as a starting point for a counselling discussion. It is not a clinical diagnosis or a selection or admissions decision tool, and the aptitude snapshot is a brief indicator rather than a formal aptitude or IQ test. Results describe self-reported preferences on the day the assessment was completed and can change over time.</div>'+
    '<div class="sa-rfoot">'+
     '<h4 style="margin-top:0;">Save &amp; Share Your Report</h4>'+
     '<p>Download your full report as a PDF, or send it straight to a Lume Live counsellor on WhatsApp to talk it through.</p>'+
@@ -4037,7 +4095,7 @@ function buildReport(){
  var cover='<div class="lrt-cover"><div class="lrt-cover-top"><div class="lrt-brand"><img src="logo.png" alt="Lume Live" onerror="this.style.display=\'none\'"><div class="lrt-brand-text"><b>Lume Live</b><span>Mental Health &amp; Career Guidance</span></div></div><div class="lrt-cover-meta"><b>Full Clarity Report</b><span>Generated '+esc(date)+'</span><span>4 assessments completed</span></div></div><div class="lrt-cover-hero"><span class="lrt-cover-eyebrow">Your Personal Report</span><h1 class="lrt-cover-name">'+esc(rawName||"Your Report")+'</h1><p class="lrt-cover-tagline">A combined clarity report for career reflection, counselling discussion, and practical next steps.</p>'+coverChips+'</div><div class="lrt-code-badges">'+codeBadges+'</div></div>';
 
  /* Greeting */
- var greeting='<div class="lrt-greeting"><p>Hi <strong>'+esc(firstName)+'</strong>, here is what your responses across four reflection tools reveal about your interests, values, personality and learning preferences.</p><p style="margin-top:10px;">This report is not a verdict. It is a starting point — a structured mirror that helps you and your counsellor have a more focused conversation about the directions that actually fit <em>you</em>.</p><div class="lrt-greeting-highlight">'+narrative+' These patterns, taken together, point toward the career directions in Section 01.</div></div>';
+ var greeting='<div class="lrt-greeting"><p>Hi <strong>'+esc(firstName)+'</strong>, here is what your responses across five short assessments reveal about your interests, values, personality and learning preferences.</p><p style="margin-top:10px;">This report is not a verdict. It is a starting point — a structured mirror that helps you and your counsellor have a more focused conversation about the directions that actually fit <em>you</em>.</p><div class="lrt-greeting-highlight">'+narrative+' These patterns, taken together, point toward the career directions in Section 01.</div></div>';
 
  /* Insight map */
  function mapCard(label,value,sub,score,max,accent){return '<div class="lrt-map-card" style="--card-accent:'+accent+'"><small>'+esc(label)+'</small><b>'+esc(value)+'</b><span>'+esc(sub)+'</span><div class="lrt-map-meter"><div class="lrt-map-meter-fill" data-w="'+pct(score,max)+'" style="width:0%"></div></div></div>';}
@@ -4096,19 +4154,28 @@ function buildReport(){
  var sec05=sectionWrap('05','Learning Preferences (VARK)','16 items · how you absorb information best',
   '<p style="font-size:.84rem;line-height:1.7;color:var(--lrt-ink-mute);margin-bottom:14px;">This is not about how smart you are — it is about <em>how</em> your brain prefers to take in new information. Using your preferred style can cut study time and improve recall.</p><p style="font-size:.88rem;line-height:1.7;color:var(--lrt-ink);margin-bottom:18px;">'+learnNote+'</p><div style="margin-bottom:18px;">'+varkRows+'</div>'+(varkTips?'<h3 style="font-size:.9rem;font-weight:700;color:var(--lrt-navy);margin-bottom:12px;">⚡ Study Strategies for Your Profile</h3>'+varkTips:''));
 
- /* 06 Stream (optional) */
- var sec06=saIsStreamStage()?sectionWrap('06','Stream Decision Starter','Class 9–12 guidance',saStreamGuideHtml(top3,anchor,topP,learnLabel)):'';
+ /* 06 Aptitude Snapshot */
+ var APT=scoreAptitude();
+ var aptColors={NUM:"#2563EB",VER:"#C97A2B",LOG:"#16A34A",SPA:"#7C3AED"};
+ var aptBg={NUM:"#E0EAFF",VER:"#FBEFE0",LOG:"#DCFCE7",SPA:"#F1EBFF"};
+ var aptRows=APT.rows.map(function(r){
+  var col=aptColors[r.key],bg=aptBg[r.key];
+  return '<div class="lrt-score-bar" style="--score-bg:'+bg+'"><div class="lrt-score-badge" style="background:'+col+'">'+esc(r.key)+'</div><div class="lrt-score-info"><b>'+esc(r.name)+'</b><span>'+r.score+' of '+r.max+' correct</span><div class="lrt-score-track"><div class="lrt-score-fill" data-w="'+r.pct+'" style="background:'+col+';width:0%"></div></div></div><div class="lrt-score-pct" style="color:'+col+'">'+r.pct+'%</div></div>';
+ }).join("");
+ var sec_apt=sectionWrap('06','Aptitude Snapshot','20 questions · relative strengths across four reasoning areas',
+  '<p style="font-size:.84rem;line-height:1.7;color:var(--lrt-ink-mute);margin-bottom:16px;">Unlike the other parts, these questions had a correct answer. This is a short, untimed snapshot of your <em>relative</em> strengths across four reasoning areas — not an IQ score or a norm-referenced (percentile) result.</p><div style="margin-bottom:16px;">'+aptRows+'</div><div style="background:#F0F4FA;border-left:3px solid #4E79A7;border-radius:12px;padding:14px 16px;"><b style="display:block;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;color:#4E79A7">What this means for you</b><p style="font-size:.84rem;line-height:1.6;color:var(--lrt-ink);margin:0;">Your strongest area here is '+esc(APT.top.name.toLowerCase())+' ('+APT.top.score+' of '+APT.top.max+'). Aptitude can be built with practice — a lower area is a chance to grow, not a ceiling.</p></div>');
+
 
  /* Counsellor's note */
- var counsellor='<div class="lrt-counsellor"><div class="lrt-counsellor-inner"><div class="lrt-counsellor-photo-fallback">SB</div><div class="lrt-counsellor-text"><span class="lrt-counsellor-eyebrow">A Note from Your Counsellor</span><p>Hi '+esc(firstName)+', thank you for completing all four assessments. Reading your responses carefully, I can see a genuine, thoughtful pattern emerging — and that is exactly what makes a good counselling conversation possible.</p><p>These results are not a label or a limitation. They are a mirror. In our session, we will look at the patterns that surprised you, the ones that felt deeply true, and the ones you are still questioning — and use those to narrow down your next concrete step.</p><p>Remember: career clarity is rarely a single "aha" moment. It is a series of small, honest conversations — and this report is a great foundation for ours.</p><div class="lrt-counsellor-sig"><b>Sachin Bajaj</b><span>Counselling Psychologist · Founder, Lume Live</span><span style="margin-top:4px;display:block;color:rgba(255,255,255,.4);font-size:.72rem;">Rohtak, Haryana · hello@lumelive.co.in</span></div></div></div></div>';
+ var counsellor='<div class="lrt-counsellor"><div class="lrt-counsellor-inner"><div class="lrt-counsellor-photo-fallback">SB</div><div class="lrt-counsellor-text"><span class="lrt-counsellor-eyebrow">A Note from Your Counsellor</span><p>Hi '+esc(firstName)+', thank you for completing all five assessments. Reading your responses carefully, I can see a genuine, thoughtful pattern emerging — and that is exactly what makes a good counselling conversation possible.</p><p>These results are not a label or a limitation. They are a mirror. In our session, we will look at the patterns that surprised you, the ones that felt deeply true, and the ones you are still questioning — and use those to narrow down your next concrete step.</p><p>Remember: career clarity is rarely a single "aha" moment. It is a series of small, honest conversations — and this report is a great foundation for ours.</p><div class="lrt-counsellor-sig"><b>Sachin Bajaj</b><span>Counselling Psychologist · Founder, Lume Live</span><span style="margin-top:4px;display:block;color:rgba(255,255,255,.4);font-size:.72rem;">Rohtak, Haryana · hello@lumelive.co.in</span></div></div></div></div>';
 
  /* Disclaimer */
- var disclaimer='<div class="lrt-disclaimer"><div class="lrt-disclaimer-inner"><div class="lrt-disclaimer-icon">ℹ️</div><p><strong>Important note:</strong> These results describe your <strong>self-reported preferences today</strong>. They are a starting point for your counselling conversation, not a psychological diagnosis or selection decision. The four tools used are educational self-reflection instruments. Preferences change over time and may not capture all of your personality or abilities. Please discuss these results with a qualified counsellor before making any major academic or career decision.</p></div></div>';
+ var disclaimer='<div class="lrt-disclaimer"><div class="lrt-disclaimer-inner"><div class="lrt-disclaimer-icon">ℹ️</div><p><strong>Important note:</strong> These results describe your <strong>self-reported preferences today</strong>. They are a starting point for your counselling conversation, not a psychological diagnosis or selection decision. The assessments are educational self-reflection tools, and the aptitude snapshot is a brief indicator, not a formal aptitude or IQ test. Preferences change over time and may not capture all of your personality or abilities. Please discuss these results with a qualified counsellor before making any major academic or career decision.</p></div></div>';
 
  /* Footer */
  var footer='<div class="lrt-footer"><div class="lrt-footer-brand"><img src="logo.png" alt="Lume Live" onerror="this.style.display=\'none\'"><b>Lume Live</b></div><div class="lrt-footer-links"><a href="https://lumelive.co.in">lumelive.co.in</a><a href="https://wa.me/917015671280">+91 70156 71280</a><a href="mailto:hello@lumelive.co.in">hello@lumelive.co.in</a></div></div>';
 
- var doc='<div class="lrt-doc">'+cover+greeting+insightMap+sec01+sec02+sec03+sec04+sec05+sec06+counsellor+disclaimer+footer+'</div>';
+ var doc='<div class="lrt-doc">'+cover+greeting+insightMap+sec01+sec02+sec03+sec04+sec05+sec_apt+counsellor+disclaimer+footer+'</div>';
 
  /* Existing share/download actions (PDF + WhatsApp) preserved */
  var actions='<div class="sa-report-actions"><h4>Save &amp; Share Your Report</h4><p>Download the full PDF report, open matching careers in Lume Career Intelligence India, or send it to a Lume Live counsellor on WhatsApp. <a class="sa-help-link" href="https://wa.me/917015671280?text=Hi%20Lume%20Live!%20I%20need%20help%20understanding%20my%20assessment%20report." target="_blank" rel="noopener">Need help reading this?</a></p><label class="sa-check"><input type="checkbox" id="saShareConsent"><span>I consent to share my report with a Lume Live counsellor on WhatsApp.</span></label><p class="sa-error" id="saShareError"></p><div class="sa-actions"><a class="sa-btn ghost" href="'+atlasHref+'" style="text-decoration:none;">Explore Matching Careers</a><button class="sa-btn gold" type="button" onclick="saSharePDF()">Send Report PDF on WhatsApp</button><button class="sa-btn ghost" type="button" onclick="saDownloadPDF()">Download Report PDF</button></div><p class="sa-pay-note" style="margin-top:11px;">On a phone, this opens your share menu. On a computer, the PDF downloads and WhatsApp opens so you can attach it.</p></div>';
@@ -4128,20 +4195,21 @@ window.saShare=function(){
  el("saShareError").textContent="";
  var d=S.report;
  var P=scorePersonality(),A=scoreAnchors(),V=scoreVark(),R=scoreRiasec();
- var msg=["Hi Sachin!","",
-  "I have completed the Lume Live Full Clarity Report and consent to discuss my combined report.",
-  "Name: "+(S.name||"Not given"),
-  S.age?"Age: "+S.age:"",
-  S.stage?"Stage: "+S.stage:"",
-  S.concern?"Main reason: "+S.concern:"",
+ var msg=["👋 Hi Sachin!","",
+  "I have completed the Lume Live Full Clarity Report and consent to discuss my combined report. 📋",
   "",
-  "Headline results:",
-  "- Career-interest profile: "+d.code,
-  "- Career Intelligence matches: https://lumelive.co.in/career-intelligence.html?access=assessment&theme="+encodeURIComponent(d.code),
-  "- Top personality dimension: "+d.topP.name+" ("+d.topP.score+"/40)",
-  "- Primary work driver: "+d.anchor.short+" ("+d.anchor.score+" pts)",
-  "- Learning preferences: "+d.learnLabel,
-  "","Please guide me on what these results suggest."].join("\n");
+  "👤 My Details",
+  "• Name: "+(S.name||"Not given"),
+  S.age?"• Age: "+S.age:"",
+  S.stage?"• Stage: "+S.stage:"",
+  S.concern?"• Main reason: "+S.concern:"",
+  "",
+  "📊 Headline Results",
+  "• Career-interest profile: "+d.code,
+  "• Top personality dimension: "+d.topP.name+" ("+d.topP.score+"/40)",
+  "• Primary work driver: "+d.anchor.short+" ("+d.anchor.score+" pts)",
+  "• Learning preferences: "+d.learnLabel,
+  "","🙏 Please guide me on what these results suggest."].join("\n");
  window.open("https://wa.me/917015671280?text="+encodeURIComponent(msg),"_blank","noopener");
  toast("Your combined result summary is ready to send on WhatsApp.");
 };
@@ -4191,7 +4259,7 @@ window.saPrint=function(){
    '<div class="chip"><small>Work Driver</small><b>'+esc(d.anchor.short)+'</b></div>'+
    '<div class="chip"><small>Learning Preferences</small><b>'+esc(d.learnLabel)+'</b></div>'+
   '</div></div>'+allPanels+
-  '<div class="disc"><strong>Important note:</strong> This combined report brings together four educational self-assessment questionnaires for personal reflection and counselling discussion. It is not a psychological diagnosis, aptitude test, or selection/admissions decision tool.</div>'+
+  '<div class="disc"><strong>Important note:</strong> This combined report brings together five short assessments for personal reflection and counselling discussion. It is not a clinical diagnosis or selection/admissions decision tool; the aptitude snapshot is a brief indicator, not a formal aptitude or IQ test.</div>'+
   '</body></html>');
  w.document.close();w.focus();
  /* fill print bars */
@@ -4335,7 +4403,7 @@ function saBuildPdfDocLegacy(){
  /* DISCLAIMER */
  ensure(26);y+=3;
  doc.setFillColor(255,247,233);doc.setDrawColor(240,223,186);doc.setLineWidth(0.3);
- var dl=doc.splitTextToSize(saPdfSafe('Important note: This combined report brings together four educational self-assessment questionnaires completed for personal reflection and as a starting point for a counselling discussion. It is not a psychological diagnosis, an aptitude test, or a selection or admissions decision tool. Results describe self-reported preferences on the day the assessment was completed and can change over time.'),W-2*M-12);
+ var dl=doc.splitTextToSize(saPdfSafe('Important note: This combined report brings together five short assessments completed for personal reflection and as a starting point for a counselling discussion. It is not a clinical diagnosis or a selection or admissions decision tool, and the aptitude snapshot is a brief indicator rather than a formal aptitude or IQ test. Results describe self-reported preferences on the day the assessment was completed and can change over time.'),W-2*M-12);
  var dh=10+dl.length*4;
  doc.roundedRect(M,y,W-2*M,dh,2.5,2.5,'FD');
  doc.setFont('helvetica','bold');doc.setFontSize(8.4);doc.setTextColor(117,83,29);
@@ -4399,17 +4467,20 @@ function saBuildPdfDoc(){
   lines.forEach(function(l,i){doc.text(l,x,yy+i*lh);});
   return lines.length*lh;
  }
- function section(num,title,sub){
-  ensure(30);
-  if(y>TOP+2)y+=4;
-  fill(NAVY);doc.roundedRect(M,y-5.6,8.5,8.5,1.8,1.8,'F');
+ var _sectStarted=false;
+ function section(num,title,sub,accent){
+  accent=accent||NAVY;
+  /* one section per page: every section starts on a fresh page */
+  doc.addPage();paint();y=TOP+1;
+  _sectStarted=true;
+  fill(accent);doc.roundedRect(M,y-5.6,8.5,8.5,1.8,1.8,'F');
   lineText(num,M+4.25,y+.6,8,[255,255,255],'helvetica','bold',{align:'center'});
   doc.setFont('times','bold');doc.setFontSize(17.4);rgb(NAVY);
   var titleLines=doc.splitTextToSize(safe(title),108);
   titleLines.forEach(function(l,i){doc.text(l,M+13,y+(i*6.8));});
   lineText(sub,W-M,y,7.2,MUTE,'helvetica','bold',{align:'right',maxWidth:44});
   y+=Math.max(7,titleLines.length*6.8)+1.5;
-  stroke(GOLD);doc.setLineWidth(.5);doc.line(M,y,M+24,y);
+  stroke(accent);doc.setLineWidth(.6);doc.line(M,y,M+24,y);
   stroke(LINE);doc.setLineWidth(.35);doc.line(M+26,y,W-M,y);y+=8.5;
  }
  function bar(x,yy,w,pct,color){
@@ -4458,6 +4529,22 @@ function saBuildPdfDoc(){
   });
   return cy+rowH-yy;
  }
+ /* Holland RIASEC hexagon — the classic interest-profile visual */
+ function hollandHexagon(cx,cy,radius,rmap){
+  var order=['R','I','A','S','E','C'],ang=function(i){return -Math.PI/2+i*(Math.PI/3);};
+  stroke([221,210,186]);doc.setLineWidth(.25);
+  [0.34,0.67,1].forEach(function(f){
+   for(var i=0;i<6;i++){var a1=ang(i),a2=ang((i+1)%6);
+    doc.line(cx+radius*f*Math.cos(a1),cy+radius*f*Math.sin(a1),cx+radius*f*Math.cos(a2),cy+radius*f*Math.sin(a2));}
+  });
+  for(var i=0;i<6;i++){doc.line(cx,cy,cx+radius*Math.cos(ang(i)),cy+radius*Math.sin(ang(i)));}
+  var sp=[];for(var i=0;i<6;i++){var sc=Math.max(0,Math.min(1,(rmap[order[i]]||0)/7));sp.push([cx+radius*sc*Math.cos(ang(i)),cy+radius*sc*Math.sin(ang(i))]);}
+  stroke(SAFF);doc.setLineWidth(.9);
+  for(var i=0;i<6;i++){doc.line(sp[i][0],sp[i][1],sp[(i+1)%6][0],sp[(i+1)%6][1]);}
+  for(var i=0;i<6;i++){fill(RPDF[order[i]]);doc.circle(sp[i][0],sp[i][1],1.2,'F');}
+  for(var i=0;i<6;i++){var lx=cx+(radius+6)*Math.cos(ang(i)),ly=cy+(radius+6)*Math.sin(ang(i));
+   lineText(order[i],lx,ly+2,9,RPDF[order[i]],'helvetica','bold',{align:'center'});}
+ }
  paint();
  var P=scorePersonality(),R=scoreRiasec(),A=scoreAnchors(),V=scoreVark();
  var topP=P.slice().sort(function(a,b){return b.score-a.score;})[0];
@@ -4467,6 +4554,22 @@ function saBuildPdfDoc(){
  var date=new Intl.DateTimeFormat('en-IN',{dateStyle:'long'}).format(new Date());
  var dirs=[];top3.forEach(function(r){r.pathways.forEach(function(p){if(dirs.indexOf(p)===-1)dirs.push(p);});});
  var fields=[];top3.slice(0,2).forEach(function(r){r.majors.slice(0,4).forEach(function(m){if(fields.indexOf(m)===-1)fields.push(m);});});
+ /* Holland-congruence career matches — honest fit % from interest overlap */
+ var SA_CAREERS=[
+  {n:"Doctor / Physician",c:"ISR"},{n:"Software Developer",c:"IRC"},{n:"Data Analyst / Scientist",c:"ICR"},
+  {n:"Mechanical / Civil Engineer",c:"RIE"},{n:"Psychologist / Counsellor",c:"SIA"},{n:"Teacher / Educator",c:"SAE"},
+  {n:"Nurse / Allied Health",c:"SIR"},{n:"Chartered Accountant",c:"CEI"},{n:"Banking & Finance",c:"CES"},
+  {n:"Lawyer",c:"ESA"},{n:"Entrepreneur / Business",c:"ESC"},{n:"Marketing & Sales",c:"ECS"},
+  {n:"Graphic / UX Designer",c:"AIE"},{n:"Architect",c:"AIR"},{n:"Journalist / Media",c:"AES"},
+  {n:"Civil Services / Administration",c:"SEC"},{n:"Research Scientist",c:"IRA"},{n:"Hospitality & Tourism",c:"ESR"},
+  {n:"Social Worker / NGO",c:"SEA"},{n:"Product / Project Manager",c:"EIC"}
+ ];
+ var saStuLetters=top3.map(function(r){return r.key;}),saStuW=[1,0.66,0.33],saCarW=[1,0.6,0.3];
+ var saMaxRaw=1*1+0.6*0.66+0.3*0.33;
+ var careerMatches=SA_CAREERS.map(function(cc){
+  var raw=0;for(var i=0;i<cc.c.length;i++){var j=saStuLetters.indexOf(cc.c[i]);if(j>-1)raw+=saCarW[i]*saStuW[j];}
+  return {n:cc.n,c:cc.c,fit:Math.round(45+(raw/saMaxRaw)*50)};
+ }).sort(function(a,b){return b.fit-a.fit;}).slice(0,7);
  var profilePdf=[S.age?'Age '+S.age:'',S.stage||'',S.city||'',S.concern||''].filter(Boolean).join('  |  ');
  var narrative='Your career-interest profile is '+code+', led by '+top3[0].name.toLowerCase()+', '+top3[1].name.toLowerCase()+' and '+top3[2].name.toLowerCase()+' interests. Your most pronounced personality pattern is '+topP.name.toLowerCase()+', and your strongest work driver is '+anchor.short+'. You tend to learn best through '+(multiV.length>1?'several modes combined':topV.name.toLowerCase()+' approaches')+'.';
 
@@ -4503,11 +4606,14 @@ function saBuildPdfDoc(){
  });
  y=idY+(idH*2)+14;
 
- /* snapshot quote */
+ /* snapshot quote + career directions + next-step link — one cohesive navy panel */
  doc.setFont('times','normal');doc.setFontSize(15.2);
  var qLines=doc.splitTextToSize(safe(narrative),W-2*M-18);
  var qChipItems=dirs.slice(0,5),qChipH=chipFlowHeight(qChipItems,M+8,W-M-8);
- var qH=Math.max(60,22+(qLines.length*6.8)+9+qChipH);
+ var ciText='Explore matching careers, salary ranges and route options at lumelive.co.in/career-intelligence (interest theme '+code+').';
+ doc.setFont('helvetica','normal');doc.setFontSize(8.2);
+ var ciLines=doc.splitTextToSize(safe(ciText),W-2*M-16);
+ var qH=Math.max(60,22+(qLines.length*6.8)+9+qChipH+11+ciLines.length*4.3);
  ensure(qH+8);fill(NAVY);doc.roundedRect(M,y,W-2*M,qH,2.8,2.8,'F');
  var quoteY=y+12;doc.setFont('times','normal');doc.setFontSize(15.2);doc.setTextColor(255,255,255);
  qLines.forEach(function(l,i){doc.text(l,M+8,quoteY+i*6.8);});
@@ -4515,21 +4621,60 @@ function saBuildPdfDoc(){
  stroke([82,86,99]);doc.line(M+8,qRuleY,W-M-8,qRuleY);
  lineText('CAREER DIRECTIONS TO EXPLORE',M+8,qRuleY+8,6.8,GOLD_LT,'helvetica','bold');
  drawChipFlow(qChipItems,M+8,qRuleY+11,W-M-8);
+ var ciY=qRuleY+11+qChipH+4;
+ stroke([82,86,99]);doc.line(M+8,ciY,W-M-8,ciY);
+ lineText('YOUR NEXT STEP',M+8,ciY+6,6.6,GOLD_LT,'helvetica','bold');
+ doc.setFont('helvetica','normal');doc.setFontSize(8.2);rgb([214,222,236]);
+ ciLines.forEach(function(l,i){doc.text(l,M+8,ciY+11+i*4.3);});
  y+=qH+9;
- ensure(24);
- fill([246,250,248]);stroke([221,232,229]);doc.roundedRect(M,y,W-2*M,18,2.8,2.8,'FD');
- lineText('Lume Career Intelligence India',M+6,y+7.2,8.2,NAVY,'helvetica','bold');
- textAt('Explore matching careers, salary ranges, qualifications and route options: https://lumelive.co.in/career-intelligence.html?access=assessment&theme='+code,M+6,y+12.5,W-2*M-12,7.8,INK_SOFT,4.2);
- y+=24;
 
- section('01','Personality Patterns','0 to 40 preference scale');
+ /* How to read this report */
+ doc.addPage();paint();y=TOP+1;
+ fill(NAVY);doc.roundedRect(M,y-5.6,8.5,8.5,1.8,1.8,'F');
+ lineText('i',M+4.25,y+.6,8,[255,255,255],'times','bold',{align:'center'});
+ doc.setFont('times','bold');doc.setFontSize(17.4);rgb(NAVY);doc.text(safe('How to Read This Report'),M+13,y);
+ y+=9;stroke(GOLD);doc.setLineWidth(.6);doc.line(M,y,M+24,y);stroke(LINE);doc.setLineWidth(.35);doc.line(M+26,y,W-M,y);y+=10;
+ var toc=[['01','Personality Patterns','How you tend to think, feel and work'],
+  ['02','Career Interest Themes','Your Holland RIASEC interest shape'],
+  ['03','Top Career Matches','Careers that fit your interest profile'],
+  ['04','Career Values & Work Drivers','What matters most to you in work'],
+  ['05','Learning Preferences','How you absorb information best'],
+  ['06','Aptitude Snapshot','Numerical, verbal, logical and spatial reasoning']];
+ toc.forEach(function(t){
+  ensure(15);
+  fill(CARD);stroke(LINE);doc.setLineWidth(.25);doc.roundedRect(M,y,W-2*M,12.5,2.2,2.2,'FD');
+  fill(NAVY);doc.roundedRect(M+3,y+2.6,7.5,7.5,1.5,1.5,'F');lineText(t[0],M+6.75,y+7.7,6.6,[255,255,255],'helvetica','bold',{align:'center'});
+  lineText(t[1],M+15,y+5.6,9.6,INK,'helvetica','bold');
+  lineText(t[2],M+15,y+10,7.6,MUTE,'helvetica','normal');
+  y+=14.5;
+ });
+ y+=4;
+ var hrH=36;ensure(hrH);fill([255,248,238]);stroke(GOLD_LT);doc.roundedRect(M,y,W-2*M,hrH,2.6,2.6,'FD');
+ lineText('HOW TO READ YOUR SCORES',M+6,y+8,7,GOLD,'helvetica','bold');
+ textAt('These scores describe your preferences today, not your abilities - a higher score is not "better", only different. Think of this as a snapshot, not a label: interests and strengths grow over time. Use it as the starting point for an honest conversation with your counsellor, not as a final decision.',M+6,y+14,W-2*M-12,8.9,INK_SOFT,4.7);
+ y+=hrH+4;
+
+ section('01','Personality Patterns','0 to 40 preference scale',PLUM);
  P.forEach(function(r){scoreRow(r.name,r.key,r.score,40,r.band,r.word);});
+ y+=2;
+ card(M,y,W-2*M,30,PLUM);fill(PLUM);doc.rect(M,y,2,30,'F');
+ lineText('WHAT THIS MEANS FOR YOU',M+7,y+8,6.8,PLUM,'helvetica','bold');
+ var pIntro='Your most pronounced pattern is '+topP.name.toLowerCase()+'. These are preferences, not fixed traits or a score of how "good" you are. In a counselling conversation we explore how this shapes your study habits, the way you make decisions, and the environments where you feel most yourself.';
+ textAt(pIntro,M+7,y+14,W-2*M-14,8.8,INK_SOFT,4.6);
+ y+=34;
 
- section('02','Career Interest Themes (Holland RIASEC)','0 to 7 interest scale');
+ section('02','Career Interest Themes (Holland RIASEC)','0 to 7 interest scale',SAFF);
  R.slice().sort(function(a,b){return 'RIASEC'.indexOf(a.key)-'RIASEC'.indexOf(b.key);}).forEach(function(r){
   var top=top3.map(function(x){return x.key;}).indexOf(r.key)>-1;
   scoreRow(r.name,r.key,r.score,7,top?'hi':'mid',top?'Top 3':'Score',RPDF[r.key]);
  });
+ /* Holland hexagon visual */
+ ensure(74);y+=4;
+ var rmapHex={};R.forEach(function(r){rmapHex[r.key]=r.score;});
+ hollandHexagon(M+34,y+30,26,rmapHex);
+ lineText('YOUR INTEREST SHAPE',M+74,y+10,7.4,SAFF,'helvetica','bold');
+ textAt('The further a point reaches toward a corner, the stronger that interest. Your three biggest corners — '+top3.map(function(r){return r.name;}).join(', ')+' — form your '+code+' code, and shape the career matches on the next page.',M+74,y+17,W-M-(M+74),9,INK_SOFT,4.6);
+ y+=66;
  top3.forEach(function(r){
   var col=RPDF[r.key]||GOLD,copy=(saReportCopy.riasec[r.key]||{});
   doc.setFont('helvetica','normal');doc.setFontSize(9);
@@ -4559,7 +4704,20 @@ function saBuildPdfDoc(){
   }else{y+=1;}
  });
 
- section('03','Career Values & Work Drivers','Ranked drivers');
+ section('03','Top Career Matches','Best-fit careers for your '+code+' profile',NAVY);
+ para('These careers are ranked by how closely their interest profile matches your top three themes ('+code+'). Fit is a starting point for exploration in counselling — not a fixed verdict, and not the only careers open to you.',M,W-2*M,9.2,INK_SOFT,6);
+ careerMatches.forEach(function(m){
+  var rowH=14;ensure(rowH);
+  lineText(m.n,M,y+4,10.2,INK,'helvetica','bold');
+  lineText('Holland code '+m.c,M,y+9.2,6.6,MUTE,'helvetica','bold');
+  var mc=m.fit>=80?SAGE:(m.fit>=66?SAFF:PLUM);
+  bar(M+98,y+1.5,68,m.fit,mc);
+  lineText(m.fit+'%',W-M,y+6,12,INK,'times','bold',{align:'right'});
+  y+=rowH;
+ });
+ y+=3;para('See detailed matches, salary ranges and entry routes at lumelive.co.in/career-intelligence (interest theme '+code+').',M,W-2*M,8.4,MUTE,3);
+
+ section('04','Career Values & Work Drivers','Ranked drivers',SAGE);
  doc.setFont('helvetica','normal');doc.setFontSize(9.2);
  var anchorLines=doc.splitTextToSize(safe(anchor.desc),W-2*M-38);
  var anchorH=Math.max(36,22+(anchorLines.length*4.8));
@@ -4571,7 +4729,7 @@ function saBuildPdfDoc(){
  var aNext=saReportCopy.anchor[anchor.key];
  if(aNext){doc.setFont('helvetica','normal');doc.setFontSize(8.8);var anLines=doc.splitTextToSize(safe(aNext),W-2*M-16),anH=anLines.length*4.6+8;ensure(anH+4);fill([255,248,238]);stroke(GOLD_LT);doc.roundedRect(M,y,W-2*M,anH,2.4,2.4,'FD');lineText('YOUR NEXT STEP',M+6,y+6,6.4,GOLD,'helvetica','bold');anLines.forEach(function(l,li){lineText(l,M+6,y+11+(li*4.6),8.8,INK,'helvetica','normal');});y+=anH+5;}
 
- section('04','Learning Preferences (VARK)','How you absorb information best');
+ section('05','Learning Preferences (VARK)','How you absorb information best',TERRA);
  var VPDF={V:[2,132,199],A:[217,119,6],R:[124,58,237],K:[5,150,105]};
  var vCol=VPDF[topV.key]||NAVY;
  var learnTip=multiV.length>1?'Use a blended study plan that combines your strongest modes.':(saReportCopy.vark[topV.key]||topV.tip);
@@ -4586,34 +4744,89 @@ function saBuildPdfDoc(){
  var oldY=y;y=oldY+learnH+8;
  V.forEach(function(r){scoreRow(r.name,r.key,r.score,16,r.score===topV.score?'hi':'mid',r.score===topV.score?'Strongest':'Mix',VPDF[r.key]);});
  y=Math.max(y,oldY+learnH+8);
+ /* Plain-language study tips for every mode — fills the page and explains the scores */
+ y+=5;
+ lineText('HOW TO STUDY WITH YOUR PROFILE — IN PLAIN WORDS',M,y,7.6,TERRA,'helvetica','bold');y+=2.5;
+ stroke(LINE);doc.setLineWidth(.3);doc.line(M,y,W-M,y);y+=7;
+ V.slice().sort(function(a,b){return b.score-a.score;}).forEach(function(r){
+  var tip=(saReportCopy.vark&&saReportCopy.vark[r.key])||r.tip||'';
+  if(!tip)return;
+  doc.setFont('helvetica','normal');doc.setFontSize(8.9);
+  var lines=doc.splitTextToSize(safe(tip),W-2*M-7);
+  ensure(6+lines.length*4.5+3);
+  fill(VPDF[r.key]||NAVY);doc.circle(M+1.7,y-1.4,1.1,'F');
+  lineText(r.name+(r.score===topV.score?'  (Strongest)':''),M+5,y,9,INK,'helvetica','bold');
+  y+=4.8;
+  rgb(INK_SOFT);doc.setFont('helvetica','normal');doc.setFontSize(8.9);
+  lines.forEach(function(l,i){doc.text(l,M+5,y+i*4.5);});
+  y+=lines.length*4.5+3.2;
+ });
 
- if(saIsStreamStage()){
-  var guide=saStreamGuide(top3,anchor,topP,learnLabel);
-  section('05','Stream Decision Starter','Class 9-12 guidance');
-  para(guide.why,M,W-2*M,9.6,INK_SOFT,3);
-  guide.lanes.forEach(function(l,i){
-   var lines=doc.splitTextToSize(safe(l.detail),W-2*M-14);
-   var h=Math.max(28,15+(lines.length*4.8));
-   ensure(h+4);card(M,y,W-2*M,h,i===0?SAFF:(i===1?SAGE:TERRA));
-   lineText((i+1)+'. '+l.title,M+6,y+9.5,11.6,INK,'times','bold');
-   lines.forEach(function(line,li){lineText(line,M+6,y+18+(li*4.8),9.1,INK_SOFT,'helvetica','normal');});
-   y+=h+5;
-  });
-  lineText('Before locking the stream, discuss',M,y+2,9.2,SAFF,'helvetica','bold');y+=8;
-  guide.prompts.forEach(function(p){para('- '+p,M,W-2*M,8.9,INK_SOFT,1.6);});
-  para('This section supports a counselling conversation. It does not automatically assign Science, Commerce, Humanities or any other stream.',M,W-2*M,8.7,MUTE,3);
- }
+ /* Aptitude Snapshot */
+ var APT=scoreAptitude(),APTC={NUM:[37,99,235],VER:[201,122,43],LOG:[22,163,74],SPA:[124,58,237]};
+ section('06','Aptitude Snapshot','Relative reasoning strengths',[78,121,167]);
+ para('A short, untimed look at four reasoning areas. Unlike the other parts, these had correct answers. This shows your relative strengths across the four areas - it is not an IQ score or a norm-referenced (percentile) result.',M,W-2*M,9.2,INK_SOFT,6);
+ APT.rows.forEach(function(r){
+  var rowH=15;ensure(rowH);
+  lineText(r.name,M,y+4,10,INK,'helvetica','bold');
+  lineText(r.score+' of '+r.max+' correct',M,y+9.4,6.6,MUTE,'helvetica','bold');
+  bar(M+96,y+1.5,70,r.pct,APTC[r.key]||NAVY);
+  lineText(r.pct+'%',W-M,y+6,12,INK,'times','bold',{align:'right'});
+  y+=rowH;
+ });
+ y+=3;
+ var aptH=26;ensure(aptH);fill([240,244,250]);stroke([210,222,238]);doc.roundedRect(M,y,W-2*M,aptH,2.6,2.6,'FD');fill([78,121,167]);doc.rect(M,y,2,aptH,'F');
+ lineText('WHAT THIS MEANS FOR YOU',M+7,y+8,6.8,[78,121,167],'helvetica','bold');
+ textAt('Your strongest area here is '+APT.top.name.toLowerCase()+' ('+APT.top.score+' of '+APT.top.max+'). Aptitude can be built with practice - a lower area is a chance to grow, not a ceiling. Bring this to your counselling session to weigh alongside your interests and personality.',M+7,y+14,W-2*M-14,8.8,INK_SOFT,4.6);
+ y+=aptH+4;
 
- /* Counsellor's note */
+ /* Your strengths & growth areas */
+ doc.addPage();paint();y=TOP+1;
+ fill(SAGE);doc.roundedRect(M,y-5.6,8.5,8.5,1.8,1.8,'F');
+ lineText('+',M+4.25,y+1,10,[255,255,255],'helvetica','bold',{align:'center'});
+ doc.setFont('times','bold');doc.setFontSize(17.4);rgb(NAVY);doc.text(safe('Your Strengths & Growth Areas'),M+13,y);
+ y+=9;stroke(SAGE);doc.setLineWidth(.6);doc.line(M,y,M+24,y);stroke(LINE);doc.setLineWidth(.35);doc.line(M+26,y,W-M,y);y+=10;
+ var strengths=[];
+ P.filter(function(r){return r.band==='hi';}).slice(0,2).forEach(function(r){strengths.push('Strong '+r.name.toLowerCase());});
+ strengths.push('Clear top interests: '+top3.map(function(r){return r.name;}).join(', '));
+ strengths.push('Motivated by '+anchor.name.toLowerCase());
+ strengths.push('Learns well through '+learnLabel.toLowerCase());
+ var lowR=R.slice().sort(function(a,b){return a.score-b.score;}).slice(0,2);
+ var growth=['Less drawn to '+lowR.map(function(r){return r.name.toLowerCase();}).join(' and ')+' work - explore these briefly before ruling them out'];
+ if(P.filter(function(r){return r.key==='C'&&r.band==='lo';})[0]) growth.push('Building steady study structure and consistency will help you turn plans into results');
+ if(P.filter(function(r){return r.key==='N'&&r.band==='hi';})[0]) growth.push('Simple stress-management habits will help you stay steady under exam pressure');
+ growth.push('Try a backup learning mode beyond '+learnLabel.toLowerCase()+' so you can adapt to any subject');
+ var colW=(W-2*M-6)/2,leftX=M,rightX=M+colW+6,colY=y;
+ fill([237,247,241]);stroke([197,221,205]);doc.setLineWidth(.3);doc.roundedRect(leftX,colY,colW,10,2.2,2.2,'FD');
+ lineText('YOUR STRENGTHS',leftX+5,colY+6.6,8,[39,116,76],'helvetica','bold');
+ fill([255,248,238]);stroke(GOLD_LT);doc.roundedRect(rightX,colY,colW,10,2.2,2.2,'FD');
+ lineText('AREAS TO EXPLORE & DEVELOP',rightX+5,colY+6.6,7.2,GOLD,'helvetica','bold');
+ var lyy=colY+16,ryy=colY+16;
+ strengths.forEach(function(s){
+  var lines=doc.splitTextToSize(safe(s),colW-9);
+  fill(SAGE);doc.circle(leftX+3,lyy-1.3,1,'F');
+  rgb(INK_SOFT);doc.setFont('helvetica','normal');doc.setFontSize(8.9);
+  lines.forEach(function(l,i){doc.text(l,leftX+6,lyy+i*4.5);});lyy+=lines.length*4.5+3.4;
+ });
+ growth.forEach(function(s){
+  var lines=doc.splitTextToSize(safe(s),colW-9);
+  fill(GOLD);doc.circle(rightX+3,ryy-1.3,1,'F');
+  rgb(INK_SOFT);doc.setFont('helvetica','normal');doc.setFontSize(8.9);
+  lines.forEach(function(l,i){doc.text(l,rightX+6,ryy+i*4.5);});ryy+=lines.length*4.5+3.4;
+ });
+ y=Math.max(lyy,ryy)+5;
+
+ /* Counsellor's note — own closing page */
+ doc.addPage();paint();y=TOP+1;
  var firstName=(S.name||'').trim().split(/\s+/)[0]||'there';
  var cnPara=[
-  'Hi '+firstName+', thank you for completing all four assessments. Reading your responses carefully, I can see a genuine, thoughtful pattern emerging — and that is exactly what makes a good counselling conversation possible.',
+  'Hi '+firstName+', thank you for completing all five assessments. Reading your responses carefully, I can see a genuine, thoughtful pattern emerging — and that is exactly what makes a good counselling conversation possible.',
   'These results are not a label or a limitation. They are a mirror. In our session, we will look at the patterns that surprised you, the ones that felt deeply true, and the ones you are still questioning — and use those to narrow down your next concrete step.',
   'Remember: career clarity is rarely a single moment. It is a series of small, honest conversations — and this report is a great foundation for ours.'
  ].join(' ');
  doc.setFont('helvetica','normal');doc.setFontSize(9.2);
  var cnLines=doc.splitTextToSize(safe(cnPara),W-2*M-34);
- var cnH=Math.max(40,20+(cnLines.length*4.7));
+ var cnH=Math.max(48,27+(cnLines.length*4.7));
  ensure(cnH+6);fill(NAVY);doc.roundedRect(M,y,W-2*M,cnH,2.8,2.8,'F');
  fill([26,48,96]);doc.circle(M+13,y+15,8.5,'F');stroke(GOLD);doc.setLineWidth(.6);doc.circle(M+13,y+15,8.5,'S');
  lineText('SB',M+13,y+18,12,GOLD_LT,'times','bold',{align:'center'});
@@ -4624,7 +4837,7 @@ function saBuildPdfDoc(){
  lineText('Counselling Psychologist · Founder, Lume Live · Rohtak, Haryana',M+26,sigY+4.4,6.6,[160,174,200],'helvetica','normal');
  y+=cnH+6;
 
- var noteText='These results describe your self-reported preferences today. They are a starting point for your counselling conversation, not a psychological diagnosis or selection decision. The four tools are educational self-reflection instruments. Preferences change over time and may not capture all of your personality or abilities. Please discuss these results with a qualified counsellor before any major academic or career decision.';
+ var noteText='These results describe your self-reported preferences today. They are a starting point for your counselling conversation, not a psychological diagnosis or selection decision. The assessments are educational self-reflection tools, and the aptitude snapshot is a brief indicator, not a formal aptitude or IQ test. Preferences change over time and may not capture all of your personality or abilities. Please discuss these results with a qualified counsellor before any major academic or career decision.';
  doc.setFont('helvetica','normal');doc.setFontSize(9.2);
  var noteLines=doc.splitTextToSize(safe(noteText),W-2*M-14);
  var noteH=Math.max(32,18+(noteLines.length*4.9));
@@ -4672,26 +4885,27 @@ function saSummaryText(){
  var topP=P.slice().sort(function(a,b){return b.score-a.score;})[0];
  var top3=R.slice(0,3);
  var topV=V[0],multiV=V.filter(function(r){return r.score>0&&topV.score-r.score<=1;});
-  return saWa(["Hi Sachin!","",
-  "I have completed the Lume Live Full Clarity Report and would like to discuss my combined report.",
+  return saWa(["👋 Hi Sachin!","",
+  "I have completed the Lume Live Full Clarity Report and would like to discuss my combined report. 📋",
   "",
-  "Student details",
-  "- Name: "+(S.name||"Not given"),
-  S.age?"- Age: "+S.age:"",
-  S.stage?"- Stage: "+S.stage:"",
-  S.city?"- City / state: "+S.city:"",
-  S.course?"- Class / course / role: "+S.course:"",
-  S.concern?"- Main reason: "+S.concern:"",
-  S.guardian?"- Parent / guardian: "+S.guardian:"",
+  "👤 Student Details",
+  "• Name: "+(S.name||"Not given"),
+  S.age?"• Age: "+S.age:"",
+  S.stage?"• Stage: "+S.stage:"",
+  S.city?"• City / state: "+S.city:"",
+  S.course?"• Class / course / role: "+S.course:"",
+  S.concern?"• Main reason: "+S.concern:"",
+  S.guardian?"• Parent / guardian: "+S.guardian:"",
   "",
-  "Headline results",
-  "- Career-interest profile: "+top3.map(function(r){return r.key;}).join("")+" ("+top3.map(function(r){return r.name;}).join(", ")+")",
-  "- Top personality pattern: "+topP.name+" ("+topP.score+"/40)",
-  "- Primary work driver: "+A[0].short+" ("+A[0].score+" pts)",
-  "- Learning preferences: "+(multiV.length>1?"Multimodal":topV.name),
-  saIsStreamStage()?"- Stream selection note: Please help us compare suitable stream/subject lanes for Class 9-12 decision-making.":"",
+  "📊 Headline Results",
+  "• Career-interest profile: "+top3.map(function(r){return r.key;}).join("")+" ("+top3.map(function(r){return r.name;}).join(", ")+")",
+  "• Top personality pattern: "+topP.name+" ("+topP.score+"/40)",
+  "• Primary work driver: "+A[0].short+" ("+A[0].score+" pts)",
+  "• Learning preferences: "+(multiV.length>1?"Multimodal":topV.name),
+  "• Strongest aptitude: "+scoreAptitude().top.name,
+  saIsStreamStage()?"🎓 Stream selection note: Please help us compare suitable stream/subject lanes for the Class 9-12 decision.":"",
   "",
-  "I am ready to share the PDF report for review."]);
+  "🙏 I am ready to share my PDF report for review."]);
 }
 function saMakeDoc(cb){
  function go(){
@@ -4720,7 +4934,7 @@ window.saSharePDF=function(){
 };
 function saShareFallback(doc,fname,waText){
  try{ doc.save(fname); }catch(e){}
- var msg=waText+"\n\nPDF report: \""+fname+"\"\nI have downloaded it on my device and will attach it here.";
+ var msg=waText+"\n\n📎 PDF report: \""+fname+"\"\nI have downloaded it on my device and will attach it here. ✅";
  setTimeout(function(){ window.open("https://wa.me/917015671280?text="+encodeURIComponent(msg),"_blank","noopener"); },700);
  toast("Report downloaded — please attach the PDF in the WhatsApp chat that opens.");
 }
@@ -4742,6 +4956,13 @@ S.name="Nishant Malik";S.phone="+91 98765 43210";S.age="17";S.stage="Class 11-12
  var anchorVals={MA:4,IN:3,AU:4,ST:3,EN:3,SV:5,CH:4,WF:6};
  for(q=1;q<=40;q++){S.answers.anchors[q]=anchorVals[anchorOrder[(q-1)%8]];}
  for(q=1;q<=16;q++){S.answers.vark[q]=q%4===0?[3,0]:[3];}
+ /* aptitude: stronger numerical/logical, weaker spatial, for a plausible sample */
+ S.answers.aptitude={};
+ aptitudeItems.forEach(function(item,i){
+  var qid=i+1,correct=item.a,wrong=(item.a+1)%item.o.length;
+  var getRight=item.area==="NUM"?true:item.area==="LOG"?(qid%5!==0):item.area==="VER"?(qid%3!==0):(qid%2===0);
+  S.answers.aptitude[qid]=getRight?correct:wrong;
+ });
 }
 window.saShowSampleReport=function(){
  saFillSampleReport();
@@ -6301,7 +6522,7 @@ document.querySelectorAll('.gallery-item').forEach(item=>{
   item.addEventListener('click',()=>{
     const img=item.querySelector('img').src;
     const overlay=document.createElement('div');
-    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:20px;backdrop-filter:blur(5px);animation:fadeUp .3s ease;';
+    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:20px;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);animation:fadeUp .3s ease;';
     overlay.innerHTML='<img src="'+img+'" style="max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain;box-shadow:0 24px 80px rgba(0,0,0,.5);">';
     overlay.addEventListener('click',()=>{overlay.style.opacity='0';setTimeout(()=>overlay.remove(),300);});
     document.body.appendChild(overlay);
@@ -6503,7 +6724,7 @@ function setMode(el, mode){
   function book(){
     if(!currentResult)return;
     var note=document.getElementById("llCheckNote");
-    var msg=["Hi Sachin!","I completed a Lume Live self-check and would like to book the Rs 49 introductory session.","","Test: "+currentResult.test,"Result band: "+currentResult.result.band,"Score: "+currentResult.result.scoreLabel];
+    var msg=["👋 Hi Sachin!","","I completed a Lume Live self-check and would like to book the ₹49 introductory session. 💛","","🧭 My Self-Check","• Test: "+currentResult.test,"• Result band: "+currentResult.result.band,"• Score: "+currentResult.result.scoreLabel];
     if(note&&note.value.trim())msg.push("Message: "+note.value.trim());
     window.open("https://wa.me/"+WA_PHONE+"?text="+encodeURIComponent(msg.join("\n")),"_blank","noopener");
   }
