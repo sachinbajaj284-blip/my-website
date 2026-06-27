@@ -4133,15 +4133,19 @@ function saBuildPdfDoc(){
   for(var i=0;i<lines.length;i++){ensure(lh+.8);doc.text(lines[i],x,y);y+=lh;}
   y+=(after===undefined?3.2:after);
  }
- function section(num,title,sub){
-  ensure(30);if(y>TOP+2)y+=4;
-  lineText(num,M,y,18,SAFF,"times","italic");
+ function section(num,title,sub,accent){
+  accent=accent||SAFF;
+  /* one section per page: each section starts on a fresh page */
+  doc.addPage();paint();y=TOP+1;
+  fill(accent);doc.roundedRect(M,y-5.6,8.5,8.5,1.8,1.8,"F");
+  lineText(num,M+4.25,y+.6,8,[255,255,255],"helvetica","bold",{align:"center"});
   doc.setFont("times","bold");doc.setFontSize(17);rgb(INK);
-  var titleLines=doc.splitTextToSize(safe(title),112);
-  titleLines.forEach(function(l,i){doc.text(l,M+20,y+(i*6.8));});
+  var titleLines=doc.splitTextToSize(safe(title),108);
+  titleLines.forEach(function(l,i){doc.text(l,M+13,y+(i*6.8));});
   lineText(sub,W-M,y,7.2,MUTE,"helvetica","bold",{align:"right",maxWidth:44});
   y+=Math.max(7,titleLines.length*6.8)+1.5;
-  stroke(LINE);doc.setLineWidth(.35);doc.line(M,y,W-M,y);y+=8.5;
+  stroke(accent);doc.setLineWidth(.6);doc.line(M,y,M+24,y);
+  stroke(LINE);doc.setLineWidth(.35);doc.line(M+26,y,W-M,y);y+=8.5;
  }
  function bar(x,yy,w,pct,color){
   fill(PAPER3);doc.roundedRect(x,yy,w,4,2,2,"F");
@@ -4233,7 +4237,7 @@ function saBuildPdfDoc(){
  /* Wellbeing check — printed if any red flags detected */
  if(pdfFlags.length){
   ensure(30);
-  section("\u26A0","Wellbeing Check","Signals worth noticing");
+  section("\u26A0","Wellbeing Check","Signals worth noticing",TERRA);
   pdfFlags.forEach(function(f){
    ensure(28);
    var color=f.severity==="critical"?[220,38,38]:f.severity==="high"?[217,119,6]:f.severity==="medium"?[37,99,235]:[8,145,178];
@@ -4256,29 +4260,29 @@ function saBuildPdfDoc(){
  }
 
  /* SECTIONS */
- section("01","Part 1 \u00B7 Personality Patterns","How you engage with work and people");
+ section("01","Part 1 \u00B7 Personality Patterns","How you engage with work and people",PLUM);
  W_.forEach(dimRow);
  y+=2;para("This part looked at how you typically engage with work and people. A higher score on any dimension is not better than a lower one - only different.",M,W-2*M,8.2,MUTE);
 
- section("02","Part 2 \u00B7 What Drives You","Where your energy at work comes from");
+ section("02","Part 2 \u00B7 What Drives You","Where your energy at work comes from",SAFF);
  D.forEach(dimRow);
  y+=2;para("This part looked at where your energy for work actually comes from. Most people work for several reasons at once; one is not better than another.",M,W-2*M,8.2,MUTE);
 
- section("03","Part 3 \u00B7 How You Decide","Your default route to a choice");
+ section("03","Part 3 \u00B7 How You Decide","Your default route to a choice",SAGE);
  C.forEach(dimRow);
  y+=2;para("This part looked at how you typically reach a choice. Style varies by stake; the score shows your most common default.",M,W-2*M,8.2,MUTE);
 
- section("04","Part 4 \u00B7 Handling Disagreement","When interests collide");
+ section("04","Part 4 \u00B7 Handling Disagreement","When interests collide",TERRA);
  H_.forEach(dimRow);
  y+=2;para("This part looked at what you do when interests collide. Style shifts with relationship and stakes; this is your most common default.",M,W-2*M,8.2,MUTE);
 
- section("05","Part 5 \u00B7 Reading and Managing Emotion","Working with feeling at work");
+ section("05","Part 5 \u00B7 Reading and Managing Emotion","Working with feeling at work",INK);
  E.forEach(dimRow);
  y+=2;para("This part looked at how you read, use, understand, and manage emotion at work. Lower scores point to where the most growth is available.",M,W-2*M,8.2,MUTE);
 
  /* Integration page */
  doc.addPage();paint();y=TOP;
- section("06","Reading the Mosaic","Three intersections worth noticing");
+ section("06","Reading the Mosaic","Three intersections worth noticing",SAFF);
  var wMap={};W_.forEach(function(r){wMap[r.key]=r.score;});
  var cMap={};C.forEach(function(r){cMap[r.key]=r.score;});
  var hMap={};H_.forEach(function(r){hMap[r.key]=r.score;});
@@ -4310,14 +4314,14 @@ function saBuildPdfDoc(){
 
  /* What to do with this report */
  ensure(60);y+=4;
- section("07","What to do with this report","Three practical moves");
+ section("07","What to do with this report","Three practical moves",SAGE);
  para("1. Share two dimensions you were surprised by with someone who knows you well - and ask whether they recognise that pattern in you.",M,W-2*M,10.4,INK_SOFT,4);
  para("2. Pick one dimension where your score is at an extreme (very high or very low). Identify one situation in the last month where that tendency helped, and one where it cost you.",M,W-2*M,10.4,INK_SOFT,4);
  para("3. If you came to this expecting confirmation of how you see yourself, look hardest at the score that disagrees with you.",M,W-2*M,10.4,INK_SOFT,4);
 
  /* Method & Limitations */
  doc.addPage();paint();y=TOP;
- section("M","Method & Limitations","How this profile was built");
+ section("M","Method & Limitations","How this profile was built",MUTE);
  para("Lume Lens uses 119 self-report statements across five short scales. Each scale is built on an established public-domain framework in psychology:",M,W-2*M,10.4,INK_SOFT,5);
  para("- Personality: the Five Factor Model, measured with markers from the International Personality Item Pool (IPIP).",M,W-2*M,9.8,INK_SOFT,3);
  para("- Motivation: Self-Determination Theory (Deci & Ryan), distinguishing intrinsic, identified, introjected, and external regulation, plus amotivation.",M,W-2*M,9.8,INK_SOFT,3);
