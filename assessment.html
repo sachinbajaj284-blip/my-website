@@ -4599,6 +4599,23 @@ function saBuildPdfDoc(){
  var oldY=y;y=oldY+learnH+8;
  V.forEach(function(r){scoreRow(r.name,r.key,r.score,16,r.score===topV.score?'hi':'mid',r.score===topV.score?'Strongest':'Mix',VPDF[r.key]);});
  y=Math.max(y,oldY+learnH+8);
+ /* Plain-language study tips for every mode — fills the page and explains the scores */
+ y+=5;
+ lineText('HOW TO STUDY WITH YOUR PROFILE — IN PLAIN WORDS',M,y,7.6,TERRA,'helvetica','bold');y+=2.5;
+ stroke(LINE);doc.setLineWidth(.3);doc.line(M,y,W-M,y);y+=7;
+ V.slice().sort(function(a,b){return b.score-a.score;}).forEach(function(r){
+  var tip=(saReportCopy.vark&&saReportCopy.vark[r.key])||r.tip||'';
+  if(!tip)return;
+  doc.setFont('helvetica','normal');doc.setFontSize(8.9);
+  var lines=doc.splitTextToSize(safe(tip),W-2*M-7);
+  ensure(6+lines.length*4.5+3);
+  fill(VPDF[r.key]||NAVY);doc.circle(M+1.7,y-1.4,1.1,'F');
+  lineText(r.name+(r.score===topV.score?'  (Strongest)':''),M+5,y,9,INK,'helvetica','bold');
+  y+=4.8;
+  rgb(INK_SOFT);doc.setFont('helvetica','normal');doc.setFontSize(8.9);
+  lines.forEach(function(l,i){doc.text(l,M+5,y+i*4.5);});
+  y+=lines.length*4.5+3.2;
+ });
 
  if(saIsStreamStage()){
   var guide=saStreamGuide(top3,anchor,topP,learnLabel);
