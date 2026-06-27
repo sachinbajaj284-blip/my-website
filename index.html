@@ -504,6 +504,7 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .hero-live:hover{background:rgba(34,197,94,.2);transform:scale(1.05);}
 .hero-live .dot{width:7px;height:7px;background:var(--green2);border-radius:50%;animation:pulse 1.5s infinite;}
 .hero-live span{font-size:.68rem;font-weight:700;color:var(--green2);letter-spacing:.8px;text-transform:uppercase;}
+.hero-live-m{display:none;}
 
 /* ── SECTION BASE ── */
 section{padding:80px 20px;}
@@ -1141,6 +1142,7 @@ body.js-ready .anim.scale{transform:scale(.9);}
   .nav-links{display:none;}
   .hamburger{display:flex;}
   .hero-right{display:none;}
+  .hero-live-m{display:inline-flex;margin-bottom:14px;}
   .lead-inner{grid-template-columns:1fr;}
   .gallery-grid{grid-template-columns:1fr 1fr;}
   .test-scroll{grid-template-columns:1fr;}
@@ -1560,6 +1562,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
         <div class="hero-stat"><div class="num">4.9/5</div><div class="lbl">Parent Rating</div></div>
         <div class="hero-stat"><div class="num">PAN<br>India</div><div class="lbl">Online Sessions</div></div>
       </div>
+      <div class="hero-live hero-live-m"><div class="dot"></div><span>Wellness Sessions Live Now</span></div>
       <div class="hero-btns">
         <a href="#" class="btn-cta btn-cta-book" onclick="openModal('session');return false;">
           <span class="btn-book-main">Book Introductory Session <span class="btn-price"><s>&#8377;499</s> &#8377;49</span></span>
