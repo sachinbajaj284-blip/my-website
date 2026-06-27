@@ -455,6 +455,8 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .hero-h1{font-family:'Playfair Display',serif;font-size:clamp(2.05rem,4.1vw,3.45rem);font-weight:800;color:#fff;line-height:1.07;margin-bottom:14px;animation:fadeUp .8s ease .5s both;letter-spacing:0;text-wrap:balance;}
 .hero-h1 em{font-style:italic;color:var(--gold2);position:relative;}
 .hero-h1 em::after{content:'';position:absolute;bottom:-4px;left:0;width:100%;height:3px;background:var(--gold2);border-radius:2px;transform:scaleX(0);transform-origin:left;animation:revealLine 1s ease 1.5s forwards;}
+.hero-h1 .h1-l{display:block;}
+.hero-h1 .h1-l+.h1-l{margin-top:.08em;}
 .hero-sub{max-width:680px;font-size:.96rem;color:rgba(255,255,255,.83);line-height:1.68;margin-bottom:18px;animation:fadeUp .8s ease .7s both;text-wrap:pretty;}
 .hero-assurance{display:flex;flex-wrap:wrap;gap:9px;margin:0 0 16px;animation:fadeUp .8s ease .8s both;}
 .hero-assurance span{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:7px 12px;color:rgba(255,255,255,.9);font-size:.7rem;font-weight:800;letter-spacing:.2px;white-space:nowrap;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);}
@@ -464,7 +466,13 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .hero-assessment-copy small{display:block;color:var(--gold2);font-size:.64rem;font-weight:900;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:4px;}
 .hero-assessment-copy b{display:block;color:#fff;font-family:'Playfair Display',serif;font-size:1.08rem;line-height:1.2;margin-bottom:3px;}
 .hero-assessment-copy span{display:block;color:rgba(255,255,255,.68);font-size:.76rem;line-height:1.5;}
-.hero-assessment-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;min-width:0;}
+.hero-assessment-actions{display:flex;flex-direction:column;gap:10px;min-width:0;}
+.hero-assessment-primary{background:linear-gradient(135deg,#c9933a,#e8b84e)!important;color:#102650!important;font-weight:900;box-shadow:0 10px 24px rgba(201,147,58,.34);}
+.hero-assessment-primary:hover{transform:translateY(-2px);background:linear-gradient(135deg,#d4a044,#f0c860)!important;color:#102650!important;}
+.hero-assessment-links{display:flex;flex-wrap:wrap;gap:5px 16px;}
+.hero-assessment-links a{display:inline-flex;align-items:center;gap:5px;color:rgba(255,255,255,.74);font-size:.72rem;font-weight:700;text-decoration:none;letter-spacing:.2px;transition:color .2s;}
+.hero-assessment-links a::before{content:'›';color:var(--gold2);font-weight:900;}
+.hero-assessment-links a:hover{color:var(--gold2);}
 .hero-assessment-btn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:9px 11px;border-radius:12px;background:#fff;color:var(--navy);font-size:.72rem;font-weight:900;text-decoration:none;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.18);transition:all .22s;line-height:1.22;}
 .hero-assessment-btn.secondary{background:rgba(255,255,255,.09);color:#fff;border:1px solid rgba(255,255,255,.18);box-shadow:none;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);}
 .hero-assessment-btn:hover{transform:translateY(-2px);background:var(--gold2);color:#102650;}
@@ -477,7 +485,7 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .btn-gold:hover::before{left:100%;}
 .btn-ghost{background:transparent;color:#fff;padding:13px 24px;border-radius:8px;font-weight:700;font-size:.87rem;border:2px solid rgba(255,255,255,.3);cursor:pointer;transition:all .25s;text-decoration:none;display:inline-flex;align-items:center;gap:8px;position:relative;overflow:hidden;}
 .btn-ghost:hover{border-color:#fff;background:rgba(255,255,255,.08);transform:translateY(-2px);}
-.hero-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;max-width:640px;animation:fadeUp .72s ease .8s both;}
+.hero-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;max-width:640px;margin-bottom:18px;animation:fadeUp .72s ease .64s both;}
 .hero-stat{min-height:72px;padding:12px 14px;border-radius:18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);box-shadow:inset 0 1px 0 rgba(255,255,255,.12);-webkit-backdrop-filter:blur(18px) saturate(1.16);backdrop-filter:blur(18px) saturate(1.16);}
 .hero-stat .num{font-size:1.32rem;font-weight:800;color:#fff;transition:transform .3s;line-height:1.05;}
 .hero-stat:hover .num{transform:scale(1.15);color:var(--gold2);}
@@ -1171,7 +1179,6 @@ body.js-ready .anim.scale{transform:scale(.9);}
   .hero-assurance{gap:7px;margin-bottom:13px;}
   .hero-assurance span{flex:1 1 auto;justify-content:center;text-align:center;white-space:normal;padding:6px 8px;font-size:.64rem;}
   .hero-assessment-card{grid-template-columns:1fr;gap:11px;margin-top:0;margin-bottom:12px;padding:14px;border-radius:18px;}
-  .hero-assessment-actions{grid-template-columns:1fr 1fr;}
   .hero-assessment-actions,.hero-assessment-btn{width:100%;}
   .hero-assessment-btn{min-height:48px;font-size:.68rem;line-height:1.18;padding:8px 7px;}
   .hero-cost-link{margin-top:0;margin-bottom:13px;line-height:1.42;}
@@ -1524,7 +1531,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
   <div class="hero-inner">
     <div class="hero-copy-panel">
       <div class="hero-badge"><div class="dot"></div><span>100% Confidential | Founder-Led 1:1 Guidance</span></div>
-      <h1 class="hero-h1">Your Mind Deserves <em>Clarity.</em><br>Your Future Deserves <em>Direction.</em></h1>
+      <h1 class="hero-h1"><span class="h1-l">Your Mind Deserves <em>Clarity.</em></span><span class="h1-l">Your Future Deserves <em>Direction.</em></span></h1>
       <p class="hero-sub">Professional online career counselling, psychometric career assessment and mental health counselling for students, parents and young adults across Delhi-NCR and India - including stream selection guidance for Class 10 &amp; 12 - blending empathy with evidence so families choose with clarity, not pressure.</p>
       <div class="hero-assurance" aria-label="Counselling session assurances">
         <span>Private & Confidential</span>
@@ -1538,25 +1545,27 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
           <span>Answer 6 quick questions, see your top career theme, then unlock Career Intelligence for matching careers.</span>
         </div>
         <div class="hero-assessment-actions">
-          <a href="assessment.html#free-test" class="hero-assessment-btn">View Free Snapshot</a>
-          <a href="career-intelligence.html" class="hero-assessment-btn secondary">Unlock Career Intelligence</a>
-          <a href="assessment.html#self-assessments" class="hero-assessment-btn secondary">Take Full Report</a>
-          <a href="for-working-professionals.html" class="hero-assessment-btn secondary">For Professionals</a>
+          <a href="assessment.html#free-test" class="hero-assessment-btn hero-assessment-primary">View Free Snapshot &rarr;</a>
+          <div class="hero-assessment-links">
+            <a href="career-intelligence.html">Unlock Career Intelligence</a>
+            <a href="assessment.html#self-assessments">Take Full Report</a>
+            <a href="for-working-professionals.html">For Professionals</a>
+          </div>
         </div>
       </div>
       <a class="hero-cost-link" href="for-parents.html#education-cost-calculator">What is the real cost of one wrong stream choice?</a>
 
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="num" data-count="500">0+</div><div class="lbl">Lives Guided</div></div>
+        <div class="hero-stat"><div class="num">4.9/5</div><div class="lbl">Parent Rating</div></div>
+        <div class="hero-stat"><div class="num">PAN<br>India</div><div class="lbl">Online Sessions</div></div>
+      </div>
       <div class="hero-btns">
         <a href="#" class="btn-cta btn-cta-book" onclick="openModal('session');return false;">
           <span class="btn-book-main">Book Introductory Session <span class="btn-price"><s>&#8377;499</s> &#8377;49</span></span>
           <span class="btn-book-sub">Founder-led 1:1 &middot; 100% confidential</span>
         </a>
         <a href="#services" class="btn-ghost btn-ghost-pro">Explore Services</a>
-      </div>
-      <div class="hero-stats">
-        <div class="hero-stat"><div class="num" data-count="500">0+</div><div class="lbl">Lives Guided</div></div>
-        <div class="hero-stat"><div class="num">4.9/5</div><div class="lbl">Parent Rating</div></div>
-        <div class="hero-stat"><div class="num">PAN<br>India</div><div class="lbl">Online Sessions</div></div>
       </div>
     </div>
     <div class="hero-right">
