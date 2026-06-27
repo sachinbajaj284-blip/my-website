@@ -3843,7 +3843,7 @@ function donut(items){
 function partInstructions(t){
  var steps=t.howto.steps.map(function(x){return '<li>'+esc(x)+'</li>';}).join("");
  var scale="";
- if(t.type!=="multi"){
+ if(t.scale){
   scale='<div class="sa-howto-scale"><span class="lbl">What the buttons mean:</span>'+
    t.scale.map(function(x){return '<span class="sc"><b>'+x[0]+'</b> '+esc(x[1])+'</span>';}).join("")+'</div>';
  }
