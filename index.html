@@ -16,6 +16,7 @@
   })();
 </script>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' sdk.cashfree.com www.gstatic.com cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' api.cashfree.com sandbox.cashfree.com *.googleapis.com *.firebaseio.com firebaseapp.com www.gstatic.com; frame-src *.cashfree.com; object-src 'none'; base-uri 'self';">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Career Counselling Delhi-NCR & India | Clarity Report ₹999 | Lume Live</title>
 <meta name="description" content="Online career counselling & psychometric assessment for Class 10–12 students in Delhi, Gurugram, Noida, Faridabad, Ghaziabad and across India. Stream selection guidance, free 60-second career snapshot, ₹999 clarity report and ₹49 introductory call.">
@@ -454,6 +455,8 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .hero-h1{font-family:'Playfair Display',serif;font-size:clamp(2.05rem,4.1vw,3.45rem);font-weight:800;color:#fff;line-height:1.07;margin-bottom:14px;animation:fadeUp .8s ease .5s both;letter-spacing:0;text-wrap:balance;}
 .hero-h1 em{font-style:italic;color:var(--gold2);position:relative;}
 .hero-h1 em::after{content:'';position:absolute;bottom:-4px;left:0;width:100%;height:3px;background:var(--gold2);border-radius:2px;transform:scaleX(0);transform-origin:left;animation:revealLine 1s ease 1.5s forwards;}
+.hero-h1 .h1-l{display:block;}
+.hero-h1 .h1-l+.h1-l{margin-top:.08em;}
 .hero-sub{max-width:680px;font-size:.96rem;color:rgba(255,255,255,.83);line-height:1.68;margin-bottom:18px;animation:fadeUp .8s ease .7s both;text-wrap:pretty;}
 .hero-assurance{display:flex;flex-wrap:wrap;gap:9px;margin:0 0 16px;animation:fadeUp .8s ease .8s both;}
 .hero-assurance span{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:7px 12px;color:rgba(255,255,255,.9);font-size:.7rem;font-weight:800;letter-spacing:.2px;white-space:nowrap;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);}
@@ -463,7 +466,13 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .hero-assessment-copy small{display:block;color:var(--gold2);font-size:.64rem;font-weight:900;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:4px;}
 .hero-assessment-copy b{display:block;color:#fff;font-family:'Playfair Display',serif;font-size:1.08rem;line-height:1.2;margin-bottom:3px;}
 .hero-assessment-copy span{display:block;color:rgba(255,255,255,.68);font-size:.76rem;line-height:1.5;}
-.hero-assessment-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;min-width:0;}
+.hero-assessment-actions{display:flex;flex-direction:column;gap:10px;min-width:0;}
+.hero-assessment-primary{background:linear-gradient(135deg,#c9933a,#e8b84e)!important;color:#102650!important;font-weight:900;box-shadow:0 10px 24px rgba(201,147,58,.34);}
+.hero-assessment-primary:hover{transform:translateY(-2px);background:linear-gradient(135deg,#d4a044,#f0c860)!important;color:#102650!important;}
+.hero-assessment-links{display:flex;flex-wrap:wrap;gap:5px 16px;}
+.hero-assessment-links a{display:inline-flex;align-items:center;gap:5px;color:rgba(255,255,255,.74);font-size:.72rem;font-weight:700;text-decoration:none;letter-spacing:.2px;transition:color .2s;}
+.hero-assessment-links a::before{content:'›';color:var(--gold2);font-weight:900;}
+.hero-assessment-links a:hover{color:var(--gold2);}
 .hero-assessment-btn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:9px 11px;border-radius:12px;background:#fff;color:var(--navy);font-size:.72rem;font-weight:900;text-decoration:none;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.18);transition:all .22s;line-height:1.22;}
 .hero-assessment-btn.secondary{background:rgba(255,255,255,.09);color:#fff;border:1px solid rgba(255,255,255,.18);box-shadow:none;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);}
 .hero-assessment-btn:hover{transform:translateY(-2px);background:var(--gold2);color:#102650;}
@@ -476,7 +485,7 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .btn-gold:hover::before{left:100%;}
 .btn-ghost{background:transparent;color:#fff;padding:13px 24px;border-radius:8px;font-weight:700;font-size:.87rem;border:2px solid rgba(255,255,255,.3);cursor:pointer;transition:all .25s;text-decoration:none;display:inline-flex;align-items:center;gap:8px;position:relative;overflow:hidden;}
 .btn-ghost:hover{border-color:#fff;background:rgba(255,255,255,.08);transform:translateY(-2px);}
-.hero-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;max-width:640px;animation:fadeUp .72s ease .8s both;}
+.hero-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;max-width:640px;margin-bottom:18px;animation:fadeUp .72s ease .64s both;}
 .hero-stat{min-height:72px;padding:12px 14px;border-radius:18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);box-shadow:inset 0 1px 0 rgba(255,255,255,.12);-webkit-backdrop-filter:blur(18px) saturate(1.16);backdrop-filter:blur(18px) saturate(1.16);}
 .hero-stat .num{font-size:1.32rem;font-weight:800;color:#fff;transition:transform .3s;line-height:1.05;}
 .hero-stat:hover .num{transform:scale(1.15);color:var(--gold2);}
@@ -495,6 +504,7 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .hero-live:hover{background:rgba(34,197,94,.2);transform:scale(1.05);}
 .hero-live .dot{width:7px;height:7px;background:var(--green2);border-radius:50%;animation:pulse 1.5s infinite;}
 .hero-live span{font-size:.68rem;font-weight:700;color:var(--green2);letter-spacing:.8px;text-transform:uppercase;}
+.hero-live-m{display:none;}
 
 /* ── SECTION BASE ── */
 section{padding:80px 20px;}
@@ -558,8 +568,15 @@ section{padding:80px 20px;}
 .ewb-card.c6{border-top-color:#27ae60;}
 .ewb-card.c7{border-top-color:#e67e22;}
 .ewb-card.c8{border-top-color:#0A6E6E;}
-.ewb-card-icon{font-size:1.6rem;margin-bottom:12px;display:block;transition:transform .3s;}
-.ewb-card:hover .ewb-card-icon{transform:scale(1.2);}
+.ewb-card-icon{width:52px;height:52px;border-radius:15px;display:inline-flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:14px;background:rgba(10,110,110,.1);transition:transform .35s,box-shadow .35s;}
+.ewb-card:hover .ewb-card-icon{transform:scale(1.1) rotate(-4deg);}
+.ewb-card.c2 .ewb-card-icon{background:rgba(201,147,58,.14);}
+.ewb-card.c3 .ewb-card-icon{background:rgba(13,27,64,.1);}
+.ewb-card.c4 .ewb-card-icon{background:rgba(231,76,60,.12);}
+.ewb-card.c5 .ewb-card-icon{background:rgba(155,89,182,.12);}
+.ewb-card.c6 .ewb-card-icon{background:rgba(39,174,96,.12);}
+.ewb-card.c7 .ewb-card-icon{background:rgba(230,126,34,.13);}
+.ewb-card.c8 .ewb-card-icon{background:rgba(10,110,110,.12);}
 .ewb-card h4{font-size:.88rem;font-weight:700;color:var(--dark);margin-bottom:8px;}
 .ewb-card p{font-size:.78rem;color:var(--mid);line-height:1.65;}
 .ll-check-btn{margin-top:14px;border:1px solid rgba(10,110,110,.2);background:#F7FBFA;color:var(--teal);border-radius:8px;padding:9px 12px;font-size:.74rem;font-weight:800;cursor:pointer;transition:all .22s;display:inline-flex;align-items:center;justify-content:center;gap:6px;line-height:1.2;}
@@ -671,8 +688,21 @@ section{padding:80px 20px;}
 .svc-bullets li:last-child{border:none;}
 .svc-bullets li::before{content:"✦";color:var(--gold);font-size:.58rem;margin-top:5px;flex-shrink:0;}
 .svc-card:hover .svc-bullets li{padding-left:4px;}
-.svc-price{font-size:.77rem;color:var(--mid);margin-bottom:12px;}
-.svc-price strong{color:var(--navy);font-size:.93rem;font-weight:800;}
+.svc-price{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px;font-size:.74rem;color:var(--mid);margin-bottom:14px;padding-top:13px;border-top:1px solid var(--gray);}
+.svc-price strong,.svc-price .amt{color:var(--navy);font-size:1.16rem;font-weight:900;line-height:1;letter-spacing:-.4px;}
+.svc-price .was{text-decoration:line-through;color:var(--mid);font-weight:600;}
+.svc-price .cap{font-size:.72rem;color:var(--mid);}
+/* unified service CTA — same shape/size/weight across cards, accent colour varies */
+.svc-cta{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;border:none;border-radius:11px;font-size:.86rem;font-weight:800;letter-spacing:.2px;cursor:pointer;color:#fff;text-decoration:none;transition:all .25s;}
+.svc-cta .arr{transition:transform .25s;}
+.svc-cta:hover{transform:translateY(-2px);}
+.svc-cta:hover .arr{transform:translateX(4px);}
+.svc-cta.teal{background:var(--teal);}
+.svc-cta.teal:hover{background:var(--teal2);box-shadow:0 8px 22px rgba(10,110,110,.3);}
+.svc-cta.gold{background:linear-gradient(135deg,#c9933a,#e8b84e);color:#102650;}
+.svc-cta.gold:hover{background:linear-gradient(135deg,#d4a044,#f0c860);box-shadow:0 8px 22px rgba(201,147,58,.36);}
+.svc-cta.navy{background:var(--navy);}
+.svc-cta.navy:hover{background:var(--navy2);box-shadow:0 8px 22px rgba(13,27,64,.32);}
 
 .chip{position:absolute;top:16px;right:16px;font-size:.6rem;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.5px;text-transform:uppercase;animation:fadeScale .5s ease both;}
 .chip-live{background:#dcfce7;color:#166534;}
@@ -777,6 +807,19 @@ section{padding:80px 20px;}
 .test-text{font-size:.84rem;color:var(--mid);line-height:1.75;font-style:italic;margin-bottom:14px;}
 .test-name{font-size:.82rem;font-weight:700;color:var(--dark);}
 .test-role{font-size:.71rem;color:var(--mid);}
+.test-foot{display:flex;align-items:center;gap:11px;margin-top:14px;padding-top:13px;border-top:1px solid var(--gray);}
+.test-ava{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.82rem;color:#fff;letter-spacing:.5px;background:linear-gradient(135deg,var(--teal),var(--navy));box-shadow:0 4px 12px rgba(13,27,64,.18);}
+/* aggregate rating summary strip */
+.test-summary{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px 30px;margin:36px auto 4px;max-width:720px;padding:20px 26px;background:#fff;border-radius:20px;box-shadow:0 10px 34px rgba(10,110,110,.09);border:1px solid var(--grayM);position:relative;z-index:1;}
+.test-summary .ts-score{display:flex;align-items:center;gap:12px;}
+.test-summary .ts-num{font-size:2.1rem;font-weight:900;color:var(--navy);line-height:1;letter-spacing:-1px;}
+.test-summary .ts-stars{color:var(--gold);font-size:1.02rem;letter-spacing:2px;line-height:1;}
+.test-summary .ts-sub{font-size:.73rem;color:var(--mid);margin-top:4px;}
+.test-summary .ts-div{width:1px;height:38px;background:var(--grayM);}
+.test-summary .ts-stat{text-align:center;}
+.test-summary .ts-stat b{display:block;font-size:1.3rem;font-weight:900;color:var(--navy);line-height:1;}
+.test-summary .ts-stat span{font-size:.69rem;color:var(--mid);text-transform:uppercase;letter-spacing:.5px;}
+@media(max-width:520px){.test-summary .ts-div{display:none;}}
 .test-verified{position:absolute;top:16px;right:16px;background:#dcfce7;color:#166534;font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:.4px;}
 
 /* ── QUESTIONNAIRE ── */
@@ -1053,6 +1096,26 @@ body.js-ready .anim.scale{transform:scale(.9);}
   background:linear-gradient(135deg,#d4a044,#f0c860);
 }
 .btn-cta:active{transform:translateY(-1px) scale(.98);}
+
+/* ── HERO CTA REFINEMENT (scoped) ── */
+.hero-btns{align-items:stretch;}
+.btn-cta-book{flex-direction:column;align-items:center;gap:3px;padding:13px 30px;line-height:1.15;}
+.btn-cta-book .btn-book-main{display:inline-flex;align-items:center;gap:9px;font-size:1rem;font-weight:800;}
+.btn-cta-book .btn-price{display:inline-flex;align-items:center;gap:6px;background:rgba(13,27,64,.14);color:#0d1b40;font-weight:900;padding:2px 10px;border-radius:30px;font-size:.92rem;}
+.btn-cta-book .btn-price s{opacity:.55;font-weight:700;font-size:.82em;}
+.btn-cta-book .btn-book-sub{font-size:.64rem;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:rgba(13,27,64,.62);}
+/* gentle attention pulse on the primary money CTA */
+.btn-cta-book::after{content:'';position:absolute;inset:0;border-radius:50px;border:2px solid rgba(232,185,90,.55);animation:ctaPulse 2.6s ease-out infinite;pointer-events:none;}
+@keyframes ctaPulse{0%{transform:scale(1);opacity:.7;}70%{transform:scale(1.12);opacity:0;}100%{opacity:0;}}
+/* secondary: deliberate gold-outlined, not a weak ghost */
+.btn-ghost-pro{border:2px solid rgba(232,185,90,.5);background:rgba(232,185,90,.06);color:#fff;font-weight:800;padding:14px 26px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}
+.btn-ghost-pro::after{content:'→';margin-left:2px;transition:transform .25s;}
+.btn-ghost-pro:hover{border-color:var(--gold2);background:rgba(232,185,90,.14);transform:translateY(-2px);}
+.btn-ghost-pro:hover::after{transform:translateX(4px);}
+@media(prefers-reduced-motion:reduce){.btn-cta-book::after{animation:none;}}
+@media(max-width:768px){
+  .hero-btns .btn-cta-book,.hero-btns .btn-ghost-pro{width:100%;justify-content:center;}
+}
 .btn-cta::before{
   content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
   background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);
@@ -1112,6 +1175,7 @@ body.js-ready .anim.scale{transform:scale(.9);}
   .nav-links{display:none;}
   .hamburger{display:flex;}
   .hero-right{display:none;}
+  .hero-live-m{display:inline-flex;margin-bottom:14px;}
   .lead-inner{grid-template-columns:1fr;}
   .gallery-grid{grid-template-columns:1fr 1fr;}
   .test-scroll{grid-template-columns:1fr;}
@@ -1150,7 +1214,6 @@ body.js-ready .anim.scale{transform:scale(.9);}
   .hero-assurance{gap:7px;margin-bottom:13px;}
   .hero-assurance span{flex:1 1 auto;justify-content:center;text-align:center;white-space:normal;padding:6px 8px;font-size:.64rem;}
   .hero-assessment-card{grid-template-columns:1fr;gap:11px;margin-top:0;margin-bottom:12px;padding:14px;border-radius:18px;}
-  .hero-assessment-actions{grid-template-columns:1fr 1fr;}
   .hero-assessment-actions,.hero-assessment-btn{width:100%;}
   .hero-assessment-btn{min-height:48px;font-size:.68rem;line-height:1.18;padding:8px 7px;}
   .hero-cost-link{margin-top:0;margin-bottom:13px;line-height:1.42;}
@@ -1503,7 +1566,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
   <div class="hero-inner">
     <div class="hero-copy-panel">
       <div class="hero-badge"><div class="dot"></div><span>100% Confidential | Founder-Led 1:1 Guidance</span></div>
-      <h1 class="hero-h1">Your Mind Deserves <em>Clarity.</em><br>Your Future Deserves <em>Direction.</em></h1>
+      <h1 class="hero-h1"><span class="h1-l">Your Mind Deserves <em>Clarity.</em></span><span class="h1-l">Your Future Deserves <em>Direction.</em></span></h1>
       <p class="hero-sub">Professional online career counselling, psychometric career assessment and mental health counselling for students, parents and young adults across Delhi-NCR and India - including stream selection guidance for Class 10 &amp; 12 - blending empathy with evidence so families choose with clarity, not pressure.</p>
       <div class="hero-assurance" aria-label="Counselling session assurances">
         <span>Private & Confidential</span>
@@ -1517,22 +1580,28 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
           <span>Answer 6 quick questions, see your top career theme, then unlock Career Intelligence for matching careers.</span>
         </div>
         <div class="hero-assessment-actions">
-          <a href="assessment.html#free-test" class="hero-assessment-btn">View Free Snapshot</a>
-          <a href="career-intelligence.html" class="hero-assessment-btn secondary">Unlock Career Intelligence</a>
-          <a href="assessment.html#self-assessments" class="hero-assessment-btn secondary">Take Full Report</a>
-          <a href="for-working-professionals.html" class="hero-assessment-btn secondary">For Professionals</a>
+          <a href="assessment.html#free-test" class="hero-assessment-btn hero-assessment-primary">View Free Snapshot &rarr;</a>
+          <div class="hero-assessment-links">
+            <a href="career-intelligence.html">Unlock Career Intelligence</a>
+            <a href="assessment.html#self-assessments">Take Full Report</a>
+            <a href="for-working-professionals.html">For Professionals</a>
+          </div>
         </div>
       </div>
       <a class="hero-cost-link" href="for-parents.html#education-cost-calculator">What is the real cost of one wrong stream choice?</a>
 
-      <div class="hero-btns">
-        <a href="#services" class="btn-cta"><span>Explore Services</span></a>
-        <a href="#" class="btn-ghost" onclick="openModal('session');return false;">Book Introductory Session - &#8377;49</a>
-      </div>
       <div class="hero-stats">
         <div class="hero-stat"><div class="num" data-count="500">0+</div><div class="lbl">Lives Guided</div></div>
         <div class="hero-stat"><div class="num">4.9/5</div><div class="lbl">Parent Rating</div></div>
         <div class="hero-stat"><div class="num">PAN<br>India</div><div class="lbl">Online Sessions</div></div>
+      </div>
+      <div class="hero-live hero-live-m"><div class="dot"></div><span>Wellness Sessions Live Now</span></div>
+      <div class="hero-btns">
+        <a href="#" class="btn-cta btn-cta-book" onclick="openModal('session');return false;">
+          <span class="btn-book-main">Book Introductory Session <span class="btn-price"><s>&#8377;499</s> &#8377;49</span></span>
+          <span class="btn-book-sub">Founder-led 1:1 &middot; 100% confidential</span>
+        </a>
+        <a href="#services" class="btn-ghost btn-ghost-pro">Explore Services</a>
       </div>
     </div>
     <div class="hero-right">
@@ -1649,12 +1718,12 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
             <li>Align natural strengths to the right academic path</li>
             <li>Every career each stream can lead to — explained</li>
           </ul>
-          <div class="svc-price">Starting at <strong>₹999</strong> / session</div>
+          <div class="svc-price"><span class="cap">Starting at</span> <span class="amt">₹999</span> <span class="cap">/ session</span></div>
           <div class="svc-check-row">
             <button class="ll-check-btn" type="button" data-ll-open="careerValues">Career Values Preview</button>
             <button class="ll-check-btn" type="button" data-ll-open="learningPrefs">Learning Preferences Preview</button>
           </div>
-          <button class="btn-teal">Book Your Session Now →</button>
+          <button class="svc-cta teal">Book Your Session Now <span class="arr">→</span></button>
         </div>
       </div>
       <div class="svc-card cc anim stagger-2" onclick="openSessionModal('career-direction')">
@@ -1672,8 +1741,8 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
             <li>Bridge the gap between your degree & dream career</li>
             <li>Entrepreneurship & startup guidance</li>
           </ul>
-          <div class="svc-price">Starting at <strong>₹1,499</strong> / session</div>
-          <button class="btn-cta" style="font-size:.8rem;padding:10px 18px;"><span>Book Your Session Now →</span></button>
+          <div class="svc-price"><span class="cap">Starting at</span> <span class="amt">₹1,499</span> <span class="cap">/ session</span></div>
+          <button class="svc-cta gold">Book Your Session Now <span class="arr">→</span></button>
         </div>
       </div>
       <a class="svc-card wp anim stagger-3" href="for-working-professionals.html" aria-label="Open Lume Lens for working professionals">
@@ -1696,8 +1765,8 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
             <li>Built for Indian professionals, companies and coaches exploring clarity, growth and career change</li>
             <li>Sign in to save progress and keep the report connected to your profile</li>
           </ul>
-          <div class="svc-price">Career Clarity report <strong>₹1,999</strong></div>
-          <span class="btn-navy" style="display:inline-flex;text-decoration:none;">Open Lume Lens →</span>
+          <div class="svc-price"><span class="cap">Career Clarity report</span> <span class="amt">₹1,999</span></div>
+          <span class="svc-cta navy">Open Lume Lens <span class="arr">→</span></span>
         </div>
       </a>
       <div class="svc-card ew anim stagger-4" onclick="openSessionModal('wellness')">
@@ -1715,12 +1784,12 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
             <li>Family pressure, relationships, identity & LGBTQ+ support</li>
             <li>Confidential online sessions — anywhere in India</li>
           </ul>
-          <div class="svc-price">First session <strong style="color:var(--green);">₹49</strong> <span style="text-decoration:line-through;color:var(--mid);">₹499</span> · Regular ₹999</div>
+          <div class="svc-price"><span class="cap">First session</span> <span class="amt" style="color:var(--green);">₹49</span> <span class="was">₹499</span> <span class="cap">· Regular ₹999</span></div>
           <div class="svc-check-row">
             <button class="ll-check-btn" type="button" data-ll-open="phq4Anxiety">Anxiety Quick Check</button>
             <button class="ll-check-btn" type="button" data-ll-open="wellbeingMenu">Wellbeing Checks</button>
           </div>
-          <button class="btn-navy">Book Your Session Now →</button>
+          <button class="svc-cta navy">Book Your Session Now <span class="arr">→</span></button>
         </div>
       </div>
     </div>
@@ -4766,78 +4835,79 @@ if(new URLSearchParams(window.location.search).has("sample-report")){window.saSh
       <h2 class="s-title">What Families Are Saying</h2>
       <p class="s-sub" style="margin:0 auto;">Unfiltered, personal accounts from students and parents across India.</p>
     </div>
+    <div class="test-summary" role="img" aria-label="Average rating 4.9 out of 5 from 500-plus guided families">
+      <div class="ts-score">
+        <div class="ts-num">4.9</div>
+        <div><div class="ts-stars">★★★★★</div><div class="ts-sub">Average parent &amp; student rating</div></div>
+      </div>
+      <div class="ts-div"></div>
+      <div class="ts-stat"><b>500+</b><span>Families Guided</span></div>
+      <div class="ts-div"></div>
+      <div class="ts-stat"><b>100%</b><span>Verified Reviews</span></div>
+    </div>
     <div class="test-scroll">
 
       <div class="test-card anim stagger-1">
         <span class="test-verified">✓ Verified</span>
         <div class="test-stars">★★★★★</div>
         <p class="test-text">"Meri beti ko Science aur Commerce ke beech bahut confusion tha. Sachin sir ke 2 sessions ke baad, usne khud decide kiya ki commerce lena hai. Ab woh confident hai. Bahut shukriya!"</p>
-        <div class="test-name">Priya Sharma</div>
-        <div class="test-role">Parent of Class 10 student · Online India</div>
+        <div class="test-foot"><span class="test-ava" aria-hidden="true">PS</span><div><div class="test-name">Priya Sharma</div><div class="test-role">Parent of Class 10 student · Online India</div></div></div>
       </div>
 
       <div class="test-card anim stagger-2">
         <span class="test-verified">✓ Verified</span>
         <div class="test-stars">★★★★★</div>
         <p class="test-text">"College ke first year mein peer pressure aur anxiety itni zyada ho gayi thi ki padh nahi pa raha tha. Sir ke sessions ne literally meri zindagi badal di. Ab main khud se better feel karta hoon."</p>
-        <div class="test-name">Arjun M.</div>
-        <div class="test-role">B.Com Student · Delhi University</div>
+        <div class="test-foot"><span class="test-ava" aria-hidden="true">AM</span><div><div class="test-name">Arjun M.</div><div class="test-role">B.Com Student · Delhi University</div></div></div>
       </div>
 
       <div class="test-card anim stagger-3">
         <span class="test-verified">✓ Verified</span>
         <div class="test-stars">★★★★★</div>
         <p class="test-text">"Humne apne bete ko engineering mein dhakelna tha relatives ke pressure mein. Structured guidance ne uski creative interests ko samajhne aur design pathways explore karne mein madad ki."</p>
-        <div class="test-name">Ramesh & Kavita Goyal</div>
-        <div class="test-role">Parents · North India</div>
+        <div class="test-foot"><span class="test-ava" aria-hidden="true">RG</span><div><div class="test-name">Ramesh & Kavita Goyal</div><div class="test-role">Parents · North India</div></div></div>
       </div>
 
       <div class="test-card anim stagger-4">
         <span class="test-verified">✓ Verified</span>
         <div class="test-stars">★★★★★</div>
         <p class="test-text">"I was going through a really dark phase after board results. Sir created such a safe space — I could say things I couldn't tell my own parents. Three sessions in, I had clarity AND peace. Truly grateful."</p>
-        <div class="test-name">Neha K.</div>
-        <div class="test-role">Class 12 Student · Gurugram</div>
+        <div class="test-foot"><span class="test-ava" aria-hidden="true">NK</span><div><div class="test-name">Neha K.</div><div class="test-role">Class 12 Student · Gurugram</div></div></div>
       </div>
 
       <div class="test-card anim stagger-5">
         <span class="test-verified">✓ Verified</span>
         <div class="test-stars">★★★★★</div>
         <p class="test-text">"As a parent, I was skeptical about online counselling. But Sachin sir's structured approach — the assessment first, then the session — made it feel very professional. My daughter came out with a written roadmap. Impressive."</p>
-        <div class="test-name">Suresh Dahiya</div>
-        <div class="test-role">Father of Class 11 student · Sonipat</div>
+        <div class="test-foot"><span class="test-ava" aria-hidden="true">SD</span><div><div class="test-name">Suresh Dahiya</div><div class="test-role">Father of Class 11 student · Sonipat</div></div></div>
       </div>
 
       <div class="test-card anim stagger-6">
         <span class="test-verified">✓ Verified</span>
         <div class="test-stars">★★★★★</div>
         <p class="test-text">"Main graduate hone ke baad 8 mahine se confuse thi ki aage kya karoon. Ek session mein sir ne mujhe itne options dikhaye jo maine soche bhi nahi the. Ab I'm pursuing content psychology and loving it."</p>
-        <div class="test-name">Anjali Verma</div>
-        <div class="test-role">Psychology Graduate · Chandigarh</div>
+        <div class="test-foot"><span class="test-ava" aria-hidden="true">AV</span><div><div class="test-name">Anjali Verma</div><div class="test-role">Psychology Graduate · Chandigarh</div></div></div>
       </div>
 
       <div class="test-card anim stagger-7">
         <span class="test-verified">✓ Verified</span>
         <div class="test-stars">★★★★★</div>
         <p class="test-text">"The session helped me understand that what I was feeling was 'exam anxiety' — not failure. Sir gave me practical tools to manage it. My performance improved significantly in the next exam. Worth every rupee."</p>
-        <div class="test-name">Rohan Bishnoi</div>
-        <div class="test-role">Class 12 PCM Student · Bhiwani</div>
+        <div class="test-foot"><span class="test-ava" aria-hidden="true">RB</span><div><div class="test-name">Rohan Bishnoi</div><div class="test-role">Class 12 PCM Student · Bhiwani</div></div></div>
       </div>
 
       <div class="test-card anim stagger-8">
         <span class="test-verified">✓ Verified</span>
         <div class="test-stars">★★★★★</div>
         <p class="test-text">"Sachin sir came and conducted a session at our school. The way he explained career options to 150 students in one room — everyone was engaged, no phones, no distraction. That says everything about his energy."</p>
-        <div class="test-name">Meenakshi Tyagi</div>
-        <div class="test-role">School Teacher · Online India</div>
+        <div class="test-foot"><span class="test-ava" aria-hidden="true">MT</span><div><div class="test-name">Meenakshi Tyagi</div><div class="test-role">School Teacher · Online India</div></div></div>
       </div>
 
       <div class="test-card anim stagger-9">
         <span class="test-verified">✓ Verified</span>
         <div class="test-stars">★★★★★</div>
         <p class="test-text">"My son was depressed after not getting into medical. One session with Sachin sir changed his entire perspective. He's now passionate about health management — a field he never knew existed. Life-changing guidance."</p>
-        <div class="test-name">Dr. Saroj Yadav</div>
-        <div class="test-role">Parent · North India</div>
+        <div class="test-foot"><span class="test-ava" aria-hidden="true">SY</span><div><div class="test-name">Dr. Saroj Yadav</div><div class="test-role">Parent · North India</div></div></div>
       </div>
 
     </div>

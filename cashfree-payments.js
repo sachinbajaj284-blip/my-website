@@ -1,6 +1,12 @@
 (function(){
   "use strict";
 
+  function esc(v){
+    return String(v==null?"":v).replace(/[&<>"']/g,function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":'&#39;'}[c];
+    });
+  }
+
   /* ============================================================
      Lume Live — Cashfree payment helper
      - Inline, on-page payment modal (no separate pop-up window)
@@ -275,7 +281,7 @@
     EL.body.innerHTML =
       '<div class="lcf-center">' +
         '<div class="lcf-spinner"></div>' +
-        '<h4 class="lcf-t">' + (message || "Setting up secure checkout…") + '</h4>' +
+        '<h4 class="lcf-t">' + esc(message || "Setting up secure checkout…") + '</h4>' +
         '<p class="lcf-p">Please don\'t close this window. You\'ll be able to pay by UPI, card, net-banking or wallet.</p>' +
         '<div class="lcf-trust">🔒 Payments are processed securely by Cashfree</div>' +
       '</div>';
@@ -290,7 +296,7 @@
         '<div class="lcf-qr"><img src="' + cfg.upiQrImage + '" alt="Lume Live UPI QR — ' + cfg.upiId + '"></div>' +
         '<div class="lcf-upiid" data-upi="' + cfg.upiId + '"><span>' + cfg.upiId + '</span>📋</div>' +
         '<p class="lcf-apps">PhonePe · Google Pay · Paytm · BHIM — Amount: <strong>' + inr(options.amount) + '</strong></p>' +
-        '<a class="lcf-btn wa" target="_blank" rel="noopener" href="' + waUrl(waConfirmMessage(options, options._cfOrderId || options._attemptId)) + '">' + waSvg() + ' Send payment screenshot on WhatsApp</a>' +
+        '<a class="lcf-btn wa" target="_blank" rel="noopener noreferrer" href="' + waUrl(waConfirmMessage(options, options._cfOrderId || options._attemptId)) + '">' + waSvg() + ' Send payment screenshot on WhatsApp</a>' +
       '</div>';
   }
 
@@ -313,11 +319,11 @@
       '<div class="lcf-center">' +
         '<div class="lcf-ico ok">✓</div>' +
         '<h4 class="lcf-t">Payment Successful</h4>' +
-        '<p class="lcf-p">Thank you' + (options.customerName ? ", " + options.customerName : "") + '! Your payment of <strong>' + inr(options.amount) + '</strong> is confirmed.' + (orderId ? '<br><span style="font-size:.78rem;color:#8493ab">Order ID: ' + orderId + '</span>' : '') + '</p>' +
+        '<p class="lcf-p">Thank you' + (options.customerName ? ", " + esc(options.customerName) : "") + '! Your payment of <strong>' + esc(inr(options.amount)) + '</strong> is confirmed.' + (orderId ? '<br><span style="font-size:.78rem;color:#8493ab">Order ID: ' + esc(orderId) + '</span>' : '') + '</p>' +
       '</div>' +
       '<ol class="lcf-steps">' + steps + '</ol>' +
       '<a class="lcf-btn gold" href="' + (options.continueUrl || flow.href) + '">' + (flow.cta) + '</a>' +
-      '<a class="lcf-btn wa" target="_blank" rel="noopener" href="' + waUrl(waConfirmMessage(options, orderId)) + '">' + waSvg() + ' Confirm booking on WhatsApp</a>' +
+      '<a class="lcf-btn wa" target="_blank" rel="noopener noreferrer" href="' + waUrl(waConfirmMessage(options, orderId)) + '">' + waSvg() + ' Confirm booking on WhatsApp</a>' +
       '<button class="lcf-back" type="button">Close</button>';
     EL.body.querySelector(".lcf-back").addEventListener("click", closeModal);
   }
@@ -327,10 +333,10 @@
       '<div class="lcf-center">' +
         '<div class="lcf-ico wait">⏳</div>' +
         '<h4 class="lcf-t">Payment Pending</h4>' +
-        '<p class="lcf-p">Cashfree shows your payment as <strong>' + (statusLabel || "pending") + '</strong>. If money was debited, it usually confirms within a minute.' + (orderId ? '<br><span style="font-size:.78rem;color:#8493ab">Order ID: ' + orderId + '</span>' : '') + '</p>' +
+        '<p class="lcf-p">Cashfree shows your payment as <strong>' + esc(statusLabel || "pending") + '</strong>. If money was debited, it usually confirms within a minute.' + (orderId ? '<br><span style="font-size:.78rem;color:#8493ab">Order ID: ' + esc(orderId) + '</span>' : '') + '</p>' +
       '</div>' +
       '<button class="lcf-btn navy" type="button" data-act="verify">Check status again</button>' +
-      '<a class="lcf-btn wa" target="_blank" rel="noopener" href="' + waUrl(waConfirmMessage(options, orderId)) + '">' + waSvg() + ' Confirm on WhatsApp</a>' +
+      '<a class="lcf-btn wa" target="_blank" rel="noopener noreferrer" href="' + waUrl(waConfirmMessage(options, orderId)) + '">' + waSvg() + ' Confirm on WhatsApp</a>' +
       '<button class="lcf-back" type="button">Close</button>';
     EL.body.querySelector('[data-act="verify"]').addEventListener("click", function(){ verifyAndRender(options, orderId); });
     EL.body.querySelector(".lcf-back").addEventListener("click", closeModal);
@@ -341,7 +347,7 @@
       '<div class="lcf-center">' +
         '<div class="lcf-ico err">!</div>' +
         '<h4 class="lcf-t">Payment didn\'t go through</h4>' +
-        '<p class="lcf-p">' + (message || "Your payment could not be completed. Don\'t worry — no money is deducted for a failed attempt. You can try again or pay by UPI below.") + '</p>' +
+        '<p class="lcf-p">' + esc(message || "Your payment could not be completed. Don't worry — no money is deducted for a failed attempt. You can try again or pay by UPI below.") + '</p>' +
       '</div>' +
       '<button class="lcf-btn gold" type="button" data-act="retry">Try payment again</button>' +
       '<div class="lcf-divider">or pay directly by UPI</div>' +
