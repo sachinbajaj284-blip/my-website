@@ -63,7 +63,29 @@ h2{font-family:'Fraunces','Noto Sans Devanagari',serif;font-size:clamp(1.55rem,3
 .cta .box{max-width:820px;margin:0 auto;background:linear-gradient(135deg,#FFF8EC,#F4FAFA);border:1px solid rgba(201,147,58,.22);border-radius:20px;padding:34px 24px}
 .cta p{max-width:660px;margin:12px auto 22px;color:var(--muted)}
 footer{background:var(--navy);color:rgba(255,255,255,.72);padding:28px 18px;text-align:center;font-size:.84rem}
-@media(max-width:780px){.hero-inner,.grid{grid-template-columns:1fr}.links{font-size:.76rem;gap:8px}.links a:not(.lang){display:none}.hero{padding-top:56px}.actions .btn{width:100%}.visual{order:-1}}
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.svc{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:0 12px 34px rgba(13,27,64,.06)}
+.svc .ic{font-size:1.7rem}
+.svc h3{color:var(--navy);font-size:1.05rem;margin:10px 0 7px}
+.svc p{font-size:.88rem;color:var(--muted)}
+.svc .price{margin-top:12px;font-weight:900;color:var(--teal);font-size:.9rem}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:720px;margin:0 auto}
+.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;text-align:center}
+.stat b{display:block;font-family:'Fraunces',serif;font-size:1.9rem;color:var(--navy);line-height:1}
+.stat span{font-size:.78rem;color:var(--muted);font-weight:700}
+.quotes{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.quote{background:#fff;border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:14px;padding:20px;box-shadow:0 12px 34px rgba(13,27,64,.05)}
+.quote p{font-size:.9rem;color:var(--ink);font-style:italic;line-height:1.65}
+.quote .who{margin-top:12px;font-weight:900;color:var(--navy);font-size:.84rem}
+.quote .who span{display:block;font-weight:600;color:var(--muted);font-size:.76rem}
+.faq{max-width:820px;margin:0 auto;display:grid;gap:12px}
+.faq details{background:#fff;border:1px solid var(--line);border-radius:13px;padding:4px 18px}
+.faq summary{cursor:pointer;font-weight:800;color:var(--navy);padding:14px 0;font-size:.95rem;list-style:none}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:'+';float:right;color:var(--gold);font-weight:900}
+.faq details[open] summary::after{content:'\2212'}
+.faq p{font-size:.88rem;color:var(--muted);padding:0 0 16px}
+@media(max-width:780px){.hero-inner,.grid,.svc-grid,.stats,.quotes{grid-template-columns:1fr}.links{font-size:.76rem;gap:8px}.links a:not(.lang){display:none}.hero{padding-top:56px}.actions .btn{width:100%}.visual{order:-1}}
 </style>
 </head>
 <body>
@@ -111,11 +133,69 @@ footer{background:var(--navy);color:rgba(255,255,255,.72);padding:28px 18px;text
     </div>
   </section>
 
+  <section class="band" style="background:#fff">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="tag">हमारी सेवाएँ</span>
+        <h2>Lume Live kya offer karta hai</h2>
+      </div>
+      <div class="svc-grid">
+        <div class="svc"><span class="ic">🎓</span><h3>Career &amp; Stream Counselling</h3><p>Class 9–12 students aur young adults ke liye stream selection, career direction aur 1:1 guidance — interest, personality aur values ke basis par.</p><div class="price">₹49 introductory session</div></div>
+        <div class="svc"><span class="ic">🧠</span><h3>Emotional Wellbeing</h3><p>Stress, exam pressure, anxiety, self-esteem aur family pressure ke liye confidential, non-judgemental mental-health support — pure India mein online.</p><div class="price">₹49 first session</div></div>
+        <div class="svc"><span class="ic">💼</span><h3>Working Professionals (Lume Lens)</h3><p>Career change, clarity aur growth ke liye ek premium working-profile report — personality, motivation, decisions aur emotional intelligence.</p><div class="price">₹1,999 report</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="tag">Bharosa kyun</span>
+        <h2>Founder-led, scientific aur 100% confidential</h2>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>500+</b><span>students &amp; families guided</span></div>
+        <div class="stat"><b>4.9★</b><span>average parent rating</span></div>
+        <div class="stat"><b>PAN-India</b><span>online sessions</span></div>
+      </div>
+      <p style="text-align:center;max-width:680px;margin:22px auto 0;color:var(--muted);font-size:.92rem">Har report Counselling Psychologist aur founder <strong>Sachin Bajaj</strong> dwara personally review hoti hai. Ye ek selection ya admission decision tool nahi hai — ye ek honest counselling conversation ka starting point hai.</p>
+    </div>
+  </section>
+
+  <section class="band" style="background:#fff">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="tag">Families kya kehti hain</span>
+        <h2>Real parents, real clarity</h2>
+      </div>
+      <div class="quotes">
+        <div class="quote"><p>"Meri beti ko Science aur Commerce ke beech bahut confusion tha. 2 sessions ke baad usne khud decide kiya — ab woh confident hai."</p><div class="who">Priya Sharma<span>Parent of Class 10 student · Online India</span></div></div>
+        <div class="quote"><p>"College ke first year mein anxiety itni badh gayi thi ki padh nahi pa raha tha. Sir ke sessions ne literally meri zindagi badal di."</p><div class="who">Arjun M.<span>B.Com Student · Delhi University</span></div></div>
+        <div class="quote"><p>"Assessment pehle, phir session — bahut professional approach. Meri beti ek written roadmap ke saath bahar aayi."</p><div class="who">Suresh Dahiya<span>Father of Class 11 student · Sonipat</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="tag">Aksar puche jaane wale sawal</span>
+        <h2>FAQ</h2>
+      </div>
+      <div class="faq">
+        <details><summary>Career counselling kis age/class ke liye sahi hai?</summary><p>Class 9 se 12 tak ke students ke liye stream aur subject decisions mein, aur college students/young adults ke liye career direction mein sabse zyada helpful hai. Working professionals ke liye alag Lume Lens profile hai.</p></details>
+        <details><summary>₹49 introductory session mein kya hota hai?</summary><p>Ye 45-minute ki 1:1 conversation hai (regular ₹499). Hum aapki current concern samajhte hain — stream choice, career direction ya emotional stress — aur agla step plan karte hain. Koi bhi formal assessment pehle explain kiya jata hai.</p></details>
+        <details><summary>Kya online counselling effective hai?</summary><p>Haan. Sabhi sessions secure video call (Google Meet/Zoom) par hote hain — ghar baithe. Research dikhati hai ki tele-counselling in-person jaisa hi effective hai. Humne 500+ students ko online guide kiya hai.</p></details>
+        <details><summary>Kya meri baatein confidential rehti hain?</summary><p>Bilkul. 100% confidentiality humari highest priority hai. Aapki personal baatein sirf aapke aur counsellor ke beech rehti hain — parents, school ya kisi third party ke saath bina consent share nahi hoti.</p></details>
+      </div>
+    </div>
+  </section>
+
   <section class="cta">
     <div class="box">
       <span class="tag">Start free</span>
       <h2>Pehle 60-second snapshot lo. Phir zaroorat ho to full ₹999 report unlock karo.</h2>
-      <p>Free test se top career theme aur 3 possible directions milte hain. Full report mein 4 assessments, PDF report aur counsellor discussion ke points milte hain.</p>
+      <p>Free test se top career theme aur 3 possible directions milte hain. Full report mein 5 assessments (personality, interests, work drivers, learning style aur aptitude snapshot), PDF report aur counsellor discussion ke points milte hain.</p>
       <div class="actions" style="justify-content:center">
         <a class="btn gold" href="index.html#free-test">Free Career Snapshot</a>
         <a class="btn ghost" style="color:var(--teal);border-color:rgba(10,110,110,.22)" href="https://wa.me/917015671280?text=Hi%20Lume%20Live!%20I%20want%20career%20counselling%20details." target="_blank" rel="noopener">WhatsApp par baat karein</a>
@@ -126,6 +206,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.72);padding:28px 18px;text
 
 <footer>
   Lume Live · Delhi-NCR focus · Rohtak origin · Online counselling across India · WhatsApp +91 70156 71280<br>
+  <a href="career-library.html" style="color:#E8B95A">Career Library</a> ·
   <a href="services-pricing.html" style="color:#E8B95A">Services & Pricing</a> ·
   <a href="terms.html" style="color:#E8B95A">Terms</a> ·
   <a href="refund-policy.html" style="color:#E8B95A">Refund Policy</a>

@@ -85,4 +85,9 @@
     <changefreq>yearly</changefreq>
     <priority>0.55</priority>
   </url>
+  <url><loc>https://lumelive.co.in/career-library.html</loc><lastmod>2026-06-27</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://lumelive.co.in/stream-selection-after-10th.html</loc><lastmod>2026-06-27</lastmod><changefreq>yearly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lumelive.co.in/psychometric-career-test.html</loc><lastmod>2026-06-27</lastmod><changefreq>yearly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lumelive.co.in/pcm-vs-pcb-vs-commerce.html</loc><lastmod>2026-06-27</lastmod><changefreq>yearly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lumelive.co.in/career-counselling-when-needed.html</loc><lastmod>2026-06-27</lastmod><changefreq>yearly</changefreq><priority>0.7</priority></url>
 </urlset>
