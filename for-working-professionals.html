@@ -4184,6 +4184,26 @@ function saBuildPdfDoc(){
    y+=lines.length*4.5+3.2;
   });
  }
+ /* Reflection prompts — makes each section a conversation tool and fills the page */
+ function reflectBox(prompts,accent){
+  accent=accent||SAFF;
+  var inner=W-2*M-14;
+  doc.setFont("helvetica","normal");doc.setFontSize(8.9);
+  var wrapped=prompts.map(function(p){return doc.splitTextToSize(safe(p),inner-4);});
+  var boxH=11;wrapped.forEach(function(l){boxH+=l.length*4.5+2.4;});
+  y+=5;ensure(boxH+3);
+  fill([247,249,252]);stroke([216,224,236]);doc.setLineWidth(.3);doc.roundedRect(M,y,W-2*M,boxH,2.6,2.6,"FD");
+  fill(accent);doc.rect(M,y,2,boxH,"F");
+  lineText("REFLECT ON THIS",M+8,y+7,7,accent,"helvetica","bold");
+  var ry=y+13.5;
+  wrapped.forEach(function(l){
+   fill(accent);doc.circle(M+9,ry-1.4,.9,"F");
+   rgb(INK_SOFT);doc.setFont("helvetica","normal");doc.setFontSize(8.9);
+   l.forEach(function(ln,i){doc.text(ln,M+12,ry+i*4.5);});
+   ry+=l.length*4.5+2.4;
+  });
+  y+=boxH+3;
+ }
  function card(x,yy,w,h,border){fill(CARD);stroke(border||LINE);doc.setLineWidth(.25);doc.roundedRect(x,yy,w,h,2.2,2.2,"FD");}
 
  paint();
@@ -4304,26 +4324,31 @@ function saBuildPdfDoc(){
  section("01","Part 1 \u00B7 Personality Patterns","How you engage with work and people",PLUM);
  W_.forEach(dimRow);
  meaningList(W_,DIMS.wsp);
+ reflectBox(["Which of these patterns feels most like you at work - and did any of them surprise you?","Where does your strongest trait help you most, and where might it quietly cost you?"],PLUM);
  y+=2;para("A higher score on any dimension is not better than a lower one - only different. These describe your natural style, not your ability.",M,W-2*M,8.2,MUTE);
 
  section("02","Part 2 \u00B7 What Drives You","Where your energy at work comes from",SAFF);
  D.forEach(dimRow);
  meaningList(D,DIMS.drv);
+ reflectBox(["On a hard day, which of these reasons actually keeps you going?","Is your current role feeding your strongest driver - or slowly starving it?"],SAFF);
  y+=2;para("Most people work for several reasons at once; one is not better than another. The aim is to protect the drivers that keep you energised.",M,W-2*M,8.2,MUTE);
 
  section("03","Part 3 \u00B7 How You Decide","Your default route to a choice",SAGE);
  C.forEach(dimRow);
  meaningList(C,DIMS.dec);
+ reflectBox(["Think of a recent big decision - did you use your default style, or borrow a different one?","Which kinds of decisions do you tend to put off or sidestep?"],SAGE);
  y+=2;para("Your style shifts with how much is at stake; the score shows your most common default when you are not thinking about it.",M,W-2*M,8.2,MUTE);
 
  section("04","Part 4 \u00B7 Handling Disagreement","When interests collide",TERRA);
  H_.forEach(dimRow);
  meaningList(H_,DIMS.hdg);
+ reflectBox(["In your last disagreement at work, which move did you reach for first?","Is there a relationship where a different approach would serve you better?"],TERRA);
  y+=2;para("Your approach changes with the relationship and the stakes; this is simply the move you reach for first.",M,W-2*M,8.2,MUTE);
 
  section("05","Part 5 \u00B7 Reading and Managing Emotion","Working with feeling at work",INK);
  E.forEach(dimRow);
  meaningList(E,DIMS.emo);
+ reflectBox(["Which branch - noticing, using, understanding, or managing emotion - is easiest for you, and which is hardest?","When you are under pressure, what actually helps you steady yourself?"],[78,121,167]);
  y+=2;para("Lower scores are not weaknesses - they simply point to where the most growth is available, and every one of these skills can be learned.",M,W-2*M,8.2,MUTE);
 
  /* Integration page */
@@ -4358,12 +4383,90 @@ function saBuildPdfDoc(){
   y+=h+6;
  });
 
- /* What to do with this report */
- ensure(60);y+=4;
- section("07","What to do with this report","Three practical moves",SAGE);
- para("1. Share two dimensions you were surprised by with someone who knows you well - and ask whether they recognise that pattern in you.",M,W-2*M,10.4,INK_SOFT,4);
- para("2. Pick one dimension where your score is at an extreme (very high or very low). Identify one situation in the last month where that tendency helped, and one where it cost you.",M,W-2*M,10.4,INK_SOFT,4);
- para("3. If you came to this expecting confirmation of how you see yourself, look hardest at the score that disagrees with you.",M,W-2*M,10.4,INK_SOFT,4);
+ /* Where you'll do your best work — environments & role types that fit the profile */
+ section("F","Where You'll Do Your Best Work","Environments and roles that fit your profile",[78,121,167]);
+ para("These are drawn from your own scores - the conditions where this profile tends to thrive. Treat them as a starting point for exploration, not a fixed recommendation.",M,W-2*M,9.4,INK_SOFT,5);
+ var env=[];
+ if((Dmap2.INT||0)>=55) env.push(["Autonomy & meaningful problems","You do your best work when you own the problem and the work itself is genuinely interesting."]);
+ if((wMap.O||0)>=55) env.push(["Variety & room to experiment","Novel challenges and freedom to try new approaches energise you; rigid routine drains you."]);
+ if((wMap.C||0)>=55) env.push(["Clear ownership & follow-through","You thrive where commitments are clear and you can be trusted to deliver end to end."]);
+ if((cMap.RAT||0)>=55) env.push(["Evidence & structured thinking","Roles that reward analysis, structure and well-reasoned decisions suit how you think."]);
+ if((hMap.COL||0)>=55 || (wMap.A||0)>=55) env.push(["Collaborative, trust-based teams","You are at your best in cooperative teams that solve problems together rather than compete."]);
+ if((wMap.E||0)>=55) env.push(["Regular people contact","Interaction and group work give you energy - protect a people-facing element in any role."]);
+ if((wMap.E||0)<45) env.push(["Focus time & low noise","You replenish through quieter, focused work; guard solo time around collaboration."]);
+ if((eMap.MAN||0)>=55 || (eMap.UND||0)>=55) env.push(["Emotionally mature cultures","Teams that handle feeling and conflict well let your people skills compound."]);
+ if(env.length<3) env.push(["Clear expectations & feedback","Any role is easier for you when goals are explicit and feedback is regular and honest."]);
+ env=env.slice(0,6);
+ var ecol=[PLUM,SAFF,SAGE,TERRA,[78,121,167],GOLD];
+ env.forEach(function(e,i){
+  doc.setFont("helvetica","normal");doc.setFontSize(9);
+  var lines=doc.splitTextToSize(safe(e[1]),W-2*M-12);
+  var h=Math.max(17,10.5+lines.length*4.5);
+  ensure(h+4);
+  fill(CARD);stroke(ecol[i%ecol.length]);doc.setLineWidth(.3);doc.roundedRect(M,y,W-2*M,h,2.4,2.4,"FD");
+  fill(ecol[i%ecol.length]);doc.rect(M,y,2.4,h,"F");
+  lineText(e[0],M+7,y+7.5,9.6,INK,"helvetica","bold");
+  rgb(INK_SOFT);doc.setFont("helvetica","normal");doc.setFontSize(9);
+  lines.forEach(function(l,li){doc.text(l,M+7,y+13+li*4.5);});
+  y+=h+4;
+ });
+ var roleHints=[];
+ if((cMap.RAT||0)>=55 && (wMap.C||0)>=55) roleHints.push("analysis- and ownership-led roles (product, strategy, operations, data/analytics, consulting)");
+ if((wMap.O||0)>=55) roleHints.push("build-and-create roles (design, R&D, early-stage or founding work)");
+ if((wMap.E||0)>=55 || (hMap.COL||0)>=55) roleHints.push("people- and partnership-led roles (program/people management, customer success, business development)");
+ if(!roleHints.length) roleHints.push("roles that combine clear ownership with steady, well-defined goals");
+ var roleText="Example directions to explore in your debrief: "+roleHints.join("; ")+".";
+ y+=2;
+ doc.setFont("helvetica","normal");doc.setFontSize(9.2);
+ var rlines=doc.splitTextToSize(safe(roleText),W-2*M-12);
+ var rh=10+rlines.length*4.6;ensure(rh+3);
+ fill([255,248,238]);stroke(GOLD_LT);doc.roundedRect(M,y,W-2*M,rh,2.4,2.4,"FD");
+ lineText("EXAMPLE ROLE TYPES TO EXPLORE",M+6,y+6.5,6.6,GOLD,"helvetica","bold");
+ rgb(INK);doc.setFont("helvetica","normal");doc.setFontSize(9.2);rlines.forEach(function(l,i){doc.text(l,M+6,y+12+i*4.6);});
+ y+=rh+4;
+
+ /* Your next 30 days — action plan */
+ section("07","Your Next 30 Days","A short, concrete action plan",SAGE);
+ para("Small, specific moves turn a profile into real change. Work through these over the next month.",M,W-2*M,9.6,INK_SOFT,5);
+ var actions=[
+  "Share two dimensions that surprised you with someone who knows you well, and ask whether they recognise the pattern in you.",
+  "Pick one dimension at an extreme (very high or very low). Note one moment this month it helped you, and one where it cost you.",
+  "Choose your lowest emotional-intelligence branch and practise it once this week in a real situation.",
+  "Protect one condition that feeds your strongest driver - block focus time, or take on a problem you find genuinely interesting.",
+  "Book a 1:1 debrief to turn this profile into two or three specific career moves."
+ ];
+ actions.forEach(function(a){
+  doc.setFont("helvetica","normal");doc.setFontSize(9.4);
+  var lines=doc.splitTextToSize(safe(a),W-2*M-24);
+  var h=Math.max(15,8+lines.length*4.8);
+  ensure(h+4);
+  fill(CARD);stroke(LINE);doc.setLineWidth(.25);doc.roundedRect(M,y,W-2*M,h,2.4,2.4,"FD");
+  stroke(SAGE);doc.setLineWidth(.6);doc.roundedRect(M+6,y+h/2-3,6,6,1,1,"S");
+  rgb(INK_SOFT);doc.setFont("helvetica","normal");doc.setFontSize(9.4);
+  lines.forEach(function(l,li){doc.text(l,M+18,y+7+li*4.8);});
+  y+=h+4;
+ });
+
+ /* Counsellor's note — own closing page */
+ doc.addPage();paint();y=TOP+1;
+ var firstName=(S.name||"").trim().split(/\s+/)[0]||"there";
+ var cnPara=[
+  "Hi "+firstName+", thank you for completing Lume Lens. A working profile like this earns its value in conversation - when we connect these patterns to the real decisions in front of you: a role change, a difficult relationship at work, or simply protecting the conditions that keep you doing your best work.",
+  "These scores are a mirror, not a verdict. If something here resonated - or quietly puzzled you - that is exactly where a debrief helps.",
+  "Let us turn this into two or three concrete next moves you can actually act on."
+ ].join(" ");
+ doc.setFont("helvetica","normal");doc.setFontSize(9.2);
+ var cnLines=doc.splitTextToSize(safe(cnPara),W-2*M-34);
+ var cnH=Math.max(48,27+(cnLines.length*4.7));
+ ensure(cnH+6);fill(NAVY);doc.roundedRect(M,y,W-2*M,cnH,2.8,2.8,"F");
+ fill([26,48,96]);doc.circle(M+13,y+15,8.5,"F");stroke(GOLD);doc.setLineWidth(.6);doc.circle(M+13,y+15,8.5,"S");
+ lineText("SB",M+13,y+18,12,GOLD_LT,"times","bold",{align:"center"});
+ lineText("A NOTE FROM YOUR COUNSELLOR",M+26,y+8,6.6,GOLD_LT,"helvetica","bold");
+ cnLines.forEach(function(l,li){lineText(l,M+26,y+14+(li*4.7),9,[222,230,242],"helvetica","normal");});
+ var sigY=y+14+(cnLines.length*4.7)+2;
+ lineText("Sachin Bajaj",M+26,sigY,9.4,[255,255,255],"helvetica","bold");
+ lineText("Counselling Psychologist · Founder, Lume Live · Rohtak, Haryana",M+26,sigY+4.4,6.6,[160,174,200],"helvetica","normal");
+ y+=cnH+6;
 
  /* Method & Limitations */
  doc.addPage();paint();y=TOP;
