@@ -1851,69 +1851,65 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 
 <!-- ══════════ WHY WE'RE DIFFERENT (comparison) ══════════ -->
 <style>
-#why-different{background:#fff;position:relative;overflow:hidden;}
-.cmp-wrap{max-width:1000px;margin:0 auto;}
+/* soft aurora so the liquid-glass tiles have something to refract */
+#why-different{background:radial-gradient(48% 58% at 14% 8%,rgba(10,110,110,.07),transparent 60%),radial-gradient(44% 54% at 90% 96%,rgba(201,147,58,.07),transparent 60%),#fff;position:relative;overflow:hidden;}
+.cmp-wrap{max-width:1040px;margin:0 auto;}
 .cmp-head{text-align:center;max-width:640px;margin:0 auto 40px;}
 .cmp-head .s-tag{justify-content:center;}
 .cmp-head .s-sub{margin:0 auto;}
-.cmp-table{border:1px solid rgba(13,27,64,.10);border-radius:var(--radius);overflow:hidden;background:rgba(13,27,64,.10);display:grid;gap:1px;}
-.cmp-row{display:grid;grid-template-columns:1.05fr 1fr 1fr;gap:1px;background:rgba(13,27,64,.10);}
-.cmp-c{background:#fff;padding:16px 18px;font-size:.86rem;color:var(--mid);line-height:1.5;display:flex;align-items:center;}
-.cmp-feat{font-weight:800;color:var(--navy);font-size:.8rem;text-transform:uppercase;letter-spacing:.4px;}
-.cmp-us{background:#F6FBFA;color:var(--dark);font-weight:600;}
-.cmp-us::before{content:"";}
-.cmp-colhead .cmp-c{font-weight:900;color:var(--navy);font-size:.82rem;text-transform:uppercase;letter-spacing:.6px;background:var(--gray);}
-.cmp-colhead .cmp-us{background:var(--navy);color:#fff;position:relative;}
-.cmp-colhead .cmp-us::after{content:"★";color:var(--gold2);margin-left:7px;}
-.cmp-row .cmp-us{border-left:2px solid rgba(201,147,58,.45);}
-.cmp-note{text-align:center;font-size:.78rem;color:var(--mid);margin-top:16px;}
-@media(max-width:720px){
-  .cmp-row{grid-template-columns:1fr;}
-  .cmp-c{font-size:.82rem;padding:11px 15px;}
-  .cmp-feat{padding-top:16px;}
-  .cmp-colhead{display:none;}
-  .cmp-c.cmp-typ::before{content:"Typical platforms: ";font-weight:800;color:var(--mid);}
-  .cmp-c.cmp-us::before{content:"Lume Live: ";font-weight:900;color:var(--teal);}
-}
+.bento{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:1fr;gap:16px;}
+.btile{display:flex;flex-direction:column;gap:7px;border-radius:var(--radius-lg);padding:22px 22px;border:var(--glass-border);background:var(--glass-bg);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);box-shadow:var(--elev-1),var(--glass-highlight);transition:transform .3s var(--ease),box-shadow .3s var(--ease);}
+.btile:hover{transform:translateY(-4px);box-shadow:var(--elev-2),var(--glass-highlight);}
+.btile-k{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:1.3px;color:var(--gold);}
+.btile .lume{font-size:.93rem;font-weight:700;color:var(--navy);line-height:1.34;}
+.btile .typ{font-size:.75rem;color:var(--mid);line-height:1.4;margin-top:auto;}
+.btile .typ s{opacity:.65;}
+.btile-hero{grid-column:span 2;grid-row:span 2;justify-content:space-between;gap:14px;color:#fff;position:relative;overflow:hidden;background:linear-gradient(150deg,#0D1B40,#13294f 58%,#0A6E6E);border:var(--glass-border-dark);box-shadow:var(--elev-3),inset 1px 1px 0 rgba(255,255,255,.14),inset -1px -1px 0 rgba(0,0,0,.28);}
+.btile-hero::after{content:"";position:absolute;top:0;left:0;right:0;height:42%;background:linear-gradient(180deg,rgba(255,255,255,.09),transparent);pointer-events:none;}
+.btile-hero>*{position:relative;z-index:1;}
+.btile-hero .btile-k{color:var(--gold2);}
+.btile-hero h3{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(1.32rem,2.2vw,1.74rem);line-height:1.18;letter-spacing:-.3px;}
+.btile-hero p{color:rgba(255,255,255,.8);font-size:.9rem;line-height:1.58;}
+.btile-foot{font-size:.71rem;font-weight:800;letter-spacing:.3px;color:rgba(255,255,255,.85);}
+.btile-foot .star{color:var(--gold2);}
+.cmp-note{text-align:center;font-size:.78rem;color:var(--mid);margin-top:18px;}
+@media(max-width:860px){.bento{grid-template-columns:repeat(2,1fr);grid-auto-rows:auto;}.btile-hero{grid-column:span 2;grid-row:span 1;}.btile .typ{margin-top:10px;}}
+@media(max-width:520px){.bento{grid-template-columns:1fr;}.btile-hero{grid-column:span 1;}}
 </style>
 <section id="why-different">
   <div class="cmp-wrap">
     <div class="cmp-head">
       <span class="s-tag">Why Lume Live</span>
       <h2 class="s-title">Guidance built differently</h2>
-      <p class="s-sub">Most platforms hand you a test and a PDF. We treat your child's wellbeing and career as one calm, honest decision — guided by a Counselling Psychologist.</p>
+      <p class="s-sub">Most platforms hand you a test and a PDF. We treat your child's wellbeing and career as one calm, honest decision.</p>
     </div>
-    <div class="cmp-table">
-      <div class="cmp-row cmp-colhead">
-        <div class="cmp-c cmp-feat"></div>
-        <div class="cmp-c cmp-typ">Typical career platforms</div>
-        <div class="cmp-c cmp-us">Lume Live</div>
-      </div>
-      <div class="cmp-row">
-        <div class="cmp-c cmp-feat">Approach</div>
-        <div class="cmp-c cmp-typ">Career or mental health — rarely both</div>
-        <div class="cmp-c cmp-us">Career and wellbeing as one decision</div>
-      </div>
-      <div class="cmp-row">
-        <div class="cmp-c cmp-feat">Method</div>
-        <div class="cmp-c cmp-typ">A test score and one &ldquo;destined&rdquo; career</div>
-        <div class="cmp-c cmp-us">Honest, non-diagnostic — a starting point, not a verdict</div>
-      </div>
-      <div class="cmp-row">
-        <div class="cmp-c cmp-feat">Who guides you</div>
-        <div class="cmp-c cmp-typ">A rotating counsellor network</div>
-        <div class="cmp-c cmp-us">Founder-led, one-to-one, by a Counselling Psychologist</div>
-      </div>
-      <div class="cmp-row">
-        <div class="cmp-c cmp-feat">Pricing</div>
-        <div class="cmp-c cmp-typ">Often opaque, &#8377;3,000&ndash;15,000 packages</div>
-        <div class="cmp-c cmp-us">Transparent &mdash; &#8377;49 intro, &#8377;999 full report</div>
-      </div>
-      <div class="cmp-row">
-        <div class="cmp-c cmp-feat">Careers covered</div>
-        <div class="cmp-c cmp-typ">Mostly private-sector roles</div>
-        <div class="cmp-c cmp-us">Private roles plus government-job pathways</div>
-      </div>
+    <div class="bento">
+      <article class="btile btile-hero">
+        <span class="btile-k">The Lume difference</span>
+        <h3>Your child's wellbeing and career, read as one calm decision.</h3>
+        <p>Guided one-to-one by a Counselling Psychologist — career and emotional state understood together, not in separate silos.</p>
+        <div class="btile-foot"><span class="star">★</span> Founder-led · Non-diagnostic · Bilingual</div>
+      </article>
+      <article class="btile">
+        <span class="btile-k">Method</span>
+        <p class="lume">Honest &mdash; a starting point for conversation, not a verdict.</p>
+        <p class="typ">vs <s>a test score and one &ldquo;destined&rdquo; career</s></p>
+      </article>
+      <article class="btile">
+        <span class="btile-k">Who guides you</span>
+        <p class="lume">The founder, one-to-one, every session.</p>
+        <p class="typ">vs <s>a rotating counsellor network</s></p>
+      </article>
+      <article class="btile">
+        <span class="btile-k">Pricing</span>
+        <p class="lume">Transparent &mdash; &#8377;49 intro, &#8377;999 full report.</p>
+        <p class="typ">vs <s>opaque &#8377;3,000&ndash;15,000 packages</s></p>
+      </article>
+      <article class="btile">
+        <span class="btile-k">Careers covered</span>
+        <p class="lume">Private roles plus government-job pathways.</p>
+        <p class="typ">vs <s>mostly private-sector roles</s></p>
+      </article>
     </div>
     <p class="cmp-note">Comparison reflects common patterns across the category, not any one provider.</p>
   </div>
