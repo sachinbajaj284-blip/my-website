@@ -1849,6 +1849,76 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 </section>
 
 
+<!-- ══════════ WHY WE'RE DIFFERENT (comparison) ══════════ -->
+<style>
+#why-different{background:#fff;position:relative;overflow:hidden;}
+.cmp-wrap{max-width:1000px;margin:0 auto;}
+.cmp-head{text-align:center;max-width:640px;margin:0 auto 40px;}
+.cmp-head .s-tag{justify-content:center;}
+.cmp-head .s-sub{margin:0 auto;}
+.cmp-table{border:1px solid rgba(13,27,64,.10);border-radius:var(--radius);overflow:hidden;background:rgba(13,27,64,.10);display:grid;gap:1px;}
+.cmp-row{display:grid;grid-template-columns:1.05fr 1fr 1fr;gap:1px;background:rgba(13,27,64,.10);}
+.cmp-c{background:#fff;padding:16px 18px;font-size:.86rem;color:var(--mid);line-height:1.5;display:flex;align-items:center;}
+.cmp-feat{font-weight:800;color:var(--navy);font-size:.8rem;text-transform:uppercase;letter-spacing:.4px;}
+.cmp-us{background:#F6FBFA;color:var(--dark);font-weight:600;}
+.cmp-us::before{content:"";}
+.cmp-colhead .cmp-c{font-weight:900;color:var(--navy);font-size:.82rem;text-transform:uppercase;letter-spacing:.6px;background:var(--gray);}
+.cmp-colhead .cmp-us{background:var(--navy);color:#fff;position:relative;}
+.cmp-colhead .cmp-us::after{content:"★";color:var(--gold2);margin-left:7px;}
+.cmp-row .cmp-us{border-left:2px solid rgba(201,147,58,.45);}
+.cmp-note{text-align:center;font-size:.78rem;color:var(--mid);margin-top:16px;}
+@media(max-width:720px){
+  .cmp-row{grid-template-columns:1fr;}
+  .cmp-c{font-size:.82rem;padding:11px 15px;}
+  .cmp-feat{padding-top:16px;}
+  .cmp-colhead{display:none;}
+  .cmp-c.cmp-typ::before{content:"Typical platforms: ";font-weight:800;color:var(--mid);}
+  .cmp-c.cmp-us::before{content:"Lume Live: ";font-weight:900;color:var(--teal);}
+}
+</style>
+<section id="why-different">
+  <div class="cmp-wrap">
+    <div class="cmp-head">
+      <span class="s-tag">Why Lume Live</span>
+      <h2 class="s-title">Guidance built differently</h2>
+      <p class="s-sub">Most platforms hand you a test and a PDF. We treat your child's wellbeing and career as one calm, honest decision — guided by a Counselling Psychologist.</p>
+    </div>
+    <div class="cmp-table">
+      <div class="cmp-row cmp-colhead">
+        <div class="cmp-c cmp-feat"></div>
+        <div class="cmp-c cmp-typ">Typical career platforms</div>
+        <div class="cmp-c cmp-us">Lume Live</div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-c cmp-feat">Approach</div>
+        <div class="cmp-c cmp-typ">Career or mental health — rarely both</div>
+        <div class="cmp-c cmp-us">Career and wellbeing as one decision</div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-c cmp-feat">Method</div>
+        <div class="cmp-c cmp-typ">A test score and one &ldquo;destined&rdquo; career</div>
+        <div class="cmp-c cmp-us">Honest, non-diagnostic — a starting point, not a verdict</div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-c cmp-feat">Who guides you</div>
+        <div class="cmp-c cmp-typ">A rotating counsellor network</div>
+        <div class="cmp-c cmp-us">Founder-led, one-to-one, by a Counselling Psychologist</div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-c cmp-feat">Pricing</div>
+        <div class="cmp-c cmp-typ">Often opaque, &#8377;3,000&ndash;15,000 packages</div>
+        <div class="cmp-c cmp-us">Transparent &mdash; &#8377;49 intro, &#8377;999 full report</div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-c cmp-feat">Careers covered</div>
+        <div class="cmp-c cmp-typ">Mostly private-sector roles</div>
+        <div class="cmp-c cmp-us">Private roles plus government-job pathways</div>
+      </div>
+    </div>
+    <p class="cmp-note">Comparison reflects common patterns across the category, not any one provider.</p>
+  </div>
+</section>
+
 <!-- ══════════ SELF-ASSESSMENT SUITE (added) ══════════ -->
 <style>
 /* All classes prefixed sa- to avoid collision with existing styles */
