@@ -106,6 +106,22 @@ button,input,select{font:inherit}
 .ca-gate-feature strong{display:block;font-size:.86rem;margin-bottom:3px}
 .ca-gate-feature span{display:block;color:rgba(255,255,255,.68);font-size:.76rem;line-height:1.55}
 .ca-gate-note{margin-top:16px;border:1px solid rgba(232,185,90,.28);background:rgba(232,185,90,.1);border-radius:14px;padding:12px 13px;color:#FBE6A8;font-size:.78rem;line-height:1.6;font-weight:800}
+/* ── preview value band: depth, how-it-works, govt teaser ── */
+.cig-band{max-width:1180px;margin:0 auto;padding:0 18px 12px;position:relative;z-index:1;display:flex;flex-direction:column;gap:16px}
+.cig-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.cig-stat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:18px 16px;text-align:center;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 rgba(255,255,255,.16)}
+.cig-stat b{display:block;font-family:Fraunces,Georgia,serif;font-size:1.9rem;line-height:1;color:#F8D27A;font-variant-numeric:tabular-nums}
+.cig-stat span{display:block;margin-top:7px;font-size:.72rem;color:rgba(255,255,255,.72);font-weight:700;letter-spacing:.2px}
+.cig-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.cig-step{display:grid;grid-template-columns:34px 1fr;gap:11px;align-items:start;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:15px}
+.cig-step i{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-style:normal;font-weight:800;color:#0D1B40;background:linear-gradient(135deg,#E8B95A,#C9933A)}
+.cig-step strong{display:block;font-size:.84rem;color:#fff;margin-bottom:3px}
+.cig-step span{display:block;font-size:.74rem;color:rgba(255,255,255,.66);line-height:1.5}
+.cig-gov{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;background:rgba(10,110,110,.18);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:14px 16px}
+.cig-gov-k{font-size:.68rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#9FE6E0}
+.cig-chips{display:flex;flex-wrap:wrap;gap:8px}
+.cig-chips span{font-size:.74rem;font-weight:700;color:#fff;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:6px 12px}
+@media(max-width:780px){.cig-stats{grid-template-columns:repeat(2,1fr)}.cig-steps{grid-template-columns:1fr}}
 .ca-hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#07182F 0%,#0D1B40 48%,#0A6E6E 118%);color:#fff}
 .ca-hero::before{content:'';position:absolute;inset:0;background:
   linear-gradient(110deg,transparent 0%,rgba(232,185,90,.12) 45%,transparent 74%),
@@ -289,6 +305,29 @@ button,input,select{font:inherit}
         </div>
         <div class="ca-gate-note">Free preview below. Full Career Intelligence opens after assessment so the advice starts from the student's real profile, not random browsing. Detailed counsellor-reviewed roadmap: Rs 1499.</div>
       </aside>
+    </div>
+
+    <!-- depth made tangible: stat band -->
+    <div class="cig-band">
+      <div class="cig-stats">
+        <div class="cig-stat"><b>97</b><span>India-relevant careers</span></div>
+        <div class="cig-stat"><b>51</b><span>Government-job pathways</span></div>
+        <div class="cig-stat"><b>6</b><span>Personality fit themes</span></div>
+        <div class="cig-stat"><b>10/12</b><span>Class-wise route maps</span></div>
+      </div>
+
+      <!-- how it works -->
+      <div class="cig-steps">
+        <div class="cig-step"><i>1</i><div><strong>Take the 60-second Snapshot</strong><span>A few quick questions — free, no signup.</span></div></div>
+        <div class="cig-step"><i>2</i><div><strong>We build the student's profile</strong><span>Interests, strengths and fit, not random browsing.</span></div></div>
+        <div class="cig-step"><i>3</i><div><strong>Careers matched to them</strong><span>Search, compare and build a route from their real profile.</span></div></div>
+      </div>
+
+      <!-- government pathways teaser (the unique hook) -->
+      <div class="cig-gov">
+        <span class="cig-gov-k">Government routes included</span>
+        <div class="cig-chips"><span>UPSC</span><span>SSC</span><span>Railways</span><span>Banking</span><span>Defence</span><span>Teaching</span><span>Healthcare</span><span>PSU &amp; State</span></div>
+      </div>
     </div>
   </section>
 
