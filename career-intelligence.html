@@ -106,6 +106,22 @@ button,input,select{font:inherit}
 .ca-gate-feature strong{display:block;font-size:.86rem;margin-bottom:3px}
 .ca-gate-feature span{display:block;color:rgba(255,255,255,.68);font-size:.76rem;line-height:1.55}
 .ca-gate-note{margin-top:16px;border:1px solid rgba(232,185,90,.28);background:rgba(232,185,90,.1);border-radius:14px;padding:12px 13px;color:#FBE6A8;font-size:.78rem;line-height:1.6;font-weight:800}
+/* ── preview value band: depth, how-it-works, govt teaser ── */
+.cig-band{max-width:1180px;margin:0 auto;padding:0 18px 12px;position:relative;z-index:1;display:flex;flex-direction:column;gap:16px}
+.cig-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.cig-stat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:18px 16px;text-align:center;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 rgba(255,255,255,.16)}
+.cig-stat b{display:block;font-family:Fraunces,Georgia,serif;font-size:1.9rem;line-height:1;color:#F8D27A;font-variant-numeric:tabular-nums}
+.cig-stat span{display:block;margin-top:7px;font-size:.72rem;color:rgba(255,255,255,.72);font-weight:700;letter-spacing:.2px}
+.cig-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.cig-step{display:grid;grid-template-columns:34px 1fr;gap:11px;align-items:start;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:15px}
+.cig-step i{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-style:normal;font-weight:800;color:#0D1B40;background:linear-gradient(135deg,#E8B95A,#C9933A)}
+.cig-step strong{display:block;font-size:.84rem;color:#fff;margin-bottom:3px}
+.cig-step span{display:block;font-size:.74rem;color:rgba(255,255,255,.66);line-height:1.5}
+.cig-gov{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;background:rgba(10,110,110,.18);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:14px 16px}
+.cig-gov-k{font-size:.68rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#9FE6E0}
+.cig-chips{display:flex;flex-wrap:wrap;gap:8px}
+.cig-chips span{font-size:.74rem;font-weight:700;color:#fff;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:6px 12px}
+@media(max-width:780px){.cig-stats{grid-template-columns:repeat(2,1fr)}.cig-steps{grid-template-columns:1fr}}
 .ca-hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#07182F 0%,#0D1B40 48%,#0A6E6E 118%);color:#fff}
 .ca-hero::before{content:'';position:absolute;inset:0;background:
   linear-gradient(110deg,transparent 0%,rgba(232,185,90,.12) 45%,transparent 74%),
@@ -160,16 +176,32 @@ button,input,select{font:inherit}
 .ca-content-head h2{font-family:Fraunces,serif;color:var(--navy);font-size:1.6rem}
 .ca-count{font-size:.8rem;color:var(--muted);font-weight:800}
 .ca-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.career-card{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 32px rgba(13,27,64,.055);padding:15px;display:flex;flex-direction:column;gap:12px;min-height:316px;transition:transform .22s,box-shadow .22s,border-color .22s;position:relative;overflow:hidden}
+.career-card{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:none;padding:18px;display:flex;flex-direction:column;gap:12px;min-height:316px;transition:transform .22s,box-shadow .22s,border-color .22s;position:relative;overflow:hidden}
 .career-card::before{content:'';position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,var(--teal),var(--gold));transform:scaleX(0);transform-origin:left;transition:.25s}
-.career-card:hover{transform:translateY(-3px);box-shadow:0 18px 44px rgba(13,27,64,.1);border-color:#CCE2DE}
+.career-card:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(13,27,64,.08);border-color:#CCE2DE}
 .career-card:hover::before{transform:scaleX(1)}
 .career-top{display:flex;justify-content:space-between;gap:10px;align-items:start}
 .career-title{font-weight:900;color:var(--navy);font-size:1rem;line-height:1.28}
 .career-sector{font-size:.62rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-top:5px}
 .confidence{flex:none;border-radius:999px;padding:5px 8px;font-size:.58rem;font-weight:900;text-transform:uppercase;border:1px solid var(--line);color:var(--muted);background:#FAFCFB}
 .confidence.high{background:#EAF7EF;color:var(--green);border-color:#CDEAD7}.confidence.medium{background:#FFF7E8;color:#A36D1D;border-color:#F0DEC0}.confidence.low{background:#FFF0F0;color:var(--red);border-color:#EBCACA}
-.career-work{color:var(--muted);font-size:.8rem;line-height:1.55;flex:1}
+.career-work{color:var(--muted);font-size:.8rem;line-height:1.55}
+.career-day{font-size:.76rem;line-height:1.5;color:var(--teal);background:#F2FAF8;border:1px solid #DCEEEA;border-left:3px solid var(--teal);border-radius:8px;padding:8px 10px;margin-top:-2px}
+.cig-legend{font-size:.76rem;color:var(--muted);margin:0 0 14px;display:flex;align-items:center;gap:7px}
+.cig-legend::before{content:"ⓘ";color:var(--teal);font-weight:900}
+/* locked glimpse */
+.cig-glimpse{display:none;position:relative;margin-bottom:22px;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#fff}
+.atlas-locked .cig-glimpse{display:block}
+.cig-glimpse-fade{filter:blur(3px) saturate(.85);opacity:.55;pointer-events:none;user-select:none}
+.cig-fsearch{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1fr;gap:12px;padding:20px}
+.cig-ffield label{display:block;font-size:.66rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:6px}
+.cig-finput{border:1px solid var(--line);border-radius:10px;padding:11px 12px;font-size:.82rem;color:var(--ink);background:#FAFCFB}
+.cig-glimpse-over{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:7px;padding:18px;background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(246,250,248,.82))}
+.cig-lock{font-size:1.5rem}
+.cig-glimpse-over strong{color:var(--navy);font-size:1rem}
+.cig-glimpse-sub{color:var(--muted);font-size:.82rem;max-width:440px}
+.cig-glimpse-over .ca-btn{margin-top:6px}
+@media(max-width:680px){.cig-fsearch{grid-template-columns:1fr 1fr;gap:10px}.cig-glimpse-sub{display:none}}
 .salary-box{background:#F6FAF8;border:1px solid var(--line);border-radius:12px;padding:10px}
 .salary-box small{display:block;color:var(--muted);font-size:.6rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
 .salary-box b{display:block;color:var(--ink);font-size:.82rem;line-height:1.48}
@@ -177,7 +209,7 @@ button,input,select{font:inherit}
 .chipline span{font-size:.62rem;font-weight:800;color:var(--muted);background:#FAFCFB;border:1px solid var(--line);border-radius:999px;padding:5px 8px}
 .career-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto}
 .career-actions button,.career-actions a{border:0;border-radius:10px;min-height:40px;padding:9px;font-size:.74rem;font-weight:900;text-decoration:none;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.career-actions button{background:var(--navy);color:#fff}.career-actions a{background:#EEF7F5;color:var(--teal);border:1px solid #D7EAE6}
+.career-actions button{background:#fff;color:var(--navy);border:1px solid var(--navy);transition:background .18s,color .18s}.career-actions button:hover{background:var(--navy);color:#fff}.career-actions a{background:#EEF7F5;color:var(--teal);border:1px solid #D7EAE6}
 .compare-btn.selected{background:var(--gold);color:#07182F}
 .ca-empty{display:none;background:#fff;border:1px dashed #BFD5D0;border-radius:16px;padding:30px;text-align:center;color:var(--muted);line-height:1.6}
 .ca-empty b{display:block;color:var(--navy);font-family:Fraunces,serif;font-size:1.35rem;margin-bottom:6px}
@@ -290,6 +322,29 @@ button,input,select{font:inherit}
         <div class="ca-gate-note">Free preview below. Full Career Intelligence opens after assessment so the advice starts from the student's real profile, not random browsing. Detailed counsellor-reviewed roadmap: Rs 1499.</div>
       </aside>
     </div>
+
+    <!-- depth made tangible: stat band -->
+    <div class="cig-band">
+      <div class="cig-stats">
+        <div class="cig-stat"><b>97</b><span>India-relevant careers</span></div>
+        <div class="cig-stat"><b>51</b><span>Government-job pathways</span></div>
+        <div class="cig-stat"><b>6</b><span>Personality fit themes</span></div>
+        <div class="cig-stat"><b>10/12</b><span>Class-wise route maps</span></div>
+      </div>
+
+      <!-- how it works -->
+      <div class="cig-steps">
+        <div class="cig-step"><i>1</i><div><strong>Take the 60-second Snapshot</strong><span>A few quick questions — free, no signup.</span></div></div>
+        <div class="cig-step"><i>2</i><div><strong>We build the student's profile</strong><span>Interests, strengths and fit, not random browsing.</span></div></div>
+        <div class="cig-step"><i>3</i><div><strong>Careers matched to them</strong><span>Search, compare and build a route from their real profile.</span></div></div>
+      </div>
+
+      <!-- government pathways teaser (the unique hook) -->
+      <div class="cig-gov">
+        <span class="cig-gov-k">Government routes included</span>
+        <div class="cig-chips"><span>UPSC</span><span>SSC</span><span>Railways</span><span>Banking</span><span>Defence</span><span>Teaching</span><span>Healthcare</span><span>PSU &amp; State</span></div>
+      </div>
+    </div>
   </section>
 
   <header class="ca-hero">
@@ -335,6 +390,24 @@ button,input,select{font:inherit}
     </section>
 
     <div class="ca-main">
+      <!-- locked glimpse: shows the real search depth, inert, with an Unlock overlay (preview-only) -->
+      <div class="cig-glimpse">
+        <div class="cig-glimpse-fade" aria-hidden="true">
+          <div class="cig-fsearch">
+            <div class="cig-ffield cig-fwide"><label>Search career or skill</label><div class="cig-finput">Try data scientist, nurse, electrician…</div></div>
+            <div class="cig-ffield"><label>Class</label><div class="cig-finput">Class 10</div></div>
+            <div class="cig-ffield"><label>Stream</label><div class="cig-finput">Science PCM</div></div>
+            <div class="cig-ffield"><label>Pathway</label><div class="cig-finput">Degree</div></div>
+            <div class="cig-ffield"><label>Entry Salary</label><div class="cig-finput">Rs 50k–1L/mo</div></div>
+          </div>
+        </div>
+        <div class="cig-glimpse-over">
+          <span class="cig-lock">🔒</span>
+          <strong>Full search unlocks after your free Snapshot</strong>
+          <span class="cig-glimpse-sub">Search all 97 careers by stream, class, salary, work style and qualifications.</span>
+          <a class="ca-btn gold" href="assessment.html#free-test">Take the free Snapshot</a>
+        </div>
+      </div>
       <aside class="ca-side">
         <section class="ca-panel" id="route-builder">
           <h2>Build My Route</h2>
@@ -370,6 +443,7 @@ button,input,select{font:inherit}
           </div>
           <button class="ca-btn ghost" type="button" id="resetBtn">Reset Filters</button>
         </div>
+        <p class="cig-legend">Salary ranges are indicative, shown with confidence levels — not promises.</p>
         <div class="ca-grid" id="careerGrid"></div>
         <div class="ca-empty" id="emptyState"><b>No exact match found</b>Try widening the stream, pathway or salary filter. A counsellor can also map a custom route if the career is emerging.</div>
       </section>
@@ -668,12 +742,22 @@ function govMatches(j){
   if(govState.stage && !j.stage.includes(govState.stage))return false;
   return true;
 }
+const DAY={
+  "ai-ml-engineer":"A day: clean a messy dataset, train a model, and explain its limits to non-technical teammates.",
+  "data-scientist":"A day: turn a business question into a chart, a number, and a clear recommendation.",
+  "software-developer":"A day: build a feature, fix a bug from yesterday, and review a teammate's code.",
+  "cybersecurity-analyst":"A day: watch alerts, investigate a suspicious login, and patch a weak spot before anyone exploits it.",
+  "cloud-engineer":"A day: keep services running, automate a deployment, and trim a cloud bill.",
+  "robotics-engineer":"A day: tweak a sensor, test a robot arm's motion, and debug why it missed by a centimetre."
+};
 function card(c){
   const selected=state.compare.includes(c.id);
   const locked=!isAtlasUnlocked();
+  const day=DAY[c.id];
   return `<article class="career-card" data-id="${esc(c.id)}">
     <div class="career-top"><div><h3 class="career-title">${esc(c.title)}</h3><div class="career-sector">${esc(c.sector)}</div></div><span class="confidence ${confidenceClass(c.salary.confidence)}">${esc(c.salary.confidence)}</span></div>
     <p class="career-work">${esc(c.work)}</p>
+    ${day?`<p class="career-day">${esc(day)}</p>`:""}
     <div class="salary-box"><small>Indicative India salary</small><b>Entry: ${esc(c.salary.entry)}<br>Mid: ${esc(c.salary.mid)}</b></div>
     <div class="chipline">${c.streams.slice(0,2).map(x=>`<span>${esc(x)}</span>`).join("")}${c.paths.slice(0,2).map(x=>`<span>${esc(x)}</span>`).join("")}</div>
     <div class="career-actions"><button type="button" data-detail="${esc(c.id)}">${locked?"Preview Card":"Open Card"}</button><button type="button" class="compare-btn ${selected?"selected":""}" data-compare="${esc(c.id)}">${selected?"Selected":"Compare"}</button></div>

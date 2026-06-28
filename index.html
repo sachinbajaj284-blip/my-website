@@ -1849,6 +1849,72 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 </section>
 
 
+<!-- ══════════ WHY WE'RE DIFFERENT (comparison) ══════════ -->
+<style>
+/* soft aurora so the liquid-glass tiles have something to refract */
+#why-different{background:radial-gradient(48% 58% at 14% 8%,rgba(10,110,110,.07),transparent 60%),radial-gradient(44% 54% at 90% 96%,rgba(201,147,58,.07),transparent 60%),#fff;position:relative;overflow:hidden;}
+.cmp-wrap{max-width:1040px;margin:0 auto;}
+.cmp-head{text-align:center;max-width:640px;margin:0 auto 40px;}
+.cmp-head .s-tag{justify-content:center;}
+.cmp-head .s-sub{margin:0 auto;}
+.bento{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:1fr;gap:16px;}
+.btile{display:flex;flex-direction:column;gap:7px;border-radius:var(--radius-lg);padding:22px 22px;border:var(--glass-border);background:var(--glass-bg);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);box-shadow:var(--elev-1),var(--glass-highlight);transition:transform .3s var(--ease),box-shadow .3s var(--ease);}
+.btile:hover{transform:translateY(-4px);box-shadow:var(--elev-2),var(--glass-highlight);}
+.btile-k{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:1.3px;color:var(--gold);}
+.btile .lume{font-size:.93rem;font-weight:700;color:var(--navy);line-height:1.34;}
+.btile .typ{font-size:.75rem;color:var(--mid);line-height:1.4;margin-top:auto;}
+.btile .typ s{opacity:.65;}
+.btile-hero{grid-column:span 2;grid-row:span 2;justify-content:space-between;gap:14px;color:#fff;position:relative;overflow:hidden;background:linear-gradient(150deg,#0D1B40,#13294f 58%,#0A6E6E);border:var(--glass-border-dark);box-shadow:var(--elev-3),inset 1px 1px 0 rgba(255,255,255,.14),inset -1px -1px 0 rgba(0,0,0,.28);}
+.btile-hero::after{content:"";position:absolute;top:0;left:0;right:0;height:42%;background:linear-gradient(180deg,rgba(255,255,255,.09),transparent);pointer-events:none;}
+.btile-hero>*{position:relative;z-index:1;}
+.btile-hero .btile-k{color:var(--gold2);}
+.btile-hero h3{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(1.32rem,2.2vw,1.74rem);line-height:1.18;letter-spacing:-.3px;}
+.btile-hero p{color:rgba(255,255,255,.8);font-size:.9rem;line-height:1.58;}
+.btile-foot{font-size:.71rem;font-weight:800;letter-spacing:.3px;color:rgba(255,255,255,.85);}
+.btile-foot .star{color:var(--gold2);}
+.cmp-note{text-align:center;font-size:.78rem;color:var(--mid);margin-top:18px;}
+@media(max-width:860px){.bento{grid-template-columns:repeat(2,1fr);grid-auto-rows:auto;}.btile-hero{grid-column:span 2;grid-row:span 1;}.btile .typ{margin-top:10px;}}
+@media(max-width:520px){.bento{grid-template-columns:1fr;}.btile-hero{grid-column:span 1;}}
+</style>
+<section id="why-different">
+  <div class="cmp-wrap">
+    <div class="cmp-head">
+      <span class="s-tag">Why Lume Live</span>
+      <h2 class="s-title">Guidance built differently</h2>
+      <p class="s-sub">Most platforms hand you a test and a PDF. We treat your child's wellbeing and career as one calm, honest decision.</p>
+    </div>
+    <div class="bento">
+      <article class="btile btile-hero">
+        <span class="btile-k">The Lume difference</span>
+        <h3>Your child's wellbeing and career, read as one calm decision.</h3>
+        <p>Guided one-to-one by a Counselling Psychologist — career and emotional state understood together, not in separate silos.</p>
+        <div class="btile-foot"><span class="star">★</span> Founder-led · Non-diagnostic · Bilingual</div>
+      </article>
+      <article class="btile">
+        <span class="btile-k">Method</span>
+        <p class="lume">Honest &mdash; a starting point for conversation, not a verdict.</p>
+        <p class="typ">vs <s>a test score and one &ldquo;destined&rdquo; career</s></p>
+      </article>
+      <article class="btile">
+        <span class="btile-k">Who guides you</span>
+        <p class="lume">The founder, one-to-one, every session.</p>
+        <p class="typ">vs <s>a rotating counsellor network</s></p>
+      </article>
+      <article class="btile">
+        <span class="btile-k">Pricing</span>
+        <p class="lume">Transparent &mdash; &#8377;49 intro, &#8377;999 full report.</p>
+        <p class="typ">vs <s>opaque &#8377;3,000&ndash;15,000 packages</s></p>
+      </article>
+      <article class="btile">
+        <span class="btile-k">Careers covered</span>
+        <p class="lume">Private roles plus government-job pathways.</p>
+        <p class="typ">vs <s>mostly private-sector roles</s></p>
+      </article>
+    </div>
+    <p class="cmp-note">Comparison reflects common patterns across the category, not any one provider.</p>
+  </div>
+</section>
+
 <!-- ══════════ SELF-ASSESSMENT SUITE (added) ══════════ -->
 <style>
 /* All classes prefixed sa- to avoid collision with existing styles */
@@ -3961,17 +4027,6 @@ function buildReportLegacy(){
   '<div class="sa-rbody"><div id="saRPanels">'+panels+'</div>'+
    '<p style="font-size:.74rem;color:var(--mid);margin-top:18px;">Report generated '+date+' for '+disp+'.</p>'+
    '<div class="sa-disclaim"><strong>Important note</strong>This combined report brings together four educational self-assessment questionnaires completed for personal reflection and as a starting point for a counselling discussion. It is not a psychological diagnosis, an aptitude test, or a selection or admissions decision tool. Results describe self-reported preferences on the day the assessment was completed and can change over time.</div>'+
-   '<div class="sa-rfoot">'+
-    '<h4 style="margin-top:0;">Save &amp; Share Your Report</h4>'+
-    '<p>Download your full report as a PDF, or send it straight to a Lume Live counsellor on WhatsApp to talk it through.</p>'+
-    '<label class="sa-check"><input type="checkbox" id="saShareConsent"><span>I consent to share my report with a Lume Live counsellor on WhatsApp.</span></label>'+
-    '<p class="sa-error" id="saShareError"></p>'+
-    '<div class="sa-actions">'+
-     '<button class="sa-btn gold" type="button" onclick="saSharePDF()">Send Report PDF on WhatsApp</button>'+
-     '<button class="sa-btn ghost" type="button" onclick="saDownloadPDF()">Download Report PDF</button>'+
-    '</div>'+
-    '<p class="sa-pay-note" style="margin-top:11px;">On a phone, this opens your share menu — just choose WhatsApp to send the PDF. On a computer, the PDF downloads and WhatsApp opens so you can attach it.</p>'+
-   '</div>'+
   '</div></div>';
 }
 
