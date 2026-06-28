@@ -10,7 +10,7 @@
   gtag('config', 'G-1CZ93P4P3V');
 </script>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' sdk.cashfree.com www.gstatic.com cdn.jsdelivr.net www.googletagmanager.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com; img-src 'self' data: blob: www.google-analytics.com www.googletagmanager.com; connect-src 'self' api.cashfree.com sandbox.cashfree.com *.googleapis.com *.firebaseio.com firebaseapp.com www.gstatic.com www.googletagmanager.com *.google-analytics.com *.analytics.google.com; frame-src *.cashfree.com; object-src 'none'; base-uri 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' *.cashfree.com www.gstatic.com cdn.jsdelivr.net www.googletagmanager.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; img-src 'self' data: blob: www.google-analytics.com www.googletagmanager.com *.cashfree.com; connect-src 'self' *.cashfree.com *.googleapis.com *.firebaseio.com *.firebaseapp.com www.gstatic.com www.googletagmanager.com *.google-analytics.com *.analytics.google.com; frame-src *.cashfree.com; object-src 'none'; base-uri 'self';">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Free Career Snapshot and Full Clarity Report | Lume Live</title>
 <meta name="description" content="Take the free 60-second Career Snapshot or begin the Lume Live Full Clarity Report on a dedicated assessment page designed for students and parents.">
@@ -3558,8 +3558,8 @@ window.saBegin=function(){
  if(!requireAssessmentSignin())return;
  if(!validateGate())return;
  var verified=applyVerifiedCashfreeAccess();
- if(!verified&&(!S.handoff||S.identity!==profileIdentity())){
-  err.textContent="Please complete the \u20B9999 payment with Cashfree before starting.";return;}
+ if(!verified){
+  err.textContent="Please complete the \u20B9999 Cashfree payment before starting. If you have just paid, wait a few seconds for it to verify and tap Begin again \u2014 or message us on WhatsApp to confirm your access.";return;}
  err.textContent="";S.paid=true;S.part=0;
  persistAssessmentProgress();
  show("saTest");
@@ -6955,7 +6955,7 @@ function setMode(el, mode){
   else setTimeout(showBanner, 900);
 })();
 </script>
-<script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+<script src="https://*.cashfree.com/js/v3/cashfree.js"></script>
 <script src="cashfree-payments.js"></script>
 </body>
 </html>
