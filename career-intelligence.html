@@ -160,9 +160,9 @@ button,input,select{font:inherit}
 .ca-content-head h2{font-family:Fraunces,serif;color:var(--navy);font-size:1.6rem}
 .ca-count{font-size:.8rem;color:var(--muted);font-weight:800}
 .ca-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.career-card{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 32px rgba(13,27,64,.055);padding:15px;display:flex;flex-direction:column;gap:12px;min-height:316px;transition:transform .22s,box-shadow .22s,border-color .22s;position:relative;overflow:hidden}
+.career-card{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:none;padding:18px;display:flex;flex-direction:column;gap:12px;min-height:316px;transition:transform .22s,box-shadow .22s,border-color .22s;position:relative;overflow:hidden}
 .career-card::before{content:'';position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,var(--teal),var(--gold));transform:scaleX(0);transform-origin:left;transition:.25s}
-.career-card:hover{transform:translateY(-3px);box-shadow:0 18px 44px rgba(13,27,64,.1);border-color:#CCE2DE}
+.career-card:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(13,27,64,.08);border-color:#CCE2DE}
 .career-card:hover::before{transform:scaleX(1)}
 .career-top{display:flex;justify-content:space-between;gap:10px;align-items:start}
 .career-title{font-weight:900;color:var(--navy);font-size:1rem;line-height:1.28}
@@ -177,7 +177,7 @@ button,input,select{font:inherit}
 .chipline span{font-size:.62rem;font-weight:800;color:var(--muted);background:#FAFCFB;border:1px solid var(--line);border-radius:999px;padding:5px 8px}
 .career-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto}
 .career-actions button,.career-actions a{border:0;border-radius:10px;min-height:40px;padding:9px;font-size:.74rem;font-weight:900;text-decoration:none;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.career-actions button{background:var(--navy);color:#fff}.career-actions a{background:#EEF7F5;color:var(--teal);border:1px solid #D7EAE6}
+.career-actions button{background:#fff;color:var(--navy);border:1px solid var(--navy);transition:background .18s,color .18s}.career-actions button:hover{background:var(--navy);color:#fff}.career-actions a{background:#EEF7F5;color:var(--teal);border:1px solid #D7EAE6}
 .compare-btn.selected{background:var(--gold);color:#07182F}
 .ca-empty{display:none;background:#fff;border:1px dashed #BFD5D0;border-radius:16px;padding:30px;text-align:center;color:var(--muted);line-height:1.6}
 .ca-empty b{display:block;color:var(--navy);font-family:Fraunces,serif;font-size:1.35rem;margin-bottom:6px}
