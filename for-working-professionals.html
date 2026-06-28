@@ -3658,8 +3658,8 @@ window.saBegin=function(){
  if(!requireAssessmentSignin())return;
  if(!validateGate())return;
  var verified=applyVerifiedCashfreeAccess();
- if(!verified&&(!S.handoff||S.identity!==profileIdentity())){
-  err.textContent="Please complete the payment with Cashfree before starting.";return;
+ if(!verified){
+  err.textContent="Please complete the ₹1,999 Cashfree payment before starting. If you have just paid, wait a few seconds for it to verify and tap Begin again — or message us on WhatsApp to confirm your access.";return;
  }
  S.paid=true;persistAssessmentProgress();
  show("saTest");renderPart();el("saTest").scrollIntoView({behavior:"smooth",block:"start"});

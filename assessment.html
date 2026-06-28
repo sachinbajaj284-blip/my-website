@@ -3558,8 +3558,8 @@ window.saBegin=function(){
  if(!requireAssessmentSignin())return;
  if(!validateGate())return;
  var verified=applyVerifiedCashfreeAccess();
- if(!verified&&(!S.handoff||S.identity!==profileIdentity())){
-  err.textContent="Please complete the \u20B9999 payment with Cashfree before starting.";return;}
+ if(!verified){
+  err.textContent="Please complete the \u20B9999 Cashfree payment before starting. If you have just paid, wait a few seconds for it to verify and tap Begin again \u2014 or message us on WhatsApp to confirm your access.";return;}
  err.textContent="";S.paid=true;S.part=0;
  persistAssessmentProgress();
  show("saTest");
