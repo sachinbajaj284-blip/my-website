@@ -323,6 +323,28 @@
   --nav-h:70px;
   --top-bars-h:calc(var(--safe-top) + var(--ann-h) + var(--countdown-h));
   --header-stack-h:calc(var(--top-bars-h) + var(--nav-h));
+  /* ── UNIFIED DESIGN SYSTEM (2026 polish) ── */
+  /* One liquid-glass material, applied consistently */
+  --glass-bg:linear-gradient(135deg,rgba(255,255,255,.74),rgba(247,252,251,.58));
+  --glass-bg-dark:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.05));
+  --glass-border:1px solid rgba(255,255,255,.62);
+  --glass-border-dark:1px solid rgba(255,255,255,.16);
+  --glass-blur:blur(22px) saturate(1.3);
+  --glass-highlight:inset 0 1px 0 rgba(255,255,255,.7);
+  /* One elevation scale — shadow grows with z-height */
+  --elev-1:0 2px 8px rgba(13,27,64,.06);
+  --elev-2:0 10px 28px rgba(13,27,64,.10);
+  --elev-3:0 22px 56px rgba(13,27,64,.16);
+  --elev-4:0 32px 80px rgba(13,27,64,.22);
+  /* One motion language */
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --dur-fast:.18s;--dur:.32s;--dur-slow:.5s;
+  --radius:20px;--radius-lg:28px;
+}
+/* Respect users who prefer reduced motion (accessibility + battery) */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important;}
+  .particle,.morph-blob,.mouse-glow{display:none!important;}
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
@@ -660,9 +682,17 @@ section{padding:80px 20px;}
 /* ── SERVICES ── */
 #services{background:var(--gray);position:relative;overflow:hidden;}
 #services::before{content:'';position:absolute;bottom:-100px;left:-100px;width:250px;height:250px;background:rgba(201,147,58,.04);border-radius:50%;animation:morphBlob 18s ease-in-out infinite;}
-.svc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:24px;margin-top:48px;position:relative;z-index:1;}
-.svc-card{background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 4px 20px rgba(10,110,110,.06);transition:all .4s cubic-bezier(.25,.46,.45,.94);cursor:pointer;position:relative;transform-style:preserve-3d;}
-.svc-card:hover{transform:translateY(-12px) rotateX(3deg);box-shadow:0 28px 60px rgba(10,110,110,.15);}
+/* Bento: weighted two-column grid, equal-height rows so tiles never look ragged.
+   The flagship (wider left column) reads as the primary offer. */
+.svc-grid{display:grid;grid-template-columns:1.32fr 1fr;grid-auto-rows:1fr;align-items:stretch;gap:22px;margin-top:48px;position:relative;z-index:1;}
+@media(max-width:880px){.svc-grid{grid-template-columns:repeat(auto-fit,minmax(248px,1fr));grid-auto-rows:auto;}}
+.svc-card{display:flex;flex-direction:column;background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:var(--elev-1);border:1px solid rgba(13,27,64,.05);transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease);cursor:pointer;position:relative;transform-style:preserve-3d;}
+.svc-card .svc-body{flex:1;display:flex;flex-direction:column;}
+.svc-card .svc-cta{margin-top:auto;}
+.svc-card:hover{transform:translateY(-10px) rotateX(2.5deg);box-shadow:var(--elev-3);}
+/* Flagship emphasis — a quiet "most chosen" ribbon, not brute size */
+.svc-card.hs{box-shadow:var(--elev-2),0 0 0 1px rgba(201,147,58,.35);}
+.svc-card.hs::after{content:"Most chosen";position:absolute;top:14px;right:-34px;transform:rotate(45deg);background:linear-gradient(135deg,#c9933a,#e8b84e);color:#102650;font-size:.62rem;font-weight:900;letter-spacing:.4px;text-transform:uppercase;padding:5px 40px;box-shadow:var(--elev-1);z-index:3;pointer-events:none;}
 .svc-head{padding:28px 24px 20px;position:relative;transition:all .3s;}
 .svc-card:hover .svc-head{transform:translateZ(20px);}
 .svc-card.hs .svc-head{background:linear-gradient(135deg,#EFF7F7,#DCF0F0);}
@@ -706,6 +736,7 @@ section{padding:80px 20px;}
 
 .chip{position:absolute;top:16px;right:16px;font-size:.6rem;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.5px;text-transform:uppercase;animation:fadeScale .5s ease both;}
 .chip-live{background:#dcfce7;color:#166534;}
+.svc-card.hs .chip{left:16px;right:auto;}
 .chip-soon{background:#fef9c3;color:#854d0e;}
 .btn-navy{background:var(--navy);color:#fff;padding:10px 18px;border-radius:8px;font-weight:700;font-size:.82rem;border:none;cursor:pointer;width:100%;transition:all .25s;position:relative;overflow:hidden;}
 .btn-navy:hover{background:var(--navy2);box-shadow:0 6px 18px rgba(13,27,64,.3);transform:translateY(-2px);}
@@ -1558,9 +1589,6 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
   <div class="hero-particles">
     <div class="particle" style="width:300px;height:300px;background:rgba(255,255,255,.04);top:-80px;right:-60px;--d:9s;"></div>
     <div class="particle" style="width:200px;height:200px;background:rgba(201,147,58,.06);bottom:-60px;left:-40px;--d:7s;--delay:2s;"></div>
-    <div class="particle" style="width:100px;height:100px;background:rgba(255,255,255,.04);top:40%;left:45%;--d:6s;--delay:1s;"></div>
-    <div class="particle" style="width:60px;height:60px;background:rgba(201,147,58,.08);top:20%;left:30%;--d:5s;--delay:3s;"></div>
-    <div class="particle" style="width:120px;height:120px;background:rgba(255,255,255,.03);top:60%;right:20%;--d:8s;--delay:4s;"></div>
   </div>
   <div class="hero-gold-bar"></div>
   <div class="hero-inner">
