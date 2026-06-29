@@ -134,20 +134,32 @@ module.exports = async function handler(req, res){
     }
   };
 
-  const response = await fetch(base + "/orders", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-client-id": clientId,
-      "x-client-secret": clientSecret,
-      "x-api-version": process.env.CASHFREE_API_VERSION || "2025-01-01",
-      "x-request-id": requestId,
-      "x-idempotency-key": requestId
-    },
-    body: JSON.stringify(cashfreePayload)
-  });
+  let response, data;
+  try{
+    const controller = new AbortController();
+    const timer = setTimeout(function(){ controller.abort(); }, 12000);
+    try{
+      response = await fetch(base + "/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-client-id": clientId,
+          "x-client-secret": clientSecret,
+          "x-api-version": process.env.CASHFREE_API_VERSION || "2025-01-01",
+          "x-request-id": requestId,
+          "x-idempotency-key": requestId
+        },
+        body: JSON.stringify(cashfreePayload),
+        signal: controller.signal
+      });
+    } finally {
+      clearTimeout(timer);
+    }
+  }catch(err){
+    return json(res, 502, { error: "Could not reach the payment gateway. Please try again in a moment, or pay by UPI." });
+  }
 
-  const data = await response.json().catch(() => ({}));
+  data = await response.json().catch(() => ({}));
   if(!response.ok){
     return json(res, response.status, { error: "Cashfree order creation failed.", details: data });
   }
