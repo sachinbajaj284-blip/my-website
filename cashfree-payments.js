@@ -350,6 +350,9 @@
         '<p class="lcf-p">' + esc(message || "Your payment could not be completed. Don't worry — no money is deducted for a failed attempt. You can try again or pay by UPI below.") + '</p>' +
       '</div>' +
       '<button class="lcf-btn gold" type="button" data-act="retry">Try payment again</button>' +
+      '<a class="lcf-btn wa" target="_blank" rel="noopener" href="' +
+        esc(waUrl("Hi Lume Live! I had trouble completing my payment" + (options.label ? " for " + options.label : "") + ". Please help me complete it.")) +
+        '">Message us on WhatsApp</a>' +
       '<div class="lcf-divider">or pay directly by UPI</div>' +
       upiPanelHtml(options) +
       '<button class="lcf-back" type="button">Cancel</button>';
@@ -399,7 +402,7 @@
       return Promise.resolve({ ok:false, reason:"preview" });
     }
     if(typeof window.Cashfree !== "function"){
-      renderFailure(options, "Cashfree is still loading. Please retry in a moment, or pay by UPI below.");
+      renderFailure(options, "The secure payment window couldn't load — this is usually a network or ad-blocker issue. Please retry in a moment, pay by UPI below, or message us on WhatsApp and we'll complete it with you.");
       return Promise.resolve({ ok:false, reason:"sdk-unavailable" });
     }
 
