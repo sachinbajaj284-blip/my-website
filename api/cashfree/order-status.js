@@ -77,16 +77,28 @@ module.exports = async function handler(req, res){
 
   const env = (process.env.CASHFREE_ENV || "production").toLowerCase();
   const base = env === "sandbox" ? "https://sandbox.cashfree.com/pg" : "https://api.cashfree.com/pg";
-  const response = await fetch(base + "/orders/" + encodeURIComponent(orderId), {
-    method: "GET",
-    headers: {
-      "x-client-id": clientId,
-      "x-client-secret": clientSecret,
-      "x-api-version": process.env.CASHFREE_API_VERSION || "2025-01-01"
+  let response, data;
+  try{
+    const controller = new AbortController();
+    const timer = setTimeout(function(){ controller.abort(); }, 12000);
+    try{
+      response = await fetch(base + "/orders/" + encodeURIComponent(orderId), {
+        method: "GET",
+        headers: {
+          "x-client-id": clientId,
+          "x-client-secret": clientSecret,
+          "x-api-version": process.env.CASHFREE_API_VERSION || "2025-01-01"
+        },
+        signal: controller.signal
+      });
+    } finally {
+      clearTimeout(timer);
     }
-  });
+  }catch(err){
+    return json(res, 502, { error: "Could not reach the payment gateway to verify status. Please retry in a moment." });
+  }
 
-  const data = await response.json().catch(() => ({}));
+  data = await response.json().catch(() => ({}));
   if(!response.ok){
     return json(res, response.status, { error: "Cashfree order status check failed.", details: data });
   }
