@@ -1,4 +1,4 @@
-# robots.txt - Lume Live
+# robots.txt - Lume Live (lumelive.co.in)
 User-agent: *
 Allow: /
 Disallow: /admin/
