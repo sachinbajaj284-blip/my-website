@@ -431,7 +431,7 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .nav-logo-text .lume{color:var(--navy);}
 .nav-logo-text .live{color:var(--gold);}
 .nav-logo-sub{font-size:.58rem;color:var(--mid);font-weight:600;letter-spacing:.7px;text-transform:uppercase;}
-.nav-links{display:flex;align-items:center;gap:clamp(8px,1vw,14px);list-style:none;min-width:0;}
+.nav-links{display:flex;align-items:center;gap:clamp(8px,0.9vw,12px);list-style:none;min-width:0;}
 .nav-links a{text-decoration:none;font-size:.78rem;font-weight:600;color:var(--mid);transition:.2s;position:relative;white-space:nowrap;}
 .nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--gold);transition:width .3s;border-radius:2px;}
 .nav-links a:hover{color:var(--teal);}
@@ -441,6 +441,17 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .nav-auth-link{border:1px solid rgba(10,110,110,.22);color:var(--teal)!important;border-radius:18px;padding:7px 12px;font-weight:700!important;}
 .nav-auth-link::after{display:none;}
 .nav-auth-link:hover{background:rgba(10,110,110,.06);border-color:var(--teal);}
+.nav-more{position:relative;}
+.nav-more-btn{display:flex;align-items:center;gap:4px;background:none;border:none;cursor:pointer;font-family:inherit;font-size:.78rem;font-weight:600;color:var(--mid);padding:0;white-space:nowrap;transition:.2s;}
+.nav-more-btn .caret{font-size:.6rem;transition:transform .25s;}
+.nav-more:hover .nav-more-btn,.nav-more.open .nav-more-btn{color:var(--teal);}
+.nav-more.open .nav-more-btn .caret{transform:rotate(180deg);}
+.nav-more-menu{position:absolute;top:calc(100% + 14px);right:0;min-width:215px;background:#fff;border:1px solid rgba(13,27,64,.08);border-radius:12px;box-shadow:0 14px 40px rgba(13,27,64,.16);list-style:none;padding:8px 0;opacity:0;visibility:hidden;transform:translateY(6px);transition:opacity .2s,transform .2s,visibility .2s;z-index:1001;}
+.nav-more-menu::before{content:'';position:absolute;top:-14px;left:0;right:0;height:14px;}
+.nav-more:hover .nav-more-menu,.nav-more.open .nav-more-menu,.nav-more:focus-within .nav-more-menu{opacity:1;visibility:visible;transform:translateY(0);}
+.nav-more-menu a{display:block;padding:9px 18px;font-size:.78rem;}
+.nav-more-menu a::after{display:none;}
+.nav-more-menu a:hover{background:rgba(10,110,110,.06);color:var(--teal);}
 .hamburger{display:none;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;width:44px;height:44px;padding:0;background:none;border:none;}
 .hamburger span{width:24px;height:2px;background:var(--navy);border-radius:2px;transition:.3s;display:block;}
 .hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}
@@ -1245,7 +1256,9 @@ body.js-ready .anim.scale{transform:scale(.9);}
   .nav-logo-sub{font-size:.48rem;}
   .nav-links{display:flex;gap:5px;align-items:center;min-width:0;}
   .nav-links a{font-size:.58rem;padding:6px 4px;white-space:nowrap;}
-  .nav-links li:nth-child(5),.nav-links li:nth-child(7),.nav-links li:nth-child(10),.nav-links li:nth-child(11),.nav-links li:nth-child(13),.nav-links li:nth-child(14){display:none;}
+  .nav-links li.nav-auth-item{display:none;}
+  .nav-more-btn{font-size:.58rem;padding:6px 4px;}
+  .nav-more-menu a{font-size:.72rem;}
   .nav-cta{padding:6px 9px!important;}
   .hamburger{display:none;}
 }
@@ -1568,20 +1581,25 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
       </div>
     </a>
     <ul class="nav-links">
-      <li><a href="#gallery">Sessions</a></li>
       <li><a href="#services">Services</a></li>
       <li><a href="assessment.html#free-test" style="color:#0A6E6E;font-weight:800;">Career Snapshot</a></li>
       <li><a href="career-intelligence.html">Career Intelligence</a></li>
-      <li><a href="assessment.html#self-assessments">Full Clarity Report</a></li>
       <li><a href="for-working-professionals.html">Professionals</a></li>
-      <li><a href="#emotional-wellbeing">Emotional Wellbeing</a></li>
       <li><a href="for-parents.html">For Parents</a></li>
       <li><a href="school-partnerships.html">Schools</a></li>
-      <li><a href="#faq">FAQ</a></li>
-      <li><a href="#testimonials">Reviews</a></li>
-      <li><a href="#questionnaire">Enquire</a></li>
-      <li><a href="#contact">Contact</a></li>
-      <li><a href="#" id="navAccountLink" class="nav-auth-link" onclick="openAuth('signin');return false;">Sign In / Sign Up</a></li>
+      <li class="nav-more" id="navMore">
+        <button type="button" class="nav-more-btn" aria-haspopup="true" aria-expanded="false" onclick="toggleNavMore(event)">More <span class="caret">▾</span></button>
+        <ul class="nav-more-menu">
+          <li><a href="#gallery">Sessions</a></li>
+          <li><a href="assessment.html#self-assessments">Full Clarity Report</a></li>
+          <li><a href="#emotional-wellbeing">Emotional Wellbeing</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#testimonials">Reviews</a></li>
+          <li><a href="#questionnaire">Enquire</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </li>
+      <li class="nav-auth-item"><a href="#" id="navAccountLink" class="nav-auth-link" onclick="openAuth('signin');return false;">Sign In / Sign Up</a></li>
       <li><a href="#" class="nav-cta" onclick="openModal('session');return false;" style="background:linear-gradient(135deg,#c9933a,#e8b84e);color:#0d1b40;font-weight:800;padding:8px 18px;border-radius:20px;box-shadow:0 4px 12px rgba(201,147,58,.3);transition:all .3s;">Counselling ₹49 <span style="font-size:.55rem;opacity:.7;text-decoration:line-through;margin-left:3px;">₹499</span></a></li>
     </ul>
     <button class="hamburger" id="ham" onclick="toggleMenu()" aria-label="Menu">
@@ -6252,6 +6270,23 @@ const counterObs=new IntersectionObserver(entries=>{
   });
 },{threshold:0.3});
 document.querySelectorAll('.hero-stats').forEach(el=>counterObs.observe(el));
+
+// ── NAV "MORE" DROPDOWN ──
+function toggleNavMore(e){
+  e.stopPropagation();
+  const m=document.getElementById('navMore');
+  const open=m.classList.toggle('open');
+  m.querySelector('.nav-more-btn').setAttribute('aria-expanded',open?'true':'false');
+}
+document.addEventListener('click',(e)=>{
+  const m=document.getElementById('navMore');
+  if(!m||!m.classList.contains('open'))return;
+  if(!m.contains(e.target)||e.target.closest('.nav-more-menu a')){
+    m.classList.remove('open');
+    m.querySelector('.nav-more-btn').setAttribute('aria-expanded','false');
+    m.querySelector('.nav-more-btn').blur();
+  }
+});
 
 // ── NAV SCROLL ──
 window.addEventListener('scroll',()=>{
