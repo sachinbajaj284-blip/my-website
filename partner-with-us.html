@@ -144,6 +144,11 @@ h2{font-size:clamp(1.7rem,3.6vw,2.5rem);color:var(--navy);font-weight:900;letter
 .showcase-list .rn{flex:none;width:30px;height:30px;border-radius:9px;background:linear-gradient(150deg,var(--navy),var(--navy2));color:var(--gold2);display:grid;place-items:center;font-weight:900;font-size:.85rem}
 .showcase-list b{color:var(--navy);display:block}
 .showcase-list p{color:var(--mid);font-size:.95rem}
+.dl{display:inline-flex;align-items:center;gap:13px;margin-top:26px;padding:13px 20px 13px 14px;border-radius:13px;border:1.5px solid var(--line);background:#fff;color:var(--navy);font-weight:800;font-size:.95rem;transition:border-color .2s,transform .18s,box-shadow .2s}
+.dl:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 14px 30px -16px rgba(13,27,64,.4)}
+.dl .dl-ic{flex:none;width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(150deg,var(--navy),var(--navy2));color:var(--gold2)}
+.dl .dl-ic svg{width:20px;height:20px}
+.dl small{display:block;font-size:.74rem;font-weight:700;color:var(--mid);margin-top:2px}
 
 /* ---------- COMMUNITY / GROWTH ---------- */
 .growth{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:960px;margin:auto}
@@ -377,6 +382,10 @@ h2{font-size:clamp(1.7rem,3.6vw,2.5rem);color:var(--navy);font-weight:900;letter
           <li><span class="rn">03</span><div><b>Learning style (VARK)</b><p>How the client absorbs information, so your recommendations actually stick.</p></div></li>
           <li><span class="rn">04</span><div><b>A ready-to-discuss narrative</b><p>Insights woven into plain language and next steps — your session starts at the conversation, not the data.</p></div></li>
         </ul>
+        <a class="dl" href="samples/Lume-Live-Sample-Report.pdf" target="_blank" rel="noopener" download>
+          <span class="dl-ic"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span>Download a full sample report<small>PDF · 11 pages · the real thing your client receives</small></span>
+        </a>
       </div>
     </div>
   </div>
