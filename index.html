@@ -3097,24 +3097,23 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
   }
 
   function ftGoFree(event){
+    const free = document.getElementById('free-test');
+    // Section is hidden on this page — let the link navigate to assessment.html instead
+    if(!free || !free.offsetParent) return;
     if(event) event.preventDefault();
     if(typeof closeMob === 'function') closeMob();
-    const free = document.getElementById('free-test');
-    if(free){
-      free.scrollIntoView({behavior:'smooth', block:'start'});
-      if(window.history && history.replaceState) history.replaceState(null, '', '#free-test');
-      else window.location.hash = 'free-test';
-    }
+    free.scrollIntoView({behavior:'smooth', block:'start'});
+    if(window.history && history.replaceState) history.replaceState(null, '', '#free-test');
+    else window.location.hash = 'free-test';
   }
 
   function ftGoPaid(event){
-    if(event) event.preventDefault();
     ftTrackUpsell();
     const paid = document.getElementById('self-assessments');
-    if(paid){
-      paid.scrollIntoView({behavior:'smooth', block:'start'});
-      if(window.history && history.replaceState) history.replaceState(null, '', '#self-assessments');
-    }
+    if(!paid || !paid.offsetParent) return;
+    if(event) event.preventDefault();
+    paid.scrollIntoView({behavior:'smooth', block:'start'});
+    if(window.history && history.replaceState) history.replaceState(null, '', '#self-assessments');
   }
 
   // Expose to window so inline onclicks work
