@@ -273,6 +273,44 @@ button,input,select{font:inherit}
 .gov-link-card b{display:block;color:var(--navy);font-size:.82rem;margin-bottom:5px}
 .gov-link-card span{display:block;color:var(--muted);font-size:.72rem;line-height:1.5;margin-bottom:8px}
 .gov-link-card a{color:var(--teal);font-size:.72rem;font-weight:900;text-decoration:none}
+/* ── v2: demand badge, save/shortlist, trust strip, related careers ── */
+.career-top{padding-right:42px}
+.career-badges{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:-4px}
+.demand{border-radius:999px;padding:5px 9px;font-size:.58rem;font-weight:900;text-transform:uppercase;letter-spacing:.04em;border:1px solid var(--line);white-space:nowrap}
+.demand.vh{background:#E7F6EE;color:#0f7a41;border-color:#C4E8D2}
+.demand.h{background:#EAF7EF;color:#1f9d5a;border-color:#CDEAD7}
+.demand.m{background:#EDF3FB;color:#37699e;border-color:#D2E1F1}
+.demand.l{background:#FBF1EA;color:#b0611f;border-color:#EFD7C4}
+.demand.v{background:#F3F1F8;color:#65559f;border-color:#DFD9EE}
+.career-save{position:absolute;top:13px;right:13px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer;z-index:3;transition:transform .18s,border-color .18s,background .18s,color .18s;font-size:1.12rem;line-height:1;color:#b7c4c2}
+.career-save:hover{border-color:var(--gold);color:var(--gold);transform:scale(1.08)}
+.career-save.saved{background:linear-gradient(135deg,var(--gold),var(--gold2));border-color:var(--gold);color:#fff;box-shadow:0 6px 16px rgba(201,147,58,.32)}
+.ca-tools{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.ca-shortlist-btn{display:none;align-items:center;gap:7px;border:1px solid var(--gold);background:linear-gradient(135deg,#FFF7E8,#FCEECD);color:#8a5a12;border-radius:999px;padding:10px 15px;font-size:.78rem;font-weight:900;cursor:pointer;min-height:44px;transition:transform .18s,box-shadow .18s}
+.ca-shortlist-btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(201,147,58,.2)}
+.ca-shortlist-btn b{color:#8a5a12}
+.ca-trust{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+.ca-trust-item{display:flex;align-items:flex-start;gap:11px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 6px 20px rgba(13,27,64,.04)}
+.ca-trust-item i{flex:none;width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-style:normal;background:#EEF7F5;color:var(--teal);border:1px solid #D7EAE6;font-weight:900;font-size:1.02rem}
+.ca-trust-item b{display:block;color:var(--navy);font-size:.83rem;margin-bottom:3px;line-height:1.25}
+.ca-trust-item span{display:block;color:var(--muted);font-size:.72rem;line-height:1.5}
+.related-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.related-chip{display:block;border:1px solid var(--line);border-radius:12px;background:#FBFEFD;padding:10px 12px;cursor:pointer;text-align:left;transition:border-color .18s,background .18s,transform .18s}
+.related-chip b{display:block;color:var(--navy);font-size:.82rem;line-height:1.25}
+.related-chip span{display:block;color:var(--muted);font-size:.66rem;margin-top:3px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.related-chip:hover{border-color:var(--teal);background:#F2FAF8;transform:translateY(-1px)}
+.shortlist-list{display:grid;gap:10px}
+.shortlist-row{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#FBFEFD}
+.shortlist-row .sr-main{cursor:pointer}
+.shortlist-row b{color:var(--navy);font-size:.9rem}
+.shortlist-row .sr-sub{display:block;color:var(--muted);font-size:.72rem;margin-top:2px}
+.shortlist-remove{flex:none;border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 11px;font-size:.72rem;font-weight:900;color:var(--red);cursor:pointer}
+.shortlist-remove:hover{background:#FFF0F0;border-color:#EBCACA}
+.shortlist-cta{margin-top:16px;display:grid;gap:8px}
+.shortlist-empty{color:var(--muted);font-size:.88rem;line-height:1.65;text-align:center;padding:26px 10px}
+.shortlist-empty b{display:block;color:var(--navy);font-family:Fraunces,serif;font-size:1.25rem;margin-bottom:6px}
+@media(max-width:900px){.ca-trust{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.ca-trust{grid-template-columns:1fr}.related-grid{grid-template-columns:1fr}}
 @keyframes caGrid{from{background-position:0 0,0 0,0 0}to{background-position:120% 0,44px 44px,44px 44px}}
 @keyframes caScan{0%,18%{transform:translateX(-100%)}62%,100%{transform:translateX(100%)}}
 @keyframes caFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
@@ -391,6 +429,13 @@ button,input,select{font:inherit}
       </div>
     </section>
 
+    <div class="ca-trust" aria-label="Why families trust this">
+      <div class="ca-trust-item"><i>✓</i><div><b>Built on official India data</b><span>NCO, NSDC, PLFS and the National Career Service — not guesswork.</span></div></div>
+      <div class="ca-trust-item"><i>♥</i><div><b>Reviewed by real counsellors</b><span>Every career, salary and route is checked by qualified guidance counsellors.</span></div></div>
+      <div class="ca-trust-item"><i>₹</i><div><b>Honest salary ranges</b><span>Conservative and marked with confidence — we never inflate numbers.</span></div></div>
+      <div class="ca-trust-item"><i>◎</i><div><b>Made for Indian families</b><span>Streams, exams, ITI, government jobs and parent notes in one place.</span></div></div>
+    </div>
+
     <div class="ca-main">
       <aside class="ca-side">
         <section class="ca-panel" id="route-builder">
@@ -425,9 +470,12 @@ button,input,select{font:inherit}
             <h2>Explore Careers</h2>
             <div class="ca-count" id="resultCount">Showing careers</div>
           </div>
-          <button class="ca-btn ghost" type="button" id="resetBtn">Reset Filters</button>
+          <div class="ca-tools">
+            <button class="ca-shortlist-btn" type="button" id="shortlistBtn">♥ My Shortlist <b>(0)</b></button>
+            <button class="ca-btn ghost" type="button" id="resetBtn">Reset Filters</button>
+          </div>
         </div>
-        <p class="cig-legend">Salary ranges are indicative, shown with confidence levels — not promises.</p>
+        <p class="cig-legend">Tip: tap the ♥ on any career to shortlist it, then discuss the list with a counsellor. Salary ranges are indicative — not promises.</p>
         <div class="ca-grid" id="careerGrid"></div>
         <div class="ca-empty" id="emptyState"><b>No exact match found</b>Try widening the stream, pathway or salary filter. A counsellor can also map a custom route if the career is emerging.</div>
       </section>
@@ -482,6 +530,13 @@ button,input,select{font:inherit}
     <div class="ca-modal-card">
       <div class="ca-modal-head"><h3 id="compareTitle">Career Comparison</h3><button class="ca-x" type="button" data-close="compareModal" aria-label="Close">x</button></div>
       <div class="ca-modal-body" id="compareBody"></div>
+    </div>
+  </div>
+
+  <div class="ca-modal" id="shortlistModal" role="dialog" aria-modal="true" aria-labelledby="shortlistTitle">
+    <div class="ca-modal-card" style="max-width:640px;">
+      <div class="ca-modal-head"><h3 id="shortlistTitle">My Child's Shortlist</h3><button class="ca-x" type="button" data-close="shortlistModal" aria-label="Close">x</button></div>
+      <div class="ca-modal-body" id="shortlistBody"></div>
     </div>
   </div>
 </div>
@@ -732,14 +787,84 @@ const DAY={
   "software-developer":"A day: build a feature, fix a bug from yesterday, and review a teammate's code.",
   "cybersecurity-analyst":"A day: watch alerts, investigate a suspicious login, and patch a weak spot before anyone exploits it.",
   "cloud-engineer":"A day: keep services running, automate a deployment, and trim a cloud bill.",
-  "robotics-engineer":"A day: tweak a sensor, test a robot arm's motion, and debug why it missed by a centimetre."
+  "robotics-engineer":"A day: tweak a sensor, test a robot arm's motion, and debug why it missed by a centimetre.",
+  "doctor-mbbs":"A day: examine patients, decide the right tests and treatment, and explain a diagnosis to a worried family.",
+  "chartered-accountant":"A day: check a company's accounts, file a tax return, and flag a compliance risk before it becomes a problem.",
+  "civil-services":"A day: chair a review meeting, clear public grievances, and push a welfare scheme forward on the ground.",
+  "teacher-educator":"A day: teach one concept three different ways until it clicks, mark work, and mentor a struggling student.",
+  "electrician":"A day: read a wiring plan, fix a faulty circuit safely, and quote a new installation to a customer.",
+  "graphic-designer":"A day: design a poster and social creatives, take client feedback, and hand final files to the team.",
+  "nurse":"A day: monitor patients, give medication on schedule, and keep a nervous patient calm and informed.",
+  "defence-officer":"A day: lead morning training, plan a task with your team, and take responsibility for their readiness.",
+  "agri-tech-professional":"A day: test soil, advise farmers on the right crop and inputs, and track results across the season.",
+  "lawyer":"A day: research case law, draft an agreement, and argue a matter or advise a client on their options."
 };
+function demandInfo(f){
+  const s=String(f||"").toLowerCase();
+  if(s.includes("very high"))return{t:"Very high demand",k:"vh"};
+  if(s.includes("high"))return{t:"High demand",k:"h"};
+  if(s.includes("medium"))return{t:"Steady demand",k:"m"};
+  if(s.includes("low"))return{t:"Selective / niche",k:"l"};
+  return{t:"Demand varies",k:"v"};
+}
+function themeArr(t){return Array.isArray(t)?t:String(t||"").split("");}
+function relatedCareers(c){
+  const ct=themeArr(c.themes);
+  return CAREERS.filter(x=>x.id!==c.id)
+    .map(x=>({x,score:(x.sector===c.sector?3:0)+themeArr(x.themes).filter(t=>ct.includes(t)).length+(x.streams.some(s=>c.streams.includes(s))?1:0)}))
+    .filter(o=>o.score>0)
+    .sort((a,b)=>b.score-a.score)
+    .slice(0,4).map(o=>o.x);
+}
+const SHORTLIST_KEY="lumeCareerShortlist";
+let shortlist=[];
+try{shortlist=JSON.parse(localStorage.getItem(SHORTLIST_KEY)||"[]")||[];}catch(e){shortlist=[];}
+if(!Array.isArray(shortlist))shortlist=[];
+function saveShortlist(){try{localStorage.setItem(SHORTLIST_KEY,JSON.stringify(shortlist));}catch(e){}}
+function toggleSave(id){
+  if(!CAREERS.some(c=>c.id===id))return;
+  if(shortlist.includes(id))shortlist=shortlist.filter(x=>x!==id);
+  else shortlist.push(id);
+  saveShortlist();
+  render();
+  renderShortlistBtn();
+  if(document.getElementById("shortlistModal").classList.contains("open"))renderShortlist();
+}
+function renderShortlistBtn(){
+  const btn=document.getElementById("shortlistBtn");if(!btn)return;
+  const n=shortlist.length;
+  btn.style.display=n?"inline-flex":"none";
+  btn.innerHTML=`♥ My Shortlist <b>(${n})</b>`;
+}
+function shortlistWa(){
+  const names=shortlist.map(id=>CAREERS.find(c=>c.id===id)).filter(Boolean).map(c=>c.title);
+  const text=`👋 Hi Lume Live!\n\nWe've shortlisted these careers for my child on Career Intelligence:\n${names.map(n=>"• "+n).join("\n")}\n\n🙏 Please help us understand which fits best and the next steps.`;
+  return "https://wa.me/917015671280?text="+encodeURIComponent(text);
+}
+function renderShortlist(){
+  const items=shortlist.map(id=>CAREERS.find(c=>c.id===id)).filter(Boolean);
+  const body=document.getElementById("shortlistBody");
+  if(!items.length){
+    body.innerHTML=`<div class="shortlist-empty"><b>No careers saved yet</b>Tap the ♥ on any career card to add it here. Build a shortlist for your child, then talk it through with a counsellor.</div>`;
+    return;
+  }
+  body.innerHTML=`<div class="shortlist-list">${items.map(c=>`<div class="shortlist-row"><div class="sr-main" data-detail="${esc(c.id)}"><b>${esc(c.title)}</b><span class="sr-sub">${esc(c.sector)} · Entry ${esc(c.salary.entry)}</span></div><button class="shortlist-remove" type="button" data-unsave="${esc(c.id)}">Remove</button></div>`).join("")}</div>
+    <div class="shortlist-cta">
+      <a class="ca-btn gold" href="${shortlistWa()}" target="_blank" rel="noopener">Discuss these ${items.length} with a counsellor (free)</a>
+      <a class="ca-btn ghost" href="assessment.html#free-test">Match this shortlist to my child — free 60-sec test</a>
+    </div>`;
+}
+function openShortlist(){renderShortlist();openModal("shortlistModal");}
 function card(c){
   const selected=state.compare.includes(c.id);
   const locked=!isAtlasUnlocked();
   const day=DAY[c.id];
+  const saved=shortlist.includes(c.id);
+  const dm=demandInfo(c.future);
   return `<article class="career-card" data-id="${esc(c.id)}">
-    <div class="career-top"><div><h3 class="career-title">${esc(c.title)}</h3><div class="career-sector">${esc(c.sector)}</div></div><span class="confidence ${confidenceClass(c.salary.confidence)}">${esc(c.salary.confidence)}</span></div>
+    <button type="button" class="career-save ${saved?"saved":""}" data-save="${esc(c.id)}" aria-pressed="${saved}" aria-label="${saved?"Remove "+esc(c.title)+" from shortlist":"Save "+esc(c.title)+" to shortlist"}" title="${saved?"Saved to shortlist":"Save to shortlist"}">${saved?"♥":"♡"}</button>
+    <div class="career-top"><div><h3 class="career-title">${esc(c.title)}</h3><div class="career-sector">${esc(c.sector)}</div></div></div>
+    <div class="career-badges"><span class="demand ${dm.k}">${dm.t}</span><span class="confidence ${confidenceClass(c.salary.confidence)}">${esc(c.salary.confidence)} confidence</span></div>
     <p class="career-work">${esc(c.work)}</p>
     ${day?`<p class="career-day">${esc(day)}</p>`:""}
     <div class="salary-box"><small>Indicative India salary</small><b>Entry: ${esc(c.salary.entry)}<br>Mid: ${esc(c.salary.mid)}</b></div>
@@ -785,6 +910,9 @@ function bindCareerActions(){
   document.querySelectorAll("#careerGrid [data-compare]").forEach(btn=>{
     bindActivate(btn,()=>toggleCompare(btn.dataset.compare));
   });
+  document.querySelectorAll("#careerGrid [data-save]").forEach(btn=>{
+    bindActivate(btn,()=>toggleSave(btn.dataset.save));
+  });
 }
 function bindGovActions(){
   document.querySelectorAll("#govGrid [data-gov-detail]").forEach(btn=>{
@@ -814,6 +942,7 @@ function render(){
   document.getElementById("statCount").textContent=CAREERS.length;
   bindCareerActions();
   renderCompare();
+  renderShortlistBtn();
 }
 function renderGov(){
   const list=GOV_JOBS.filter(govMatches);
@@ -857,7 +986,8 @@ function openDetail(id){
     <div class="detail-section"><h4>Skills To Build</h4><ul>${c.skills.map(s=>`<li>${esc(s)}</li>`).join("")}</ul></div>
     <div class="detail-section"><h4>Future Scope And AI Impact</h4><p><strong>Scope:</strong> ${esc(c.future)}<br><strong>AI impact:</strong> ${esc(c.ai)}</p></div>
     <div class="detail-section"><h4>Risks And Parent Note</h4><p><strong>Risks:</strong> ${esc(c.risks)}</p><p style="margin-top:8px;"><strong>Parent note:</strong> ${esc(c.parentNote)}</p></div>
-    <div class="detail-section"><h4>Next Step</h4><p>Your assessment unlocked this career intelligence card. The detailed Lume roadmap can map class, stream, subject choices, colleges, cost, backup routes and first 90-day action plan for Rs 1499.</p><div style="display:grid;gap:8px;margin-top:12px;"><button class="ca-btn gold" type="button" data-roadmap-pay="${esc(c.id)}">Pay Securely With Cashfree - Rs 1499</button><a class="ca-btn ghost" href="${wa(c)}" target="_blank" rel="noopener">Backup: WhatsApp Roadmap Support</a><a class="ca-btn ghost" href="assessment.html#free-test">Retake Career Snapshot</a></div></div>
+    ${(()=>{const rel=relatedCareers(c);return rel.length?`<div class="detail-section"><h4>Careers Like This</h4><div class="related-grid">${rel.map(r=>`<button type="button" class="related-chip" data-detail="${esc(r.id)}"><b>${esc(r.title)}</b><span>${esc(r.sector)}</span></button>`).join("")}</div></div>`:"";})()}
+    <div class="detail-section"><h4>Next Step</h4><p>The detailed Lume roadmap maps class, stream, subject choices, colleges, cost, backup routes and a first 90-day action plan for your child — reviewed by a counsellor.</p><div style="display:grid;gap:8px;margin-top:12px;"><button class="ca-btn ghost" type="button" data-save="${esc(c.id)}">${shortlist.includes(c.id)?"♥ Saved to shortlist":"♡ Add to shortlist"}</button><button class="ca-btn gold" type="button" data-roadmap-pay="${esc(c.id)}">Get the personal roadmap · ₹1,499</button><a class="ca-btn ghost" href="${wa(c)}" target="_blank" rel="noopener">Ask on WhatsApp first</a></div></div>
   </div></div>`;
   openModal("detailModal");
 }
@@ -926,13 +1056,16 @@ document.addEventListener("change",e=>{
   renderGov();
 });
 document.addEventListener("click",e=>{
-  const detail=e.target.closest("[data-detail]"); if(detail){openDetail(detail.dataset.detail);return;}
+  const save=e.target.closest("[data-save]"); if(save){const inDetail=save.closest("#detailModal");toggleSave(save.dataset.save);if(inDetail)openDetail(save.dataset.save);return;}
+  const unsave=e.target.closest("[data-unsave]"); if(unsave){toggleSave(unsave.dataset.unsave);return;}
+  const detail=e.target.closest("[data-detail]"); if(detail){if(detail.closest("#shortlistModal"))closeModal("shortlistModal");openDetail(detail.dataset.detail);return;}
   const govDetail=e.target.closest("[data-gov-detail]"); if(govDetail){openGovDetail(govDetail.dataset.govDetail);return;}
   const cmp=e.target.closest("[data-compare]"); if(cmp){toggleCompare(cmp.dataset.compare); return;}
   const roadmap=e.target.closest("[data-roadmap-pay]"); if(roadmap){startCareerRoadmapPayment(e, roadmap.dataset.roadmapPay); return;}
   const close=e.target.closest("[data-close]"); if(close){closeModal(close.dataset.close);return;}
   if(e.target.classList.contains("ca-modal"))closeModal(e.target.id);
 });
+document.getElementById("shortlistBtn").addEventListener("click",openShortlist);
 document.getElementById("compareOpen").addEventListener("click",openCompare);
 document.getElementById("compareClear").addEventListener("click",()=>{state.compare=[];render();});
 document.getElementById("resetBtn").addEventListener("click",()=>{state.query=state.class=state.stream=state.path=state.salary=state.themeParam="";["q","classFilter","streamFilter","pathFilter","salaryFilter"].forEach(id=>document.getElementById(id).value="");render();});
