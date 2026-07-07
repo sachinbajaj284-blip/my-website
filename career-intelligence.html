@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google Analytics (same property as the rest of lumelive.co.in) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1CZ93P4P3V"></script>
+<script>
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js',new Date());
+  gtag('config','G-1CZ93P4P3V');
+</script>
 <title>Lume Career Intelligence India | Stream Selection, Careers & Government Jobs</title>
 <meta name="description" content="Lume Career Intelligence India is an assessment-linked career intelligence experience for Indian students and parents, with careers, stream selection routes, salary ranges, qualifications, exams, government jobs, AI impact and future scope.">
 <meta name="keywords" content="career intelligence India, career intelligence platform India, career assessment India, stream selection guidance India, career options after class 10, career options after class 12, government jobs India eligibility salary, Indian careers salary, salary after degree India, ITI careers India, diploma careers India, SSC UPSC IBPS RRB jobs">
@@ -822,6 +830,7 @@ govJob("municipal-local-body","Municipal Corporation / Local Body Jobs","State G
 const state={query:"",class:"",stream:"",path:"",salary:"",compare:[],themeParam:""};
 const govState={query:"",category:"",qual:"",stage:""};
 const els={grid:document.getElementById("careerGrid"),count:document.getElementById("resultCount"),empty:document.getElementById("emptyState"),compareBar:document.getElementById("compareBar"),compareList:document.getElementById("compareList")};
+function track(name,params){try{if(typeof window.gtag==="function")window.gtag("event",name,params||{});}catch(e){}}
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
 function parseEntry(s){const m=String(s).match(/Rs\s*([\d.]+)\s*k/i);return m?Math.round(Number(m[1])*1000):0;}
 function confidenceClass(c){return String(c).toLowerCase().replace(/\s+/g,"-");}
@@ -923,10 +932,11 @@ function careerPrintHtml(c){
   <div class="row"><div class="k">Parent note</div>${esc(c.parentNote)}</div>
   <div class="ft">Salary ranges are indicative, not promises. Prepared with Lume Live Career Intelligence · +91 7015671280 · hello@lumelive.co.in</div>`;
 }
-function printCareer(id){const c=CAREERS.find(x=>x.id===id);if(!c)return;printDoc("Career plan · "+c.title,careerPrintHtml(c));}
+function printCareer(id){const c=CAREERS.find(x=>x.id===id);if(!c)return;track("ci_plan_download",{type:"career",career:id});printDoc("Career plan · "+c.title,careerPrintHtml(c));}
 function printShortlist(){
   const items=shortlist.map(id=>findItem(id)).filter(Boolean);
   if(!items.length)return;
+  track("ci_plan_download",{type:"shortlist",count:items.length});
   const rows=items.map(o=>{
     if(o.sector){return `<div class="item"><h3>${esc(o.title)}</h3><div class="sec">${esc(o.sector)} · ${esc(demandInfo(o.future).t)}</div><div class="row">Entry ${esc(o.salary.entry)} · Mid ${esc(o.salary.mid)}</div><div class="row"><div class="k">Route in</div>${esc(o.qualifications)}${o.exams?(" · "+esc(o.exams)):""}</div></div>`;}
     return `<div class="item"><h3>${esc(o.title)}</h3><div class="sec">Government job · ${esc(o.category)}</div><div class="row"><div class="k">Exam</div>${esc(o.exam)}</div><div class="row"><div class="k">Qualification</div>${esc(o.qual.join(", "))}</div><div class="row">${esc(o.salary)}</div></div>`;
@@ -940,8 +950,8 @@ if(!Array.isArray(shortlist))shortlist=[];
 function saveShortlist(){try{localStorage.setItem(SHORTLIST_KEY,JSON.stringify(shortlist));}catch(e){}}
 function toggleSave(id){
   if(!findItem(id))return;
-  if(shortlist.includes(id))shortlist=shortlist.filter(x=>x!==id);
-  else shortlist.push(id);
+  if(shortlist.includes(id)){shortlist=shortlist.filter(x=>x!==id);track("ci_shortlist_remove",{item_id:id});}
+  else {shortlist.push(id);track("ci_shortlist_add",{item_id:id,count:shortlist.length});}
   saveShortlist();
   render();
   renderGov();
@@ -1103,6 +1113,7 @@ function renderCompare(){
 }
 function openDetail(id){
   const c=CAREERS.find(x=>x.id===id); if(!c)return;
+  track("ci_career_open",{career:id,locked:!isAtlasUnlocked()});
   document.getElementById("detailTitle").textContent=c.title;
   if(!isAtlasUnlocked()){
     document.getElementById("detailBody").innerHTML=`<div class="detail-grid"><div>
@@ -1131,6 +1142,7 @@ function openDetail(id){
 }
 function openGovDetail(id){
   const j=GOV_JOBS.find(x=>x.id===id); if(!j)return;
+  track("ci_govjob_open",{job:id});
   document.getElementById("detailTitle").textContent=j.title;
   document.getElementById("detailBody").innerHTML=`<div class="detail-grid"><div>
     <div class="detail-section"><h4>Exam / Recruitment Route</h4><p>${esc(j.exam)}</p></div>
@@ -1245,6 +1257,7 @@ function scrollToHashTarget(){
 }
 function startCareerRoadmapPayment(e, careerId){
   if(e)e.preventDefault();
+  track("ci_roadmap_click",{career:String(careerId||"general")});
   const item=CAREERS.find(c=>c.id===careerId);
   const label=item ? "Career Intelligence Detailed Roadmap - "+item.title : "Career Intelligence Detailed Roadmap";
   const fallback=function(){
@@ -1261,9 +1274,17 @@ function startCareerRoadmapPayment(e, careerId){
     onFallback:fallback
   });
 }
+// ── funnel tracking on outbound conversion links (test + WhatsApp) ──
+document.addEventListener("click",e=>{
+  const a=e.target.closest("a[href]");if(!a)return;
+  const href=a.getAttribute("href")||"";
+  if(href.includes("assessment.html"))track("ci_test_cta_click",{location:a.closest("#shortlistModal")?"shortlist":(a.closest(".ca-modal")?"career_modal":"page")});
+  else if(href.includes("wa.me"))track("ci_whatsapp_click",{location:a.closest("#shortlistModal")?"shortlist":(a.closest(".ca-modal")?"career_modal":"page")});
+},true);
 window.addEventListener("hashchange",()=>[40,220,520].forEach(t=>setTimeout(scrollToHashTarget,t)));
 const atlasUnlocked=initAtlasAccess();
 initFromUrl(); renderSources(); renderGovLinks(); render(); renderGov();
+track("ci_page_view",{state:atlasUnlocked?"unlocked":"preview",personalised:childThemes().length>0});
 if(atlasUnlocked){[80,320,760].forEach(t=>setTimeout(scrollToHashTarget,t));}
 </script>
 <footer style="padding:28px 20px;text-align:center;background:#08142F;color:rgba(255,255,255,.72);font:500 .82rem Montserrat,Arial,sans-serif;line-height:1.8">
