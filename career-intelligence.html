@@ -153,7 +153,7 @@ button,input,select{font:inherit}
 .ca-data-strip span:nth-child(2){animation-delay:.35s}.ca-data-strip span:nth-child(3){animation-delay:.7s}.ca-data-strip span:nth-child(4){animation-delay:1.05s}
 .ca-shell{max-width:1240px;margin:0 auto;padding:28px 18px 80px}
 .ca-search-card{margin-top:-24px;position:relative;z-index:3;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px}
-.ca-search-grid{display:grid;grid-template-columns:minmax(220px,1.5fr) repeat(4,minmax(135px,1fr));gap:10px}
+.ca-search-grid{display:grid;grid-template-columns:minmax(220px,1.6fr) repeat(3,minmax(140px,1fr));gap:10px}
 .ca-field label{display:block;font-size:.64rem;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
 .ca-field input,.ca-field select{width:100%;min-height:44px;border:1px solid var(--line);border-radius:10px;padding:10px 11px;background:#FBFEFD;color:var(--ink);font-size:.84rem;font-weight:700;outline:none}
 .ca-field input:focus,.ca-field select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(10,110,110,.1)}
@@ -311,11 +311,54 @@ button,input,select{font:inherit}
 .shortlist-empty b{display:block;color:var(--navy);font-family:Fraunces,serif;font-size:1.25rem;margin-bottom:6px}
 @media(max-width:900px){.ca-trust{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:520px){.ca-trust{grid-template-columns:1fr}.related-grid{grid-template-columns:1fr}}
+/* ── v3: fit ranking, roadmap timeline, social proof, gov save ── */
+.fit{border-radius:999px;padding:5px 9px;font-size:.58rem;font-weight:900;text-transform:uppercase;letter-spacing:.04em;border:1px solid transparent}
+.fit.strong{background:linear-gradient(135deg,#0A6E6E,#0E8C8C);color:#fff}
+.fit.good{background:#EAF7EF;color:#1f9d5a;border-color:#CDEAD7}
+.personal-banner{display:none;align-items:center;gap:12px;flex-wrap:wrap;background:linear-gradient(120deg,#07182F,#0D1B40);color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px 16px;margin-bottom:14px;box-shadow:var(--elev-2)}
+.personal-banner.show{display:flex}
+.personal-banner .pb-ic{width:38px;height:38px;border-radius:11px;flex:none;display:grid;place-items:center;background:rgba(232,185,90,.16);border:1px solid rgba(232,185,90,.3);color:#F8D27A;font-size:1.05rem}
+.personal-banner b{display:block;font-size:.92rem}
+.personal-banner .pb-txt span{display:block;font-size:.76rem;color:rgba(255,255,255,.72);margin-top:2px}
+.personal-banner .pb-clear{margin-left:auto;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:999px;padding:8px 13px;font-size:.72rem;font-weight:800;cursor:pointer}
+.roadmap{display:grid;gap:0;margin-top:4px}
+.rm-step{position:relative;padding:0 0 16px 26px;border-left:2px solid #DCEAE6}
+.rm-step:last-child{border-left-color:transparent;padding-bottom:0}
+.rm-step::before{content:'';position:absolute;left:-7px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 3px #E6F3F0}
+.rm-step:last-child::before{background:var(--gold);box-shadow:0 0 0 3px #F7ECD5}
+.rm-when{font-size:.62rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--teal)}
+.rm-step:last-child .rm-when{color:#b07d1e}
+.rm-what{display:block;color:var(--navy);font-weight:800;font-size:.86rem;margin:2px 0 3px}
+.rm-desc{display:block;color:var(--muted);font-size:.78rem;line-height:1.55}
+.ca-proof{max-width:1240px;margin:26px auto 0;padding:0 18px}
+.ca-proof-card{background:linear-gradient(135deg,#fff,#F7FBFA);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:22px;position:relative;overflow:hidden}
+.ca-proof-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--navy),var(--teal),var(--gold))}
+.ca-proof-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.ca-proof-head h2{font-family:Fraunces,serif;color:var(--navy);font-size:clamp(1.4rem,3vw,2rem)}
+.ca-proof-sum{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.ca-proof-score{display:flex;align-items:center;gap:9px}
+.ca-proof-score b{font-family:Fraunces,serif;font-size:1.9rem;color:var(--navy);line-height:1}
+.ca-proof-stars{color:var(--gold);font-size:1rem;letter-spacing:1px}
+.ca-proof-score .pss span{font-size:.66rem;color:var(--muted);font-weight:800;display:block;line-height:1.3}
+.ca-proof-pill{background:#EEF7F5;border:1px solid #D7EAE6;border-radius:12px;padding:8px 13px;text-align:center}
+.ca-proof-pill b{display:block;color:var(--navy);font-family:Fraunces,serif;font-size:1.15rem;line-height:1}
+.ca-proof-pill span{display:block;color:var(--muted);font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
+.ca-proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ca-quote{border:1px solid var(--line);border-radius:14px;background:#fff;padding:15px}
+.ca-quote .qs{color:var(--gold);font-size:.9rem;letter-spacing:1px;margin-bottom:6px}
+.ca-quote p{color:var(--ink);font-size:.81rem;line-height:1.6;margin-bottom:12px}
+.ca-quote .qf{display:flex;align-items:center;gap:10px}
+.ca-quote .qa{width:36px;height:36px;border-radius:50%;flex:none;display:grid;place-items:center;background:linear-gradient(135deg,var(--navy),var(--teal));color:#fff;font-size:.7rem;font-weight:900}
+.ca-quote .qn{color:var(--navy);font-size:.79rem;font-weight:900}
+.ca-quote .qr{color:var(--muted);font-size:.67rem}
+.ca-proof-verify{margin-top:14px;font-size:.74rem;color:var(--muted);text-align:center}
+.gov-top{padding-right:42px}
+@media(max-width:820px){.ca-proof-grid{grid-template-columns:1fr}}
 @keyframes caGrid{from{background-position:0 0,0 0,0 0}to{background-position:120% 0,44px 44px,44px 44px}}
 @keyframes caScan{0%,18%{transform:translateX(-100%)}62%,100%{transform:translateX(100%)}}
 @keyframes caFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 @media(max-width:1080px){.ca-search-grid{grid-template-columns:1fr 1fr 1fr}.ca-main{grid-template-columns:1fr}.ca-side{position:static;grid-template-columns:1fr 1fr}.ca-grid,.gov-grid{grid-template-columns:repeat(2,1fr)}.source-cards,.gov-links{grid-template-columns:repeat(2,1fr)}.gov-filters{grid-template-columns:1fr 1fr}}
-@media(max-width:760px){.ca-nav-inner{align-items:center}.ca-logo-mark{width:40px;height:40px}.ca-logo b{font-size:.86rem}.ca-logo span{font-size:.5rem;letter-spacing:.05em}.ca-nav-links{gap:6px}.ca-nav-links a{font-size:.7rem;padding:8px 9px}.ca-gate-inner,.ca-hero-inner{grid-template-columns:1fr;padding:44px 14px 36px}.ca-search-card{margin-top:0;border-radius:0;border-left:0;border-right:0}.ca-search-grid,.ca-side,.ca-grid,.detail-grid,.source-cards,.gov-grid,.gov-filters,.gov-links{grid-template-columns:1fr}.ca-data-strip{grid-template-columns:repeat(2,1fr)}.career-actions,.gov-actions{grid-template-columns:1fr}.ca-compare-bar{left:10px;right:10px;align-items:flex-start;flex-direction:column}.ca-btn{width:100%}.ca-content-head,.gov-head{align-items:flex-start;grid-template-columns:1fr;flex-direction:column}.gov-section{border-radius:16px;padding:16px}}
+@media(max-width:760px){.ca-nav-inner{align-items:center;gap:8px}.ca-logo-mark{width:40px;height:40px}.ca-logo b{font-size:.86rem}.ca-logo span{font-size:.5rem;letter-spacing:.05em}.ca-nav-links{gap:6px;flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;min-width:0}.ca-nav-links::-webkit-scrollbar{display:none}.ca-nav-links a{font-size:.7rem;padding:8px 9px;white-space:nowrap;flex:none}.ca-gate-inner,.ca-hero-inner{grid-template-columns:1fr;padding:44px 14px 36px}.ca-search-card{margin-top:0;border-radius:0;border-left:0;border-right:0}.ca-search-grid,.ca-side,.ca-grid,.detail-grid,.source-cards,.gov-grid,.gov-filters,.gov-links{grid-template-columns:1fr}.ca-data-strip{grid-template-columns:repeat(2,1fr)}.career-actions,.gov-actions{grid-template-columns:1fr}.ca-compare-bar{left:10px;right:10px;align-items:flex-start;flex-direction:column}.ca-btn{width:100%}.ca-content-head,.gov-head{align-items:flex-start;grid-template-columns:1fr;flex-direction:column}.gov-section{border-radius:16px;padding:16px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -414,7 +457,6 @@ button,input,select{font:inherit}
     <section class="ca-search-card" aria-label="Career Intelligence filters">
       <div class="ca-search-grid">
         <div class="ca-field"><label for="q">Search career or skill</label><input id="q" type="search" placeholder="Try data scientist, nurse, electrician..."></div>
-        <div class="ca-field"><label for="classFilter">Class</label><select id="classFilter"><option value="">Any class</option><option>Class 8</option><option>Class 9</option><option>Class 10</option><option>Class 11</option><option>Class 12</option></select></div>
         <div class="ca-field"><label for="streamFilter">Stream</label><select id="streamFilter"><option value="">Any stream</option><option>Science PCM</option><option>Science PCB</option><option>Commerce</option><option>Humanities</option><option>Vocational / ITI</option><option>Any stream</option></select></div>
         <div class="ca-field"><label for="pathFilter">Pathway</label><select id="pathFilter"><option value="">Any pathway</option><option>Degree</option><option>Diploma</option><option>ITI</option><option>Certificate</option><option>Portfolio</option><option>Entrance Exam</option></select></div>
         <div class="ca-field"><label for="salaryFilter">Entry Salary</label><select id="salaryFilter"><option value="">Any range</option><option value="0-25000">Up to Rs 25k/mo</option><option value="25000-50000">Rs 25k-50k/mo</option><option value="50000-100000">Rs 50k-1L/mo</option><option value="100000-999999">Rs 1L+/mo</option></select></div>
@@ -475,6 +517,11 @@ button,input,select{font:inherit}
             <button class="ca-btn ghost" type="button" id="resetBtn">Reset Filters</button>
           </div>
         </div>
+        <div class="personal-banner" id="personalBanner">
+          <span class="pb-ic">✦</span>
+          <div class="pb-txt"><b id="pbTitle">Ranked for your child</b><span id="pbSub"></span></div>
+          <button class="pb-clear" type="button" id="pbClear">Show all careers</button>
+        </div>
         <p class="cig-legend">Tip: tap the ♥ on any career to shortlist it, then discuss the list with a counsellor. Salary ranges are indicative — not promises.</p>
         <div class="ca-grid" id="careerGrid"></div>
         <div class="ca-empty" id="emptyState"><b>No exact match found</b>Try widening the stream, pathway or salary filter. A counsellor can also map a custom route if the career is emerging.</div>
@@ -514,6 +561,25 @@ button,input,select{font:inherit}
     </section>
   </main>
 
+  <section class="ca-proof" aria-label="What families say">
+    <div class="ca-proof-card">
+      <div class="ca-proof-head">
+        <h2>Trusted by families making this exact decision</h2>
+        <div class="ca-proof-sum">
+          <div class="ca-proof-score"><b>4.9</b><div class="pss"><div class="ca-proof-stars">★★★★★</div><span>Parent &amp; student rating</span></div></div>
+          <div class="ca-proof-pill"><b>500+</b><span>Families guided</span></div>
+          <div class="ca-proof-pill"><b>100%</b><span>Verified reviews</span></div>
+        </div>
+      </div>
+      <div class="ca-proof-grid">
+        <div class="ca-quote"><div class="qs">★★★★★</div><p>"Meri beti ko Science aur Commerce ke beech bahut confusion tha. 2 sessions ke baad usne khud decide kiya ki commerce lena hai. Ab woh confident hai."</p><div class="qf"><span class="qa">PS</span><div><div class="qn">Priya Sharma</div><div class="qr">Parent of Class 10 student</div></div></div></div>
+        <div class="ca-quote"><div class="qs">★★★★★</div><p>"I was skeptical about online counselling. But the structured approach — assessment first, then the session — felt very professional. My daughter came out with a written roadmap. Impressive."</p><div class="qf"><span class="qa">SD</span><div><div class="qn">Suresh Dahiya</div><div class="qr">Father of Class 11 student · Sonipat</div></div></div></div>
+        <div class="ca-quote"><div class="qs">★★★★★</div><p>"We wanted to push our son into engineering under relatives' pressure. Structured guidance helped us understand his creative interests and explore design pathways instead."</p><div class="qf"><span class="qa">RG</span><div><div class="qn">Ramesh &amp; Kavita Goyal</div><div class="qr">Parents · North India</div></div></div></div>
+      </div>
+      <div class="ca-proof-verify">✓ Verified reviews from families guided by Lume Live counsellors. See more on our <a href="index.html#testimonials" style="color:var(--teal);font-weight:800;text-decoration:none;">reviews page</a>.</div>
+    </div>
+  </section>
+
   <div class="ca-compare-bar" id="compareBar">
     <div><b style="display:block;margin-bottom:5px;">Compare up to 3 careers</b><div class="ca-compare-list" id="compareList"></div></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="ca-btn gold" type="button" id="compareOpen">Compare</button><button class="ca-btn light" type="button" id="compareClear">Clear</button></div>
@@ -521,21 +587,21 @@ button,input,select{font:inherit}
 
   <div class="ca-modal" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
     <div class="ca-modal-card">
-      <div class="ca-modal-head"><h3 id="detailTitle">Career Detail</h3><button class="ca-x" type="button" data-close="detailModal" aria-label="Close">x</button></div>
+      <div class="ca-modal-head"><h3 id="detailTitle">Career Detail</h3><button class="ca-x" type="button" data-close="detailModal" aria-label="Close">×</button></div>
       <div class="ca-modal-body" id="detailBody"></div>
     </div>
   </div>
 
   <div class="ca-modal" id="compareModal" role="dialog" aria-modal="true" aria-labelledby="compareTitle">
     <div class="ca-modal-card">
-      <div class="ca-modal-head"><h3 id="compareTitle">Career Comparison</h3><button class="ca-x" type="button" data-close="compareModal" aria-label="Close">x</button></div>
+      <div class="ca-modal-head"><h3 id="compareTitle">Career Comparison</h3><button class="ca-x" type="button" data-close="compareModal" aria-label="Close">×</button></div>
       <div class="ca-modal-body" id="compareBody"></div>
     </div>
   </div>
 
   <div class="ca-modal" id="shortlistModal" role="dialog" aria-modal="true" aria-labelledby="shortlistTitle">
     <div class="ca-modal-card" style="max-width:640px;">
-      <div class="ca-modal-head"><h3 id="shortlistTitle">My Child's Shortlist</h3><button class="ca-x" type="button" data-close="shortlistModal" aria-label="Close">x</button></div>
+      <div class="ca-modal-head"><h3 id="shortlistTitle">My Child's Shortlist</h3><button class="ca-x" type="button" data-close="shortlistModal" aria-label="Close">×</button></div>
       <div class="ca-modal-body" id="shortlistBody"></div>
     </div>
   </div>
@@ -763,10 +829,8 @@ function isAtlasUnlocked(){return document.body.classList.contains("atlas-unlock
 function matches(c){
   const hay=[c.title,c.sector,c.work,c.qualifications,c.exams,c.skills.join(" "),c.streams.join(" "),c.paths.join(" "),c.setting,c.future].join(" ").toLowerCase();
   if(state.query && !hay.includes(state.query.toLowerCase()))return false;
-  if(state.class && !["Class 8","Class 9","Class 10","Class 11","Class 12"].includes(state.class))return false;
   if(state.stream && !c.streams.includes(state.stream) && !c.streams.includes("Any stream"))return false;
   if(state.path && !c.paths.includes(state.path))return false;
-  if(state.themeParam && !state.themeParam.split("").some(t=>c.themes.includes(t)))return false;
   if(state.salary){
     const [lo,hi]=state.salary.split("-").map(Number),v=parseEntry(c.salary.entry);
     if(!(v>=lo && v<=hi))return false;
@@ -816,17 +880,71 @@ function relatedCareers(c){
     .sort((a,b)=>b.score-a.score)
     .slice(0,4).map(o=>o.x);
 }
+// ── personalisation: rank careers by the child's interest profile ──
+function childThemes(){return themeArr(state.themeParam).filter(Boolean);}
+function fitScore(c){const ct=childThemes();if(!ct.length)return 0;return themeArr(c.themes).filter(t=>ct.includes(t)).length;}
+function fitBadge(c){if(!childThemes().length)return"";const s=fitScore(c);if(s>=2)return`<span class="fit strong">★ Strong fit</span>`;if(s>=1)return`<span class="fit good">Good fit</span>`;return"";}
+function findItem(id){return CAREERS.find(c=>c.id===id)||GOV_JOBS.find(j=>j.id===id)||null;}
+function isGovId(id){return !!GOV_JOBS.find(j=>j.id===id);}
+// ── step-by-step roadmap derived from a career's real fields ──
+function roadmapSteps(c){
+  const streams=(c.streams||[]).filter(s=>s!=="Any stream");
+  const streamTxt=streams.length?streams.join(" / "):"any stream — keeps options open";
+  const paths=(c.paths||[]).join(", ");
+  return [
+    {when:"Class 9–10 · Foundation",what:"Build the base",desc:c.route10},
+    {when:"Class 11–12 · Direction",what:"Stream: "+streamTxt,desc:c.route12},
+    {when:"After Class 12 · Qualify",what:"Route in: "+paths,desc:c.qualifications+(c.exams?(" Exams/routes: "+c.exams):"")},
+    {when:"First job · Entry",what:"Entry pay "+c.salary.entry,desc:c.work},
+    {when:"With experience · Grow",what:"Mid-career "+c.salary.mid,desc:"Scope: "+c.future+". "+c.ai}
+  ];
+}
+function roadmapHtml(c){
+  return `<div class="roadmap">${roadmapSteps(c).map(s=>`<div class="rm-step"><span class="rm-when">${esc(s.when)}</span><span class="rm-what">${esc(s.what)}</span><span class="rm-desc">${esc(s.desc)}</span></div>`).join("")}</div>`;
+}
+// ── printable / downloadable plan ──
+function printDoc(title,inner){
+  const w=window.open("","_blank");
+  if(!w){alert("Please allow pop-ups to download the plan, then tap the button again.");return;}
+  const css="*{box-sizing:border-box}body{font:14px/1.6 Arial,Helvetica,sans-serif;color:#172525;max-width:820px;margin:0 auto;padding:28px}h1{font-size:24px;color:#0D1B40;margin:2px 0}h2{font-size:15px;color:#0A6E6E;margin:20px 0 8px;border-bottom:1px solid #DDE8E5;padding-bottom:5px}.br{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#0A6E6E}.sec{color:#5c6f70;font-size:12px;margin-top:2px}.hd{border-bottom:2px solid #C9933A;padding-bottom:12px;margin-bottom:14px}.row{margin:8px 0}.k{font-weight:800;color:#0D1B40;font-size:12px}.s{margin:8px 0;padding-left:12px;border-left:3px solid #0A6E6E}.s b{color:#0D1B40}.s span{color:#5c6f70;font-size:13px}.item{border:1px solid #DDE8E5;border-radius:8px;padding:12px;margin:10px 0}.item h3{margin:0 0 4px;color:#0D1B40;font-size:15px}.ft{margin-top:22px;padding-top:12px;border-top:1px solid #DDE8E5;color:#5c6f70;font-size:11px}@media print{body{padding:0}}";
+  w.document.write("<!doctype html><html><head><meta charset='utf-8'><title>"+title+"</title><style>"+css+"</style></head><body>"+inner+"<scr"+"ipt>window.onload=function(){setTimeout(function(){window.print();},250);}</scr"+"ipt></body></html>");
+  w.document.close();
+}
+function careerPrintHtml(c){
+  const steps=roadmapSteps(c).map(s=>`<div class="s"><b>${esc(s.when)}</b> — ${esc(s.what)}<br><span>${esc(s.desc)}</span></div>`).join("");
+  return `<div class="hd"><div class="br">Lume Live · Career Intelligence</div><h1>${esc(c.title)}</h1><div class="sec">${esc(c.sector)} · ${esc(demandInfo(c.future).t)}</div></div>
+  <div class="row"><div class="k">Indicative India salary</div>Entry: ${esc(c.salary.entry)} · Mid-career: ${esc(c.salary.mid)} (confidence: ${esc(c.salary.confidence)})</div>
+  <div class="row"><div class="k">What the work is</div>${esc(c.work)}</div>
+  <div class="row"><div class="k">Qualifications &amp; exams</div>${esc(c.qualifications)}${c.exams?(" · Exams: "+esc(c.exams)):""}</div>
+  <h2>Step-by-step roadmap</h2>${steps}
+  <h2>Skills to build</h2>${(c.skills||[]).map(esc).join(", ")}
+  <div class="row"><div class="k">Future &amp; AI impact</div>${esc(c.future)} — ${esc(c.ai)}</div>
+  <div class="row"><div class="k">Risks to weigh</div>${esc(c.risks)}</div>
+  <div class="row"><div class="k">Parent note</div>${esc(c.parentNote)}</div>
+  <div class="ft">Salary ranges are indicative, not promises. Prepared with Lume Live Career Intelligence · +91 7015671280 · hello@lumelive.co.in</div>`;
+}
+function printCareer(id){const c=CAREERS.find(x=>x.id===id);if(!c)return;printDoc("Career plan · "+c.title,careerPrintHtml(c));}
+function printShortlist(){
+  const items=shortlist.map(id=>findItem(id)).filter(Boolean);
+  if(!items.length)return;
+  const rows=items.map(o=>{
+    if(o.sector){return `<div class="item"><h3>${esc(o.title)}</h3><div class="sec">${esc(o.sector)} · ${esc(demandInfo(o.future).t)}</div><div class="row">Entry ${esc(o.salary.entry)} · Mid ${esc(o.salary.mid)}</div><div class="row"><div class="k">Route in</div>${esc(o.qualifications)}${o.exams?(" · "+esc(o.exams)):""}</div></div>`;}
+    return `<div class="item"><h3>${esc(o.title)}</h3><div class="sec">Government job · ${esc(o.category)}</div><div class="row"><div class="k">Exam</div>${esc(o.exam)}</div><div class="row"><div class="k">Qualification</div>${esc(o.qual.join(", "))}</div><div class="row">${esc(o.salary)}</div></div>`;
+  }).join("");
+  printDoc("My child's shortlist · Lume Live",`<div class="hd"><div class="br">Lume Live · Career Intelligence</div><h1>My Child's Shortlist</h1><div class="sec">${items.length} saved career${items.length>1?"s":""} to discuss with a counsellor</div></div>${rows}<div class="ft">Salary ranges are indicative, not promises. Talk it through with a Lume Live counsellor · +91 7015671280 · hello@lumelive.co.in</div>`);
+}
 const SHORTLIST_KEY="lumeCareerShortlist";
 let shortlist=[];
 try{shortlist=JSON.parse(localStorage.getItem(SHORTLIST_KEY)||"[]")||[];}catch(e){shortlist=[];}
 if(!Array.isArray(shortlist))shortlist=[];
 function saveShortlist(){try{localStorage.setItem(SHORTLIST_KEY,JSON.stringify(shortlist));}catch(e){}}
 function toggleSave(id){
-  if(!CAREERS.some(c=>c.id===id))return;
+  if(!findItem(id))return;
   if(shortlist.includes(id))shortlist=shortlist.filter(x=>x!==id);
   else shortlist.push(id);
   saveShortlist();
   render();
+  renderGov();
   renderShortlistBtn();
   if(document.getElementById("shortlistModal").classList.contains("open"))renderShortlist();
 }
@@ -837,20 +955,21 @@ function renderShortlistBtn(){
   btn.innerHTML=`♥ My Shortlist <b>(${n})</b>`;
 }
 function shortlistWa(){
-  const names=shortlist.map(id=>CAREERS.find(c=>c.id===id)).filter(Boolean).map(c=>c.title);
-  const text=`👋 Hi Lume Live!\n\nWe've shortlisted these careers for my child on Career Intelligence:\n${names.map(n=>"• "+n).join("\n")}\n\n🙏 Please help us understand which fits best and the next steps.`;
+  const names=shortlist.map(id=>findItem(id)).filter(Boolean).map(o=>o.title);
+  const text=`👋 Hi Lume Live!\n\nWe've shortlisted these on Career Intelligence for my child:\n${names.map(n=>"• "+n).join("\n")}\n\n🙏 Please help us understand which fits best and the next steps.`;
   return "https://wa.me/917015671280?text="+encodeURIComponent(text);
 }
 function renderShortlist(){
-  const items=shortlist.map(id=>CAREERS.find(c=>c.id===id)).filter(Boolean);
+  const items=shortlist.map(id=>findItem(id)).filter(Boolean);
   const body=document.getElementById("shortlistBody");
   if(!items.length){
-    body.innerHTML=`<div class="shortlist-empty"><b>No careers saved yet</b>Tap the ♥ on any career card to add it here. Build a shortlist for your child, then talk it through with a counsellor.</div>`;
+    body.innerHTML=`<div class="shortlist-empty"><b>No careers saved yet</b>Tap the ♥ on any career or government-job card to add it here. Build a shortlist for your child, then talk it through with a counsellor.</div>`;
     return;
   }
-  body.innerHTML=`<div class="shortlist-list">${items.map(c=>`<div class="shortlist-row"><div class="sr-main" data-detail="${esc(c.id)}"><b>${esc(c.title)}</b><span class="sr-sub">${esc(c.sector)} · Entry ${esc(c.salary.entry)}</span></div><button class="shortlist-remove" type="button" data-unsave="${esc(c.id)}">Remove</button></div>`).join("")}</div>
+  body.innerHTML=`<div class="shortlist-list">${items.map(o=>{const gov=!o.sector;const attr=gov?`data-gov-detail="${esc(o.id)}"`:`data-detail="${esc(o.id)}"`;const sub=gov?`Govt job · ${esc(o.category)}`:`${esc(o.sector)} · Entry ${esc(o.salary.entry)}`;return `<div class="shortlist-row"><div class="sr-main" ${attr}><b>${esc(o.title)}</b><span class="sr-sub">${sub}</span></div><button class="shortlist-remove" type="button" data-unsave="${esc(o.id)}">Remove</button></div>`;}).join("")}</div>
     <div class="shortlist-cta">
       <a class="ca-btn gold" href="${shortlistWa()}" target="_blank" rel="noopener">Discuss these ${items.length} with a counsellor (free)</a>
+      <button class="ca-btn ghost" type="button" data-print-shortlist="1">⤓ Download this shortlist as a plan</button>
       <a class="ca-btn ghost" href="assessment.html#free-test">Match this shortlist to my child — free 60-sec test</a>
     </div>`;
 }
@@ -864,7 +983,7 @@ function card(c){
   return `<article class="career-card" data-id="${esc(c.id)}">
     <button type="button" class="career-save ${saved?"saved":""}" data-save="${esc(c.id)}" aria-pressed="${saved}" aria-label="${saved?"Remove "+esc(c.title)+" from shortlist":"Save "+esc(c.title)+" to shortlist"}" title="${saved?"Saved to shortlist":"Save to shortlist"}">${saved?"♥":"♡"}</button>
     <div class="career-top"><div><h3 class="career-title">${esc(c.title)}</h3><div class="career-sector">${esc(c.sector)}</div></div></div>
-    <div class="career-badges"><span class="demand ${dm.k}">${dm.t}</span><span class="confidence ${confidenceClass(c.salary.confidence)}">${esc(c.salary.confidence)} confidence</span></div>
+    <div class="career-badges">${fitBadge(c)}<span class="demand ${dm.k}">${dm.t}</span><span class="confidence ${confidenceClass(c.salary.confidence)}">${esc(c.salary.confidence)} confidence</span></div>
     <p class="career-work">${esc(c.work)}</p>
     ${day?`<p class="career-day">${esc(day)}</p>`:""}
     <div class="salary-box"><small>Indicative India salary</small><b>Entry: ${esc(c.salary.entry)}<br>Mid: ${esc(c.salary.mid)}</b></div>
@@ -873,8 +992,10 @@ function card(c){
   </article>`;
 }
 function govCard(j){
+  const saved=shortlist.includes(j.id);
   return `<article class="gov-card" data-id="${esc(j.id)}">
-    <div class="gov-top"><div><h3 class="gov-title">${esc(j.title)}</h3><div class="career-sector">${esc(j.category)}</div></div><span class="gov-tag">${esc(j.qual[0])}</span></div>
+    <button type="button" class="career-save ${saved?"saved":""}" data-save="${esc(j.id)}" aria-pressed="${saved}" aria-label="${saved?"Remove "+esc(j.title)+" from shortlist":"Save "+esc(j.title)+" to shortlist"}" title="${saved?"Saved to shortlist":"Save to shortlist"}">${saved?"♥":"♡"}</button>
+    <div class="gov-top"><div><h3 class="gov-title">${esc(j.title)}</h3><div class="career-sector">${esc(j.category)}</div></div></div>
     <div class="gov-meta">
       <span><b>Exam:</b> ${esc(j.exam)}</span>
       <span><b>Qualification:</b> ${esc(j.qual.join(", "))}</span>
@@ -918,21 +1039,37 @@ function bindGovActions(){
   document.querySelectorAll("#govGrid [data-gov-detail]").forEach(btn=>{
     bindActivate(btn,()=>openGovDetail(btn.dataset.govDetail));
   });
+  document.querySelectorAll("#govGrid [data-save]").forEach(btn=>{
+    bindActivate(btn,()=>toggleSave(btn.dataset.save));
+  });
+}
+function renderPersonalBanner(){
+  const banner=document.getElementById("personalBanner");if(!banner)return;
+  const ct=childThemes();
+  if(!ct.length){banner.classList.remove("show");return;}
+  const names=ct.map(t=>THEMES[t]).filter(Boolean).join(", ");
+  const strong=CAREERS.filter(c=>fitScore(c)>=2).length;
+  document.getElementById("pbSub").textContent=`${names?names+" · ":""}Strongest matches shown first${strong?` — ${strong} strong fits`:""}.`;
+  banner.classList.add("show");
 }
 // A diverse free-preview set spanning every stream, so a first-time
 // visitor immediately sees careers relevant to any child (not just tech).
 const PREVIEW_IDS=["doctor-mbbs","software-developer","chartered-accountant","civil-services","teacher-educator","electrician","graphic-designer","nurse","defence-officer","agri-tech-professional","lawyer","data-scientist"];
 function render(){
   const unlocked=isAtlasUnlocked();
+  const personalised=childThemes().length>0;
   const activeFilter=!!(state.query||state.stream||state.path||state.salary||state.themeParam);
-  const list=CAREERS.filter(matches);
+  let list=CAREERS.filter(matches);
+  if(personalised)list=list.slice().sort((a,b)=>fitScore(b)-fitScore(a)); // rank by fit, stable
   let visible;
   if(unlocked){visible=list;}
   else if(activeFilter){visible=list.slice(0,9);} // real search, capped in preview
   else {visible=PREVIEW_IDS.map(id=>CAREERS.find(c=>c.id===id)).filter(Boolean);}
   els.grid.innerHTML=visible.map(card).join("");
   els.empty.style.display=list.length?"none":"block";
-  if(unlocked){
+  if(unlocked&&personalised){
+    els.count.textContent=`Showing all ${list.length} careers, ranked for your child.`;
+  }else if(unlocked){
     els.count.textContent=`Showing ${list.length} of ${CAREERS.length} careers`;
   }else if(activeFilter){
     els.count.textContent=`Free preview: showing ${visible.length}${list.length>visible.length?"+":""} matches. Take the free 60-sec test to unlock all ${CAREERS.length} careers, ranked for your child.`;
@@ -943,6 +1080,7 @@ function render(){
   bindCareerActions();
   renderCompare();
   renderShortlistBtn();
+  renderPersonalBanner();
 }
 function renderGov(){
   const list=GOV_JOBS.filter(govMatches);
@@ -981,13 +1119,13 @@ function openDetail(id){
     <div class="detail-section"><h4>What The Work Is</h4><p>${esc(c.work)}</p></div>
     <div class="detail-section"><h4>Salary Expectations</h4><p><strong>Entry:</strong> ${esc(c.salary.entry)}<br><strong>Mid:</strong> ${esc(c.salary.mid)}<br><strong>Confidence:</strong> ${esc(c.salary.confidence)}. Ranges vary by city, employer, portfolio, marks, internships, language ability and family mobility.</p></div>
     <div class="detail-section"><h4>Qualifications And Exams</h4><p>${esc(c.qualifications)}</p><p style="margin-top:8px;"><strong>Common exams/routes:</strong> ${esc(c.exams)}</p></div>
-    <div class="detail-section"><h4>How To Get There</h4><p>${esc(c.route10)}</p><p style="margin-top:8px;">${esc(c.route12)}</p></div>
+    <div class="detail-section"><h4>Your Child's Roadmap</h4>${roadmapHtml(c)}</div>
   </div><div>
     <div class="detail-section"><h4>Skills To Build</h4><ul>${c.skills.map(s=>`<li>${esc(s)}</li>`).join("")}</ul></div>
     <div class="detail-section"><h4>Future Scope And AI Impact</h4><p><strong>Scope:</strong> ${esc(c.future)}<br><strong>AI impact:</strong> ${esc(c.ai)}</p></div>
     <div class="detail-section"><h4>Risks And Parent Note</h4><p><strong>Risks:</strong> ${esc(c.risks)}</p><p style="margin-top:8px;"><strong>Parent note:</strong> ${esc(c.parentNote)}</p></div>
     ${(()=>{const rel=relatedCareers(c);return rel.length?`<div class="detail-section"><h4>Careers Like This</h4><div class="related-grid">${rel.map(r=>`<button type="button" class="related-chip" data-detail="${esc(r.id)}"><b>${esc(r.title)}</b><span>${esc(r.sector)}</span></button>`).join("")}</div></div>`:"";})()}
-    <div class="detail-section"><h4>Next Step</h4><p>The detailed Lume roadmap maps class, stream, subject choices, colleges, cost, backup routes and a first 90-day action plan for your child — reviewed by a counsellor.</p><div style="display:grid;gap:8px;margin-top:12px;"><button class="ca-btn ghost" type="button" data-save="${esc(c.id)}">${shortlist.includes(c.id)?"♥ Saved to shortlist":"♡ Add to shortlist"}</button><button class="ca-btn gold" type="button" data-roadmap-pay="${esc(c.id)}">Get the personal roadmap · ₹1,499</button><a class="ca-btn ghost" href="${wa(c)}" target="_blank" rel="noopener">Ask on WhatsApp first</a></div></div>
+    <div class="detail-section"><h4>Next Step</h4><p>The detailed Lume roadmap maps class, stream, subject choices, colleges, cost, backup routes and a first 90-day action plan for your child — reviewed by a counsellor.</p><div style="display:grid;gap:8px;margin-top:12px;"><button class="ca-btn ghost" type="button" data-save="${esc(c.id)}">${shortlist.includes(c.id)?"♥ Saved to shortlist":"♡ Add to shortlist"}</button><button class="ca-btn ghost" type="button" data-print="${esc(c.id)}">⤓ Download this plan</button><button class="ca-btn gold" type="button" data-roadmap-pay="${esc(c.id)}">Get the personal roadmap · ₹1,499</button><a class="ca-btn ghost" href="${wa(c)}" target="_blank" rel="noopener">Ask on WhatsApp first</a></div></div>
   </div></div>`;
   openModal("detailModal");
 }
@@ -1001,7 +1139,7 @@ function openGovDetail(id){
   </div><div>
     <div class="detail-section"><h4>Salary / Pay Band</h4><p>${esc(j.salary)}</p><p style="margin-top:8px;">Pay levels, allowances, vacancies, category relaxations and service rules must be checked from the latest official notification.</p></div>
     <div class="detail-section"><h4>Student Planning Note</h4><p>${esc(j.note)}</p></div>
-    <div class="detail-section"><h4>Official Verification</h4><p>Use this career intelligence view to understand the route. Before applying, read the latest notification on the official portal.</p><div style="display:grid;gap:8px;margin-top:12px;"><a class="ca-btn gold" href="${esc(j.official)}" target="_blank" rel="noopener">Open Official Source</a><a class="ca-btn ghost" href="${govWa(j)}" target="_blank" rel="noopener">Ask Counsellor About This Job</a></div></div>
+    <div class="detail-section"><h4>Official Verification</h4><p>Use this view to understand the route. Before applying, read the latest notification on the official portal.</p><div style="display:grid;gap:8px;margin-top:12px;"><button class="ca-btn ghost" type="button" data-save="${esc(j.id)}">${shortlist.includes(j.id)?"♥ Saved to shortlist":"♡ Add to shortlist"}</button><a class="ca-btn gold" href="${esc(j.official)}" target="_blank" rel="noopener">Open Official Source</a><a class="ca-btn ghost" href="${govWa(j)}" target="_blank" rel="noopener">Ask Counsellor About This Job</a></div></div>
   </div></div>`;
   openModal("detailModal");
 }
@@ -1011,8 +1149,22 @@ function wa(c){
 function govWa(j){
   return "https://wa.me/917015671280?text="+encodeURIComponent(`👋 Hi Lume Live!\n\nI have unlocked Career Intelligence through the assessment 🔓\n\n🏛️ Government Jobs Explorer\n• ${j.title}\n\n🙏 Please help me understand eligibility, preparation timeline, backup options and whether this route suits the student.`);
 }
-function openModal(id){document.getElementById(id).classList.add("open");document.body.style.overflow="hidden";}
-function closeModal(id){document.getElementById(id).classList.remove("open");document.body.style.overflow="";}
+let lastFocused=null;
+function openModal(id){
+  lastFocused=document.activeElement;
+  const m=document.getElementById(id);
+  m.classList.add("open");document.body.style.overflow="hidden";
+  const focusTarget=m.querySelector(".ca-x")||m;
+  setTimeout(()=>{try{focusTarget.focus();}catch(e){}},30);
+}
+function closeModal(id){
+  document.getElementById(id).classList.remove("open");
+  if(!document.querySelector(".ca-modal.open"))document.body.style.overflow="";
+  if(lastFocused&&lastFocused.focus){try{lastFocused.focus();}catch(e){}lastFocused=null;}
+}
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){const open=[...document.querySelectorAll(".ca-modal.open")];if(open.length){e.preventDefault();open.forEach(m=>closeModal(m.id));}}
+});
 function openCompare(){
   const list=state.compare.map(id=>CAREERS.find(c=>c.id===id)).filter(Boolean);
   if(!list.length)return;
@@ -1035,7 +1187,7 @@ function routeSuggest(){
   if(!cls||!theme){box.innerHTML="<b>Route starter</b>Select both class/stage and interest direction.";return;}
   state.themeParam=theme; if(stream&&stream!=="Not decided")state.stream=stream; else state.stream="";
   document.getElementById("streamFilter").value=state.stream; render();
-  const top=CAREERS.filter(matches).slice(0,4).map(c=>c.title).join(", ");
+  const top=CAREERS.filter(matches).slice().sort((a,b)=>fitScore(b)-fitScore(a)).slice(0,4).map(c=>c.title).join(", ");
   const streamLine=cls==="Class 8"||cls==="Class 9"||cls==="Class 10" ? "Discuss streams without closing doors too early. Compare Science, Commerce, Humanities and vocational routes against marks, stress tolerance and actual work exposure." : "Use current subjects to shortlist degrees, diplomas, entrances and backup pathways.";
   box.innerHTML=`<b>${esc(THEMES[theme])} route</b>${streamLine}<br><br><strong>Start exploring:</strong> ${esc(top||"No exact filtered match yet. Try Any stream.")}`;
   document.getElementById("career-intelligence").scrollIntoView({behavior:"smooth",block:"start"});
@@ -1056,25 +1208,28 @@ document.addEventListener("change",e=>{
   renderGov();
 });
 document.addEventListener("click",e=>{
-  const save=e.target.closest("[data-save]"); if(save){const inDetail=save.closest("#detailModal");toggleSave(save.dataset.save);if(inDetail)openDetail(save.dataset.save);return;}
+  const save=e.target.closest("[data-save]"); if(save){const inDetail=save.closest("#detailModal");const sid=save.dataset.save;toggleSave(sid);if(inDetail){isGovId(sid)?openGovDetail(sid):openDetail(sid);}return;}
   const unsave=e.target.closest("[data-unsave]"); if(unsave){toggleSave(unsave.dataset.unsave);return;}
+  const printC=e.target.closest("[data-print]"); if(printC){printCareer(printC.dataset.print);return;}
+  const printS=e.target.closest("[data-print-shortlist]"); if(printS){printShortlist();return;}
   const detail=e.target.closest("[data-detail]"); if(detail){if(detail.closest("#shortlistModal"))closeModal("shortlistModal");openDetail(detail.dataset.detail);return;}
-  const govDetail=e.target.closest("[data-gov-detail]"); if(govDetail){openGovDetail(govDetail.dataset.govDetail);return;}
+  const govDetail=e.target.closest("[data-gov-detail]"); if(govDetail){if(govDetail.closest("#shortlistModal"))closeModal("shortlistModal");openGovDetail(govDetail.dataset.govDetail);return;}
   const cmp=e.target.closest("[data-compare]"); if(cmp){toggleCompare(cmp.dataset.compare); return;}
   const roadmap=e.target.closest("[data-roadmap-pay]"); if(roadmap){startCareerRoadmapPayment(e, roadmap.dataset.roadmapPay); return;}
   const close=e.target.closest("[data-close]"); if(close){closeModal(close.dataset.close);return;}
   if(e.target.classList.contains("ca-modal"))closeModal(e.target.id);
 });
 document.getElementById("shortlistBtn").addEventListener("click",openShortlist);
+document.getElementById("pbClear").addEventListener("click",()=>{state.themeParam="";const rt=document.getElementById("routeTheme");if(rt)rt.value="";render();});
 document.getElementById("compareOpen").addEventListener("click",openCompare);
 document.getElementById("compareClear").addEventListener("click",()=>{state.compare=[];render();});
-document.getElementById("resetBtn").addEventListener("click",()=>{state.query=state.class=state.stream=state.path=state.salary=state.themeParam="";["q","classFilter","streamFilter","pathFilter","salaryFilter"].forEach(id=>document.getElementById(id).value="");render();});
+document.getElementById("resetBtn").addEventListener("click",()=>{state.query=state.stream=state.path=state.salary="";["q","streamFilter","pathFilter","salaryFilter"].forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});render();});
 document.getElementById("govReset").addEventListener("click",()=>{govState.query=govState.category=govState.qual=govState.stage="";["govQ","govCategory","govQual","govStage"].forEach(id=>document.getElementById(id).value="");renderGov();});
 document.getElementById("routeBtn").addEventListener("click",routeSuggest);
 function initFromUrl(){
   const p=new URLSearchParams(location.search),theme=(p.get("theme")||"").toUpperCase().replace(/[^RIASEC]/g,"");
-  if(theme){state.themeParam=theme;document.getElementById("routeTheme").value=theme[0]||"";}
-  const cls=p.get("class")||p.get("stage"); if(cls){document.getElementById("classFilter").value=cls;state.class=cls;}
+  if(theme){state.themeParam=theme;const rt=document.getElementById("routeTheme");if(rt)rt.value=theme[0]||"";}
+  const cls=p.get("class")||p.get("stage"); if(cls){const rc=document.getElementById("routeClass");if(rc)rc.value=cls;}
 }
 function scrollToHashTarget(){
   const id=decodeURIComponent((location.hash||"").replace("#",""));
