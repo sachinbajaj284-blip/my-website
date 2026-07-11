@@ -375,6 +375,10 @@ button,input,select{font:inherit}
 .ca-quote .qr{color:var(--muted);font-size:.67rem}
 .ca-proof-verify{margin-top:14px;font-size:.74rem;color:var(--muted);text-align:center}
 .gov-top{padding-right:42px}
+.exam-links{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;align-items:center}
+.exam-links .el-label{font-size:.62rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-right:2px}
+.exam-links a{display:inline-flex;align-items:center;gap:4px;font-size:.72rem;font-weight:800;color:var(--teal);background:#EEF7F5;border:1px solid #D7EAE6;border-radius:999px;padding:5px 10px;text-decoration:none;transition:background .18s,border-color .18s}
+.exam-links a:hover{background:#E1F1EE;border-color:#BFE0DA}
 .ca-faq{max-width:1240px;margin:24px auto 0;padding:0 18px}
 .ca-faq h2{font-family:Fraunces,serif;color:var(--navy);font-size:clamp(1.4rem,3vw,2rem);margin-bottom:14px;text-align:center}
 .ca-faq-list{display:grid;gap:10px;max-width:860px;margin:0 auto}
@@ -916,6 +920,38 @@ function demandInfo(f){
   if(s.includes("low"))return{t:"Selective / niche",k:"l"};
   return{t:"Demand varies",k:"v"};
 }
+// Official, verifiable sources — links families can check for themselves.
+const EXAM_LINKS=[
+  {re:/\bNEET\b/i,name:"NEET",url:"https://neet.nta.nic.in/"},
+  {re:/\bJEE\b/i,name:"JEE Main",url:"https://jeemain.nta.nic.in/"},
+  {re:/\bCUET\b/i,name:"CUET",url:"https://cuet.nta.nic.in/"},
+  {re:/\bCLAT\b/i,name:"CLAT",url:"https://consortiumofnlus.ac.in/"},
+  {re:/\bNIFT\b/i,name:"NIFT",url:"https://www.nift.ac.in/"},
+  {re:/\bUCEED\b/i,name:"UCEED",url:"https://www.uceed.iitb.ac.in/"},
+  {re:/\bNID\b/i,name:"NID",url:"https://www.nid.edu/"},
+  {re:/\bNATA\b/i,name:"NATA",url:"https://www.nata.in/"},
+  {re:/\bUPSC\b|\bNDA\b|\bCDS\b|Civil Services/i,name:"UPSC",url:"https://upsc.gov.in/"},
+  {re:/\bAFCAT\b/i,name:"AFCAT",url:"https://afcat.cdac.in/"},
+  {re:/ICAI|CA Foundation/i,name:"ICAI (CA)",url:"https://www.icai.org/"},
+  {re:/ICSI|CSEET/i,name:"ICSI (CS)",url:"https://www.icsi.edu/"},
+  {re:/\bNISM\b/i,name:"NISM",url:"https://www.nism.ac.in/"},
+  {re:/\bIBPS\b/i,name:"IBPS",url:"https://www.ibps.in/"},
+  {re:/\bSSC\b/i,name:"SSC",url:"https://ssc.gov.in/"},
+  {re:/\bIMU\b/i,name:"IMU CET",url:"https://www.imu.edu.in/"},
+  {re:/NCHM/i,name:"NCHM JEE",url:"https://nchmjee.nta.nic.in/"},
+  {re:/\bCTET\b/i,name:"CTET",url:"https://ctet.nic.in/"},
+  {re:/UGC ?NET|\bNET\b/i,name:"UGC NET",url:"https://ugcnet.nta.ac.in/"},
+  {re:/ICAR|AIEEA/i,name:"ICAR",url:"https://icar.org.in/"},
+  {re:/\bIIST\b/i,name:"IIST",url:"https://www.iist.ac.in/"},
+  {re:/\bISI\b/i,name:"ISI",url:"https://www.isical.ac.in/"},
+  {re:/\bDGCA\b/i,name:"DGCA",url:"https://www.dgca.gov.in/"},
+  {re:/ACET|actuar/i,name:"IAI / ACET",url:"https://www.actuariesindia.org/"}
+];
+function examLinks(c){
+  const hay=[c.exams,c.qualifications].join(" ");const out=[];const seen={};
+  EXAM_LINKS.forEach(l=>{if(l.re.test(hay)&&!seen[l.name]){seen[l.name]=1;out.push(l);}});
+  return out.slice(0,5);
+}
 function themeArr(t){return Array.isArray(t)?t:String(t||"").split("");}
 function relatedCareers(c){
   const ct=themeArr(c.themes);
@@ -1185,7 +1221,7 @@ function openDetail(id){
   document.getElementById("detailBody").innerHTML=`<div class="detail-grid"><div>
     <div class="detail-section"><h4>What The Work Is</h4><p>${esc(c.work)}</p></div>
     <div class="detail-section"><h4>Salary Expectations</h4><p><strong>Entry:</strong> ${esc(c.salary.entry)}<br><strong>Mid:</strong> ${esc(c.salary.mid)}<br><strong>Confidence:</strong> ${esc(c.salary.confidence)}. Ranges vary by city, employer, portfolio, marks, internships, language ability and family mobility.</p></div>
-    <div class="detail-section"><h4>Qualifications And Exams</h4><p>${esc(c.qualifications)}</p><p style="margin-top:8px;"><strong>Common exams/routes:</strong> ${esc(c.exams)}</p></div>
+    <div class="detail-section"><h4>Qualifications And Exams</h4><p>${esc(c.qualifications)}</p><p style="margin-top:8px;"><strong>Common exams/routes:</strong> ${esc(c.exams)}</p>${(()=>{const ls=examLinks(c);return ls.length?`<div class="exam-links"><span class="el-label">Verify at official source</span>${ls.map(l=>`<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.name)} ↗</a>`).join("")}</div>`:"";})()}</div>
     <div class="detail-section"><h4>Your Child's Roadmap</h4>${roadmapHtml(c)}</div>
   </div><div>
     <div class="detail-section"><h4>Skills To Build</h4><ul>${c.skills.map(s=>`<li>${esc(s)}</li>`).join("")}</ul></div>
