@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>School Partnership Proposal | Lume Live</title>
+<meta name="description" content="A ready-to-share career &amp; wellbeing partnership proposal for schools — programs, sample report, bulk pricing and outcomes from Lume Live.">
+<meta name="robots" content="noindex, follow">
+<link rel="icon" type="image/png" href="logo.png">
+<style>
+:root{--navy:#0D1B40;--navy2:#142C5A;--teal:#0A6E6E;--gold:#C9933A;--gold2:#E8B84E;--sky:#DBEAFE;--mint:#ECF7F6;--gray:#F5F7F8;--dark:#1A2C2C;--mid:#4A6060;--line:#E2E9E8;--white:#fff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;color:var(--dark);background:#EEF1F3;line-height:1.55;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,.serif{font-family:Georgia,'Times New Roman',serif}
+.doc{max-width:900px;margin:24px auto;background:#fff;box-shadow:0 20px 60px rgba(13,27,64,.14)}
+.page{padding:44px 48px}
+.pagebreak{page-break-after:always}
+
+/* Action bar (screen only) */
+.bar{position:sticky;top:0;z-index:10;background:var(--navy);color:#fff;display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 20px;font-size:.85rem}
+.bar b{color:var(--gold2)}
+.bar .btns{display:flex;gap:8px;flex-wrap:wrap}
+.bar button,.bar a.pill{border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);color:#fff;border-radius:999px;padding:8px 15px;font-weight:800;font-size:.8rem;cursor:pointer}
+.bar button.primary{background:var(--gold);border-color:var(--gold)}
+
+/* Cover */
+.cover{background:var(--navy);color:#fff;padding:52px 48px 46px;position:relative;overflow:hidden}
+.cover::after{content:"";position:absolute;inset:0;background:radial-gradient(55% 75% at 8% 0%,rgba(10,110,110,.42),transparent 60%),radial-gradient(50% 60% at 100% 120%,rgba(201,147,58,.22),transparent 60%);pointer-events:none}
+.cover>*{position:relative;z-index:1}
+.brand{display:flex;align-items:center;gap:11px;font-weight:900;letter-spacing:.5px}
+.brand img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--gold)}
+.kicker{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(232,184,78,.42);background:rgba(201,147,58,.16);color:#FFE2A3;border-radius:999px;padding:6px 13px;font-size:.7rem;font-weight:900;letter-spacing:.7px;text-transform:uppercase;margin:26px 0 16px}
+.cover h1{font-size:2.6rem;line-height:1.06;margin-bottom:14px}
+.cover p.lead{color:rgba(255,255,255,.82);font-size:1.02rem;max-width:620px}
+.prepared{margin-top:30px;display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:560px}
+.prepared .box{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:14px 16px}
+.prepared .box span{display:block;font-size:.64rem;text-transform:uppercase;letter-spacing:.6px;color:rgba(255,255,255,.6);font-weight:800;margin-bottom:6px}
+.prepared .box b{font-size:.95rem;font-weight:800;color:#fff;border-bottom:1px dashed rgba(255,255,255,.35);display:inline-block;min-width:150px;padding-bottom:3px}
+.cover-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:30px}
+.cstat{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.15);border-radius:13px;padding:14px;text-align:center}
+.cstat b{display:block;color:var(--gold2);font-size:1.5rem;line-height:1}
+.cstat span{font-size:.62rem;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.66);font-weight:800;margin-top:6px;display:block}
+
+/* Sections */
+.tag{display:inline-flex;color:var(--gold);font-weight:900;text-transform:uppercase;font-size:.68rem;letter-spacing:.8px;margin-bottom:7px}
+h2.sec{font-size:1.7rem;color:var(--navy);line-height:1.14;margin-bottom:6px}
+.sub{color:var(--mid);font-size:.9rem;margin-bottom:22px}
+.divider{height:3px;width:54px;background:linear-gradient(90deg,var(--teal),var(--gold2));border-radius:3px;margin:0 0 22px}
+
+.why{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.why .card{border:1px solid var(--line);border-radius:13px;padding:18px 20px;background:linear-gradient(135deg,#F8FBFB,#fff)}
+.why .card h3{font-size:1rem;color:var(--navy);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.why .card p{font-size:.85rem;color:var(--mid)}
+.why .card .em{font-size:1.15rem}
+
+.programs{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.program{border:1px solid var(--line);border-radius:13px;padding:18px 20px}
+.program span.ic{font-size:1.6rem;display:block;margin-bottom:8px}
+.program h3{font-size:.98rem;color:var(--navy);margin-bottom:5px}
+.program p{font-size:.83rem;color:var(--mid)}
+
+.report{display:grid;grid-template-columns:.95fr 1.05fr;gap:26px;align-items:center}
+.report .frame{border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 14px 34px rgba(13,27,64,.12)}
+.report .frame img{width:100%;display:block}
+.report ul{list-style:none;display:grid;gap:11px}
+.report li{display:flex;gap:11px;font-size:.88rem;color:var(--dark)}
+.report li b{color:var(--navy)}
+.report li::before{content:"✓";color:var(--teal);font-weight:900;flex:0 0 auto}
+.sampledl{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}
+.sampledl a{border:1px solid var(--teal);color:var(--teal);border-radius:999px;padding:9px 15px;font-size:.8rem;font-weight:800}
+
+/* Pricing */
+.pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.plan{border:1px solid var(--line);border-radius:15px;padding:22px 20px;display:flex;flex-direction:column;background:#fff}
+.plan.feat{border:2px solid var(--gold);box-shadow:0 14px 34px rgba(201,147,58,.16);position:relative}
+.plan.feat::before{content:"MOST POPULAR";position:absolute;top:-11px;left:20px;background:var(--gold);color:#fff;font-size:.6rem;font-weight:900;letter-spacing:.6px;padding:4px 10px;border-radius:999px}
+.plan h3{font-size:1rem;color:var(--navy);margin-bottom:4px}
+.plan .who{font-size:.74rem;color:var(--mid);min-height:32px;margin-bottom:10px}
+.plan .amt{font-size:1.5rem;font-weight:900;color:var(--gold);line-height:1}
+.plan .amt small{font-size:.72rem;color:var(--mid);font-weight:700}
+.plan ul{list-style:none;margin:14px 0 0;display:grid;gap:7px}
+.plan li{font-size:.79rem;color:var(--mid);display:flex;gap:8px}
+.plan li::before{content:"•";color:var(--teal);font-weight:900}
+.pnote{font-size:.74rem;color:var(--mid);margin-top:14px;text-align:center}
+
+/* ROI */
+.roi{background:linear-gradient(135deg,#0D1B40,#142C5A);color:#fff;border-radius:18px;padding:30px 32px}
+.roi h2{color:#fff;font-size:1.55rem;margin-bottom:4px}
+.roi .sub{color:rgba(255,255,255,.72)}
+.roigrid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:8px}
+.roi .item{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:16px 18px}
+.roi .item b{color:var(--gold2);font-size:1.05rem;display:block;margin-bottom:4px}
+.roi .item p{font-size:.83rem;color:rgba(255,255,255,.8)}
+
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:6px}
+.step{border:1px solid var(--line);border-radius:13px;padding:16px;text-align:center}
+.step b{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--navy);color:#fff;margin:0 auto 10px}
+.step h3{font-size:.85rem;color:var(--navy);margin-bottom:3px}
+.step p{font-size:.75rem;color:var(--mid)}
+
+.cta{background:linear-gradient(135deg,#F7FAF9,#FFF8E8);border:1px solid #E8E2D0;border-radius:18px;padding:30px 34px;text-align:center}
+.cta h2{color:var(--navy);font-size:1.7rem;margin-bottom:8px}
+.cta p{color:var(--mid);font-size:.92rem;max-width:560px;margin:0 auto 18px}
+.cta .contacts{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.cta a.big{background:var(--gold);color:#fff;border-radius:999px;padding:13px 24px;font-weight:800;font-size:.9rem}
+.cta a.big.wa{background:#128C7E}
+.cta a.big.alt{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.contactline{margin-top:18px;font-size:.85rem;color:var(--mid)}
+.contactline b{color:var(--navy)}
+
+.footnote{font-size:.7rem;color:#8A9A9A;padding:20px 48px 34px;text-align:center;line-height:1.5}
+
+@media(max-width:760px){
+  .page{padding:30px 24px}
+  .cover{padding:36px 24px}
+  .cover h1{font-size:2rem}
+  .why,.report,.roigrid,.programs,.prepared{grid-template-columns:1fr}
+  .pricing,.steps,.cover-stats{grid-template-columns:1fr 1fr}
+  .report .frame{max-width:320px;margin:0 auto}
+}
+@media print{
+  body{background:#fff}
+  .bar{display:none}
+  .doc{box-shadow:none;margin:0;max-width:none}
+  .page{padding:26px 30px}
+  .pagebreak{page-break-after:always}
+  .roi,.cta,.plan.feat{box-shadow:none}
+  a[href]{text-decoration:none}
+  @page{size:A4;margin:12mm}
+}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div>📄 <b>School Partnership Proposal</b> — ready to email or print</div>
+  <div class="btns">
+    <button class="primary" onclick="window.print()">⬇ Save as PDF / Print</button>
+    <a class="pill" href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20read%20the%20Lume%20Live%20school%20proposal%20and%20would%20like%20to%20discuss." target="_blank">WhatsApp Sachin</a>
+  </div>
+</div>
+
+<div class="doc">
+
+  <!-- COVER -->
+  <section class="cover">
+    <div class="brand"><img src="logo.png" alt="Lume Live logo"><span>LUME LIVE</span></div>
+    <span class="kicker">Career &amp; Wellbeing Partnership Proposal</span>
+    <h1>Give every student clarity about their future — with a program your parents will remember.</h1>
+    <p class="lead">A structured career-guidance and mental-wellbeing partnership for schools across Haryana — scientific assessments, live workshops, individual student reports, and parent orientation, delivered by Lume Live.</p>
+    <div class="prepared">
+      <div class="box"><span>Prepared for</span><b>&nbsp;</b></div>
+      <div class="box"><span>Attention</span><b>Principal / Career Cell</b></div>
+      <div class="box"><span>Prepared by</span><b>Sachin · Lume Live</b></div>
+      <div class="box"><span>Date</span><b>&nbsp;</b></div>
+    </div>
+    <div class="cover-stats">
+      <div class="cstat"><b>500+</b><span>Students Guided</span></div>
+      <div class="cstat"><b>15+</b><span>School Touchpoints</span></div>
+      <div class="cstat"><b>4.9★</b><span>Average Rating</span></div>
+      <div class="cstat"><b>Class 8–12</b><span>Program Range</span></div>
+    </div>
+  </section>
+
+  <!-- WHY -->
+  <section class="page">
+    <span class="tag">Why this matters for your school</span>
+    <h2 class="sec">Career confusion is now the #1 stress driver for teenagers</h2>
+    <div class="divider"></div>
+    <p class="sub">Most students pick a stream or college course under pressure, with little real insight into their own strengths. A structured guidance program turns that anxiety into direction — and positions your school as one that genuinely invests in each child's future.</p>
+    <div class="why">
+      <div class="card"><h3><span class="em">🎯</span> Better-informed choices</h3><p>Students choose streams and careers based on aptitude and interest data — not peer pressure or guesswork.</p></div>
+      <div class="card"><h3><span class="em">💬</span> Parents who feel supported</h3><p>Parent orientation + individual reports become a talking point families remember at admission and re-enrolment time.</p></div>
+      <div class="card"><h3><span class="em">🧠</span> Lower exam-season stress</h3><p>Wellbeing sessions give students practical tools for anxiety, focus and confidence during board years.</p></div>
+      <div class="card"><h3><span class="em">🏫</span> A visible differentiator</h3><p>"Structured career &amp; wellbeing program" is a genuine edge in your prospectus and parent conversations.</p></div>
+    </div>
+  </section>
+
+  <!-- PROGRAMS -->
+  <section class="page">
+    <span class="tag">What we deliver on campus</span>
+    <h2 class="sec">A complete support ecosystem — not a one-off lecture</h2>
+    <div class="divider"></div>
+    <p class="sub">Pick one focused workshop or build a multi-touch program across the school year. Every module is delivered by trained facilitators and tailored to your class groups.</p>
+    <div class="programs">
+      <div class="program"><span class="ic">🎤</span><h3>Career Awareness Workshops</h3><p>Interactive auditorium sessions for Classes 9–12 on stream selection, emerging careers and goal-setting.</p></div>
+      <div class="program"><span class="ic">📊</span><h3>Scientific Career Assessments</h3><p>Each student completes a psychometric assessment and receives an individual, counsellor-reviewed report.</p></div>
+      <div class="program"><span class="ic">🧠</span><h3>Mental Health Seminars</h3><p>Exam anxiety, peer pressure, confidence and emotional-wellness sessions with practical tools.</p></div>
+      <div class="program"><span class="ic">📋</span><h3>Parent Orientation</h3><p>Help parents support modern career decisions without adding pressure — a session families value.</p></div>
+      <div class="program"><span class="ic">👨‍🏫</span><h3>Teacher Sensitisation</h3><p>Equip faculty to notice early signs of distress and offer responsible first-level support.</p></div>
+      <div class="program"><span class="ic">🎯</span><h3>1:1 Counselling Booths</h3><p>On-campus individual slots for students who want deeper, personalised guidance.</p></div>
+    </div>
+  </section>
+
+  <div class="pagebreak"></div>
+
+  <!-- SAMPLE REPORT -->
+  <section class="page">
+    <span class="tag">What every student takes home</span>
+    <h2 class="sec">A professional, personalised career report</h2>
+    <div class="divider"></div>
+    <div class="report">
+      <div class="frame"><img src="report-preview-hero.webp" alt="Sample Lume Live student career report"></div>
+      <div>
+        <ul>
+          <li><b>Aptitude &amp; interest profile</b> mapped to real-world career families.</li>
+          <li><b>Recommended streams &amp; courses</b> with clear reasoning the student understands.</li>
+          <li><b>Strengths &amp; growth areas</b> written in encouraging, student-friendly language.</li>
+          <li><b>Suggested next steps</b> — subjects, skills and exploration paths to pursue.</li>
+          <li><b>Counsellor-reviewed</b>, not a raw computer print-out.</li>
+        </ul>
+        <div class="sampledl">
+          <a href="samples/Lume-Live-Student-Sample-Report.pdf" target="_blank">📄 View student sample report</a>
+          <a href="samples/Lume-Lens-Professional-Sample-Report.pdf" target="_blank">📄 View detailed sample</a>
+        </div>
+        <p style="font-size:.78rem;color:var(--mid);margin-top:14px">Leadership also receives an <b>anonymised cohort snapshot</b> — a batch-level view of aptitude and interest trends across your students, useful for guidance planning.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="page">
+    <span class="tag">Partnership options</span>
+    <h2 class="sec">Simple, batch-friendly pricing</h2>
+    <div class="divider"></div>
+    <p class="sub">Transparent per-student and per-session pricing. Final quote is tailored to your batch size and chosen modules — the figures below are our standard school rates.</p>
+    <div class="pricing">
+      <div class="plan">
+        <h3>Awareness Workshop</h3>
+        <div class="who">A single high-energy session for a full grade.</div>
+        <div class="amt">₹18,000 <small>/ session</small></div>
+        <ul>
+          <li>60–90 min auditorium workshop</li>
+          <li>Up to one grade (Classes 9–12)</li>
+          <li>Career-clarity handout for students</li>
+          <li>Ideal as a first pilot with your school</li>
+        </ul>
+      </div>
+      <div class="plan feat">
+        <h3>Career Clarity Program</h3>
+        <div class="who">Assessment + individual report for every student.</div>
+        <div class="amt">₹399 <small>/ student</small></div>
+        <ul>
+          <li>Psychometric assessment per student</li>
+          <li>Individual counsellor-reviewed report</li>
+          <li>Group debrief workshop included</li>
+          <li>Anonymised cohort snapshot for leadership</li>
+          <li>Minimum batch of 50 students</li>
+        </ul>
+      </div>
+      <div class="plan">
+        <h3>Year-Round Partnership</h3>
+        <div class="who">The full ecosystem across the school year.</div>
+        <div class="amt">from ₹75,000 <small>/ year</small></div>
+        <ul>
+          <li>Multiple workshops + assessments</li>
+          <li>Parent orientation + teacher session</li>
+          <li>1:1 counselling booth days</li>
+          <li>Priority scheduling &amp; custom modules</li>
+        </ul>
+      </div>
+    </div>
+    <p class="pnote">Volume slabs available above 200 students · Pilot pricing available for your first program · GST as applicable.</p>
+  </section>
+
+  <div class="pagebreak"></div>
+
+  <!-- ROI -->
+  <section class="page">
+    <div class="roi">
+      <span class="tag" style="color:var(--gold2)">The return for your school</span>
+      <h2>What the school actually gets back</h2>
+      <p class="sub">Beyond the sessions themselves, a guidance program pays back where it matters most for a school.</p>
+      <div class="roigrid">
+        <div class="item"><b>Admissions &amp; retention edge</b><p>A named career &amp; wellbeing program is a real differentiator parents weigh at enrolment and re-enrolment.</p></div>
+        <div class="item"><b>Parent goodwill</b><p>Individual reports + a parent session create the kind of experience families talk about to other families.</p></div>
+        <div class="item"><b>Near-zero staff burden</b><p>We handle facilitation, assessments and reports. Your team only coordinates dates and venue.</p></div>
+        <div class="item"><b>Better board-year outcomes</b><p>Clearer direction and stress tools help students focus — reflected in engagement and results.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="page">
+    <span class="tag">How we begin</span>
+    <h2 class="sec">From first call to first session in under two weeks</h2>
+    <div class="divider"></div>
+    <div class="steps">
+      <div class="step"><b>1</b><h3>Briefing Call</h3><p>Understand your goals &amp; class groups.</p></div>
+      <div class="step"><b>2</b><h3>Tailored Plan</h3><p>We share modules, dates &amp; a fixed quote.</p></div>
+      <div class="step"><b>3</b><h3>On-Campus Delivery</h3><p>We run the sessions &amp; assessments.</p></div>
+      <div class="step"><b>4</b><h3>Reports &amp; Review</h3><p>Students &amp; leadership receive reports.</p></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="page">
+    <div class="cta">
+      <h2>Let's plan a short pilot for your school</h2>
+      <p>The easiest start is one Awareness Workshop for a single grade. If it lands well with students and parents, we scale from there. Reach out and we'll send tailored dates within 48 hours.</p>
+      <div class="contacts">
+        <a class="big wa" href="https://wa.me/917015671280?text=Hi%20Sachin!%20We%20would%20like%20to%20discuss%20a%20Lume%20Live%20school%20partnership%20pilot." target="_blank">💬 WhatsApp Sachin</a>
+        <a class="big" href="tel:+917015671280">📞 Call +91 70156 71280</a>
+        <a class="big alt" href="https://lumelive.co.in/school-partnerships.html" target="_blank">🌐 lumelive.co.in</a>
+      </div>
+      <p class="contactline"><b>Sachin · Lume Live</b> &nbsp;·&nbsp; Career Guidance &amp; Student Wellbeing &nbsp;·&nbsp; Haryana &amp; across India</p>
+    </div>
+  </section>
+
+  <p class="footnote">
+    Lume Live provides career guidance, psychometric assessment and wellbeing sessions. Assessments are guidance tools and not a substitute for medical or psychological diagnosis. Pricing shown is indicative of standard school rates and confirmed per school in a written quote. © Lume Live.
+  </p>
+
+</div>
+</body>
+</html>
