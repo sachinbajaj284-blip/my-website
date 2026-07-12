@@ -647,7 +647,7 @@ h2{font-size:clamp(1.7rem,3.6vw,2.5rem);color:var(--navy);font-weight:900;letter
   var WA='917015671280';
   function build(body){
     var b=body.replace(/[.\s]+$/,'');
-    var lines=['👋 Hello Lume Live!','• '+b];
+    var lines=['Hello Lume Live!','• '+b];
     if(!/please|confirm|\?\s*$/i.test(body))lines.push('• Please share the next steps and available options');
     return lines.join('\n');
   }

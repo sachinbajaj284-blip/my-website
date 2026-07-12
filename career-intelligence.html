@@ -881,10 +881,10 @@ function openGovDetail(id){
   openModal("detailModal");
 }
 function wa(c){
-  return "https://wa.me/917015671280?text="+encodeURIComponent(`👋 Hello Lume Live!\n\nI have unlocked Career Intelligence through the assessment 🔓\n\n🎯 Exploring\n• ${c.title}\n\n🙏 Please help me understand suitability and the ₹1,499 detailed roadmap.`);
+  return "https://wa.me/917015671280?text="+encodeURIComponent(`Hello Lume Live!\n\nI have unlocked Career Intelligence through the assessment 🔓\n\n🎯 Exploring\n• ${c.title}\n\n🙏 Please help me understand suitability and the ₹1,499 detailed roadmap.`);
 }
 function govWa(j){
-  return "https://wa.me/917015671280?text="+encodeURIComponent(`👋 Hello Lume Live!\n\nI have unlocked Career Intelligence through the assessment 🔓\n\n🏛️ Government Jobs Explorer\n• ${j.title}\n\n🙏 Please help me understand eligibility, preparation timeline, backup options and whether this route suits the student.`);
+  return "https://wa.me/917015671280?text="+encodeURIComponent(`Hello Lume Live!\n\nI have unlocked Career Intelligence through the assessment 🔓\n\n🏛️ Government Jobs Explorer\n• ${j.title}\n\n🙏 Please help me understand eligibility, preparation timeline, backup options and whether this route suits the student.`);
 }
 function openModal(id){document.getElementById(id).classList.add("open");document.body.style.overflow="hidden";}
 function closeModal(id){document.getElementById(id).classList.remove("open");document.body.style.overflow="";}
@@ -965,7 +965,7 @@ function startCareerRoadmapPayment(e, careerId){
   const item=CAREERS.find(c=>c.id===careerId);
   const label=item ? "Career Intelligence Detailed Roadmap - "+item.title : "Career Intelligence Detailed Roadmap";
   const fallback=function(){
-    const text=`👋 Hello Lume Live!\n\nI have unlocked Career Intelligence through the assessment 🔓\n\n🗺️ I want the ₹1,499 detailed roadmap${item ? " for "+item.title : ""}.\n\n🙏 Please help me complete payment and start the roadmap.`;
+    const text=`Hello Lume Live!\n\nI have unlocked Career Intelligence through the assessment 🔓\n\n🗺️ I want the ₹1,499 detailed roadmap${item ? " for "+item.title : ""}.\n\n🙏 Please help me complete payment and start the roadmap.`;
     window.open("https://wa.me/917015671280?text="+encodeURIComponent(text),"_blank","noopener");
   };
   if(typeof window.lumeCashfreePay!=="function"){alert("Cashfree checkout is still loading. Please wait a few seconds and tap Pay Securely With Cashfree again.");return;}
@@ -998,7 +998,7 @@ if(atlasUnlocked){[80,320,760].forEach(t=>setTimeout(scrollToHashTarget,t));}
   var WA='917015671280';
   function build(body){
     var b=body.replace(/[.\s]+$/,'');
-    var lines=['👋 Hello Lume Live!','• '+b];
+    var lines=['Hello Lume Live!','• '+b];
     if(!/please|confirm|\?\s*$/i.test(body))lines.push('• Please share the next steps and available options');
     return lines.join('\n');
   }

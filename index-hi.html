@@ -221,7 +221,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.72);padding:28px 18px;text
   var WA='917015671280';
   function build(body){
     var b=body.replace(/[.\s]+$/,'');
-    var lines=['👋 Hello Lume Live!','• '+b];
+    var lines=['Hello Lume Live!','• '+b];
     if(!/please|confirm|\?\s*$/i.test(body))lines.push('• Please share the next steps and available options');
     return lines.join('\n');
   }

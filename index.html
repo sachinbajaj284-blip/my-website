@@ -3071,7 +3071,7 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
 
     // Optional: open WhatsApp if a phone was provided so the lead is captured manually
     if(phone){
-      const msg = encodeURIComponent(`👋 Hello Lume Live!\n\nI just took the free Career Snapshot 📋\n\nMy Details\n• Name: ${state.name}\n• WhatsApp: ${phone}\n\nMy Top Theme\n• ${t.name} (${t.full})\n\nPlease send my snapshot summary and tell me more about the ₹999 Full Clarity Report.`);
+      const msg = encodeURIComponent(`Hello Lume Live!\n\nI just took the free Career Snapshot 📋\n\nMy Details\n• Name: ${state.name}\n• WhatsApp: ${phone}\n\nMy Top Theme\n• ${t.name} (${t.full})\n\nPlease send my snapshot summary and tell me more about the ₹999 Full Clarity Report.`);
       // Open in new tab so they don't lose their result
       window.open(`https://wa.me/917015671280?text=${msg}`,'_blank','noopener');
     }
@@ -3528,7 +3528,7 @@ function applyVerifiedCashfreeAccess(){
 window.saSendPayment=function(){
  if(!requireAssessmentSignin())return;
  if(!validateGate())return;
- var msg=saWa(["👋 Hello Lume Live!","",
+ var msg=saWa(["Hello Lume Live!","",
   "I would like to begin the Lume Live Full Clarity Report.",
   "",
   "Student Details",
@@ -4143,7 +4143,7 @@ window.saShare=function(){
  el("saShareError").textContent="";
  var d=S.report;
  var P=scorePersonality(),A=scoreAnchors(),V=scoreVark(),R=scoreRiasec();
- var msg=["👋 Hello Lume Live!","",
+ var msg=["Hello Lume Live!","",
   "I have completed the Lume Live Full Clarity Report and consent to discuss my combined report. 📋",
   "",
   "My Details",
@@ -4625,7 +4625,7 @@ function saSummaryText(){
  var topP=P.slice().sort(function(a,b){return b.score-a.score;})[0];
  var top3=R.slice(0,3);
  var topV=V[0],multiV=V.filter(function(r){return r.score>0&&topV.score-r.score<=1;});
-  return saWa(["👋 Hello Lume Live!","",
+  return saWa(["Hello Lume Live!","",
   "I have completed the Lume Live Full Clarity Report and would like to discuss my combined report. 📋",
   "",
   "Student Details",
@@ -5716,7 +5716,7 @@ function waUrl(lines){return waLink(waMessage(lines));}
 function waLine(label,value){return value ? label+': '+value : null;}
 function applyStaticWhatsAppMessages(){
   const generic=[
-    '👋 Hello Lume Live!',
+    'Hello Lume Live!',
     '',
     '• I would like to know more about your counselling programmes',
     '• Please share the next steps and available options'
@@ -5724,43 +5724,43 @@ function applyStaticWhatsAppMessages(){
   const messages=new Map([
     ['Hello Lume Live! I would like to know more about Lume Live.',generic],
     ['Hello Lume Live! I would like to know more about Lume Live counselling.',[
-      '👋 Hello Lume Live!',
+      'Hello Lume Live!',
       '',
       '• I would like to know more about your counselling',
       '• Please guide me on the right support option'
     ]],
     ['Hello Lume Live! I would like to know more about Emotional Wellness Counselling at Lume Live.',[
-      '👋 Hello Lume Live!',
+      'Hello Lume Live!',
       '',
       '• I would like to know more about your Emotional Wellness Counselling',
       '• Please guide me on the right support option'
     ]],
     ['Hello Lume Live! I am a parent and would like guidance for my child.',[
-      '👋 Hello Lume Live!',
+      'Hello Lume Live!',
       '',
       '• I am a parent and would like guidance for my child',
       '• Please share the next steps for parent counselling'
     ]],
     ['Hello Lume Live! I would like to discuss Lume Live support options.',[
-      '👋 Hello Lume Live!',
+      'Hello Lume Live!',
       '',
       '• I would like to discuss the right support option for me',
       '• Please help me choose the most suitable next step'
     ]],
     ['Hello Lume Live! I would like to book a session with Lume Live.',[
-      '👋 Hello Lume Live!',
+      'Hello Lume Live!',
       '',
       '• I would like to book a session',
       '• Please share available slots and next steps'
     ]],
     ['Hello Lume Live! I would like to book my first wellness session with Lume Live.',[
-      '👋 Hello Lume Live!',
+      'Hello Lume Live!',
       '',
       '• I would like to book my first ₹49 wellness session',
       '• Please share available slots and next steps'
     ]],
     ['Hello Lume Live! I have paid Rs.199 for the Parents Career Handbook PDF. Please send it to me.',[
-      '👋 Hello Lume Live!',
+      'Hello Lume Live!',
       '',
       '• I have paid ₹199 for the Parents Career Handbook PDF',
       '• I will attach my payment screenshot here',
@@ -6028,7 +6028,7 @@ function submitNotify(){
   if(!p){showToast('Please enter your WhatsApp number');return;}
   const t=document.getElementById('comingTitle').textContent;
   const msg=waMessage([
-    '👋 Hello Lume Live!',
+    'Hello Lume Live!',
     '',
     'Please notify me when this Lume Live service is available.',
     '',
@@ -6199,7 +6199,7 @@ function submitQ(){
   qData.classStage=stage;
   const streamContext=/\b(class|grade|std|standard)\s*(9|10|11|12)\b|\b(9th|10th|11th|12th)\b/i.test(stage);
   const msg=[
-    '👋 Hello Lume Live!',
+    'Hello Lume Live!',
     '',
     'I would like to discuss the right support option for me.',
     '',
@@ -6346,7 +6346,7 @@ function submitSchool(){
   if(!name){showToast('Please enter coordinator name'); return;}
   if(phone.length < 10){showToast('Please enter a valid phone number'); return;}
   const msg = waMessage([
-    '👋 Hello Lume Live!',
+    'Hello Lume Live!',
     '',
     'School Partnership Enquiry',
     '',
@@ -6506,7 +6506,7 @@ function setMode(el, mode){
   function book(){
     if(!currentResult)return;
     var note=document.getElementById("llCheckNote");
-    var msg=["👋 Hello Lume Live!","","I completed a Lume Live self-check and would like to book the ₹49 introductory session. 💛","","My Self-Check","• Test: "+currentResult.test,"• Result band: "+currentResult.result.band,"• Score: "+currentResult.result.scoreLabel];
+    var msg=["Hello Lume Live!","","I completed a Lume Live self-check and would like to book the ₹49 introductory session. 💛","","My Self-Check","• Test: "+currentResult.test,"• Result band: "+currentResult.result.band,"• Score: "+currentResult.result.scoreLabel];
     if(note&&note.value.trim())msg.push("Message: "+note.value.trim());
     window.open("https://wa.me/"+WA_PHONE+"?text="+encodeURIComponent(msg.join("\n")),"_blank","noopener");
   }
