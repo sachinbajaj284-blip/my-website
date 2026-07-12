@@ -923,7 +923,7 @@ function demandInfo(f){
 // Official, verifiable sources — links families can check for themselves.
 const EXAM_LINKS=[
   {re:/\bNEET\b/i,name:"NEET",url:"https://neet.nta.nic.in/"},
-  {re:/(?<!NCHM\s)\bJEE\b/i,name:"JEE Main",url:"https://jeemain.nta.nic.in/"},
+  {re:/\bJEE\b/i,name:"JEE Main",url:"https://jeemain.nta.nic.in/"},
   {re:/\bCUET\b/i,name:"CUET",url:"https://cuet.nta.nic.in/"},
   {re:/\bCLAT\b/i,name:"CLAT",url:"https://consortiumofnlus.ac.in/"},
   {re:/\bNIFT\b/i,name:"NIFT",url:"https://www.nift.ac.in/"},
@@ -948,7 +948,10 @@ const EXAM_LINKS=[
   {re:/ACET|actuar/i,name:"IAI / ACET",url:"https://www.actuariesindia.org/"}
 ];
 function examLinks(c){
-  const hay=[c.exams,c.qualifications].join(" ");const out=[];const seen={};
+  // Neutralise "NCHM JEE" first so it can't trip the JEE Main matcher
+  // (done without regex lookbehind for older-browser safety).
+  const hay=[c.exams,c.qualifications].join(" ").replace(/NCHM\s*JEE/ig," NCHM ");
+  const out=[];const seen={};
   EXAM_LINKS.forEach(l=>{if(l.re.test(hay)&&!seen[l.name]){seen[l.name]=1;out.push(l);}});
   return out.slice(0,5);
 }
@@ -1271,7 +1274,7 @@ document.addEventListener("keydown",e=>{
   if(!modal)return;
   if(e.key==="Escape"){e.preventDefault();closeModal(modal.id);return;}
   if(e.key==="Tab"){ // keep focus inside the open dialog
-    const f=[...modal.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(el=>el.offsetParent!==null||el===document.activeElement);
+    const f=[...modal.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(el=>el.getClientRects().length>0);
     if(!f.length)return;
     const first=f[0],last=f[f.length-1];
     if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
