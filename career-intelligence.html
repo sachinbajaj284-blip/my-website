@@ -546,7 +546,7 @@ button,input,select{font:inherit}
         <div class="ca-content-head">
           <div>
             <h2>Explore Careers</h2>
-            <div class="ca-count" id="resultCount">Showing careers</div>
+            <div class="ca-count" id="resultCount" aria-live="polite" role="status">Showing careers</div>
           </div>
           <div class="ca-tools">
             <button class="ca-shortlist-btn" type="button" id="shortlistBtn">♥ My Shortlist <b>(0)</b></button>
@@ -580,7 +580,7 @@ button,input,select{font:inherit}
       </div>
       <div class="ca-meta-row" style="margin:0 0 16px;padding-top:0;border-top:0;">
         <div>
-          <span class="ca-source-pill" id="govCount">Showing govt job families</span>
+          <span class="ca-source-pill" id="govCount" aria-live="polite" role="status">Showing govt job families</span>
           <span class="ca-source-pill">Official notifications required before applying</span>
         </div>
         <button class="ca-btn ghost" type="button" id="govReset">Reset Govt Filters</button>
@@ -923,7 +923,7 @@ function demandInfo(f){
 // Official, verifiable sources — links families can check for themselves.
 const EXAM_LINKS=[
   {re:/\bNEET\b/i,name:"NEET",url:"https://neet.nta.nic.in/"},
-  {re:/\bJEE\b/i,name:"JEE Main",url:"https://jeemain.nta.nic.in/"},
+  {re:/(?<!NCHM\s)\bJEE\b/i,name:"JEE Main",url:"https://jeemain.nta.nic.in/"},
   {re:/\bCUET\b/i,name:"CUET",url:"https://cuet.nta.nic.in/"},
   {re:/\bCLAT\b/i,name:"CLAT",url:"https://consortiumofnlus.ac.in/"},
   {re:/\bNIFT\b/i,name:"NIFT",url:"https://www.nift.ac.in/"},
@@ -938,7 +938,7 @@ const EXAM_LINKS=[
   {re:/\bIBPS\b/i,name:"IBPS",url:"https://www.ibps.in/"},
   {re:/\bSSC\b/i,name:"SSC",url:"https://ssc.gov.in/"},
   {re:/\bIMU\b/i,name:"IMU CET",url:"https://www.imu.edu.in/"},
-  {re:/NCHM/i,name:"NCHM JEE",url:"https://nchmjee.nta.nic.in/"},
+  {re:/NCHM/i,name:"NCHM JEE",url:"https://exams.nta.nic.in/nchm-jee/"},
   {re:/\bCTET\b/i,name:"CTET",url:"https://ctet.nic.in/"},
   {re:/UGC ?NET|\bNET\b/i,name:"UGC NET",url:"https://ugcnet.nta.ac.in/"},
   {re:/ICAR|AIEEA/i,name:"ICAR",url:"https://icar.org.in/"},
@@ -1267,7 +1267,17 @@ function closeModal(id){
   if(lastFocused&&lastFocused.focus){try{lastFocused.focus();}catch(e){}lastFocused=null;}
 }
 document.addEventListener("keydown",e=>{
-  if(e.key==="Escape"){const open=[...document.querySelectorAll(".ca-modal.open")];if(open.length){e.preventDefault();open.forEach(m=>closeModal(m.id));}}
+  const modal=document.querySelector(".ca-modal.open");
+  if(!modal)return;
+  if(e.key==="Escape"){e.preventDefault();closeModal(modal.id);return;}
+  if(e.key==="Tab"){ // keep focus inside the open dialog
+    const f=[...modal.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(el=>el.offsetParent!==null||el===document.activeElement);
+    if(!f.length)return;
+    const first=f[0],last=f[f.length-1];
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+    else if(!modal.contains(document.activeElement)){e.preventDefault();first.focus();}
+  }
 });
 function openCompare(){
   const list=state.compare.map(id=>CAREERS.find(c=>c.id===id)).filter(Boolean);
