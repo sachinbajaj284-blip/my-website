@@ -1251,10 +1251,10 @@ function openGovDetail(id){
   openModal("detailModal");
 }
 function wa(c){
-  return "https://wa.me/917015671280?text="+encodeURIComponent(`👋 Hello Lume Live!\n\nI have unlocked Career Intelligence through the assessment 🔓\n\n🎯 Exploring\n• ${c.title}\n\n🙏 Please help me understand suitability and the ₹1,499 detailed roadmap.`);
+  return "https://wa.me/917015671280?text="+encodeURIComponent(`Hello Lume Live!\n\nI have unlocked Career Intelligence through the assessment 🔓\n\n🎯 Exploring\n• ${c.title}\n\n🙏 Please help me understand suitability and the ₹1,499 detailed roadmap.`);
 }
 function govWa(j){
-  return "https://wa.me/917015671280?text="+encodeURIComponent(`👋 Hello Lume Live!\n\nI have unlocked Career Intelligence through the assessment 🔓\n\n🏛️ Government Jobs Explorer\n• ${j.title}\n\n🙏 Please help me understand eligibility, preparation timeline, backup options and whether this route suits the student.`);
+  return "https://wa.me/917015671280?text="+encodeURIComponent(`Hello Lume Live!\n\nI have unlocked Career Intelligence through the assessment 🔓\n\n🏛️ Government Jobs Explorer\n• ${j.title}\n\n🙏 Please help me understand eligibility, preparation timeline, backup options and whether this route suits the student.`);
 }
 let lastFocused=null;
 function openModal(id){
@@ -1367,7 +1367,7 @@ function startCareerRoadmapPayment(e, careerId){
   const item=CAREERS.find(c=>c.id===careerId);
   const label=item ? "Career Intelligence Detailed Roadmap - "+item.title : "Career Intelligence Detailed Roadmap";
   const fallback=function(){
-    const text=`👋 Hello Lume Live!\n\nI have unlocked Career Intelligence through the assessment 🔓\n\n🗺️ I want the ₹1,499 detailed roadmap${item ? " for "+item.title : ""}.\n\n🙏 Please help me complete payment and start the roadmap.`;
+    const text=`Hello Lume Live!\n\nI have unlocked Career Intelligence through the assessment 🔓\n\n🗺️ I want the ₹1,499 detailed roadmap${item ? " for "+item.title : ""}.\n\n🙏 Please help me complete payment and start the roadmap.`;
     window.open("https://wa.me/917015671280?text="+encodeURIComponent(text),"_blank","noopener");
   };
   if(typeof window.lumeCashfreePay!=="function"){alert("Cashfree checkout is still loading. Please wait a few seconds and tap Pay Securely With Cashfree again.");return;}
@@ -1405,21 +1405,13 @@ if(atlasUnlocked){[80,320,760].forEach(t=>setTimeout(scrollToHashTarget,t));}
 <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
 <script src="cashfree-payments.js"></script>
 <script>
-/* Lume WhatsApp message polish — warm, structured handoff (lumeWaUpgrade) */
+/* Lume WhatsApp message polish — minimal, bulleted handoff (lumeWaUpgrade) */
 (function(){
   var WA='917015671280';
-  function emojiFor(t){
-    if(/book|₹49|rs\.?\s*49|session|slot/i.test(t))return'🎯';
-    if(/parent|child|guidance for my/i.test(t))return'👨‍👩‍👧';
-    if(/anxiety|stress|mental\s*health|wellness|confidential/i.test(t))return'🧠';
-    if(/payment|paid|cashfree/i.test(t))return'💳';
-    if(/review|google/i.test(t))return'🙏';
-    if(/school|partnership/i.test(t))return'🏫';
-    return'✨';
-  }
   function build(body){
-    var lines=['👋 Hello Lume Live!','',emojiFor(body)+' '+body];
-    if(!/please|confirm|\?\s*$/i.test(body))lines.push('','Please share the next steps and available options.');
+    var b=body.replace(/[.\s]+$/,'');
+    var lines=['Hello Lume Live!','• '+b];
+    if(!/please|confirm|\?\s*$/i.test(body))lines.push('• Please share the next steps and available options');
     return lines.join('\n');
   }
   function textOf(link){try{return new URL(link.href).searchParams.get('text')||'';}catch(e){return'';}}

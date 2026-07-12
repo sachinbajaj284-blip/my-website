@@ -3071,7 +3071,7 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
 
     // Optional: open WhatsApp if a phone was provided so the lead is captured manually
     if(phone){
-      const msg = encodeURIComponent(`👋 Hello Lume Live!\n\nI just took the free Career Snapshot 📋\n\n👤 My Details\n• Name: ${state.name}\n• WhatsApp: ${phone}\n\n🎯 My Top Theme\n• ${t.name} (${t.full})\n\n🙏 Please send my snapshot summary and tell me more about the ₹999 Full Clarity Report.`);
+      const msg = encodeURIComponent(`Hello Lume Live!\n\nI just took the free Career Snapshot 📋\n\nMy Details\n• Name: ${state.name}\n• WhatsApp: ${phone}\n\nMy Top Theme\n• ${t.name} (${t.full})\n\nPlease send my snapshot summary and tell me more about the ₹999 Full Clarity Report.`);
       // Open in new tab so they don't lose their result
       window.open(`https://wa.me/917015671280?text=${msg}`,'_blank','noopener');
     }
@@ -3528,10 +3528,10 @@ function applyVerifiedCashfreeAccess(){
 window.saSendPayment=function(){
  if(!requireAssessmentSignin())return;
  if(!validateGate())return;
- var msg=saWa(["👋 Hello Lume Live!","",
-  "🧭 I would like to begin the Lume Live Full Clarity Report.",
+ var msg=saWa(["Hello Lume Live!","",
+  "I would like to begin the Lume Live Full Clarity Report.",
   "",
-  "👤 Student Details",
+  "Student Details",
   "• Name: "+S.name,
   "• WhatsApp: "+S.phone,
   "• Age: "+S.age,
@@ -3541,11 +3541,11 @@ window.saSendPayment=function(){
   S.concern?"• Main reason: "+S.concern:"",
   S.guardian?"• Parent / guardian: "+S.guardian:"",
   "",
-  "💳 Payment Details",
+  "Payment Details",
   "• Assessment suite: All four assessments",
   "• Fee: ₹999",
   "",
-  "📎 I will attach my payment screenshot here for confirmation.",
+  "I will attach my payment screenshot here for confirmation.",
   "Please confirm my access before I begin."]);
  S.handoff=true;S.identity=profileIdentity();
  persistAssessmentProgress();
@@ -4143,10 +4143,10 @@ window.saShare=function(){
  el("saShareError").textContent="";
  var d=S.report;
  var P=scorePersonality(),A=scoreAnchors(),V=scoreVark(),R=scoreRiasec();
- var msg=["👋 Hello Lume Live!","",
+ var msg=["Hello Lume Live!","",
   "I have completed the Lume Live Full Clarity Report and consent to discuss my combined report. 📋",
   "",
-  "👤 My Details",
+  "My Details",
   "• Name: "+(S.name||"Not given"),
   S.age?"• Age: "+S.age:"",
   S.stage?"• Stage: "+S.stage:"",
@@ -4157,7 +4157,7 @@ window.saShare=function(){
   "• Top personality dimension: "+d.topP.name+" ("+d.topP.score+"/40)",
   "• Primary work driver: "+d.anchor.short+" ("+d.anchor.score+" pts)",
   "• Learning preferences: "+d.learnLabel,
-  "","🙏 Please guide me on what these results suggest."].join("\n");
+  "","Please guide me on what these results suggest."].join("\n");
  window.open("https://wa.me/917015671280?text="+encodeURIComponent(msg),"_blank","noopener");
  toast("Your combined result summary is ready to send on WhatsApp.");
 };
@@ -4625,10 +4625,10 @@ function saSummaryText(){
  var topP=P.slice().sort(function(a,b){return b.score-a.score;})[0];
  var top3=R.slice(0,3);
  var topV=V[0],multiV=V.filter(function(r){return r.score>0&&topV.score-r.score<=1;});
-  return saWa(["👋 Hello Lume Live!","",
+  return saWa(["Hello Lume Live!","",
   "I have completed the Lume Live Full Clarity Report and would like to discuss my combined report. 📋",
   "",
-  "👤 Student Details",
+  "Student Details",
   "• Name: "+(S.name||"Not given"),
   S.age?"• Age: "+S.age:"",
   S.stage?"• Stage: "+S.stage:"",
@@ -4644,7 +4644,7 @@ function saSummaryText(){
   "• Learning preferences: "+(multiV.length>1?"Multimodal":topV.name),
   saIsStreamStage()?"🎓 Stream selection note: Please help us compare suitable stream/subject lanes for the Class 9-12 decision.":"",
   "",
-  "🙏 I am ready to share my PDF report for review."]);
+  "I am ready to share my PDF report for review."]);
 }
 function saMakeDoc(cb){
  function go(){
@@ -4673,7 +4673,7 @@ window.saSharePDF=function(){
 };
 function saShareFallback(doc,fname,waText){
  try{ doc.save(fname); }catch(e){}
- var msg=waText+"\n\n📎 PDF report: \""+fname+"\"\nI have downloaded it on my device and will attach it here. ✅";
+ var msg=waText+"\n\nPDF report: \""+fname+"\"\nI have downloaded it on my device and will attach it here. ✅";
  setTimeout(function(){ window.open("https://wa.me/917015671280?text="+encodeURIComponent(msg),"_blank","noopener"); },700);
  toast("Report downloaded — please attach the PDF in the WhatsApp chat that opens.");
 }
@@ -5716,63 +5716,55 @@ function waUrl(lines){return waLink(waMessage(lines));}
 function waLine(label,value){return value ? label+': '+value : null;}
 function applyStaticWhatsAppMessages(){
   const generic=[
-    '👋 Hello Lume Live!',
+    'Hello Lume Live!',
     '',
-    '✨ I would like to know more about your counselling programmes.',
-    '',
-    'Please share the next steps and available counselling options.'
+    '• I would like to know more about your counselling programmes',
+    '• Please share the next steps and available options'
   ];
   const messages=new Map([
     ['Hello Lume Live! I would like to know more about Lume Live.',generic],
     ['Hello Lume Live! I would like to know more about Lume Live counselling.',[
-      '👋 Hello Lume Live!',
+      'Hello Lume Live!',
       '',
-      '🧠 I would like to know more about your counselling support.',
-      '',
-      'Please guide me on the right support option.'
+      '• I would like to know more about your counselling',
+      '• Please guide me on the right support option'
     ]],
     ['Hello Lume Live! I would like to know more about Emotional Wellness Counselling at Lume Live.',[
-      '👋 Hello Lume Live!',
+      'Hello Lume Live!',
       '',
-      '🧠 I would like to know more about your Emotional Wellness Counselling.',
-      '',
-      'Please guide me on the right support option.'
+      '• I would like to know more about your Emotional Wellness Counselling',
+      '• Please guide me on the right support option'
     ]],
     ['Hello Lume Live! I am a parent and would like guidance for my child.',[
-      '👋 Hello Lume Live!',
+      'Hello Lume Live!',
       '',
-      '👨‍👩‍👧 I am a parent and would like guidance for my child.',
-      '',
-      'Please share the next steps for parent counselling.'
+      '• I am a parent and would like guidance for my child',
+      '• Please share the next steps for parent counselling'
     ]],
     ['Hello Lume Live! I would like to discuss Lume Live support options.',[
-      '👋 Hello Lume Live!',
+      'Hello Lume Live!',
       '',
-      '🧠 I would like to discuss the right support option for me.',
-      '',
-      'Please help me choose the most suitable next step.'
+      '• I would like to discuss the right support option for me',
+      '• Please help me choose the most suitable next step'
     ]],
     ['Hello Lume Live! I would like to book a session with Lume Live.',[
-      '👋 Hello Lume Live!',
+      'Hello Lume Live!',
       '',
-      '🎯 I would like to book a session.',
-      '',
-      'Please share available slots and next steps.'
+      '• I would like to book a session',
+      '• Please share available slots and next steps'
     ]],
     ['Hello Lume Live! I would like to book my first wellness session with Lume Live.',[
-      '👋 Hello Lume Live!',
+      'Hello Lume Live!',
       '',
-      '🎯 I would like to book my first ₹49 wellness session.',
-      '',
-      'Please share available slots and next steps.'
+      '• I would like to book my first ₹49 wellness session',
+      '• Please share available slots and next steps'
     ]],
     ['Hello Lume Live! I have paid Rs.199 for the Parents Career Handbook PDF. Please send it to me.',[
-      '👋 Hello Lume Live!',
+      'Hello Lume Live!',
       '',
-      '📘 I have paid ₹199 for the Parents Career Handbook PDF.',
-      '',
-      '📎 I will attach my payment screenshot here.',
-      'Please send the PDF to me.'
+      '• I have paid ₹199 for the Parents Career Handbook PDF',
+      '• I will attach my payment screenshot here',
+      '• Please send the PDF to me'
     ]]
   ]);
   document.querySelectorAll('a[href^="https://wa.me/917015671280"]').forEach(link=>{
@@ -6036,11 +6028,11 @@ function submitNotify(){
   if(!p){showToast('Please enter your WhatsApp number');return;}
   const t=document.getElementById('comingTitle').textContent;
   const msg=waMessage([
-    '👋 Hello Lume Live!',
+    'Hello Lume Live!',
     '',
-    '🔔 Please notify me when this Lume Live service is available.',
+    'Please notify me when this Lume Live service is available.',
     '',
-    '👤 Contact Details',
+    'Contact Details',
     '• Name: '+(n||'Not given'),
     '• WhatsApp: '+p,
     '',
@@ -6207,16 +6199,16 @@ function submitQ(){
   qData.classStage=stage;
   const streamContext=/\b(class|grade|std|standard)\s*(9|10|11|12)\b|\b(9th|10th|11th|12th)\b/i.test(stage);
   const msg=[
-    '👋 Hello Lume Live!',
+    'Hello Lume Live!',
     '',
-    '🧠 I would like to discuss the right support option for me.',
+    'I would like to discuss the right support option for me.',
     '',
-    '👤 Contact Details',
+    'Contact Details',
     '• Name: '+name,
     '• WhatsApp: '+phone,
     email?'• Email: '+email:null,
     '',
-    '📝 Support Details',
+    'Support Details',
     '• Who needs support: '+(qData.role||'Not answered'),
     stage?'• Class / stage: '+stage:null,
     '• Main challenge: '+(qData.challenge||'Not answered'),
@@ -6354,19 +6346,19 @@ function submitSchool(){
   if(!name){showToast('Please enter coordinator name'); return;}
   if(phone.length < 10){showToast('Please enter a valid phone number'); return;}
   const msg = waMessage([
-    '👋 Hello Lume Live!',
+    'Hello Lume Live!',
     '',
-    '🏫 School Partnership Enquiry',
+    'School Partnership Enquiry',
     '',
-    '👤 Coordinator',
+    'Coordinator',
     '• Name: '+name,
     '• Phone / WhatsApp: '+phone,
     email?'• Email: '+email:null,
     '',
-    '🏫 School',
+    'School',
     '• School name: '+school,
     '',
-    '🎯 Interest',
+    'Interest',
     '• Career counselling and mental health workshops',
     '',
     'Please send us a partnership proposal.'
@@ -6514,7 +6506,7 @@ function setMode(el, mode){
   function book(){
     if(!currentResult)return;
     var note=document.getElementById("llCheckNote");
-    var msg=["👋 Hello Lume Live!","","I completed a Lume Live self-check and would like to book the ₹49 introductory session. 💛","","🧭 My Self-Check","• Test: "+currentResult.test,"• Result band: "+currentResult.result.band,"• Score: "+currentResult.result.scoreLabel];
+    var msg=["Hello Lume Live!","","I completed a Lume Live self-check and would like to book the ₹49 introductory session. 💛","","My Self-Check","• Test: "+currentResult.test,"• Result band: "+currentResult.result.band,"• Score: "+currentResult.result.scoreLabel];
     if(note&&note.value.trim())msg.push("Message: "+note.value.trim());
     window.open("https://wa.me/"+WA_PHONE+"?text="+encodeURIComponent(msg.join("\n")),"_blank","noopener");
   }
