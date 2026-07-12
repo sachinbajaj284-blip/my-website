@@ -466,8 +466,8 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 /* ── RIGHT GLOWING SIDEBAR ── */
 .side-icons{position:fixed;right:0;top:55%;transform:translateY(-50%);z-index:990;display:flex;flex-direction:column;gap:0;}
 .side-icon{width:48px;height:48px;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;position:relative;transition:.3s;}
-.side-icon.wa{background:#25D366;animation:glowGreen 3.4s ease-in-out infinite;border-radius:8px 0 0 0;}
-.side-icon.call{background:#3b82f6;box-shadow:0 3px 12px rgba(59,130,246,.28);border-radius:0;}
+.side-icon.wa{display:none;}
+.side-icon.call{background:#3b82f6;box-shadow:0 3px 12px rgba(59,130,246,.28);border-radius:8px 0 0 0;}
 .side-icon.mail{background:var(--gold);box-shadow:0 3px 12px rgba(201,147,58,.28);border-radius:0 0 0 8px;}
 .side-icon svg{width:20px;height:20px;fill:#fff;}
 .side-icon:hover{transform:scaleX(1.15) scale(1.1);width:56px;}
@@ -1024,10 +1024,10 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
 .footer-bottom p{font-size:.74rem;color:rgba(255,255,255,.35);}
 
 /* ── FLOAT WHATSAPP ── */
-.float-wa{position:fixed;bottom:24px;left:24px;z-index:990;height:52px;width:52px;background:#25D366;border-radius:26px;display:flex;align-items:center;justify-content:center;gap:0;overflow:hidden;box-shadow:0 4px 20px rgba(37,211,102,.4);text-decoration:none;transition:width .35s cubic-bezier(.25,.46,.45,.94),box-shadow .3s,transform .3s;animation:glowGreen 2.5s ease-in-out infinite;}
+.float-wa{position:fixed;bottom:24px;left:24px;z-index:990;height:52px;width:52px;background:#25D366;border-radius:26px;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 4px 20px rgba(37,211,102,.4);text-decoration:none;transition:width .35s cubic-bezier(.25,.46,.45,.94),box-shadow .3s,transform .3s;animation:glowGreen 2.5s ease-in-out infinite;}
 .float-wa svg{width:26px;height:26px;fill:#fff;flex:none;}
-.float-wa .fw-label{color:#fff;font-weight:700;font-size:.82rem;white-space:nowrap;max-width:0;opacity:0;transition:max-width .35s cubic-bezier(.25,.46,.45,.94),opacity .25s,margin-left .35s;}
-@media(hover:hover){.float-wa:hover{width:176px;box-shadow:0 8px 30px rgba(37,211,102,.5);}.float-wa:hover .fw-label{max-width:120px;opacity:1;margin-left:8px;}}
+.float-wa::after{content:"Chat on WhatsApp";color:#fff;font-weight:700;font-size:.82rem;white-space:nowrap;max-width:0;opacity:0;overflow:hidden;transition:max-width .35s cubic-bezier(.25,.46,.45,.94),opacity .25s,margin-left .35s;}
+@media(hover:hover){.float-wa:hover{width:176px;box-shadow:0 8px 30px rgba(37,211,102,.5);}.float-wa:hover::after{max-width:120px;opacity:1;margin-left:8px;}}
 
 /* ── MODALS ── */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:2000;display:none;align-items:center;justify-content:center;padding:16px;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);}
@@ -5389,7 +5389,6 @@ if(new URLSearchParams(window.location.search).has("sample-report")){window.saSh
 <!-- FLOATING WA (mobile left) -->
 <a href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20would%20like%20to%20know%20more%20about%20Lume%20Live." target="_blank" class="float-wa" title="Chat on WhatsApp" aria-label="Chat on WhatsApp">
   <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.556 4.121 1.528 5.856L.057 23.215a.75.75 0 00.922.921l5.344-1.47A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.663-.523-5.183-1.432l-.37-.219-3.171.871.884-3.175-.237-.386A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-  <span class="fw-label">Chat on WhatsApp</span>
 </a>
 <div class="toast" id="toast"></div>
 
