@@ -56,11 +56,28 @@ function setCors(req, res){
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 
+const MAX_BODY_BYTES = 16 * 1024; // 16 KB is far more than a checkout payload needs
+
 function readBody(req){
   return new Promise((resolve, reject) => {
     let raw = "";
-    req.on("data", chunk => { raw += chunk; });
+    let size = 0;
+    let aborted = false;
+    req.on("data", chunk => {
+      if(aborted) return;
+      size += chunk.length;
+      if(size > MAX_BODY_BYTES){
+        aborted = true;
+        const err = new Error("Request body too large.");
+        err.statusCode = 413;
+        reject(err);
+        req.destroy();
+        return;
+      }
+      raw += chunk;
+    });
     req.on("end", () => {
+      if(aborted) return;
       try{ resolve(raw ? JSON.parse(raw) : {}); }
       catch(err){ reject(err); }
     });
@@ -88,7 +105,12 @@ module.exports = async function handler(req, res){
 
   let body;
   try{ body = await readBody(req); }
-  catch(err){ return json(res, 400, { error: "Invalid JSON body." }); }
+  catch(err){
+    if(err && err.statusCode === 413){
+      return json(res, 413, { error: "Request body too large." });
+    }
+    return json(res, 400, { error: "Invalid JSON body." });
+  }
 
   const sku = String(body.sku || "");
   const product = SKU_PRICES[sku];

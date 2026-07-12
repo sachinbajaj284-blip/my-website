@@ -110,10 +110,13 @@ module.exports = async function handler(req, res){
     order_amount: data.order_amount,
     order_currency: data.order_currency,
     sku: data.order_tags && data.order_tags.sku ? data.order_tags.sku : "",
+    // Only the first name is returned for a friendly greeting. Phone/email are
+    // deliberately withheld so this public, order-id-only endpoint never leaks
+    // personal contact details to anyone who guesses or shares an order id.
     customer: {
-      name: data.customer_details && data.customer_details.customer_name ? data.customer_details.customer_name : "",
-      phone: data.customer_details && data.customer_details.customer_phone ? data.customer_details.customer_phone : "",
-      email: data.customer_details && data.customer_details.customer_email ? data.customer_details.customer_email : ""
+      name: data.customer_details && data.customer_details.customer_name
+        ? String(data.customer_details.customer_name).split(" ")[0]
+        : ""
     }
   });
 };
