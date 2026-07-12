@@ -226,7 +226,7 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
       <h1>Helping You Guide Your Child with Confidence</h1>
       <p class="hero-copy">A focused parent guide for stream selection, career confusion, exam pressure, emotional wellbeing, and parent-child decision making. Calm the noise, understand your child, and move with a clear next step.</p>
       <div class="hero-actions">
-        <a class="btn" href="https://wa.me/917015671280?text=%F0%9F%91%8B%20Hello%20Lume%20Live!%20I%20want%20to%20book%20a%20parent%20guidance%20session%20with%20Lume%20Live." target="_blank">Book Parent Session</a>
+        <a class="btn" href="https://wa.me/917015671280?text=%F0%9F%91%8B%20Hello%20Lume%20Live!%20I%20want%20to%20book%20a%20parent%20guidance%20session." target="_blank">Book Parent Session</a>
         <a class="btn secondary" href="index.html">Back to Homepage</a>
       </div>
     </div>
@@ -529,10 +529,10 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
     document.querySelectorAll('a[href*="wa.me/'+WA+'"]').forEach(function(link){
       if(link.getAttribute('data-wa-upgraded'))return;
       var text=textOf(link),body;
-      if(!text){body='I would like to know more about Lume Live.';}
+      if(!text){body='I would like to know more about your counselling programmes.';}
       else if(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)/i.test(text)){
         body=text.replace(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)[!,.\s]*/i,'').trim();
-        if(!body)body='I would like to know more about Lume Live.';
+        if(!body)body='I would like to know more about your counselling programmes.';
       } else {return;}
       link.setAttribute('href','https://wa.me/'+WA+'?text='+encodeURIComponent(build(body)));
       link.setAttribute('data-wa-upgraded','1');

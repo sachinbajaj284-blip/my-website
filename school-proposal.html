@@ -137,7 +137,7 @@ h2.sec{font-size:1.7rem;color:var(--navy);line-height:1.14;margin-bottom:6px}
   <div>📄 <b>School Partnership Proposal</b> — ready to email or print</div>
   <div class="btns">
     <button class="primary" onclick="window.print()">⬇ Save as PDF / Print</button>
-    <a class="pill" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20read%20the%20Lume%20Live%20school%20proposal%20and%20would%20like%20to%20discuss." target="_blank">WhatsApp Sachin</a>
+    <a class="pill" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20read%20your%20school%20proposal%20and%20would%20like%20to%20discuss." target="_blank">WhatsApp Sachin</a>
   </div>
 </div>
 
@@ -300,7 +300,7 @@ h2.sec{font-size:1.7rem;color:var(--navy);line-height:1.14;margin-bottom:6px}
       <h2>Let's plan a short pilot for your school</h2>
       <p>The easiest start is one Awareness Workshop for a single grade. If it lands well with students and parents, we scale from there. Reach out and we'll send tailored dates within 48 hours.</p>
       <div class="contacts">
-        <a class="big wa" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20We%20would%20like%20to%20discuss%20a%20Lume%20Live%20school%20partnership%20pilot." target="_blank">💬 WhatsApp Sachin</a>
+        <a class="big wa" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20We%20would%20like%20to%20discuss%20a%20school%20partnership%20pilot." target="_blank">💬 WhatsApp Sachin</a>
         <a class="big" href="tel:+917015671280">📞 Call +91 70156 71280</a>
         <a class="big alt" href="https://lumelive.co.in/school-partnerships.html" target="_blank">🌐 lumelive.co.in</a>
       </div>
@@ -336,10 +336,10 @@ h2.sec{font-size:1.7rem;color:var(--navy);line-height:1.14;margin-bottom:6px}
     document.querySelectorAll('a[href*="wa.me/'+WA+'"]').forEach(function(link){
       if(link.getAttribute('data-wa-upgraded'))return;
       var text=textOf(link),body;
-      if(!text){body='I would like to know more about Lume Live.';}
+      if(!text){body='I would like to know more about your counselling programmes.';}
       else if(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)/i.test(text)){
         body=text.replace(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)[!,.\s]*/i,'').trim();
-        if(!body)body='I would like to know more about Lume Live.';
+        if(!body)body='I would like to know more about your counselling programmes.';
       } else {return;}
       link.setAttribute('href','https://wa.me/'+WA+'?text='+encodeURIComponent(build(body)));
       link.setAttribute('data-wa-upgraded','1');

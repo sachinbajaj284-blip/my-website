@@ -664,10 +664,10 @@ h2{font-size:clamp(1.7rem,3.6vw,2.5rem);color:var(--navy);font-weight:900;letter
     document.querySelectorAll('a[href*="wa.me/'+WA+'"]').forEach(function(link){
       if(link.getAttribute('data-wa-upgraded'))return;
       var text=textOf(link),body;
-      if(!text){body='I would like to know more about Lume Live.';}
+      if(!text){body='I would like to know more about your counselling programmes.';}
       else if(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)/i.test(text)){
         body=text.replace(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)[!,.\s]*/i,'').trim();
-        if(!body)body='I would like to know more about Lume Live.';
+        if(!body)body='I would like to know more about your counselling programmes.';
       } else {return;}
       link.setAttribute('href','https://wa.me/'+WA+'?text='+encodeURIComponent(build(body)));
       link.setAttribute('data-wa-upgraded','1');
