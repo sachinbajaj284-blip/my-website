@@ -215,7 +215,7 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
       <a href="for-working-professionals.html">Professionals</a>
       <a href="#clarity-map">Clarity Map</a>
       <a href="#parents-handbook">₹199 Guide</a>
-      <a class="btn" href="https://wa.me/917015671280?text=%F0%9F%91%8B%20Hi%20Sachin!%20I%20am%20a%20parent%20and%20would%20like%20guidance%20for%20my%20child." target="_blank">WhatsApp</a>
+      <a class="btn" href="https://wa.me/917015671280?text=%F0%9F%91%8B%20Hello%20Lume%20Live!%20I%20am%20a%20parent%20and%20would%20like%20guidance%20for%20my%20child." target="_blank">WhatsApp</a>
     </div>
   </div>
 </nav>
@@ -226,7 +226,7 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
       <h1>Helping You Guide Your Child with Confidence</h1>
       <p class="hero-copy">A focused parent guide for stream selection, career confusion, exam pressure, emotional wellbeing, and parent-child decision making. Calm the noise, understand your child, and move with a clear next step.</p>
       <div class="hero-actions">
-        <a class="btn" href="https://wa.me/917015671280?text=%F0%9F%91%8B%20Hi%20Sachin!%20I%20want%20to%20book%20a%20parent%20guidance%20session%20with%20Lume%20Live." target="_blank">Book Parent Session</a>
+        <a class="btn" href="https://wa.me/917015671280?text=%F0%9F%91%8B%20Hello%20Lume%20Live!%20I%20want%20to%20book%20a%20parent%20guidance%20session." target="_blank">Book Parent Session</a>
         <a class="btn secondary" href="index.html">Back to Homepage</a>
       </div>
     </div>
@@ -393,9 +393,9 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
         <h2>Every parent wants the best for their child</h2>
         <p>Book a parent guidance session or a joint parent-child session. Get clarity, reduce conflict, and move forward with confidence.</p>
         <div class="cta-actions">
-          <a class="btn" href="https://wa.me/917015671280?text=%F0%9F%91%8B%20Hi%20Sachin!%20I%20want%20to%20book%20a%20parent%20guidance%20session." target="_blank">Book Parent Guidance</a>
+          <a class="btn" href="https://wa.me/917015671280?text=%F0%9F%91%8B%20Hello%20Lume%20Live!%20I%20want%20to%20book%20a%20parent%20guidance%20session." target="_blank">Book Parent Guidance</a>
           <a class="btn secondary" href="#parents-handbook">Get ₹199 Parent PDF</a>
-          <a class="btn wa" href="https://wa.me/917015671280?text=%F0%9F%91%8B%20Hi%20Sachin!%20I%20am%20a%20parent%20and%20would%20like%20guidance%20for%20my%20child." target="_blank">Chat on WhatsApp</a>
+          <a class="btn wa" href="https://wa.me/917015671280?text=%F0%9F%91%8B%20Hello%20Lume%20Live!%20I%20am%20a%20parent%20and%20would%20like%20guidance%20for%20my%20child." target="_blank">Chat on WhatsApp</a>
         </div>
       </div>
     </div>
@@ -456,7 +456,7 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
   function val(id){ return (document.getElementById(id)?.value || '').trim(); }
   function parentPdfMessage(){
     const lines = [
-      '👋 Hi Sachin!',
+      '👋 Hello Lume Live!',
       '',
       "I have paid ₹199 for the Parents' Career Handbook PDF. 📘",
       '',
@@ -506,5 +506,41 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
 </script>
 <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
 <script src="cashfree-payments.js"></script>
+<script>
+/* Lume WhatsApp message polish — warm, structured handoff (lumeWaUpgrade) */
+(function(){
+  var WA='917015671280';
+  function emojiFor(t){
+    if(/book|₹49|rs\.?\s*49|session|slot/i.test(t))return'🎯';
+    if(/parent|child|guidance for my/i.test(t))return'👨‍👩‍👧';
+    if(/anxiety|stress|mental\s*health|wellness|confidential/i.test(t))return'🧠';
+    if(/payment|paid|cashfree/i.test(t))return'💳';
+    if(/review|google/i.test(t))return'🙏';
+    if(/school|partnership/i.test(t))return'🏫';
+    return'✨';
+  }
+  function build(body){
+    var lines=['👋 Hello Lume Live!','',emojiFor(body)+' '+body];
+    if(!/please|confirm|\?\s*$/i.test(body))lines.push('','Please share the next steps and available options.');
+    return lines.join('\n');
+  }
+  function textOf(link){try{return new URL(link.href).searchParams.get('text')||'';}catch(e){return'';}}
+  function upgrade(){
+    document.querySelectorAll('a[href*="wa.me/'+WA+'"]').forEach(function(link){
+      if(link.getAttribute('data-wa-upgraded'))return;
+      var text=textOf(link),body;
+      if(!text){body='I would like to know more about your counselling programmes.';}
+      else if(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)/i.test(text)){
+        body=text.replace(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)[!,.\s]*/i,'').trim();
+        if(!body)body='I would like to know more about your counselling programmes.';
+      } else {return;}
+      link.setAttribute('href','https://wa.me/'+WA+'?text='+encodeURIComponent(build(body)));
+      link.setAttribute('data-wa-upgraded','1');
+    });
+  }
+  upgrade();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',upgrade);
+})();
+</script>
 </body>
 </html>

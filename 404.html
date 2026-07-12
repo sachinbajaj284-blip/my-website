@@ -46,9 +46,45 @@ footer{padding:20px;text-align:center;color:var(--mid);font-size:.8rem}
       <a href="career-counselling-in-rohtak.html">📍 Career Counselling in Rohtak</a>
       <a href="services-pricing.html">💰 Services &amp; Pricing</a>
     </div>
-    <a class="btn" href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20landed%20on%20a%20broken%20page%20on%20your%20site." target="_blank">💬 Or just message us on WhatsApp</a>
+    <a class="btn" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20landed%20on%20a%20broken%20page%20on%20your%20site." target="_blank">💬 Or just message us on WhatsApp</a>
   </div>
 </main>
 <footer>Lume Live · Career &amp; mental health counselling · Rohtak, Haryana &amp; online across India</footer>
+<script>
+/* Lume WhatsApp message polish — warm, structured handoff (lumeWaUpgrade) */
+(function(){
+  var WA='917015671280';
+  function emojiFor(t){
+    if(/book|₹49|rs\.?\s*49|session|slot/i.test(t))return'🎯';
+    if(/parent|child|guidance for my/i.test(t))return'👨‍👩‍👧';
+    if(/anxiety|stress|mental\s*health|wellness|confidential/i.test(t))return'🧠';
+    if(/payment|paid|cashfree/i.test(t))return'💳';
+    if(/review|google/i.test(t))return'🙏';
+    if(/school|partnership/i.test(t))return'🏫';
+    return'✨';
+  }
+  function build(body){
+    var lines=['👋 Hello Lume Live!','',emojiFor(body)+' '+body];
+    if(!/please|confirm|\?\s*$/i.test(body))lines.push('','Please share the next steps and available options.');
+    return lines.join('\n');
+  }
+  function textOf(link){try{return new URL(link.href).searchParams.get('text')||'';}catch(e){return'';}}
+  function upgrade(){
+    document.querySelectorAll('a[href*="wa.me/'+WA+'"]').forEach(function(link){
+      if(link.getAttribute('data-wa-upgraded'))return;
+      var text=textOf(link),body;
+      if(!text){body='I would like to know more about your counselling programmes.';}
+      else if(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)/i.test(text)){
+        body=text.replace(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)[!,.\s]*/i,'').trim();
+        if(!body)body='I would like to know more about your counselling programmes.';
+      } else {return;}
+      link.setAttribute('href','https://wa.me/'+WA+'?text='+encodeURIComponent(build(body)));
+      link.setAttribute('data-wa-upgraded','1');
+    });
+  }
+  upgrade();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',upgrade);
+})();
+</script>
 </body>
 </html>

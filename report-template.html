@@ -826,7 +826,7 @@ window.LUME_REPORT_DATA = {
 
   // ─── Print actions (screen only) ───
   function actionsHtml(){
-    var waMsg = "Hi Sachin! I have completed the Lume Live Full Clarity Report.\n\nName: "+(D.name||"")+"\nInterest Code: "+code+"\nTop Value: "+(topAnchor.short||"")+"\nPlease help me understand my results.";
+    var waMsg = "Hello Lume Live! I have completed my Full Clarity Report.\n\nName: "+(D.name||"")+"\nInterest Code: "+code+"\nTop Value: "+(topAnchor.short||"")+"\nPlease help me understand my results.";
     return '<div class="lrt-actions">'+
       '<button class="lrt-btn gold" onclick="window.print()">🖨️ Print / Save PDF</button>'+
       '<a class="lrt-btn wa" href="https://wa.me/917015671280?text='+encodeURIComponent(waMsg)+'" target="_blank" rel="noopener">'+
@@ -886,6 +886,42 @@ window.LUME_REPORT_DATA = {
   } else {
     render();
   }
+})();
+</script>
+<script>
+/* Lume WhatsApp message polish — warm, structured handoff (lumeWaUpgrade) */
+(function(){
+  var WA='917015671280';
+  function emojiFor(t){
+    if(/book|₹49|rs\.?\s*49|session|slot/i.test(t))return'🎯';
+    if(/parent|child|guidance for my/i.test(t))return'👨‍👩‍👧';
+    if(/anxiety|stress|mental\s*health|wellness|confidential/i.test(t))return'🧠';
+    if(/payment|paid|cashfree/i.test(t))return'💳';
+    if(/review|google/i.test(t))return'🙏';
+    if(/school|partnership/i.test(t))return'🏫';
+    return'✨';
+  }
+  function build(body){
+    var lines=['👋 Hello Lume Live!','',emojiFor(body)+' '+body];
+    if(!/please|confirm|\?\s*$/i.test(body))lines.push('','Please share the next steps and available options.');
+    return lines.join('\n');
+  }
+  function textOf(link){try{return new URL(link.href).searchParams.get('text')||'';}catch(e){return'';}}
+  function upgrade(){
+    document.querySelectorAll('a[href*="wa.me/'+WA+'"]').forEach(function(link){
+      if(link.getAttribute('data-wa-upgraded'))return;
+      var text=textOf(link),body;
+      if(!text){body='I would like to know more about your counselling programmes.';}
+      else if(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)/i.test(text)){
+        body=text.replace(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)[!,.\s]*/i,'').trim();
+        if(!body)body='I would like to know more about your counselling programmes.';
+      } else {return;}
+      link.setAttribute('href','https://wa.me/'+WA+'?text='+encodeURIComponent(build(body)));
+      link.setAttribute('data-wa-upgraded','1');
+    });
+  }
+  upgrade();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',upgrade);
 })();
 </script>
 </body>

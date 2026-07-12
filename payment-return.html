@@ -30,7 +30,7 @@ a{display:flex;align-items:center;justify-content:center;min-height:46px;border-
     <div class="status wait" id="statusBox">Checking Cashfree payment status...</div>
     <div class="actions">
       <a class="primary" id="continueLink" href="assessment.html#self-assessments">Start Assessment Now</a>
-      <a class="ghost" href="https://wa.me/917015671280?text=Hi%20Lume%20Live!%20I%20have%20completed%20my%20Cashfree%20payment.%20Please%20confirm%20my%20access." target="_blank" rel="noopener">Confirm On WhatsApp</a>
+      <a class="ghost" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20have%20completed%20my%20Cashfree%20payment.%20Please%20confirm%20my%20access." target="_blank" rel="noopener">Confirm On WhatsApp</a>
       <a class="ghost" href="index.html">Back To Home</a>
     </div>
   </main>
@@ -123,6 +123,42 @@ a{display:flex;align-items:center;justify-content:center;min-height:46px;border-
     .catch(function(){
       showStatus("fail","We could not verify automatically yet. Please continue or confirm on WhatsApp with your payment reference.");
     });
+})();
+</script>
+<script>
+/* Lume WhatsApp message polish — warm, structured handoff (lumeWaUpgrade) */
+(function(){
+  var WA='917015671280';
+  function emojiFor(t){
+    if(/book|₹49|rs\.?\s*49|session|slot/i.test(t))return'🎯';
+    if(/parent|child|guidance for my/i.test(t))return'👨‍👩‍👧';
+    if(/anxiety|stress|mental\s*health|wellness|confidential/i.test(t))return'🧠';
+    if(/payment|paid|cashfree/i.test(t))return'💳';
+    if(/review|google/i.test(t))return'🙏';
+    if(/school|partnership/i.test(t))return'🏫';
+    return'✨';
+  }
+  function build(body){
+    var lines=['👋 Hello Lume Live!','',emojiFor(body)+' '+body];
+    if(!/please|confirm|\?\s*$/i.test(body))lines.push('','Please share the next steps and available options.');
+    return lines.join('\n');
+  }
+  function textOf(link){try{return new URL(link.href).searchParams.get('text')||'';}catch(e){return'';}}
+  function upgrade(){
+    document.querySelectorAll('a[href*="wa.me/'+WA+'"]').forEach(function(link){
+      if(link.getAttribute('data-wa-upgraded'))return;
+      var text=textOf(link),body;
+      if(!text){body='I would like to know more about your counselling programmes.';}
+      else if(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)/i.test(text)){
+        body=text.replace(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)[!,.\s]*/i,'').trim();
+        if(!body)body='I would like to know more about your counselling programmes.';
+      } else {return;}
+      link.setAttribute('href','https://wa.me/'+WA+'?text='+encodeURIComponent(build(body)));
+      link.setAttribute('data-wa-upgraded','1');
+    });
+  }
+  upgrade();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',upgrade);
 })();
 </script>
 </body>

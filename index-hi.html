@@ -202,7 +202,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.72);padding:28px 18px;text
       <p>Free test se top career theme aur 3 possible directions milte hain. Full report mein 5 assessments (personality, interests, work drivers, learning style aur aptitude snapshot), PDF report aur counsellor discussion ke points milte hain.</p>
       <div class="actions" style="justify-content:center">
         <a class="btn gold" href="index.html#free-test">Free Career Snapshot</a>
-        <a class="btn ghost" style="color:var(--teal);border-color:rgba(10,110,110,.22)" href="https://wa.me/917015671280?text=Hi%20Lume%20Live!%20I%20want%20career%20counselling%20details." target="_blank" rel="noopener">WhatsApp par baat karein</a>
+        <a class="btn ghost" style="color:var(--teal);border-color:rgba(10,110,110,.22)" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20want%20career%20counselling%20details." target="_blank" rel="noopener">WhatsApp par baat karein</a>
       </div>
     </div>
   </section>
@@ -215,5 +215,41 @@ footer{background:var(--navy);color:rgba(255,255,255,.72);padding:28px 18px;text
   <a href="terms.html" style="color:#E8B95A">Terms</a> ·
   <a href="refund-policy.html" style="color:#E8B95A">Refund Policy</a>
 </footer>
+<script>
+/* Lume WhatsApp message polish — warm, structured handoff (lumeWaUpgrade) */
+(function(){
+  var WA='917015671280';
+  function emojiFor(t){
+    if(/book|₹49|rs\.?\s*49|session|slot/i.test(t))return'🎯';
+    if(/parent|child|guidance for my/i.test(t))return'👨‍👩‍👧';
+    if(/anxiety|stress|mental\s*health|wellness|confidential/i.test(t))return'🧠';
+    if(/payment|paid|cashfree/i.test(t))return'💳';
+    if(/review|google/i.test(t))return'🙏';
+    if(/school|partnership/i.test(t))return'🏫';
+    return'✨';
+  }
+  function build(body){
+    var lines=['👋 Hello Lume Live!','',emojiFor(body)+' '+body];
+    if(!/please|confirm|\?\s*$/i.test(body))lines.push('','Please share the next steps and available options.');
+    return lines.join('\n');
+  }
+  function textOf(link){try{return new URL(link.href).searchParams.get('text')||'';}catch(e){return'';}}
+  function upgrade(){
+    document.querySelectorAll('a[href*="wa.me/'+WA+'"]').forEach(function(link){
+      if(link.getAttribute('data-wa-upgraded'))return;
+      var text=textOf(link),body;
+      if(!text){body='I would like to know more about your counselling programmes.';}
+      else if(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)/i.test(text)){
+        body=text.replace(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)[!,.\s]*/i,'').trim();
+        if(!body)body='I would like to know more about your counselling programmes.';
+      } else {return;}
+      link.setAttribute('href','https://wa.me/'+WA+'?text='+encodeURIComponent(build(body)));
+      link.setAttribute('data-wa-upgraded','1');
+    });
+  }
+  upgrade();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',upgrade);
+})();
+</script>
 </body>
 </html>

@@ -66,7 +66,7 @@
 
   function waMessage(options){
     return [
-      "Hi Lume Live!",
+      "Hello Lume Live!",
       "I want to complete payment for " + (options.label || "a Lume Live service") + ".",
       "Amount: " + inr(options.amount),
       options.customerName ? "Name: " + options.customerName : "",
@@ -78,7 +78,7 @@
 
   function waConfirmMessage(options, orderId){
     return [
-      "Hi Lume Live!",
+      "Hello Lume Live!",
       "I have completed my Cashfree payment for " + (options.label || "a Lume Live service") + ".",
       "Amount: " + inr(options.amount),
       orderId ? "Order ID: " + orderId : "",
@@ -351,7 +351,7 @@
       '</div>' +
       '<button class="lcf-btn gold" type="button" data-act="retry">Try payment again</button>' +
       '<a class="lcf-btn wa" target="_blank" rel="noopener" href="' +
-        esc(waUrl("Hi Lume Live! I had trouble completing my payment" + (options.label ? " for " + options.label : "") + ". Please help me complete it.")) +
+        esc(waUrl("Hello Lume Live! I had trouble completing my payment" + (options.label ? " for " + options.label : "") + ". Please help me complete it.")) +
         '">Message us on WhatsApp</a>' +
       '<div class="lcf-divider">or pay directly by UPI</div>' +
       upiPanelHtml(options) +
