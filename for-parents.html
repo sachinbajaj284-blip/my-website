@@ -507,21 +507,13 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
 <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
 <script src="cashfree-payments.js"></script>
 <script>
-/* Lume WhatsApp message polish — warm, structured handoff (lumeWaUpgrade) */
+/* Lume WhatsApp message polish — minimal, bulleted handoff (lumeWaUpgrade) */
 (function(){
   var WA='917015671280';
-  function emojiFor(t){
-    if(/book|₹49|rs\.?\s*49|session|slot/i.test(t))return'🎯';
-    if(/parent|child|guidance for my/i.test(t))return'👨‍👩‍👧';
-    if(/anxiety|stress|mental\s*health|wellness|confidential/i.test(t))return'🧠';
-    if(/payment|paid|cashfree/i.test(t))return'💳';
-    if(/review|google/i.test(t))return'🙏';
-    if(/school|partnership/i.test(t))return'🏫';
-    return'✨';
-  }
   function build(body){
-    var lines=['👋 Hello Lume Live!','',emojiFor(body)+' '+body];
-    if(!/please|confirm|\?\s*$/i.test(body))lines.push('','Please share the next steps and available options.');
+    var b=body.replace(/[.\s]+$/,'');
+    var lines=['👋 Hello Lume Live!','• '+b];
+    if(!/please|confirm|\?\s*$/i.test(body))lines.push('• Please share the next steps and available options');
     return lines.join('\n');
   }
   function textOf(link){try{return new URL(link.href).searchParams.get('text')||'';}catch(e){return'';}}
