@@ -826,7 +826,7 @@ window.LUME_REPORT_DATA = {
 
   // ─── Print actions (screen only) ───
   function actionsHtml(){
-    var waMsg = "Hi Sachin! I have completed the Lume Live Full Clarity Report.\n\nName: "+(D.name||"")+"\nInterest Code: "+code+"\nTop Value: "+(topAnchor.short||"")+"\nPlease help me understand my results.";
+    var waMsg = "Hello Lume Live! I have completed the Lume Live Full Clarity Report.\n\nName: "+(D.name||"")+"\nInterest Code: "+code+"\nTop Value: "+(topAnchor.short||"")+"\nPlease help me understand my results.";
     return '<div class="lrt-actions">'+
       '<button class="lrt-btn gold" onclick="window.print()">🖨️ Print / Save PDF</button>'+
       '<a class="lrt-btn wa" href="https://wa.me/917015671280?text='+encodeURIComponent(waMsg)+'" target="_blank" rel="noopener">'+
@@ -902,7 +902,7 @@ window.LUME_REPORT_DATA = {
     return'✨';
   }
   function build(body){
-    var lines=['👋 Hi Sachin!','',emojiFor(body)+' '+body];
+    var lines=['👋 Hello Lume Live!','',emojiFor(body)+' '+body];
     if(!/please|confirm|\?\s*$/i.test(body))lines.push('','Please share the next steps and available options.');
     return lines.join('\n');
   }
@@ -912,8 +912,8 @@ window.LUME_REPORT_DATA = {
       if(link.getAttribute('data-wa-upgraded'))return;
       var text=textOf(link),body;
       if(!text){body='I would like to know more about Lume Live.';}
-      else if(/^\s*(👋\s*)?hi\s+(sachin|lume live)/i.test(text)){
-        body=text.replace(/^\s*(👋\s*)?hi\s+(sachin|lume live)[!,.\s]*/i,'').trim();
+      else if(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)/i.test(text)){
+        body=text.replace(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)[!,.\s]*/i,'').trim();
         if(!body)body='I would like to know more about Lume Live.';
       } else {return;}
       link.setAttribute('href','https://wa.me/'+WA+'?text='+encodeURIComponent(build(body)));

@@ -195,7 +195,7 @@ Target audience: Class 12 students and parents across India, immediately after b
       <h3>Start with a 60-second snapshot, or talk to Sachin sir directly</h3>
       <p>Take the free Career Snapshot for an instant starting point, or book the ₹49 introductory session for a full 1:1 conversation about your options after 12th.</p>
       <a class="btn gold" href="assessment.html#free-test">Start the Free Career Snapshot</a>
-      <a class="btn gold" style="background:#1EAE5C;margin-left:10px" href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20just%20finished%2012th%20and%20want%20career%20counselling." target="_blank">💬 Book on WhatsApp</a>
+      <a class="btn gold" style="background:#1EAE5C;margin-left:10px" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20just%20finished%2012th%20and%20want%20career%20counselling." target="_blank">💬 Book on WhatsApp</a>
     </div>
 
     <h2>Frequently Asked Questions</h2>
@@ -255,7 +255,7 @@ Target audience: Class 12 students and parents across India, immediately after b
     return'✨';
   }
   function build(body){
-    var lines=['👋 Hi Sachin!','',emojiFor(body)+' '+body];
+    var lines=['👋 Hello Lume Live!','',emojiFor(body)+' '+body];
     if(!/please|confirm|\?\s*$/i.test(body))lines.push('','Please share the next steps and available options.');
     return lines.join('\n');
   }
@@ -265,8 +265,8 @@ Target audience: Class 12 students and parents across India, immediately after b
       if(link.getAttribute('data-wa-upgraded'))return;
       var text=textOf(link),body;
       if(!text){body='I would like to know more about Lume Live.';}
-      else if(/^\s*(👋\s*)?hi\s+(sachin|lume live)/i.test(text)){
-        body=text.replace(/^\s*(👋\s*)?hi\s+(sachin|lume live)[!,.\s]*/i,'').trim();
+      else if(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)/i.test(text)){
+        body=text.replace(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)[!,.\s]*/i,'').trim();
         if(!body)body='I would like to know more about Lume Live.';
       } else {return;}
       link.setAttribute('href','https://wa.me/'+WA+'?text='+encodeURIComponent(build(body)));

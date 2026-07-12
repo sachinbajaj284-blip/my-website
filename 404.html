@@ -46,7 +46,7 @@ footer{padding:20px;text-align:center;color:var(--mid);font-size:.8rem}
       <a href="career-counselling-in-rohtak.html">📍 Career Counselling in Rohtak</a>
       <a href="services-pricing.html">💰 Services &amp; Pricing</a>
     </div>
-    <a class="btn" href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20landed%20on%20a%20broken%20page%20on%20your%20site." target="_blank">💬 Or just message us on WhatsApp</a>
+    <a class="btn" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20landed%20on%20a%20broken%20page%20on%20your%20site." target="_blank">💬 Or just message us on WhatsApp</a>
   </div>
 </main>
 <footer>Lume Live · Career &amp; mental health counselling · Rohtak, Haryana &amp; online across India</footer>
@@ -64,7 +64,7 @@ footer{padding:20px;text-align:center;color:var(--mid);font-size:.8rem}
     return'✨';
   }
   function build(body){
-    var lines=['👋 Hi Sachin!','',emojiFor(body)+' '+body];
+    var lines=['👋 Hello Lume Live!','',emojiFor(body)+' '+body];
     if(!/please|confirm|\?\s*$/i.test(body))lines.push('','Please share the next steps and available options.');
     return lines.join('\n');
   }
@@ -74,8 +74,8 @@ footer{padding:20px;text-align:center;color:var(--mid);font-size:.8rem}
       if(link.getAttribute('data-wa-upgraded'))return;
       var text=textOf(link),body;
       if(!text){body='I would like to know more about Lume Live.';}
-      else if(/^\s*(👋\s*)?hi\s+(sachin|lume live)/i.test(text)){
-        body=text.replace(/^\s*(👋\s*)?hi\s+(sachin|lume live)[!,.\s]*/i,'').trim();
+      else if(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)/i.test(text)){
+        body=text.replace(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)[!,.\s]*/i,'').trim();
         if(!body)body='I would like to know more about Lume Live.';
       } else {return;}
       link.setAttribute('href','https://wa.me/'+WA+'?text='+encodeURIComponent(build(body)));

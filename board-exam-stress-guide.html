@@ -156,7 +156,7 @@
     <div class="cta-box">
       <h3>Seeing the signs and not sure what to do next?</h3>
       <p>Book a parent-guidance conversation with Sachin sir — ₹49, 45 minutes, and you'll leave knowing whether what you're seeing needs professional support or just a change of approach at home.</p>
-      <a class="btn gold" href="https://wa.me/917015671280?text=Hi%20Sachin!%20My%20child%20is%20stressed%20about%20board%20exams%20and%20I%20want%20guidance." target="_blank">Talk to Sachin Sir About What You're Seeing</a>
+      <a class="btn gold" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20My%20child%20is%20stressed%20about%20board%20exams%20and%20I%20want%20guidance." target="_blank">Talk to Sachin Sir About What You're Seeing</a>
     </div>
 
     <h2>When to bring in professional help</h2>
@@ -232,7 +232,7 @@
     return'✨';
   }
   function build(body){
-    var lines=['👋 Hi Sachin!','',emojiFor(body)+' '+body];
+    var lines=['👋 Hello Lume Live!','',emojiFor(body)+' '+body];
     if(!/please|confirm|\?\s*$/i.test(body))lines.push('','Please share the next steps and available options.');
     return lines.join('\n');
   }
@@ -242,8 +242,8 @@
       if(link.getAttribute('data-wa-upgraded'))return;
       var text=textOf(link),body;
       if(!text){body='I would like to know more about Lume Live.';}
-      else if(/^\s*(👋\s*)?hi\s+(sachin|lume live)/i.test(text)){
-        body=text.replace(/^\s*(👋\s*)?hi\s+(sachin|lume live)[!,.\s]*/i,'').trim();
+      else if(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)/i.test(text)){
+        body=text.replace(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)[!,.\s]*/i,'').trim();
         if(!body)body='I would like to know more about Lume Live.';
       } else {return;}
       link.setAttribute('href','https://wa.me/'+WA+'?text='+encodeURIComponent(build(body)));

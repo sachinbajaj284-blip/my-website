@@ -202,7 +202,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.72);padding:28px 18px;text
       <p>Free test se top career theme aur 3 possible directions milte hain. Full report mein 5 assessments (personality, interests, work drivers, learning style aur aptitude snapshot), PDF report aur counsellor discussion ke points milte hain.</p>
       <div class="actions" style="justify-content:center">
         <a class="btn gold" href="index.html#free-test">Free Career Snapshot</a>
-        <a class="btn ghost" style="color:var(--teal);border-color:rgba(10,110,110,.22)" href="https://wa.me/917015671280?text=Hi%20Lume%20Live!%20I%20want%20career%20counselling%20details." target="_blank" rel="noopener">WhatsApp par baat karein</a>
+        <a class="btn ghost" style="color:var(--teal);border-color:rgba(10,110,110,.22)" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20want%20career%20counselling%20details." target="_blank" rel="noopener">WhatsApp par baat karein</a>
       </div>
     </div>
   </section>
@@ -229,7 +229,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.72);padding:28px 18px;text
     return'✨';
   }
   function build(body){
-    var lines=['👋 Hi Sachin!','',emojiFor(body)+' '+body];
+    var lines=['👋 Hello Lume Live!','',emojiFor(body)+' '+body];
     if(!/please|confirm|\?\s*$/i.test(body))lines.push('','Please share the next steps and available options.');
     return lines.join('\n');
   }
@@ -239,8 +239,8 @@ footer{background:var(--navy);color:rgba(255,255,255,.72);padding:28px 18px;text
       if(link.getAttribute('data-wa-upgraded'))return;
       var text=textOf(link),body;
       if(!text){body='I would like to know more about Lume Live.';}
-      else if(/^\s*(👋\s*)?hi\s+(sachin|lume live)/i.test(text)){
-        body=text.replace(/^\s*(👋\s*)?hi\s+(sachin|lume live)[!,.\s]*/i,'').trim();
+      else if(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)/i.test(text)){
+        body=text.replace(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)[!,.\s]*/i,'').trim();
         if(!body)body='I would like to know more about Lume Live.';
       } else {return;}
       link.setAttribute('href','https://wa.me/'+WA+'?text='+encodeURIComponent(build(body)));

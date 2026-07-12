@@ -190,7 +190,7 @@ li{margin-bottom:7px;font-size:.98rem}
     <a href="index.html">Home</a>
     <a href="career-counselling-in-rohtak.html">Rohtak</a>
     <a href="assessment.html#free-test">Free Career Snapshot</a>
-    <a class="btn wa" href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20am%20from%20Sonipat%20and%20want%20career%20counselling." target="_blank">WhatsApp</a>
+    <a class="btn wa" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20am%20from%20Sonipat%20and%20want%20career%20counselling." target="_blank">WhatsApp</a>
   </div>
 </div></nav>
 
@@ -237,7 +237,7 @@ li{margin-bottom:7px;font-size:.98rem}
       <h3>Book your ₹49 introductory session from Sonipat</h3>
       <p>45 minutes, 1:1 with Sachin sir over video call (regular ₹499). The lowest-barrier way for a Sonipat family to try structured career counselling.</p>
       <div class="cta-row">
-        <a class="btn wa" href="https://wa.me/917015671280?text=Hi%20Sachin!%20I%20am%20from%20Sonipat%20and%20want%20to%20book%20the%20%E2%82%B949%20session." target="_blank">💬 Book on WhatsApp — ₹49</a>
+        <a class="btn wa" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20am%20from%20Sonipat%20and%20want%20to%20book%20the%20%E2%82%B949%20session." target="_blank">💬 Book on WhatsApp — ₹49</a>
         <a class="btn secondary" href="tel:+917015671280">Call +91 70156 71280</a>
       </div>
     </div>
@@ -324,7 +324,7 @@ li{margin-bottom:7px;font-size:.98rem}
     return'✨';
   }
   function build(body){
-    var lines=['👋 Hi Sachin!','',emojiFor(body)+' '+body];
+    var lines=['👋 Hello Lume Live!','',emojiFor(body)+' '+body];
     if(!/please|confirm|\?\s*$/i.test(body))lines.push('','Please share the next steps and available options.');
     return lines.join('\n');
   }
@@ -334,8 +334,8 @@ li{margin-bottom:7px;font-size:.98rem}
       if(link.getAttribute('data-wa-upgraded'))return;
       var text=textOf(link),body;
       if(!text){body='I would like to know more about Lume Live.';}
-      else if(/^\s*(👋\s*)?hi\s+(sachin|lume live)/i.test(text)){
-        body=text.replace(/^\s*(👋\s*)?hi\s+(sachin|lume live)[!,.\s]*/i,'').trim();
+      else if(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)/i.test(text)){
+        body=text.replace(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)[!,.\s]*/i,'').trim();
         if(!body)body='I would like to know more about Lume Live.';
       } else {return;}
       link.setAttribute('href','https://wa.me/'+WA+'?text='+encodeURIComponent(build(body)));

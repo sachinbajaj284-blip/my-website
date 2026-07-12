@@ -30,7 +30,7 @@ a{display:flex;align-items:center;justify-content:center;min-height:46px;border-
     <div class="status wait" id="statusBox">Checking Cashfree payment status...</div>
     <div class="actions">
       <a class="primary" id="continueLink" href="assessment.html#self-assessments">Start Assessment Now</a>
-      <a class="ghost" href="https://wa.me/917015671280?text=Hi%20Lume%20Live!%20I%20have%20completed%20my%20Cashfree%20payment.%20Please%20confirm%20my%20access." target="_blank" rel="noopener">Confirm On WhatsApp</a>
+      <a class="ghost" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20have%20completed%20my%20Cashfree%20payment.%20Please%20confirm%20my%20access." target="_blank" rel="noopener">Confirm On WhatsApp</a>
       <a class="ghost" href="index.html">Back To Home</a>
     </div>
   </main>
@@ -139,7 +139,7 @@ a{display:flex;align-items:center;justify-content:center;min-height:46px;border-
     return'✨';
   }
   function build(body){
-    var lines=['👋 Hi Sachin!','',emojiFor(body)+' '+body];
+    var lines=['👋 Hello Lume Live!','',emojiFor(body)+' '+body];
     if(!/please|confirm|\?\s*$/i.test(body))lines.push('','Please share the next steps and available options.');
     return lines.join('\n');
   }
@@ -149,8 +149,8 @@ a{display:flex;align-items:center;justify-content:center;min-height:46px;border-
       if(link.getAttribute('data-wa-upgraded'))return;
       var text=textOf(link),body;
       if(!text){body='I would like to know more about Lume Live.';}
-      else if(/^\s*(👋\s*)?hi\s+(sachin|lume live)/i.test(text)){
-        body=text.replace(/^\s*(👋\s*)?hi\s+(sachin|lume live)[!,.\s]*/i,'').trim();
+      else if(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)/i.test(text)){
+        body=text.replace(/^\s*(👋\s*)?(hi|hello)\s+(sachin|lume live)[!,.\s]*/i,'').trim();
         if(!body)body='I would like to know more about Lume Live.';
       } else {return;}
       link.setAttribute('href','https://wa.me/'+WA+'?text='+encodeURIComponent(build(body)));
