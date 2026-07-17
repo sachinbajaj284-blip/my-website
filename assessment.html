@@ -3024,6 +3024,13 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
   function ftGoPaid(event){
     if(event) event.preventDefault();
     ftTrackUpsell();
+    // Carry the free-snapshot lead into the paid report so it feels like one journey
+    try{
+      var sn=document.getElementById('saName'), sp=document.getElementById('saPhone');
+      if(sn && !sn.value && state && state.name) sn.value=state.name;
+      var ph=(document.getElementById('ftPhone')||{}).value;
+      if(sp && !sp.value && ph) sp.value=ph.trim();
+    }catch(e){}
     const paid = document.getElementById('self-assessments');
     if(paid){
       paid.scrollIntoView({behavior:'smooth', block:'start'});
@@ -3076,6 +3083,14 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
 .sa-faq details[open] summary::after{content:'\2013';}
 .sa-faq details p{padding:0 0 16px;margin:0;font-size:.83rem;color:var(--mid);line-height:1.62;}
 .sa-faq details p a{color:var(--teal);font-weight:800;}
+.sa-more{margin:2px 0 6px;border:1px solid #E8E1D6;border-radius:12px;background:#FBF9F4;overflow:hidden;}
+.sa-more>summary{cursor:pointer;list-style:none;padding:12px 14px;font-size:.8rem;font-weight:800;color:var(--teal);display:flex;align-items:center;gap:8px;}
+.sa-more>summary::-webkit-details-marker{display:none;}
+.sa-more>summary span{color:var(--mid);font-weight:600;}
+.sa-more[open]>summary{border-bottom:1px solid #EFE9DD;}
+.sa-more .sa-profile-grid{padding:14px;margin:0;}
+.sa-wa-btn{background:#EAF9F0!important;color:#0B8F62!important;border:1px solid #BFE8D2!important;margin-top:11px;font-weight:800;}
+.sa-wa-btn:hover{background:#DDF4E7!important;}
 </style>
 <section id="self-assessments">
   <div class="sa-shell">
@@ -3117,8 +3132,8 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
             <div class="sa-list" id="saToolList"></div>
             <div class="sa-save-prompt">
               <div class="sa-save-copy">
-                <strong>Sign-in is required before assessment.</strong>
-                <span>Create an account or sign in first so your progress can be saved safely if the page refreshes.</span>
+                <strong>Sign-in is optional — you can start right away.</strong>
+                <span>Your progress is already saved on this device. Create a free account only if you'd like your report saved to your profile too.</span>
               </div>
               <div class="sa-save-actions auth-signed-out">
                 <button class="sa-btn primary" type="button" onclick="openAuth('signup')">Create Account</button>
@@ -3133,10 +3148,12 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
               <div class="sa-field"><label for="saPhone">WhatsApp number *</label>
                 <input class="sa-input" id="saPhone" type="tel" maxlength="18" placeholder="+91 98765 43210"></div>
             </div>
+            <details class="sa-more">
+            <summary>➕ Add a few details to personalise your report <span>(optional — you can skip this)</span></summary>
             <div class="sa-profile-grid">
-              <div class="sa-field"><label for="saAge">Age *</label>
+              <div class="sa-field"><label for="saAge">Age</label>
                 <input class="sa-input" id="saAge" type="number" min="10" max="60" maxlength="2" placeholder="17"></div>
-              <div class="sa-field"><label for="saStage">Current stage / class *</label>
+              <div class="sa-field"><label for="saStage">Current stage / class</label>
                 <select class="sa-input" id="saStage">
                   <option value="">Select stage</option>
                   <option>Class 9</option>
@@ -3167,6 +3184,7 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
               <div class="sa-field"><label for="saGuardian">Parent / guardian name (optional)</label>
                 <input class="sa-input" id="saGuardian" type="text" maxlength="60" placeholder="If report is for a student"></div>
             </div>
+            </details>
             <label class="sa-check sa-check-highlight"><input type="checkbox" id="saPurpose">
               <span>I understand this is a set of educational self-assessment questionnaires for personal reflection and counselling discussion — not a psychological diagnosis, aptitude test, or selection or admissions decision.</span></label>
             <div class="sa-integrity"><strong>Assessment integrity &amp; licensing</strong>
@@ -3201,7 +3219,8 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
               <button class="sa-btn primary" type="button" id="saBeginBtn" onclick="saBegin()">Begin Full Report &rarr;</button>
               <p class="sa-begin-hint" id="saBeginHint">This unlocks automatically once your &#8377;999 payment is confirmed. Already paid? Just tap it — access verifies in a few seconds.</p>
             </div>
-            <p class="sa-pay-note sa-help-strong">Confused, or already paid and stuck? <a class="sa-help-link" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20need%20help%20booking%20the%20%E2%82%B9999%20Full%20Clarity%20Report.%20Please%20help%20me%20complete%20it." target="_blank" rel="noopener">WhatsApp us and we'll book it for you.</a></p>
+            <a class="sa-btn ghost sa-wa-btn" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20need%20help%20booking%20the%20%E2%82%B9999%20Full%20Clarity%20Report.%20Please%20help%20me%20complete%20it." target="_blank" rel="noopener">💬 Prefer help? Book with our team on WhatsApp</a>
+            <p class="sa-pay-note">Cashfree is the fastest way to start instantly. Confused, or already paid and stuck? We'll sort it for you on WhatsApp.</p>
           </aside>
         </div>
       </div>
@@ -3473,7 +3492,7 @@ var TOTAL=order.reduce(function(t,k){return t+tools[k].items.length;},0);
 /* ─── State ─── */
 var S={name:"",phone:"",age:"",stage:"",city:"",course:"",concern:"",guardian:"",paid:false,handoff:false,identity:"",part:0,answers:{},picks:[]};
 order.forEach(function(k){S.answers[k]={};});
-var saProgressKey="";
+var saProgressKey="lume-live-assessment-progress:anon";
 var saSaveStatusTimer=null;
 
 function hasAssessmentProgress(){
@@ -3535,7 +3554,7 @@ function restoreAssessmentProgress(saved){
  return true;
 }
 window.saUseAccountProgress=function(user){
- if(!user||!user.uid){saProgressKey="";return;}
+ if(!user||!user.uid){saProgressKey="lume-live-assessment-progress:anon";return;}
  saProgressKey="lume-live-assessment-progress:"+user.uid;
  if(hasAssessmentProgress()){persistAssessmentProgress();return;}
  try{
@@ -3569,17 +3588,14 @@ function validateGate(){
  var guardian=el("saGuardian").value.trim();
  if(!name){err.textContent="Please enter the name for the report.";return false;}
  if(phone.replace(/\D/g,"").length<10){err.textContent="Please enter a valid WhatsApp number.";return false;}
- if(!age||Number(age)<10||Number(age)>60){err.textContent="Please enter a valid age.";return false;}
- if(!stage){err.textContent="Please select the current stage.";return false;}
- if(!el("saPurpose").checked){err.textContent="Please acknowledge the purpose of the assessment.";return false;}
+ if(age&&(Number(age)<10||Number(age)>60)){err.textContent="Please enter a valid age between 10 and 60, or leave it blank.";return false;}
+ if(!el("saPurpose").checked){err.textContent="Please tick the box to acknowledge the purpose of the assessment.";return false;}
  S.name=name;S.phone=phone;S.age=age;S.stage=stage;S.city=city;S.course=course;S.concern=concern;S.guardian=guardian;err.textContent="";persistAssessmentProgress();return true;
 }
 function requireAssessmentSignin(){
- var err=el("saGateError");
- if(window.currentFirebaseUser)return true;
- err.textContent="Please sign up or sign in before starting so your assessment progress can be saved safely.";
- if(typeof openAuth==="function")openAuth("signin");
- return false;
+ /* Sign-in is optional: progress saves to this device via the anonymous
+    saProgressKey. Signed-in users additionally get profile-scoped saving. */
+ return true;
 }
 function applyVerifiedCashfreeAccess(){
  var verified=typeof window.lumeCashfreeHasAccess==="function"&&window.lumeCashfreeHasAccess("student-full-report");
