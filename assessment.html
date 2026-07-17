@@ -3050,6 +3050,33 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
 
 <!-- ════════════════════════════════════════════════════════════════════ -->
 
+<style id="saBookingClarity">
+/* ── Booking clarity additions — purely presentational, no payment/logic changes ── */
+.sa-howto{background:linear-gradient(135deg,#F6FAF9,#FFFFFF);border:1px solid #E2EFED;border-radius:16px;padding:16px 18px;margin-bottom:20px;}
+.sa-howto-tag{display:inline-flex;align-items:center;gap:7px;font-size:.66rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--teal);background:#EAF5F3;border:1px solid #D3E9E5;border-radius:999px;padding:5px 11px;margin-bottom:13px;}
+.sa-howto-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.sa-howto-step{display:flex;gap:11px;align-items:flex-start;}
+.sa-howto-step b{flex:none;width:30px;height:30px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;box-shadow:0 4px 12px rgba(10,110,110,.25);}
+.sa-howto-step strong{display:block;font-size:.85rem;color:var(--navy);line-height:1.3;}
+.sa-howto-step span{display:block;font-size:.75rem;color:var(--mid);line-height:1.45;margin-top:3px;}
+@media(max-width:720px){.sa-howto-steps{grid-template-columns:1fr;gap:11px;}}
+.sa-step-badge{display:inline-flex;align-items:center;gap:6px;font-size:.63rem;font-weight:900;text-transform:uppercase;letter-spacing:.8px;color:var(--gold);background:rgba(201,147,58,.12);border:1px solid rgba(201,147,58,.32);border-radius:999px;padding:4px 10px;margin:0 0 9px;}
+.sa-begin-block{margin-top:14px;padding-top:15px;border-top:1px dashed #E1DAC9;transition:opacity .3s;}
+.sa-begin-block.sa-locked{opacity:.6;}
+.sa-begin-block.sa-locked .sa-step-badge{color:var(--mid);background:rgba(99,112,131,.1);border-color:rgba(99,112,131,.22);}
+.sa-begin-block.sa-unlocked .sa-step-badge{color:#0B8F62;background:rgba(11,143,98,.12);border-color:rgba(11,143,98,.32);}
+.sa-begin-hint{font-size:.72rem;color:var(--mid);line-height:1.5;margin-top:9px;}
+.sa-help-strong{font-weight:700!important;color:var(--navy)!important;}
+.sa-faq{max-width:920px;margin:26px auto 0;display:grid;gap:10px;}
+.sa-faq-head{text-align:center;font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:1.2px;color:var(--teal);margin-bottom:6px;}
+.sa-faq details{background:#fff;border:1px solid #E8E1D6;border-radius:14px;padding:0 16px;}
+.sa-faq summary{cursor:pointer;list-style:none;padding:15px 0;font-weight:800;font-size:.89rem;color:var(--navy);display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.sa-faq summary::-webkit-details-marker{display:none;}
+.sa-faq summary::after{content:'+';font-size:1.25rem;line-height:1;color:var(--teal);font-weight:800;flex:none;}
+.sa-faq details[open] summary::after{content:'\2013';}
+.sa-faq details p{padding:0 0 16px;margin:0;font-size:.83rem;color:var(--mid);line-height:1.62;}
+.sa-faq details p a{color:var(--teal);font-weight:800;}
+</style>
 <section id="self-assessments">
   <div class="sa-shell">
     <div class="sa-head">
@@ -3074,6 +3101,14 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
     <!-- SCREEN 1 — overview + payment gate -->
     <div class="sa-screen" id="saGate">
       <div class="sa-card">
+        <div class="sa-howto" aria-label="How to get your report in three steps">
+          <span class="sa-howto-tag">📋 How it works — 3 simple steps</span>
+          <div class="sa-howto-steps">
+            <div class="sa-howto-step"><b>1</b><div><strong>Fill your details</strong><span>Name &amp; WhatsApp number — takes about 30 seconds.</span></div></div>
+            <div class="sa-howto-step"><b>2</b><div><strong>Pay ₹999 securely</strong><span>UPI, card, net-banking or wallet via Cashfree.</span></div></div>
+            <div class="sa-howto-step"><b>3</b><div><strong>Answer &amp; get your report</strong><span>Complete the guided questions and view your report instantly.</span></div></div>
+          </div>
+        </div>
         <div class="sa-gate-grid">
           <div>
             <span class="s-tag">What's included</span>
@@ -3157,15 +3192,62 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
                 <div class="sa-cashfree-mark" aria-hidden="true">&#8377;</div>
                 <div><b>Secure Cashfree Checkout</b><span>Pay by UPI, card, netbanking or wallet and come back to begin.</span></div>
               </div>
-              <button class="sa-btn primary" type="button" onclick="saStartCashfreePayment()">Pay Securely with Cashfree</button>
+              <span class="sa-step-badge">Step 1 · Pay</span>
+              <button class="sa-btn primary" type="button" onclick="saStartCashfreePayment()">Pay &#8377;999 Securely with Cashfree</button>
               <p class="sa-pay-note">Checkout opens securely and returns you here after payment.</p>
             </div>
-            <button class="sa-btn primary" type="button" onclick="saBegin()">Begin Full Report &rarr;</button>
-            <p class="sa-pay-note">Cashfree payments verify automatically and return you here to begin. <a class="sa-help-link" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20need%20help%20with%20the%20assessment%20payment%20or%20report." target="_blank" rel="noopener">Need help? Message Lume Live.</a></p>
+            <div class="sa-begin-block sa-locked" id="saBeginBlock">
+              <span class="sa-step-badge" id="saStep2Badge">Step 2 · after payment</span>
+              <button class="sa-btn primary" type="button" id="saBeginBtn" onclick="saBegin()">Begin Full Report &rarr;</button>
+              <p class="sa-begin-hint" id="saBeginHint">This unlocks automatically once your &#8377;999 payment is confirmed. Already paid? Just tap it — access verifies in a few seconds.</p>
+            </div>
+            <p class="sa-pay-note sa-help-strong">Confused, or already paid and stuck? <a class="sa-help-link" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20need%20help%20booking%20the%20%E2%82%B9999%20Full%20Clarity%20Report.%20Please%20help%20me%20complete%20it." target="_blank" rel="noopener">WhatsApp us and we'll book it for you.</a></p>
           </aside>
         </div>
       </div>
     </div>
+
+    <!-- Booking questions (additive, no logic) -->
+    <div class="sa-faq" id="saFaq">
+      <div class="sa-faq-head">Common questions before you book</div>
+      <details><summary>Is this a live session with a counsellor, or a self-test?</summary><p>The ₹999 Full Clarity Report is a guided self-assessment you complete online — four short reflection parts that combine into one editorial report. It is <strong>personally reviewed by our founder</strong> and forms the basis for a counselling conversation. If you'd prefer to start with a live 1:1 call instead, you can book the ₹49 introductory session on our <a href="index.html#services">services page</a>.</p></details>
+      <details><summary>What exactly do I get for ₹999?</summary><p>All four assessments in one flow, plus a single combined, print-ready report you can view, download and discuss. It's a one-time fee — nothing recurring.</p></details>
+      <details><summary>How do I pay?</summary><p>Tap <strong>“Pay ₹999 Securely with Cashfree”</strong> (Step 1). Cashfree's secure checkout opens and you can pay by UPI, card, net-banking or wallet. You'll return to this page automatically.</p></details>
+      <details><summary>What happens right after I pay?</summary><p>Your payment verifies automatically in a few seconds and the <strong>“Begin Full Report” button (Step 2) unlocks</strong>. Tap it to start answering the questions straight away. If it doesn't unlock, just tap Begin once more, or <a href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20paid%20for%20the%20%E2%82%B9999%20report%20but%20cannot%20begin.%20Please%20help." target="_blank" rel="noopener">WhatsApp us</a> and we'll confirm access.</p></details>
+      <details><summary>I'm still confused — can someone just book it for me?</summary><p>Yes. Message us on <a href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20Please%20help%20me%20book%20the%20%E2%82%B9999%20Full%20Clarity%20Report." target="_blank" rel="noopener">WhatsApp (+91 70156 71280)</a> and we'll guide you through payment and starting the report.</p></details>
+    </div>
+
+    <script>
+    /* Read-only UI reflector: unlocks the Step 2 "Begin" button visually once
+       Cashfree access is verified. It only READS window.lumeCashfreeHasAccess —
+       it never changes payment state, and the Begin button stays tappable at all
+       times (saBegin() still performs the real verification), so nothing breaks
+       if this runs before or after verification. */
+    (function(){
+      function reflectPayState(){
+        var block=document.getElementById("saBeginBlock");
+        if(!block)return;
+        var ok=typeof window.lumeCashfreeHasAccess==="function"&&window.lumeCashfreeHasAccess("student-full-report");
+        var badge=document.getElementById("saStep2Badge");
+        var hint=document.getElementById("saBeginHint");
+        if(ok){
+          if(block.classList.contains("sa-unlocked"))return;
+          block.classList.remove("sa-locked");
+          block.classList.add("sa-unlocked");
+          if(badge)badge.textContent="✅ Payment received";
+          if(hint)hint.textContent="You're all set — tap below to begin your report.";
+        }else{
+          block.classList.remove("sa-unlocked");
+          block.classList.add("sa-locked");
+        }
+      }
+      window.saReflectPayState=reflectPayState;
+      window.addEventListener("lume:cashfree-ready",reflectPayState);
+      if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",reflectPayState);
+      else reflectPayState();
+      [400,1400,3000].forEach(function(ms){setTimeout(reflectPayState,ms);});
+    })();
+    </script>
 
     <!-- SCREEN 2 — assessment stepper -->
     <div class="sa-screen sa-card" id="saTest" hidden>
