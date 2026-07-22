@@ -2537,6 +2537,30 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
 .tp-outcome strong{display:block;font-family:'Fraunces',serif;font-size:1.15rem;margin-bottom:3px;font-weight:700;}
 .tp-card.regret .tp-outcome strong{color:#fca5a5;}
 .tp-card.clarity .tp-outcome strong{color:#86efac;}
+/* Mobile-friendly accordion for the secondary card detail (bullets + outcome).
+   Semantic <details>/<summary>: collapsed on mobile to cut scroll fatigue,
+   always expanded on desktop (and with JS disabled / for crawlers). */
+.tp-more{margin-top:2px;}
+.tp-more-summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;font-size:.82rem;font-weight:800;letter-spacing:.4px;padding:11px 15px;border:1px solid rgba(255,255,255,.16);border-radius:12px;background:rgba(255,255,255,.04);color:#fff;user-select:none;transition:background .2s,border-color .2s;}
+.tp-more-summary:hover{background:rgba(255,255,255,.07);}
+.tp-more-summary::-webkit-details-marker{display:none;}
+.tp-more-summary::marker{content:'';}
+.tp-card.regret .tp-more-summary{color:#fca5a5;border-color:rgba(220,38,38,.3);}
+.tp-card.clarity .tp-more-summary{color:#86efac;border-color:rgba(34,197,94,.35);}
+.tp-more-caret{font-size:.7rem;transition:transform .25s ease;flex-shrink:0;}
+.tp-more[open] .tp-more-caret{transform:rotate(180deg);}
+.tp-more[open] .tp-more-summary{border-bottom-left-radius:0;border-bottom-right-radius:0;}
+.tp-more-body{padding-top:16px;animation:tpReveal .28s ease;}
+.tp-more-body ul{margin-bottom:14px;}
+@keyframes tpReveal{from{opacity:0;transform:translateY(-5px);}to{opacity:1;transform:translateY(0);}}
+/* Desktop: keep the original always-expanded layout, hide the toggle entirely.
+   Overrides both legacy (display:none on closed children) and modern
+   (::details-content content-visibility) UA behaviours. */
+@media(min-width:761px){
+  .tp-more-summary{display:none;}
+  .tp-more>.tp-more-body{display:block;padding-top:0;animation:none;}
+  .tp-more::details-content{content-visibility:visible;}
+}
 .tp-cta-row{text-align:center;margin-top:38px;}
 .tp-cta-row a{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#C9933A,#E8B95A);color:#0D1B40;font-size:1rem;font-weight:900;padding:15px 32px;border-radius:999px;text-decoration:none;box-shadow:0 12px 28px rgba(201,147,58,.32);transition:all .25s;letter-spacing:.3px;}
 .tp-cta-row a:hover{transform:translateY(-2px);box-shadow:0 16px 36px rgba(201,147,58,.45);}
@@ -2558,16 +2582,21 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
         <div class="tp-card-icon">⏳</div>
         <h3>"We'll <span class="accent">figure it out</span> after the results."</h3>
         <p class="tp-quote">"Beta, sab Science le rahe hain, tu bhi le le. Hum baad mein dekhenge."</p>
-        <ul>
-          <li>Decides stream based on relatives' opinions and tuition class trends</li>
-          <li>Discovers wrong fit only in Class 11 mid-terms or first year of college</li>
-          <li>Pays lakhs in coaching for an exam the child never wanted</li>
-          <li>Spends years repairing a confidence quietly broken</li>
-        </ul>
-        <div class="tp-outcome">
-          <strong>The real cost: ₹15–25 Lakh</strong>
-          Two wasted years. One unmotivated child. A decision quietly regretted at every birthday.
-        </div>
+        <details class="tp-more">
+          <summary class="tp-more-summary">See how this plays out<span class="tp-more-caret">▾</span></summary>
+          <div class="tp-more-body">
+            <ul>
+              <li>Decides stream based on relatives' opinions and tuition class trends</li>
+              <li>Discovers wrong fit only in Class 11 mid-terms or first year of college</li>
+              <li>Pays lakhs in coaching for an exam the child never wanted</li>
+              <li>Spends years repairing a confidence quietly broken</li>
+            </ul>
+            <div class="tp-outcome">
+              <strong>The real cost: ₹15–25 Lakh</strong>
+              Two wasted years. One unmotivated child. A decision quietly regretted at every birthday.
+            </div>
+          </div>
+        </details>
       </div>
 
       <div class="tp-card clarity">
@@ -2575,16 +2604,21 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
         <div class="tp-card-icon">🧭</div>
         <h3>"Let's get a <span class="accent">scientific picture</span> first."</h3>
         <p class="tp-quote">"Hum dono baith ke report dekhenge. Phir decide karenge — together, with data."</p>
-        <ul>
-          <li>Spends 60 seconds on the free Career Snapshot, then ₹999 for the full report</li>
-          <li>Sits with a qualified counsellor before any stream form is signed</li>
-          <li>Knows exactly which careers fit their child's mind, not just their marks</li>
-          <li>Becomes the parent their child thanks at every milestone</li>
-        </ul>
-        <div class="tp-outcome">
-          <strong>The real cost: ₹999</strong>
-          One clarity report. One honest conversation. A decision made together.
-        </div>
+        <details class="tp-more">
+          <summary class="tp-more-summary">See how this plays out<span class="tp-more-caret">▾</span></summary>
+          <div class="tp-more-body">
+            <ul>
+              <li>Spends 60 seconds on the free Career Snapshot, then ₹999 for the full report</li>
+              <li>Sits with a qualified counsellor before any stream form is signed</li>
+              <li>Knows exactly which careers fit their child's mind, not just their marks</li>
+              <li>Becomes the parent their child thanks at every milestone</li>
+            </ul>
+            <div class="tp-outcome">
+              <strong>The real cost: ₹999</strong>
+              One clarity report. One honest conversation. A decision made together.
+            </div>
+          </div>
+        </details>
       </div>
     </div>
 
