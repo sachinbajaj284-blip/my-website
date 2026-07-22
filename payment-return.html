@@ -30,6 +30,7 @@ a{display:flex;align-items:center;justify-content:center;min-height:46px;border-
     <div class="status wait" id="statusBox">Checking Cashfree payment status...</div>
     <div class="actions">
       <a class="primary" id="continueLink" href="assessment.html#self-assessments">Start Assessment Now</a>
+      <button class="ghost" id="invoiceBtn" type="button" style="display:none;border:0;cursor:pointer;font-family:inherit;font-size:1rem;">🧾 Download Invoice</button>
       <a class="ghost" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20have%20completed%20my%20Cashfree%20payment.%20Please%20confirm%20my%20access." target="_blank" rel="noopener">Confirm On WhatsApp</a>
       <a class="ghost" href="index.html">Back To Home</a>
     </div>
@@ -51,6 +52,7 @@ a{display:flex;align-items:center;justify-content:center;min-height:46px;border-
     "career-intelligence-roadmap": { href:"career-intelligence.html?access=assessment#career-intelligence", label:"Open Career Intelligence", title:"Payment Verified" },
     "parents-handbook": { href:"for-parents.html#parents-handbook", label:"Return To Parent Guide", title:"Payment Received" },
     "intro-session": { href:"index.html#contact", label:"Return To Booking", title:"Payment Received" },
+    "wellness-session": { href:"index.html#contact", label:"Return To Booking", title:"Payment Received" },
     "stream-clarity-session": { href:"index.html#contact", label:"Return To Booking", title:"Payment Received" },
     "career-direction-session": { href:"index.html#contact", label:"Return To Booking", title:"Payment Received" }
   };
@@ -115,7 +117,39 @@ a{display:flex;align-items:center;justify-content:center;min-height:46px;border-
           returnTitle.textContent = skuTargets[sku].title;
           continueLink.textContent = skuTargets[sku].label;
         }
-        autoContinue();
+        var invoiceBtn = document.getElementById("invoiceBtn");
+        if(invoiceBtn && typeof window.lumeDownloadInvoice === "function"){
+          var skuLabels = {
+            "student-full-report":"Lume Live Full Clarity Report",
+            "lume-lens-working-profile":"Lume Lens Working Profile",
+            "career-intelligence-roadmap":"Career Intelligence Detailed Roadmap",
+            "parents-handbook":"Parents Career Handbook",
+            "intro-session":"Introductory Guidance Session",
+            "wellness-session":"Wellness Session",
+            "stream-clarity-session":"Stream Clarity Counselling Session",
+            "career-direction-session":"Career Direction Counselling Session"
+          };
+          invoiceBtn.style.display = "flex";
+          invoiceBtn.addEventListener("click", function(){
+            window.lumeDownloadInvoice({
+              orderId: orderId,
+              amount: data.order_amount,
+              label: skuLabels[sku] || "Lume Live Service",
+              customerName: (data.customer && data.customer.name) || "",
+              date: new Date()
+            });
+          });
+        }
+        // Assessment unlocks jump straight into the tool; bookings/receipts
+        // stay on this page so the client can download their invoice first.
+        var AUTO_CONTINUE_SKUS = ["student-full-report","lume-lens-working-profile","career-intelligence-roadmap"];
+        if(AUTO_CONTINUE_SKUS.indexOf(sku) !== -1){
+          autoContinue();
+        }else{
+          returnTitle.textContent = (skuTargets[sku] && skuTargets[sku].title) || "Payment Received";
+          returnCopy.textContent = "Your payment is confirmed. Download your invoice below, or continue.";
+          showStatus("","Payment verified. Order ID: " + orderId);
+        }
       }else{
         showStatus("wait","Cashfree status is "+(status || "pending")+". If money was debited, wait a minute and refresh this page.");
       }

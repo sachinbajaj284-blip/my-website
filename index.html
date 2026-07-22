@@ -5479,15 +5479,15 @@ if(new URLSearchParams(window.location.search).has("sample-report")){window.saSh
       </div>
       <!-- Date & Time Picker -->
       <div class="date-section">
-        <h4>📅 Choose Your Preferred Date & Time</h4>
+        <h4>📅 Choose Your Preferred Date &amp; Time <span style="color:#dc2626;">*</span></h4>
         <div class="date-grid">
           <div>
-            <label style="font-size:.72rem;font-weight:600;color:var(--mid);display:block;margin-bottom:4px;">Preferred Date</label>
-            <input class="date-inp" type="date" id="sessionDate" min="">
+            <label style="font-size:.72rem;font-weight:600;color:var(--mid);display:block;margin-bottom:4px;">Preferred Date <span style="color:#dc2626;">*</span></label>
+            <input class="date-inp" type="date" id="sessionDate" min="" required aria-required="true">
           </div>
           <div>
-            <label style="font-size:.72rem;font-weight:600;color:var(--mid);display:block;margin-bottom:4px;">Preferred Time</label>
-            <input class="date-inp" type="time" id="sessionTime" value="10:00">
+            <label style="font-size:.72rem;font-weight:600;color:var(--mid);display:block;margin-bottom:4px;">Preferred Time <span style="color:#dc2626;">*</span></label>
+            <input class="date-inp" type="time" id="sessionTime" value="10:00" required aria-required="true">
           </div>
         </div>
         <label style="font-size:.72rem;font-weight:600;color:var(--mid);display:block;margin-bottom:6px;">Quick Time Slots</label>
@@ -5505,7 +5505,7 @@ if(new URLSearchParams(window.location.search).has("sample-report")){window.saSh
       </div>
       <!-- Session Mode -->
       <div class="mode-section">
-        <h4>🎥 Choose Your Preferred Session Mode</h4>
+        <h4>🎥 Choose Your Preferred Session Mode <span style="color:#dc2626;">*</span></h4>
         <div class="mode-options">
           <div class="mode-opt sel" onclick="setMode(this,'Video Call (Google Meet / Zoom)')" id="modeVideo">
             <span class="icon">🎥</span>
@@ -5990,17 +5990,50 @@ var SESSION_PLANS={
   'career-direction':{sku:"career-direction-session",amount:1499,regular:null,title:"Book Your Career Direction Session",sub:"For older students & young adults · Online across India",detail:"Career Direction & First-Job Readiness session",label:"Career Direction & First-Job Readiness Session",offer:false}
 };
 var currentSessionPlan=SESSION_PLANS.intro;
+var currentSessionBaseKey='intro';
 function fmtINR(n){return '₹'+Number(n||0).toLocaleString('en-IN');}
-function applySessionPlan(key){
-  var p=SESSION_PLANS[key]||SESSION_PLANS.intro;
+// The ₹49 price is a first-session offer. A client who has already taken a
+// session pays the regular ₹499 (a distinct SKU so the server charges ₹499).
+function regularSessionVariant(base){
+  return {sku:"wellness-session",amount:499,regular:null,
+    title:base.title,sub:base.sub,detail:(base.detail||"Session"),
+    label:base.label,offer:false,repeat:true};
+}
+function isFirstSessionOffer(plan){return !!(plan&&plan.offer&&plan.sku==='intro-session');}
+function renderSessionPlan(p){
   currentSessionPlan=p;
   var set=function(id,html){var n=document.getElementById(id);if(n)n.innerHTML=html;};
   set('sessTitle',p.title);
   set('sessSub',p.sub);
   set('sessAmt',fmtINR(p.amount));
-  set('sessDetail',p.detail+(p.regular?'<br><span style="color:var(--grayM);text-decoration:line-through;">'+fmtINR(p.regular)+'</span> regular price':''));
+  if(p.repeat){
+    set('sessDetail',p.detail+'<br><span style="color:var(--mid);font-size:.74rem;">Regular price — the ₹49 offer applies to your first session only</span>');
+  }else{
+    set('sessDetail',p.detail+(p.regular?'<br><span style="color:var(--grayM);text-decoration:line-through;">'+fmtINR(p.regular)+'</span> regular price':''));
+  }
   var cd=document.querySelector('#modal-session .offer-countdown');
   if(cd){ if(p.offer){cd.removeAttribute('hidden');} else {cd.setAttribute('hidden','');} }
+}
+function applySessionPlan(key){
+  var base=SESSION_PLANS[key]?key:'intro';
+  currentSessionBaseKey=base;
+  var p=SESSION_PLANS[base];
+  // Instant, device-local check — returning clients see ₹499 immediately.
+  if(isFirstSessionOffer(p)&&typeof window.lumeHasPriorSessionLocal==='function'&&window.lumeHasPriorSessionLocal()){
+    p=regularSessionVariant(p);
+  }
+  renderSessionPlan(p);
+}
+// Best-effort phone-number check (covers a returning client on a new device).
+function refreshRepeatPricing(phone){
+  var base=SESSION_PLANS[currentSessionBaseKey]||SESSION_PLANS.intro;
+  if(!isFirstSessionOffer(base)){return;}
+  if(typeof window.lumeHasPriorSession!=='function'){return;}
+  window.lumeHasPriorSession(phone).then(function(prior){
+    if(prior&&isFirstSessionOffer(SESSION_PLANS[currentSessionBaseKey])){
+      renderSessionPlan(regularSessionVariant(base));
+    }
+  }).catch(function(){});
 }
 function openModal(id){if(id==='session'){applySessionPlan('intro');}document.getElementById('modal-'+id).classList.add('open');document.body.style.overflow='hidden';}
 function openSessionModal(key){applySessionPlan(key);document.getElementById('modal-session').classList.add('open');document.body.style.overflow='hidden';}
@@ -6082,16 +6115,35 @@ function startSessionCashfree(e){
   const name=(document.getElementById('sessionName').value||'').trim();
   const phone=(document.getElementById('sessionPhone').value||'').replace(/\D/g,'').slice(-10);
   if(phone.length<10){showToast('Please enter a valid 10-digit WhatsApp number so we can confirm your session.');var pe=document.getElementById('sessionPhone');if(pe)pe.focus();return;}
+  // Date, time and mode are mandatory for every session booking.
+  if(!d){showToast('Please choose your preferred date for the session.');var de=document.getElementById('sessionDate');if(de){de.focus();if(de.showPicker){try{de.showPicker();}catch(err){}}}return;}
+  var todayStr=new Date().toISOString().split('T')[0];
+  if(d<todayStr){showToast('Please choose a date that is today or later.');var de2=document.getElementById('sessionDate');if(de2)de2.focus();return;}
+  if(!t){showToast('Please choose your preferred time for the session.');var te=document.getElementById('sessionTime');if(te)te.focus();return;}
+  if(!sessionMode){showToast('Please choose your preferred session mode (video, call or chat).');var ms=document.querySelector('#modal-session .mode-section');if(ms)ms.scrollIntoView({behavior:'smooth',block:'center'});return;}
   if(typeof window.lumeCashfreePay!=="function"){showToast('Cashfree checkout is still loading. Please wait a few seconds and tap Pay Securely with Cashfree again.');return;}
   var plan=currentSessionPlan||SESSION_PLANS.intro;
-  window.lumeCashfreePay({
-    sku:plan.sku,
-    amount:plan.amount,
-    label:plan.label,
-    customerName:name||'Lume Live Customer',
-    customerPhone:phone,
-    notes:{preferredDate:d,preferredTime:t,sessionMode:sessionMode}
-  });
+  var pay=function(finalPlan){
+    window.lumeCashfreePay({
+      sku:finalPlan.sku,
+      amount:finalPlan.amount,
+      label:finalPlan.label,
+      customerName:name||'Lume Live Customer',
+      customerPhone:phone,
+      notes:{preferredDate:d,preferredTime:t,sessionMode:sessionMode}
+    });
+  };
+  // Authoritative first-session check just before charging: if this client has
+  // already taken a session, switch to the regular ₹499 SKU.
+  var base=SESSION_PLANS[currentSessionBaseKey]||SESSION_PLANS.intro;
+  if(isFirstSessionOffer(base)&&typeof window.lumeHasPriorSession==='function'){
+    window.lumeHasPriorSession(phone).then(function(prior){
+      if(prior){var reg=regularSessionVariant(base);renderSessionPlan(reg);pay(reg);}
+      else{pay(plan);}
+    }).catch(function(){pay(plan);});
+  }else{
+    pay(plan);
+  }
 }
 function formatTime(t){
   if(!t)return'';
@@ -6114,6 +6166,12 @@ const today=new Date().toISOString().split('T')[0];
 document.getElementById('sessionDate').min=today;
 document.getElementById('sessionDate').addEventListener('change',updateSessionWA);
 document.getElementById('sessionTime').addEventListener('change',updateSessionWA);
+// Once the client enters their WhatsApp number, check (best-effort) whether they
+// have already taken a session — if so, the ₹49 first-session offer becomes ₹499.
+(function(){
+  var pe=document.getElementById('sessionPhone');
+  if(pe){pe.addEventListener('blur',function(){refreshRepeatPricing(pe.value);});}
+})();
 let sessionMode='Video Call (Google Meet / Zoom)';
 updateSessionWA();
 

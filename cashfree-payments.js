@@ -38,8 +38,13 @@
     "lume-lens-working-profile":  { cta:"Start Lume Lens Now",         href:"for-working-professionals.html#self-assessments",         steps:["Your Lume Lens report is unlocked.","Complete the short assessment to generate your clarity report.","We share your personalised PDF on WhatsApp."] },
     "career-intelligence-roadmap":{ cta:"Open Career Intelligence",    href:"career-intelligence.html?access=assessment#career-intelligence", steps:["Your Career Intelligence roadmap is unlocked.","Open the dashboard to begin.","Save your WhatsApp confirmation for your records."] },
     "parents-handbook":           { cta:"Confirm Delivery on WhatsApp",href:"https://wa.me/917015671280", steps:["Payment received for the Parents' Career Handbook.","Send us your email on WhatsApp so we can deliver the PDF.","You'll receive it within a few hours."] },
-    "intro-session":              { cta:"Confirm Booking on WhatsApp", href:"https://wa.me/917015671280", steps:["Payment received for your ₹49 introductory session.","Tap below to confirm your preferred date & time on WhatsApp.","Sachin will send your Google Meet / call details before the session."] }
+    "intro-session":              { cta:"Confirm Booking on WhatsApp", href:"https://wa.me/917015671280", steps:["Payment received for your ₹49 introductory session.","Tap below to confirm your preferred date & time on WhatsApp.","Sachin will send your Google Meet / call details before the session."] },
+    "wellness-session":           { cta:"Confirm Booking on WhatsApp", href:"https://wa.me/917015671280", steps:["Payment received for your ₹499 wellness session.","Tap below to confirm your preferred date & time on WhatsApp.","Sachin will send your Google Meet / call details before the session."] }
   };
+
+  // SKUs that count as "a wellness/guidance session already taken". Once a client
+  // has paid for any of these, the ₹49 first-session offer no longer applies.
+  var SESSION_SKUS = ["intro-session", "wellness-session"];
 
   function getConfig(){
     var pageConfig = window.LUME_CASHFREE || {};
@@ -118,6 +123,149 @@
   window.lumeCashfreeGetConfig = getConfig;
 
   /* ============================================================
+     First-session offer control
+     The ₹49 price is a first-session offer. Once a client has paid for
+     any wellness/guidance session, repeat bookings are charged ₹499.
+     Detection is two-tiered:
+       1. Instant, offline — the local access store on this device.
+       2. Best-effort — a phone-number lookup in Firestore (covers a
+          returning client on a new device). Fails open to the offer
+          if Firestore is unavailable or rules disallow the read.
+     ============================================================ */
+  function hasLocalSession(){
+    var store = readAccessStore();
+    return SESSION_SKUS.some(function(sku){
+      return store[sku] && String(store[sku].status || "").toUpperCase() === "PAID";
+    });
+  }
+  // Synchronous, device-local check — safe to call during modal render.
+  window.lumeHasPriorSessionLocal = hasLocalSession;
+
+  // Async check: local first, then a best-effort Firestore lookup by phone.
+  // Resolves true if this client appears to have already taken a session.
+  window.lumeHasPriorSession = function(phone){
+    if(hasLocalSession()){ return Promise.resolve(true); }
+    var p = String(phone || "").replace(/\D/g, "").slice(-10);
+    if(p.length < 10){ return Promise.resolve(false); }
+    return getFirestore().then(function(fs){
+      if(!fs || !fs.h.query || !fs.h.where || !fs.h.getDocs){ return false; }
+      try{
+        var q = fs.h.query(
+          fs.h.collection(fs.db, getConfig().firestoreCollection),
+          fs.h.where("customerPhone", "==", p),
+          fs.h.limit(40)
+        );
+        return fs.h.getDocs(q).then(function(snap){
+          var found = false;
+          snap.forEach(function(docSnap){
+            var d = docSnap.data() || {};
+            if(String(d.status || "").toUpperCase() === "PAID" && SESSION_SKUS.indexOf(d.sku) !== -1){
+              found = true;
+            }
+          });
+          return found;
+        });
+      }catch(err){ return false; }
+    }).catch(function(){ return false; });
+  };
+
+  /* ============================================================
+     Invoice / payment receipt — client-side, dependency-free.
+     Opens a clean, print-ready receipt the client can save as PDF.
+     ============================================================ */
+  function invoiceDate(d){
+    var dt = d ? new Date(d) : new Date();
+    if(isNaN(dt.getTime())){ dt = new Date(); }
+    return dt.toLocaleDateString("en-IN", { day:"2-digit", month:"short", year:"numeric" });
+  }
+
+  function buildInvoiceHtml(info){
+    var origin = (window.location && window.location.origin) || "https://lumelive.co.in";
+    var logo = origin + "/logo.png";
+    var num = info.orderId || ("LUME-" + Date.now());
+    var rows = [
+      ["Receipt No.", esc(num)],
+      ["Date", esc(invoiceDate(info.date))],
+      ["Billed To", esc(info.customerName || "Lume Live Customer")],
+      info.customerPhone ? ["WhatsApp", esc(info.customerPhone)] : null,
+      ["Payment Mode", "Cashfree (Online)"],
+      ["Status", "PAID"]
+    ].filter(Boolean).map(function(r){
+      return '<tr><td class="k">' + r[0] + '</td><td class="v">' + r[1] + '</td></tr>';
+    }).join("");
+    return '' +
+'<!doctype html><html lang="en"><head><meta charset="utf-8">' +
+'<meta name="viewport" content="width=device-width,initial-scale=1">' +
+'<title>Payment Receipt ' + esc(num) + ' — Lume Live</title>' +
+'<style>' +
+'*{box-sizing:border-box}body{margin:0;background:#f4f6fb;font-family:Arial,Helvetica,sans-serif;color:#102033;padding:24px}' +
+'.sheet{max-width:640px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 12px 40px rgba(8,16,38,.12)}' +
+'.hd{background:linear-gradient(135deg,#0D1B40,#13306b);color:#fff;padding:26px 30px;display:flex;align-items:center;gap:14px}' +
+'.hd img{width:52px;height:52px;object-fit:contain;background:#fff;border-radius:10px;padding:4px}' +
+'.hd h1{margin:0;font-size:1.25rem;letter-spacing:.3px}.hd .sub{margin-top:2px;font-size:.78rem;color:#E8B95A;font-weight:700}' +
+'.tag{margin-left:auto;text-align:right;font-size:.72rem;color:#c7d2ea}' +
+'.body{padding:26px 30px}' +
+'h2{font-size:.82rem;text-transform:uppercase;letter-spacing:1px;color:#7587a0;margin:0 0 12px}' +
+'table{width:100%;border-collapse:collapse;margin-bottom:22px}' +
+'td{padding:8px 0;font-size:.9rem;vertical-align:top}td.k{color:#7587a0;width:42%}td.v{color:#102033;font-weight:600}' +
+'.item{display:flex;justify-content:space-between;align-items:center;background:#F6F8FC;border-radius:12px;padding:16px 18px;margin-bottom:8px}' +
+'.item .lbl{font-weight:700;font-size:.95rem}.item .amt{font-weight:800;font-size:1.05rem}' +
+'.total{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-top:2px solid #0D1B40;margin-top:6px}' +
+'.total .lbl{font-weight:800}.total .amt{font-weight:900;font-size:1.3rem;color:#0A6E6E}' +
+'.note{font-size:.74rem;color:#8493ab;line-height:1.6;margin-top:22px;border-top:1px solid #E3E9F2;padding-top:16px}' +
+'.foot{text-align:center;font-size:.74rem;color:#8493ab;padding:0 30px 26px}' +
+'.actions{max-width:640px;margin:18px auto 0;text-align:center}' +
+'.btn{display:inline-block;border:0;border-radius:999px;background:linear-gradient(135deg,#C9933A,#E8B95A);color:#0D1B40;font-weight:800;font-size:.92rem;padding:13px 26px;cursor:pointer;text-decoration:none}' +
+'@media print{body{background:#fff;padding:0}.sheet{box-shadow:none;border-radius:0}.actions{display:none}}' +
+'</style></head><body>' +
+'<div class="sheet">' +
+  '<div class="hd"><img src="' + esc(logo) + '" alt="Lume Live" onerror="this.style.display=\'none\'">' +
+    '<div><h1>Lume Live</h1><div class="sub">Payment Receipt</div></div>' +
+    '<div class="tag">lumelive.co.in<br>hello@lumelive.co.in<br>WhatsApp +91 70156 71280</div>' +
+  '</div>' +
+  '<div class="body">' +
+    '<h2>Receipt Details</h2>' +
+    '<table>' + rows + '</table>' +
+    '<h2>Summary</h2>' +
+    '<div class="item"><span class="lbl">' + esc(info.label || "Lume Live Service") + '</span><span class="amt">' + esc(inr(info.amount)) + '</span></div>' +
+    '<div class="total"><span class="lbl">Total Paid</span><span class="amt">' + esc(inr(info.amount)) + '</span></div>' +
+    '<p class="note">This is a system-generated payment receipt and does not require a signature. Prices are inclusive of applicable taxes. For a formal GST tax invoice, please message us on WhatsApp with this receipt number.</p>' +
+  '</div>' +
+  '<div class="foot">Thank you for choosing Lume Live 💛</div>' +
+'</div>' +
+'<div class="actions"><button class="btn" type="button" onclick="window.print()">🖨️ Print / Save as PDF</button></div>' +
+'</body></html>';
+  }
+
+  // Public: open a print-ready receipt window. Falls back to an HTML
+  // download if the browser blocks the pop-up.
+  window.lumeDownloadInvoice = function(info){
+    info = info || {};
+    var html = buildInvoiceHtml(info);
+    var w = null;
+    try{ w = window.open("", "_blank"); }catch(err){ w = null; }
+    if(w && w.document){
+      w.document.open();
+      w.document.write(html);
+      w.document.close();
+      try{ w.focus(); }catch(e){}
+      return;
+    }
+    // Pop-up blocked — download the receipt as a file instead.
+    try{
+      var blob = new Blob([html], { type:"text/html" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "LumeLive-Receipt-" + (info.orderId || "payment") + ".html";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+    }catch(err){ notify("Could not open the receipt. Please take a screenshot of this page."); }
+  };
+
+  /* ============================================================
      Firestore logging — metadata only (orderId, amount, timestamp,
      sku, status). Never stores psychometric answers. Fails silently
      so it can never block a payment.
@@ -131,7 +279,8 @@
       .then(function(mod){
         _firestore = mod.getFirestore(window.firebaseApp);
         _fsHelpers = { collection:mod.collection, addDoc:mod.addDoc, doc:mod.doc,
-                       setDoc:mod.setDoc, serverTimestamp:mod.serverTimestamp };
+                       setDoc:mod.setDoc, serverTimestamp:mod.serverTimestamp,
+                       query:mod.query, where:mod.where, getDocs:mod.getDocs, limit:mod.limit };
         return { db:_firestore, h:_fsHelpers };
       })
       .catch(function(err){ console.warn("[Lume Cashfree] Firestore unavailable", err); return null; });
@@ -323,8 +472,22 @@
       '</div>' +
       '<ol class="lcf-steps">' + steps + '</ol>' +
       '<a class="lcf-btn gold" href="' + (options.continueUrl || flow.href) + '">' + (flow.cta) + '</a>' +
+      '<button class="lcf-btn ghost" type="button" data-act="invoice">🧾 Download Invoice</button>' +
       '<a class="lcf-btn wa" target="_blank" rel="noopener noreferrer" href="' + waUrl(waConfirmMessage(options, orderId)) + '">' + waSvg() + ' Confirm booking on WhatsApp</a>' +
       '<button class="lcf-back" type="button">Close</button>';
+    var invBtn = EL.body.querySelector('[data-act="invoice"]');
+    if(invBtn){
+      invBtn.addEventListener("click", function(){
+        window.lumeDownloadInvoice({
+          orderId: orderId,
+          amount: options.amount,
+          label: options.label,
+          customerName: options.customerName,
+          customerPhone: options.customerPhone,
+          date: new Date()
+        });
+      });
+    }
     EL.body.querySelector(".lcf-back").addEventListener("click", closeModal);
   }
 
