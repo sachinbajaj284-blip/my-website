@@ -114,6 +114,7 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
 @media(max-width:960px){.hero-inner,.programs,.infographic,.proposal,.pipeline{grid-template-columns:1fr}.stats,.ecosystem{grid-template-columns:1fr 1fr}.nav-links{display:none}.photo-frame img{height:280px}}
 @media(max-width:560px){.stats,.ecosystem{grid-template-columns:1fr}.impact-row{grid-template-columns:1fr}.hero{padding-top:54px}}
 </style>
+<style>picture:has(> source[type="image/webp"]){display:contents;}</style>
 </head>
 <body>
 <nav class="nav">
@@ -145,7 +146,7 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
         <div class="stat"><b>100%</b><span>Care Focus</span></div>
       </div>
     </div>
-    <div class="photo-frame"><img src="session7.jpg" alt="Lume Live school auditorium session"></div>
+    <div class="photo-frame"><picture><source type="image/webp" srcset="session7.webp"><img loading="lazy" src="session7.jpg" alt="Lume Live school auditorium session"></picture></div>
   </div>
 </header>
 <main>
