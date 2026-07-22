@@ -448,6 +448,7 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .nav-more.open .nav-more-btn .caret{transform:rotate(180deg);}
 .nav-more-menu{position:absolute;top:calc(100% + 14px);right:0;min-width:215px;background:#fff;border:1px solid rgba(13,27,64,.08);border-radius:12px;box-shadow:0 14px 40px rgba(13,27,64,.16);list-style:none;padding:8px 0;opacity:0;visibility:hidden;transform:translateY(6px);transition:opacity .2s,transform .2s,visibility .2s;z-index:1001;}
 .nav-more-menu::before{content:'';position:absolute;top:-14px;left:0;right:0;height:14px;}
+.nav-more-menu.align-left{left:0;right:auto;}
 .nav-more:hover .nav-more-menu,.nav-more.open .nav-more-menu,.nav-more:focus-within .nav-more-menu{opacity:1;visibility:visible;transform:translateY(0);}
 .nav-more-menu a{display:block;padding:9px 18px;font-size:.78rem;}
 .nav-more-menu a::after{display:none;}
@@ -462,6 +463,7 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .mob-menu a{display:block;padding:14px 24px;font-weight:600;color:var(--dark);text-decoration:none;border-bottom:1px solid var(--gray);font-size:.93rem;transition:background .2s;}
 .mob-menu a:hover{background:var(--gray);}
 .mob-menu a.highlight{color:var(--gold);font-weight:700;}
+.mob-group-label{display:block;padding:12px 24px 6px;font-size:.68rem;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--teal);background:rgba(10,110,110,.05);border-bottom:1px solid var(--gray);}
 
 /* ── RIGHT GLOWING SIDEBAR ── */
 .side-icons{position:fixed;right:0;top:55%;transform:translateY(-50%);z-index:990;display:flex;flex-direction:column;gap:0;}
@@ -1592,14 +1594,18 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
       </div>
     </a>
     <ul class="nav-links">
-      <li><a href="#services">Services</a></li>
-      <li><a href="assessment.html#free-test" style="color:#0A6E6E;font-weight:800;">Career Snapshot</a></li>
-      <li><a href="career-intelligence.html">Career Intelligence</a></li>
-      <li><a href="for-working-professionals.html">Professionals</a></li>
-      <li><a href="for-parents.html">For Parents</a></li>
-      <li><a href="school-partnerships.html">Schools</a></li>
+      <li class="nav-more" id="navServices">
+        <button type="button" class="nav-more-btn" aria-haspopup="true" aria-expanded="false" onclick="toggleNavMore(event,'navServices')">Services <span class="caret">▾</span></button>
+        <ul class="nav-more-menu align-left">
+          <li><a href="assessment.html#free-test" style="color:#0A6E6E;font-weight:800;">Career Snapshot</a></li>
+          <li><a href="career-intelligence.html">Career Intelligence</a></li>
+          <li><a href="for-working-professionals.html">Professionals</a></li>
+          <li><a href="for-parents.html">For Parents</a></li>
+          <li><a href="school-partnerships.html">Schools</a></li>
+        </ul>
+      </li>
       <li class="nav-more" id="navMore">
-        <button type="button" class="nav-more-btn" aria-haspopup="true" aria-expanded="false" onclick="toggleNavMore(event)">More <span class="caret">▾</span></button>
+        <button type="button" class="nav-more-btn" aria-haspopup="true" aria-expanded="false" onclick="toggleNavMore(event,'navMore')">More <span class="caret">▾</span></button>
         <ul class="nav-more-menu">
           <li><a href="#gallery">Sessions</a></li>
           <li><a href="assessment.html#self-assessments">Full Clarity Report</a></li>
@@ -1610,7 +1616,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
           <li><a href="#contact">Contact</a></li>
         </ul>
       </li>
-      <li class="nav-auth-item"><a href="#" id="navAccountLink" class="nav-auth-link" onclick="openAuth('signin');return false;">Sign In / Sign Up</a></li>
+      <li class="nav-auth-item"><a href="#" id="navAccountLink" class="nav-auth-link" onclick="openAuth('signin');return false;">Login</a></li>
       <li><a href="#" class="nav-cta" onclick="openModal('session');return false;" style="background:linear-gradient(135deg,#c9933a,#e8b84e);color:#0d1b40;font-weight:800;padding:8px 18px;border-radius:20px;box-shadow:0 4px 12px rgba(201,147,58,.3);transition:all .3s;">Counselling ₹49 <span style="font-size:.55rem;opacity:.7;text-decoration:line-through;margin-left:3px;">₹499</span></a></li>
     </ul>
     <button class="hamburger" id="ham" onclick="toggleMenu()" aria-label="Menu">
@@ -1619,22 +1625,21 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
   </div>
 </nav>
 <div class="mob-menu" id="mobMenu">
-  <a href="#gallery" onclick="closeMob()">📸 Sessions Gallery</a>
-  <a href="#services" onclick="closeMob()">🛎️ Services</a>
+  <span class="mob-group-label">Services</span>
   <a href="assessment.html#free-test" onclick="closeMob()" style="color:#0A6E6E;font-weight:800;">🎁 Free Career Snapshot</a>
   <a href="career-intelligence.html" onclick="closeMob()">Career Intelligence India</a>
-  <a href="assessment.html#self-assessments" onclick="closeMob()">🧭 Full Clarity Report</a>
   <a href="for-working-professionals.html" onclick="closeMob()">💼 Working Professionals</a>
-  <a href="#emotional-wellbeing" onclick="closeMob()">🧠 Emotional Wellbeing</a>
   <a href="for-parents.html" onclick="closeMob()">👨‍👩‍👧 For Parents</a>
   <a href="school-partnerships.html" onclick="closeMob()">🏫 School Partnerships</a>
+  <span class="mob-group-label">More</span>
+  <a href="#gallery" onclick="closeMob()">📸 Sessions Gallery</a>
+  <a href="assessment.html#self-assessments" onclick="closeMob()">🧭 Full Clarity Report</a>
+  <a href="#emotional-wellbeing" onclick="closeMob()">🧠 Emotional Wellbeing</a>
   <a href="#faq" onclick="closeMob()">❓ FAQ</a>
   <a href="#testimonials" onclick="closeMob()">⭐ Client Reviews</a>
   <a href="#questionnaire" onclick="closeMob()">📋 Support Enquiry</a>
   <a href="#contact" onclick="closeMob()">📍 Contact</a>
-  <a href="#" class="auth-signed-out" onclick="closeMob();openAuth('signin');return false;">Sign In</a>
-  <a href="#" class="highlight auth-signed-out" onclick="closeMob();openAuth('signup');return false;">Create Account</a>
-  <a href="#" class="highlight auth-signed-in" id="mobileAccountLink" onclick="closeMob();openAuth('signin');return false;" hidden>My Account</a>
+  <a href="#" class="highlight" id="mobileAccountLink" onclick="closeMob();openAuth('signin');return false;">🔐 Login</a>
   <a href="#" onclick="openModal('session');closeMob();return false;" style="background:linear-gradient(135deg,#c9933a,#e8b84e);color:#0d1b40;font-weight:800;padding:12px 20px;border-radius:12px;margin:8px 0;display:block;text-align:center;box-shadow:0 4px 12px rgba(201,147,58,.3);text-decoration:none;">🎯 Book Session — ₹49</a>
   <a href="https://wa.me/917015671280" target="_blank" style="color:#25D366;font-weight:700;">💬 WhatsApp Us Now</a>
 </div>
@@ -5942,7 +5947,9 @@ function renderAuthUser(user){
   const signedIn=Boolean(user);
   document.querySelectorAll('.auth-signed-out').forEach(el=>{el.hidden=signedIn;});
   document.querySelectorAll('.auth-signed-in').forEach(el=>{el.hidden=!signedIn;});
-  document.getElementById('navAccountLink').textContent=signedIn?'My Account':'Sign In / Sign Up';
+  document.getElementById('navAccountLink').textContent=signedIn?'Account':'Login';
+  const mobAccount=document.getElementById('mobileAccountLink');
+  if(mobAccount)mobAccount.textContent=signedIn?'👤 My Account':'🔐 Login';
   document.getElementById('authSignedOut').hidden=signedIn;
   document.getElementById('authSignedIn').hidden=!signedIn;
   if(signedIn){
@@ -6281,20 +6288,29 @@ const counterObs=new IntersectionObserver(entries=>{
 document.querySelectorAll('.hero-stats').forEach(el=>counterObs.observe(el));
 
 // ── NAV "MORE" DROPDOWN ──
-function toggleNavMore(e){
+function toggleNavMore(e,id){
   e.stopPropagation();
-  const m=document.getElementById('navMore');
+  const m=document.getElementById(id||'navMore');
+  if(!m)return;
+  // Close any other open dropdowns so only one is open at a time.
+  document.querySelectorAll('.nav-more.open').forEach(other=>{
+    if(other!==m){
+      other.classList.remove('open');
+      const b=other.querySelector('.nav-more-btn');
+      if(b)b.setAttribute('aria-expanded','false');
+    }
+  });
   const open=m.classList.toggle('open');
   m.querySelector('.nav-more-btn').setAttribute('aria-expanded',open?'true':'false');
 }
 document.addEventListener('click',(e)=>{
-  const m=document.getElementById('navMore');
-  if(!m||!m.classList.contains('open'))return;
-  if(!m.contains(e.target)||e.target.closest('.nav-more-menu a')){
-    m.classList.remove('open');
-    m.querySelector('.nav-more-btn').setAttribute('aria-expanded','false');
-    m.querySelector('.nav-more-btn').blur();
-  }
+  document.querySelectorAll('.nav-more.open').forEach(m=>{
+    if(!m.contains(e.target)||e.target.closest('.nav-more-menu a')){
+      m.classList.remove('open');
+      const b=m.querySelector('.nav-more-btn');
+      if(b){b.setAttribute('aria-expanded','false');b.blur();}
+    }
+  });
 });
 
 // ── NAV SCROLL ──
