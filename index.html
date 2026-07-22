@@ -2063,6 +2063,18 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 .sa-progress-top{display:flex;justify-content:space-between;font-size:.76rem;font-weight:700;color:var(--mid);margin-bottom:6px;}
 .sa-track{height:9px;border-radius:6px;background:#E6EDEC;overflow:hidden;}
 .sa-track span{display:block;height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:6px;transition:width .4s ease;}
+/* Sticky "Step X of N — P% Completed" bar pinned below the fixed header while
+   the assessment stepper is in view. Sits inside the card via negative margins. */
+.sa-sticky{position:-webkit-sticky;position:sticky;top:var(--header-stack-h);z-index:60;margin:-30px -30px 22px;padding:11px 30px 12px;background:rgba(255,255,255,.94);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid #E2E9E8;border-radius:22px 22px 0 0;box-shadow:0 8px 20px rgba(13,27,64,.07);}
+.sa-sticky-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
+.sa-sticky-step{font-size:.82rem;font-weight:800;color:var(--navy);letter-spacing:.2px;}
+.sa-sticky-pct{font-size:.78rem;font-weight:800;color:var(--teal);}
+.sa-sticky-saved{font-size:.7rem;font-weight:700;color:var(--green);opacity:0;transition:opacity .3s;white-space:nowrap;}
+.sa-sticky-saved.show{opacity:1;}
+.sa-sticky-track{height:8px;border-radius:6px;background:#E6EDEC;overflow:hidden;}
+.sa-sticky-track span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:6px;transition:width .4s ease;}
+@media(max-width:640px){.sa-sticky{margin:-20px -16px 18px;padding:9px 16px 10px;border-radius:20px 20px 0 0;}.sa-sticky-step{font-size:.76rem;}.sa-sticky-pct{font-size:.72rem;}}
+@media(prefers-reduced-motion:reduce){.sa-sticky-track span{transition:none;}}
 .sa-steps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
 .sa-step{flex:1;min-width:120px;border:1px solid var(--grayM);border-radius:12px;padding:10px 12px;background:#fff;cursor:pointer;transition:all .2s;display:flex;gap:9px;align-items:center;}
 .sa-step:hover{border-color:var(--teal);}
@@ -3301,6 +3313,15 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
 
     <!-- SCREEN 2 — assessment stepper -->
     <div class="sa-screen sa-card" id="saTest" hidden>
+      <!-- Sticky progress header: sets clear expectations ("Step 2 of 4 - 45% Completed") -->
+      <div class="sa-sticky" id="saSticky">
+        <div class="sa-sticky-row">
+          <span class="sa-sticky-step" id="saStickyStep">Step 1 of 4</span>
+          <span class="sa-sticky-pct" id="saStickyPct">0% Completed</span>
+          <span class="sa-sticky-saved" id="saStickySaved">✓ Progress saved</span>
+        </div>
+        <div class="sa-sticky-track"><span id="saStickyBar" style="width:0%"></span></div>
+      </div>
       <div class="sa-progress">
         <div class="sa-progress-top"><span id="saPartTitle">Part</span><span id="saProgCount">0 / 0</span></div>
         <div class="sa-track"><span id="saProgBar" style="width:0%"></span></div>
@@ -3463,7 +3484,11 @@ var TOTAL=order.reduce(function(t,k){return t+tools[k].items.length;},0);
 var S={name:"",phone:"",age:"",stage:"",city:"",course:"",concern:"",guardian:"",paid:false,handoff:false,identity:"",part:0,answers:{},picks:[]};
 order.forEach(function(k){S.answers[k]={};});
 var saProgressKey="";
+/* Device-level key so in-progress answers survive even before the user signs in
+   (prevents data loss for anonymous / not-yet-authenticated respondents). */
+var SA_DEVICE_KEY="lume-live-assessment-progress:device";
 var saSaveStatusTimer=null;
+var saStickySavedTimer=null;
 
 function hasAssessmentProgress(){
  return Boolean(S.name||S.phone||S.age||S.stage||S.city||S.course||S.concern||S.guardian||S.paid||S.picks.length||order.some(function(k){return Object.keys(S.answers[k]).length>0;}));
@@ -3488,12 +3513,34 @@ function updateSaveStatus(message){
   if(status)status.textContent="Progress saving is active";
  },2200);
 }
+function flashStickySaved(){
+ var badge=el("saStickySaved");
+ if(!badge)return;
+ badge.classList.add("show");
+ clearTimeout(saStickySavedTimer);
+ saStickySavedTimer=setTimeout(function(){badge.classList.remove("show");},1600);
+}
 function persistAssessmentProgress(silent){
- if(!saProgressKey)return;
+ var draft;
+ try{draft=JSON.stringify(collectAssessmentDraft());}catch(e){return;}
  try{
-  localStorage.setItem(saProgressKey,JSON.stringify(collectAssessmentDraft()));
-  if(!silent)updateSaveStatus("Progress saved just now");
+  /* Always keep a device-level copy (works for anonymous users too), and mirror
+     to the signed-in user's key when available so it syncs to their account. */
+  localStorage.setItem(SA_DEVICE_KEY,draft);
+  if(saProgressKey)localStorage.setItem(saProgressKey,draft);
+  if(!silent){updateSaveStatus("Progress saved just now");flashStickySaved();}
  }catch(e){}
+}
+/* Restore any device-level draft on first load (before Firebase auth resolves),
+   so a returning respondent never loses their place. Returns true if a screen
+   was already shown as a result. */
+function bootstrapDeviceProgress(){
+ if(hasAssessmentProgress())return false;
+ try{
+  var raw=localStorage.getItem(SA_DEVICE_KEY);
+  if(raw&&restoreAssessmentProgress(JSON.parse(raw))){updateProgress();return true;}
+ }catch(e){}
+ return false;
 }
 function restoreAssessmentProgress(saved){
  if(!saved||!saved.answers)return false;
@@ -3664,8 +3711,14 @@ function partComplete(k){
 }
 function updateProgress(){
  var done=order.reduce(function(s,k){return s+answeredIn(k);},0);
+ var pct=TOTAL?Math.round(done/TOTAL*100):0;
  el("saProgCount").textContent=done+" / "+TOTAL;
- el("saProgBar").style.width=Math.round(done/TOTAL*100)+"%";
+ el("saProgBar").style.width=pct+"%";
+ /* Sticky header: "Step X of N" + "P% Completed" */
+ var stepEl=el("saStickyStep"),pctEl=el("saStickyPct"),barEl=el("saStickyBar");
+ if(stepEl)stepEl.textContent="Step "+(S.part+1)+" of "+order.length;
+ if(pctEl)pctEl.textContent=pct+"% Completed";
+ if(barEl)barEl.style.width=pct+"%";
 }
 function renderSteps(){
  el("saSteps").innerHTML=order.map(function(k,i){
@@ -4780,7 +4833,8 @@ renderToolList();
  if(node){node.addEventListener("change",function(){persistAssessmentProgress();});}
 });
 window.addEventListener("beforeunload",function(){persistAssessmentProgress(true);});
-if(new URLSearchParams(window.location.search).has("sample-report")){window.saShowSampleReport();}else{show("saGate");}
+if(new URLSearchParams(window.location.search).has("sample-report")){window.saShowSampleReport();}
+else if(!bootstrapDeviceProgress()){show("saGate");}
 
 })();
 </script>
