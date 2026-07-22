@@ -13,6 +13,7 @@
 */
 
 const crypto = require("crypto");
+const { hasPaidSession, isSessionSku } = require("./_sessions");
 
 const SKU_PRICES = {
   "student-full-report": { amount: 999, label: "Lume Live Full Clarity Report", alias: "student999" },
@@ -113,9 +114,8 @@ module.exports = async function handler(req, res){
     return json(res, 400, { error: "Invalid JSON body." });
   }
 
-  const sku = String(body.sku || "");
-  const product = SKU_PRICES[sku];
-  if(!product){
+  const requestedSku = String(body.sku || "");
+  if(!SKU_PRICES[requestedSku]){
     return json(res, 400, { error: "Unknown payment item." });
   }
 
@@ -123,6 +123,27 @@ module.exports = async function handler(req, res){
   const phone = String(customer.phone || "").replace(/\D/g, "").slice(-10);
   const email = String(customer.email || "hello@lumelive.co.in").slice(0, 120);
   const name = String(customer.name || "Lume Live Customer").slice(0, 80);
+
+  // Authoritative first-session pricing. For any session booking the SERVER
+  // decides the price from Firestore, ignoring whatever SKU the client sent:
+  //   • phone has a prior confirmed session -> wellness-session (₹499)
+  //   • no prior session (or no phone)       -> intro-session   (₹49)
+  // If Firestore is unavailable (returns null), we keep the client's SKU so
+  // checkout is never blocked by an infrastructure hiccup.
+  let sku = requestedSku;
+  if(isSessionSku(requestedSku)){
+    let prior = null;
+    if(phone){
+      try{ prior = await hasPaidSession(phone); }
+      catch(err){ prior = null; }
+    }else{
+      prior = false; // no phone to match against — treat as a first session
+    }
+    if(prior === true){ sku = "wellness-session"; }
+    else if(prior === false){ sku = "intro-session"; }
+  }
+
+  const product = SKU_PRICES[sku];
   if(!phone && sku !== "parents-handbook" && sku !== "intro-session"){
     return json(res, 400, { error: "Customer phone is required." });
   }

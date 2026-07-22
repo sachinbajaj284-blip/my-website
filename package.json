@@ -5,6 +5,9 @@
   "scripts": {
     "build": "node vercel-build.js"
   },
+  "dependencies": {
+    "firebase-admin": "^12.7.0"
+  },
   "engines": {
     "node": ">=18"
   }

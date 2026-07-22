@@ -11,6 +11,8 @@
   CASHFREE_API_VERSION=2025-01-01
 */
 
+const { recordPaidSession, isSessionSku } = require("./_sessions");
+
 function json(res, status, body){
   res.statusCode = status;
   res.setHeader("Content-Type", "application/json");
@@ -101,6 +103,18 @@ module.exports = async function handler(req, res){
   data = await response.json().catch(() => ({}));
   if(!response.ok){
     return json(res, response.status, { error: "Cashfree order status check failed.", details: data });
+  }
+
+  // On a confirmed session payment, record the customer's phone so future
+  // bookings are priced as returning sessions (₹499). Best-effort and
+  // idempotent — never blocks or fails the status response.
+  const statusUpper = String(data.order_status || "").toUpperCase();
+  const paidSku = data.order_tags && data.order_tags.sku ? data.order_tags.sku : "";
+  const paidPhone = data.customer_details && data.customer_details.customer_phone ? data.customer_details.customer_phone : "";
+  if(statusUpper === "PAID" && isSessionSku(paidSku) && paidPhone){
+    try{
+      await recordPaidSession(paidPhone, { sku: paidSku, orderId: data.order_id, amount: data.order_amount });
+    }catch(err){ /* ignore — recording must never break status checks */ }
   }
 
   return json(res, 200, {
