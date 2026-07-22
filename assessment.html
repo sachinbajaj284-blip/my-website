@@ -501,6 +501,7 @@ section{padding:80px 20px;}
 .gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:1100px;margin:0 auto;position:relative;z-index:1;}
 .gallery-item{border-radius:14px;overflow:hidden;position:relative;cursor:pointer;transition:all .4s cubic-bezier(.25,.46,.45,.94);box-shadow:0 4px 16px rgba(0,0,0,.2);}
 .gallery-item:hover{transform:scale(1.04) translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,.4);}
+.gallery-item picture,.rec-photo picture{display:block;}
 .gallery-item img{width:100%;height:240px;object-fit:cover;display:block;transition:all .5s;}
 .gallery-item:hover img{filter:brightness(1.1) saturate(1.1);transform:scale(1.08);}
 .gallery-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(13,27,64,.7) 0%,transparent 60%);opacity:0;transition:opacity .4s;display:flex;align-items:flex-end;justify-content:center;padding-bottom:16px;}
@@ -942,6 +943,10 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
 .m-steps li::before{content:counter(s);width:20px;height:20px;background:var(--navy);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;flex-shrink:0;transition:all .3s;}
 .m-steps li:hover::before{background:var(--gold);transform:scale(1.1);}
 .m-wa-btn{background:#25D366;color:#fff;padding:12px 16px;border-radius:8px;font-weight:700;font-size:.86rem;border:none;cursor:pointer;width:100%;margin-top:12px;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;position:relative;overflow:hidden;}
+/* Required consent checkbox for intake/registration forms (DPDP compliance) */
+.consent-check{display:flex;gap:9px;align-items:flex-start;margin:14px 0 4px;font-size:.76rem;line-height:1.5;color:var(--mid);cursor:pointer;text-align:left;}
+.consent-check input{margin-top:2px;width:16px;height:16px;flex:none;accent-color:var(--teal);cursor:pointer;}
+.consent-check a{color:var(--teal);font-weight:700;text-decoration:underline;}
 .m-wa-btn:hover{background:#1ebe5a;transform:translateY(-2px);box-shadow:0 6px 20px rgba(37,211,102,.3);}
 .cashfree-pay-btn{background:linear-gradient(135deg,#123A7A,#0A8D87)!important;color:#fff!important;}
 .cashfree-pay-btn:hover{background:linear-gradient(135deg,#0A2C60,#08746F)!important;box-shadow:0 8px 24px rgba(10,141,135,.28)!important;}
@@ -1540,31 +1545,31 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
   </div>
   <div class="gallery-grid s-inner" style="margin-top:28px;">
     <div class="gallery-item anim stagger-1">
-      <img width="1600" height="1200" src="session1.jpg" alt="Session Photo 1">
+      <picture><source type="image/webp" srcset="session1.webp"><img loading="lazy" width="1600" height="1200" src="session1.jpg" alt="Session Photo 1"></picture>
       <div class="gallery-overlay">
         <div class="gallery-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></div>
       </div>
     </div>
     <div class="gallery-item anim stagger-2">
-      <img width="1600" height="1200" src="session2.jpg" alt="Session Photo 2">
+      <picture><source type="image/webp" srcset="session2.webp"><img loading="lazy" width="1600" height="1200" src="session2.jpg" alt="Session Photo 2"></picture>
       <div class="gallery-overlay">
         <div class="gallery-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></div>
       </div>
     </div>
     <div class="gallery-item anim stagger-3">
-      <img loading="lazy" width="1600" height="1200" src="session3.jpg" alt="Session Photo 3">
+      <picture><source type="image/webp" srcset="session3.webp"><img loading="lazy" width="1600" height="1200" src="session3.jpg" alt="Session Photo 3"></picture>
       <div class="gallery-overlay">
         <div class="gallery-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></div>
       </div>
     </div>
     <div class="gallery-item anim stagger-4">
-      <img loading="lazy" width="1600" height="1200" src="session4.jpg" alt="Session Photo 4">
+      <picture><source type="image/webp" srcset="session4.webp"><img loading="lazy" width="1600" height="1200" src="session4.jpg" alt="Session Photo 4"></picture>
       <div class="gallery-overlay">
         <div class="gallery-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></div>
       </div>
     </div>
     <div class="gallery-item anim stagger-5">
-      <img loading="lazy" width="1600" height="1200" src="session5.jpg" alt="Session Photo 5">
+      <picture><source type="image/webp" srcset="session5.webp"><img loading="lazy" width="1600" height="1200" src="session5.jpg" alt="Session Photo 5"></picture>
       <div class="gallery-overlay">
         <div class="gallery-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></div>
       </div>
@@ -1576,19 +1581,19 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
       </div>
     </div>
     <div class="gallery-item anim stagger-7">
-      <img loading="lazy" width="1600" height="1200" src="session7.jpg" alt="Session Photo 7">
+      <picture><source type="image/webp" srcset="session7.webp"><img loading="lazy" width="1600" height="1200" src="session7.jpg" alt="Session Photo 7"></picture>
       <div class="gallery-overlay">
         <div class="gallery-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></div>
       </div>
     </div>
     <div class="gallery-item anim stagger-8">
-      <img loading="lazy" width="1600" height="1200" src="session8.jpg" alt="Session Photo 8">
+      <picture><source type="image/webp" srcset="session8.webp"><img loading="lazy" width="1600" height="1200" src="session8.jpg" alt="Session Photo 8"></picture>
       <div class="gallery-overlay">
         <div class="gallery-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></div>
       </div>
     </div>
     <div class="gallery-item anim stagger-9">
-      <img loading="lazy" width="1600" height="1200" src="session9.jpg" alt="Session Photo 9">
+      <picture><source type="image/webp" srcset="session9.webp"><img loading="lazy" width="1600" height="1200" src="session9.jpg" alt="Session Photo 9"></picture>
       <div class="gallery-overlay">
         <div class="gallery-zoom"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></div>
       </div>
@@ -1598,7 +1603,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 <section id="recognition" style="display:none;">
   <div class="rec-inner s-inner">
     <div class="rec-photo anim left">
-      <img loading="lazy" width="1600" height="1200" src="session5.jpg" alt="Recognition Ceremony">
+      <picture><source type="image/webp" srcset="session5.webp"><img loading="lazy" width="1600" height="1200" src="session5.jpg" alt="Recognition Ceremony"></picture>
       <div class="rec-photo-lbl">🏆 AILET 2026 · Toppers' Felicitation Ceremony · Laureate Award</div>
     </div>
     <div class="anim right">
@@ -1804,6 +1809,18 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 .sa-progress-top{display:flex;justify-content:space-between;font-size:.76rem;font-weight:700;color:var(--mid);margin-bottom:6px;}
 .sa-track{height:9px;border-radius:6px;background:#E6EDEC;overflow:hidden;}
 .sa-track span{display:block;height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:6px;transition:width .4s ease;}
+/* Sticky "Step X of N — P% Completed" bar pinned below the fixed header while
+   the assessment stepper is in view. Sits inside the card via negative margins. */
+.sa-sticky{position:-webkit-sticky;position:sticky;top:var(--header-stack-h);z-index:60;margin:-30px -30px 22px;padding:11px 30px 12px;background:rgba(255,255,255,.94);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid #E2E9E8;border-radius:22px 22px 0 0;box-shadow:0 8px 20px rgba(13,27,64,.07);}
+.sa-sticky-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
+.sa-sticky-step{font-size:.82rem;font-weight:800;color:var(--navy);letter-spacing:.2px;}
+.sa-sticky-pct{font-size:.78rem;font-weight:800;color:var(--teal);}
+.sa-sticky-saved{font-size:.7rem;font-weight:700;color:var(--green);opacity:0;transition:opacity .3s;white-space:nowrap;}
+.sa-sticky-saved.show{opacity:1;}
+.sa-sticky-track{height:8px;border-radius:6px;background:#E6EDEC;overflow:hidden;}
+.sa-sticky-track span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:6px;transition:width .4s ease;}
+@media(max-width:640px){.sa-sticky{margin:-20px -16px 18px;padding:9px 16px 10px;border-radius:20px 20px 0 0;}.sa-sticky-step{font-size:.76rem;}.sa-sticky-pct{font-size:.72rem;}}
+@media(prefers-reduced-motion:reduce){.sa-sticky-track span{transition:none;}}
 .sa-steps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
 .sa-step{flex:1;min-width:120px;border:1px solid var(--grayM);border-radius:12px;padding:10px 12px;background:#fff;cursor:pointer;transition:all .2s;display:flex;gap:9px;align-items:center;}
 .sa-step:hover{border-color:var(--teal);}
@@ -3187,6 +3204,8 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
             </details>
             <label class="sa-check sa-check-highlight"><input type="checkbox" id="saPurpose">
               <span>I understand this is a set of educational self-assessment questionnaires for personal reflection and counselling discussion — not a psychological diagnosis, aptitude test, or selection or admissions decision.</span></label>
+            <label class="sa-check sa-check-highlight"><input type="checkbox" id="saConsent">
+              <span>I agree to the <a href="privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a>, <a href="terms.html" target="_blank" rel="noopener">Terms of Service</a>, and confirm I have parental consent if under 18.</span></label>
             <div class="sa-integrity"><strong>Assessment integrity &amp; licensing</strong>
               These questionnaires are administered for reflective and counselling use. Scores follow each tool's published scoring method. Results describe self-reported preferences on the day the assessment is completed.</div>
             <p class="sa-error" id="saGateError"></p>
@@ -3270,6 +3289,15 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
 
     <!-- SCREEN 2 — assessment stepper -->
     <div class="sa-screen sa-card" id="saTest" hidden>
+      <!-- Sticky progress header: sets clear expectations ("Step 2 of 5 - 45% Completed") -->
+      <div class="sa-sticky" id="saSticky">
+        <div class="sa-sticky-row">
+          <span class="sa-sticky-step" id="saStickyStep">Step 1 of 5</span>
+          <span class="sa-sticky-pct" id="saStickyPct">0% Completed</span>
+          <span class="sa-sticky-saved" id="saStickySaved">✓ Progress saved</span>
+        </div>
+        <div class="sa-sticky-track"><span id="saStickyBar" style="width:0%"></span></div>
+      </div>
       <div class="sa-progress">
         <div class="sa-progress-top"><span id="saPartTitle">Part</span><span id="saProgCount">0 / 0</span></div>
         <div class="sa-track"><span id="saProgBar" style="width:0%"></span></div>
@@ -3492,8 +3520,12 @@ var TOTAL=order.reduce(function(t,k){return t+tools[k].items.length;},0);
 /* ─── State ─── */
 var S={name:"",phone:"",age:"",stage:"",city:"",course:"",concern:"",guardian:"",paid:false,handoff:false,identity:"",part:0,answers:{},picks:[]};
 order.forEach(function(k){S.answers[k]={};});
-var saProgressKey="lume-live-assessment-progress:anon";
+/* Device/anon-level key so in-progress answers survive even before the user
+   signs in (prevents data loss for anonymous respondents). */
+var SA_DEVICE_KEY="lume-live-assessment-progress:anon";
+var saProgressKey=SA_DEVICE_KEY;
 var saSaveStatusTimer=null;
+var saStickySavedTimer=null;
 
 function hasAssessmentProgress(){
  return Boolean(S.name||S.phone||S.age||S.stage||S.city||S.course||S.concern||S.guardian||S.paid||S.picks.length||order.some(function(k){return Object.keys(S.answers[k]).length>0;}));
@@ -3518,12 +3550,34 @@ function updateSaveStatus(message){
   if(status)status.textContent="Progress saving is active";
  },2200);
 }
+function flashStickySaved(){
+ var badge=el("saStickySaved");
+ if(!badge)return;
+ badge.classList.add("show");
+ clearTimeout(saStickySavedTimer);
+ saStickySavedTimer=setTimeout(function(){badge.classList.remove("show");},1600);
+}
 function persistAssessmentProgress(silent){
- if(!saProgressKey)return;
+ var draft;
+ try{draft=JSON.stringify(collectAssessmentDraft());}catch(e){return;}
  try{
-  localStorage.setItem(saProgressKey,JSON.stringify(collectAssessmentDraft()));
-  if(!silent)updateSaveStatus("Progress saved just now");
+  /* Always keep a device-level copy (works for anonymous users too), and mirror
+     to the signed-in user's key when available so it syncs to their account. */
+  localStorage.setItem(SA_DEVICE_KEY,draft);
+  if(saProgressKey&&saProgressKey!==SA_DEVICE_KEY)localStorage.setItem(saProgressKey,draft);
+  if(!silent){updateSaveStatus("Progress saved just now");flashStickySaved();}
  }catch(e){}
+}
+/* Restore any device-level draft on first load (before Firebase auth resolves),
+   so a returning respondent never loses their place. Returns true if a screen
+   was already shown as a result. */
+function bootstrapDeviceProgress(){
+ if(hasAssessmentProgress())return false;
+ try{
+  var raw=localStorage.getItem(SA_DEVICE_KEY);
+  if(raw&&restoreAssessmentProgress(JSON.parse(raw))){updateProgress();return true;}
+ }catch(e){}
+ return false;
 }
 function restoreAssessmentProgress(saved){
  if(!saved||!saved.answers)return false;
@@ -3590,6 +3644,7 @@ function validateGate(){
  if(phone.replace(/\D/g,"").length<10){err.textContent="Please enter a valid WhatsApp number.";return false;}
  if(age&&(Number(age)<10||Number(age)>60)){err.textContent="Please enter a valid age between 10 and 60, or leave it blank.";return false;}
  if(!el("saPurpose").checked){err.textContent="Please tick the box to acknowledge the purpose of the assessment.";return false;}
+ if(!el("saConsent")||!el("saConsent").checked){err.textContent="Please agree to the Privacy Policy and Terms of Service, and confirm parental consent if under 18, to continue.";return false;}
  S.name=name;S.phone=phone;S.age=age;S.stage=stage;S.city=city;S.course=course;S.concern=concern;S.guardian=guardian;err.textContent="";persistAssessmentProgress();return true;
 }
 function requireAssessmentSignin(){
@@ -3690,8 +3745,14 @@ function partComplete(k){
 }
 function updateProgress(){
  var done=order.reduce(function(s,k){return s+answeredIn(k);},0);
+ var pct=TOTAL?Math.round(done/TOTAL*100):0;
  el("saProgCount").textContent=done+" / "+TOTAL;
- el("saProgBar").style.width=Math.round(done/TOTAL*100)+"%";
+ el("saProgBar").style.width=pct+"%";
+ /* Sticky header: "Step X of N" + "P% Completed" */
+ var stepEl=el("saStickyStep"),pctEl=el("saStickyPct"),barEl=el("saStickyBar");
+ if(stepEl)stepEl.textContent="Step "+(S.part+1)+" of "+order.length;
+ if(pctEl)pctEl.textContent=pct+"% Completed";
+ if(barEl)barEl.style.width=pct+"%";
 }
 function renderSteps(){
  el("saSteps").innerHTML=order.map(function(k,i){
@@ -5100,7 +5161,8 @@ renderToolList();
  if(node){node.addEventListener("change",function(){persistAssessmentProgress();});}
 });
 window.addEventListener("beforeunload",function(){persistAssessmentProgress(true);});
-if(new URLSearchParams(window.location.search).has("sample-report")){window.saShowSampleReport();}else{show("saGate");}
+if(new URLSearchParams(window.location.search).has("sample-report")){window.saShowSampleReport();}
+else if(!bootstrapDeviceProgress()){show("saGate");}
 
 })();
 </script>
@@ -5523,6 +5585,7 @@ if(new URLSearchParams(window.location.search).has("sample-report")){window.saSh
         <input class="q-inp" type="text" id="qName" placeholder="Your Full Name *">
         <input class="q-inp" type="tel" id="qPhone" placeholder="WhatsApp Number *" inputmode="numeric" autocomplete="tel">
         <input class="q-inp" type="email" id="qEmail" placeholder="Email Address (optional)" autocomplete="email">
+        <label class="consent-check" style="color:rgba(255,255,255,.82);margin:6px 0 12px;"><input type="checkbox" id="qConsent"><span>I agree to the <a href="privacy-policy.html" target="_blank" rel="noopener" style="color:#E8B95A;">Privacy Policy</a>, <a href="terms.html" target="_blank" rel="noopener" style="color:#E8B95A;">Terms of Service</a>, and confirm I have parental consent if under 18.</span></label>
         <div class="q-nav">
           <button class="q-btn ghost" onclick="nextQStep(3)">← Back</button>
           <button class="q-btn" onclick="submitQ()">Request Contact →</button>
@@ -5568,7 +5631,7 @@ if(new URLSearchParams(window.location.search).has("sample-report")){window.saSh
     </div>
     <div class="sp-grid">
       <div class="sp-photo anim left">
-        <img loading="lazy" width="1600" height="1200" src="session7.jpg" alt="School Session at Auditorium">
+        <picture><source type="image/webp" srcset="session7.webp"><img loading="lazy" width="1600" height="1200" src="session7.jpg" alt="School Session at Auditorium"></picture>
       </div>
       <div class="anim right">
         <span class="s-tag" style="color:var(--gold2);">What We Offer Schools</span>
@@ -5734,7 +5797,8 @@ if(new URLSearchParams(window.location.search).has("sample-report")){window.saSh
         <h4>Company</h4>
         <a href="index.html#gallery">Sessions Gallery</a>
         <a href="index.html#faq">FAQ</a>
-        <a href="terms.html">Terms and Conditions</a>
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
         <a href="refund-policy.html">Refund / Cancellation Policy</a>
         </div>
       <div class="f-col">
@@ -5863,6 +5927,7 @@ if(new URLSearchParams(window.location.search).has("sample-report")){window.saSh
           </div>
         </div>
       </div>
+      <label class="consent-check"><input type="checkbox" id="sessionConsent"><span>I agree to the <a href="privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a>, <a href="terms.html" target="_blank" rel="noopener">Terms of Service</a>, and confirm I have parental consent if under 18.</span></label>
       <button class="m-wa-btn cashfree-pay-btn" type="button" onclick="startSessionCashfree(event)">Pay Securely with Cashfree</button>
       <p class="sess-closing">You do not have to solve career confusion alone — we will turn the concern into a clear next step. 💛</p>
     </div>
@@ -5945,6 +6010,9 @@ if(new URLSearchParams(window.location.search).has("sample-report")){window.saSh
           <div class="auth-field auth-signup-only">
             <label for="authConfirm">Confirm password</label>
             <input id="authConfirm" type="password" autocomplete="new-password" minlength="6" placeholder="Repeat your password">
+          </div>
+          <div class="auth-field auth-signup-only">
+            <label class="consent-check" style="margin:2px 0 0;"><input type="checkbox" id="authConsent"><span>I agree to the <a href="privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a>, <a href="terms.html" target="_blank" rel="noopener">Terms of Service</a>, and confirm I have parental consent if under 18.</span></label>
           </div>
           <button type="submit" class="auth-submit" id="authSubmit">Sign In</button>
         </form>
@@ -6234,6 +6302,13 @@ async function handleAuthSubmit(event){
     setAuthFeedback(!name?'Please enter your full name.':'The passwords do not match.','error');
     return;
   }
+  if(authView==='signup'){
+    const consent=document.getElementById('authConsent');
+    if(consent && !consent.checked){
+      setAuthFeedback('Please agree to the Privacy Policy and Terms of Service, and confirm parental consent if under 18, to create your account.','error');
+      return;
+    }
+  }
   setAuthFeedback('','info');
   setAuthBusy(true);
   try{
@@ -6401,6 +6476,8 @@ function startSessionCashfree(e){
   if(e)e.preventDefault();
   const d=document.getElementById('sessionDate').value;
   const t=document.getElementById('sessionTime').value;
+  var sc=document.getElementById('sessionConsent');
+  if(sc&&!sc.checked){showToast('Please agree to the Privacy Policy and Terms, and confirm parental consent if under 18, to continue.');sc.focus();return;}
   if(typeof window.lumeCashfreePay!=="function"){showToast('Cashfree checkout is still loading. Please wait a few seconds and tap Pay Securely with Cashfree again.');return;}
   window.lumeCashfreePay({
     sku:"intro-session",
@@ -6527,6 +6604,8 @@ function submitQ(){
   const phone=document.getElementById('qPhone').value.trim();
   if(!name){showToast('Please enter your name');return;}
   if(phone.length<10){showToast('Please enter a valid WhatsApp number');return;}
+  const qc=document.getElementById('qConsent');
+  if(qc&&!qc.checked){showToast('Please agree to the Privacy Policy and Terms, and confirm parental consent if under 18, to continue.');qc.focus();return;}
   const email=document.getElementById('qEmail').value.trim();
   const stage=document.getElementById('qClassStage').value.trim();
   if((/Student|Parent/.test(qData.role||''))&&!stage){showToast('Please select the student class or stage.');return;}
