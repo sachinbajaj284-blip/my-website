@@ -1079,6 +1079,10 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
 .m-steps li::before{content:counter(s);width:20px;height:20px;background:var(--navy);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;flex-shrink:0;transition:all .3s;}
 .m-steps li:hover::before{background:var(--gold);transform:scale(1.1);}
 .m-wa-btn{background:#25D366;color:#fff;padding:12px 16px;border-radius:8px;font-weight:700;font-size:.86rem;border:none;cursor:pointer;width:100%;margin-top:12px;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;position:relative;overflow:hidden;}
+/* Required consent checkbox for intake/registration forms (DPDP compliance) */
+.consent-check{display:flex;gap:9px;align-items:flex-start;margin:14px 0 4px;font-size:.76rem;line-height:1.5;color:var(--mid);cursor:pointer;text-align:left;}
+.consent-check input{margin-top:2px;width:16px;height:16px;flex:none;accent-color:var(--teal);cursor:pointer;}
+.consent-check a{color:var(--teal);font-weight:700;text-decoration:underline;}
 .m-wa-btn:hover{background:#1ebe5a;transform:translateY(-2px);box-shadow:0 6px 20px rgba(37,211,102,.3);}
 .cashfree-pay-btn{background:linear-gradient(135deg,#123A7A,#0A8D87)!important;color:#fff!important;}
 .cashfree-pay-btn:hover{background:linear-gradient(135deg,#0A2C60,#08746F)!important;box-shadow:0 8px 24px rgba(10,141,135,.28)!important;}
@@ -3289,6 +3293,8 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
             </div>
             <label class="sa-check sa-check-highlight"><input type="checkbox" id="saPurpose">
               <span>I understand this is a set of educational self-assessment questionnaires for personal reflection and counselling discussion — not a psychological diagnosis, aptitude test, or selection or admissions decision.</span></label>
+            <label class="sa-check sa-check-highlight"><input type="checkbox" id="saConsent">
+              <span>I agree to the <a href="privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a>, <a href="terms.html" target="_blank" rel="noopener">Terms of Service</a>, and confirm I have parental consent if under 18.</span></label>
             <div class="sa-integrity"><strong>Assessment integrity &amp; licensing</strong>
               These questionnaires are administered for reflective and counselling use. Scores follow each tool's published scoring method. Results describe self-reported preferences on the day the assessment is completed.</div>
             <p class="sa-error" id="saGateError"></p>
@@ -3610,6 +3616,7 @@ function validateGate(){
  if(!age||Number(age)<10||Number(age)>60){err.textContent="Please enter a valid age.";return false;}
  if(!stage){err.textContent="Please select the current stage.";return false;}
  if(!el("saPurpose").checked){err.textContent="Please acknowledge the purpose of the assessment.";return false;}
+ if(!el("saConsent")||!el("saConsent").checked){err.textContent="Please agree to the Privacy Policy and Terms of Service, and confirm parental consent if under 18, to continue.";return false;}
  S.name=name;S.phone=phone;S.age=age;S.stage=stage;S.city=city;S.course=course;S.concern=concern;S.guardian=guardian;err.textContent="";persistAssessmentProgress();return true;
 }
 function requireAssessmentSignin(){
@@ -5259,6 +5266,7 @@ else if(!bootstrapDeviceProgress()){show("saGate");}
         <input class="q-inp" type="text" id="qName" placeholder="Your Full Name *">
         <input class="q-inp" type="tel" id="qPhone" placeholder="WhatsApp Number *" inputmode="numeric" autocomplete="tel">
         <input class="q-inp" type="email" id="qEmail" placeholder="Email Address (optional)" autocomplete="email">
+        <label class="consent-check" style="color:rgba(255,255,255,.82);margin:6px 0 12px;"><input type="checkbox" id="qConsent"><span>I agree to the <a href="privacy-policy.html" target="_blank" rel="noopener" style="color:#E8B95A;">Privacy Policy</a>, <a href="terms.html" target="_blank" rel="noopener" style="color:#E8B95A;">Terms of Service</a>, and confirm I have parental consent if under 18.</span></label>
         <div class="q-nav">
           <button class="q-btn ghost" onclick="nextQStep(3)">← Back</button>
           <button class="q-btn" onclick="submitQ()">Request Contact →</button>
@@ -5475,7 +5483,8 @@ else if(!bootstrapDeviceProgress()){show("saGate");}
         <a href="career-library.html">Career Library</a>
         <a href="#gallery">Sessions Gallery</a>
         <a href="#faq">FAQ</a>
-        <a href="terms.html">Terms and Conditions</a>
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
         <a href="refund-policy.html">Refund / Cancellation Policy</a>
         </div>
       <div class="f-col">
@@ -5618,6 +5627,7 @@ else if(!bootstrapDeviceProgress()){show("saGate");}
           </div>
         </div>
       </div>
+      <label class="consent-check"><input type="checkbox" id="sessionConsent"><span>I agree to the <a href="privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a>, <a href="terms.html" target="_blank" rel="noopener">Terms of Service</a>, and confirm I have parental consent if under 18.</span></label>
       <button class="m-wa-btn cashfree-pay-btn" type="button" onclick="startSessionCashfree(event)">Pay Securely with Cashfree</button>
       <p class="sess-closing">You do not have to solve career confusion alone — we will turn the concern into a clear next step. 💛</p>
     </div>
@@ -5700,6 +5710,9 @@ else if(!bootstrapDeviceProgress()){show("saGate");}
           <div class="auth-field auth-signup-only">
             <label for="authConfirm">Confirm password</label>
             <input id="authConfirm" type="password" autocomplete="new-password" minlength="6" placeholder="Repeat your password">
+          </div>
+          <div class="auth-field auth-signup-only">
+            <label class="consent-check" style="margin:2px 0 0;"><input type="checkbox" id="authConsent"><span>I agree to the <a href="privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a>, <a href="terms.html" target="_blank" rel="noopener">Terms of Service</a>, and confirm I have parental consent if under 18.</span></label>
           </div>
           <button type="submit" class="auth-submit" id="authSubmit">Sign In</button>
         </form>
@@ -5994,6 +6007,13 @@ async function handleAuthSubmit(event){
     setAuthFeedback(!name?'Please enter your full name.':'The passwords do not match.','error');
     return;
   }
+  if(authView==='signup'){
+    const consent=document.getElementById('authConsent');
+    if(consent && !consent.checked){
+      setAuthFeedback('Please agree to the Privacy Policy and Terms of Service, and confirm parental consent if under 18, to create your account.','error');
+      return;
+    }
+  }
   setAuthFeedback('','info');
   setAuthBusy(true);
   try{
@@ -6178,6 +6198,8 @@ function startSessionCashfree(e){
   const name=(document.getElementById('sessionName').value||'').trim();
   const phone=(document.getElementById('sessionPhone').value||'').replace(/\D/g,'').slice(-10);
   if(phone.length<10){showToast('Please enter a valid 10-digit WhatsApp number so we can confirm your session.');var pe=document.getElementById('sessionPhone');if(pe)pe.focus();return;}
+  var sc=document.getElementById('sessionConsent');
+  if(sc&&!sc.checked){showToast('Please agree to the Privacy Policy and Terms, and confirm parental consent if under 18, to continue.');sc.focus();return;}
   if(typeof window.lumeCashfreePay!=="function"){showToast('Cashfree checkout is still loading. Please wait a few seconds and tap Pay Securely with Cashfree again.');return;}
   var plan=currentSessionPlan||SESSION_PLANS.intro;
   window.lumeCashfreePay({
@@ -6306,6 +6328,8 @@ function submitQ(){
   const phone=document.getElementById('qPhone').value.trim();
   if(!name){showToast('Please enter your name');return;}
   if(phone.length<10){showToast('Please enter a valid WhatsApp number');return;}
+  const qc=document.getElementById('qConsent');
+  if(qc&&!qc.checked){showToast('Please agree to the Privacy Policy and Terms, and confirm parental consent if under 18, to continue.');qc.focus();return;}
   const email=document.getElementById('qEmail').value.trim();
   const stage=document.getElementById('qClassStage').value.trim();
   if((/Student|Parent/.test(qData.role||''))&&!stage){showToast('Please select the student class or stage.');return;}
