@@ -6194,7 +6194,7 @@ document.querySelectorAll('.gallery-item').forEach(item=>{
     const img=item.querySelector('img').src;
     const overlay=document.createElement('div');
     overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:20px;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);animation:fadeUp .3s ease;';
-    overlay.innerHTML='<img src="'+img+'" style="max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain;box-shadow:0 24px 80px rgba(0,0,0,.5);">';
+    overlay.innerHTML='<img src="'+img+'" alt="Lume Live session (enlarged)" style="max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain;box-shadow:0 24px 80px rgba(0,0,0,.5);">';
     overlay.addEventListener('click',()=>{overlay.style.opacity='0';setTimeout(()=>overlay.remove(),300);});
     document.body.appendChild(overlay);
   });

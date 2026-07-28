@@ -13,7 +13,9 @@
 <meta property="og:title" content="Free: The Parent's Stream-Selection Checklist">
 <meta property="og:description" content="A free one-page checklist to guide the Class 10 stream decision calmly and on evidence. Instant download.">
 <meta property="og:url" content="https://lumelive.co.in/parents-stream-checklist.html">
-<meta property="og:image" content="https://lumelive.co.in/logo.png">
+<meta property="og:image" content="https://lumelive.co.in/og/parents-stream-checklist.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://lumelive.co.in/og/parents-stream-checklist.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -124,6 +126,7 @@
     if(!re.test(email)){err.style.display='block';input.focus();return;}
     err.style.display='none';
     if(window.gtag) gtag('event','handbook_lead',{event_category:'lead_tools',event_label:'stream-checklist',value:1});
+    try{fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,source:'stream-checklist'}),keepalive:true});}catch(e3){}
     var msg='Hello Lume Live! I downloaded the free Parent’s Stream-Selection Checklist. My email: '+email+'. Please also send it on WhatsApp and share how the ₹49 session works.';
     wa.href='https://wa.me/'+WA+'?text='+encodeURIComponent(msg);
     form.style.display='none';
