@@ -2859,6 +2859,7 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
         <div class="ft-gate-form">
           <input class="ft-gate-input" id="ftName" type="text" placeholder="Your name (or your child's name)" maxlength="60">
           <input class="ft-gate-input" id="ftPhone" type="tel" placeholder="WhatsApp number (e.g. 98765 43210)" maxlength="15" inputmode="numeric">
+          <label class="consent-check" style="margin:2px 0 8px;"><input type="checkbox" id="ftConsent"><span>I agree to the <a href="privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a>, <a href="terms.html" target="_blank" rel="noopener">Terms of Service</a>, and confirm I have parental consent if under 18.</span></label>
           <button class="ft-gate-submit" type="button" onclick="ftGateSubmit()">Get My Free Snapshot →</button>
           <button class="ft-gate-skip" type="button" onclick="ftReveal('')">Skip — just show my result</button>
           <div class="ft-gate-err" id="ftGateErr"></div>
@@ -3092,6 +3093,8 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
     err.style.display = 'none';
     if(!name){ err.textContent = 'Please enter a name so we can personalise your report.'; err.style.display='block'; return; }
     if(phone.length < 10){ err.textContent = 'Please enter a valid 10-digit WhatsApp number.'; err.style.display='block'; return; }
+    const consent = $('ftConsent');
+    if(consent && !consent.checked){ err.textContent = 'Please agree to the Privacy Policy and Terms, and confirm parental consent if under 18, to send your report.'; err.style.display='block'; return; }
     state.name = name;
     if(window.gtag) gtag('event','free_test_lead_captured',{event_category:'freemium_funnel'});
     ftReveal(name, phone);
