@@ -312,6 +312,7 @@
   }
 
   function renderSuccess(options, orderId){
+    if(window.gtag) gtag('event','payment_success',{event_category:'payment_funnel',event_label:options.sku||options.label||'',value:Number(options.amount||0),transaction_id:orderId||''});
     var flow = SKU_FLOW[options.sku] || { cta:"Continue", href:options.continueUrl || "index.html",
       steps:["Your payment is confirmed.","We've recorded your order.","Tap below to confirm on WhatsApp."] };
     var steps = (options.successSteps || flow.steps).map(function(s){ return "<li>" + s + "</li>"; }).join("");
@@ -396,6 +397,7 @@
     openModal(options);
     renderLoading("Creating your secure order…");
     logAttempt(options, { status:"INITIATED" });
+    if(window.gtag) gtag('event','payment_initiated',{event_category:'payment_funnel',event_label:options.sku||options.label||'',value:Number(options.amount||0)});
 
     if(window.location.protocol === "file:"){
       renderFailure(options, "This is a local preview. Cashfree checkout works on the live website. You can still pay by UPI below.");
