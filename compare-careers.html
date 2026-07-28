@@ -88,9 +88,9 @@ tr:last-child td,tr:last-child th{border-bottom:0}
 
 <main class="wrap">
   <div class="pickers" id="pickers">
-    <div class="pick"><label>Career A</label><select id="selA"></select></div>
+    <div class="pick"><label>Career A</label><select id="selA" aria-label="Choose the first career to compare"></select></div>
     <div class="vs">vs</div>
-    <div class="pick"><label>Career B</label><select id="selB"></select></div>
+    <div class="pick"><label>Career B</label><select id="selB" aria-label="Choose the second career to compare"></select></div>
     <button class="addbtn" id="addBtn" title="Add a third career">+ Add</button>
   </div>
 
@@ -169,7 +169,7 @@ selects[0].addEventListener('change',render); selects[1].addEventListener('chang
 document.getElementById('addBtn').addEventListener('click',function(){
   if(third) return;
   var d=document.createElement('div'); d.className='pick';
-  d.innerHTML='<label>Career C</label><select id="selC"></select>';
+  d.innerHTML='<label>Career C</label><select id="selC" aria-label="Choose a third career to compare"></select>';
   document.getElementById('pickers').insertBefore(d,document.getElementById('addBtn'));
   third=document.getElementById('selC'); selects.push(third);
   fillSelect(third,'ca'); third.addEventListener('change',render);
