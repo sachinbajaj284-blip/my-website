@@ -1,6 +1,14 @@
 {
   "buildCommand": "node vercel-build.js",
   "outputDirectory": "public",
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "www.lumelive.co.in" }],
+      "destination": "https://lumelive.co.in/$1",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
