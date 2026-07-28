@@ -19,11 +19,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="library.css">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Lume Live Career Library","description":"Free career and stream-selection guides for Indian students and parents.","url":"https://lumelive.co.in/career-library.html","publisher":{"@type":"Organization","name":"Lume Live","url":"https://lumelive.co.in/"}}</script>
+<style>
+.cluster{font-family:Georgia,serif;color:var(--navy);font-size:1.4rem;margin:46px 0 2px;padding-top:10px;border-top:2px solid var(--gold);display:inline-block}
+.cluster-sub{color:var(--muted);font-size:.92rem;margin:2px 0 0}
+main .cards{margin:18px 0 8px}
+.explore-band{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-radius:18px;padding:34px 28px;margin:52px 0 8px;text-align:center;position:relative;overflow:hidden}
+.explore-band::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 80% at 50% -10%,rgba(10,110,110,.4),transparent 60%),radial-gradient(40% 60% at 90% 120%,rgba(201,147,58,.2),transparent 60%);pointer-events:none}
+.explore-band h2{color:#fff;font-family:Georgia,serif;font-size:1.55rem;margin-bottom:10px;position:relative}
+.explore-band p{color:rgba(255,255,255,.82);max-width:580px;margin:0 auto 18px;position:relative}
+.explore-band .btn{position:relative}
+</style>
 </head>
 <body>
 <header class="top"><nav class="nav">
   <a class="brand" href="index.html"><img src="logo.png" alt="Lume Live logo"><span>LUME LIVE</span></a>
-  <div class="nlinks"><a href="index.html">Home</a><a href="career-library.html">Library</a><a href="for-parents.html">For Parents</a><a class="cta" href="assessment.html#free-test">Free Career Test</a></div>
+  <div class="nlinks"><a href="index.html">Home</a><a href="career-explorer.html">Careers</a><a href="career-library.html">Library</a><a href="for-parents.html">For Parents</a><a class="cta" href="assessment.html#free-test">Free Career Test</a></div>
 </nav></header>
 
 <section class="lib-hero"><div class="wrap-wide">
@@ -33,18 +43,27 @@
 </div></section>
 
 <main class="wrap-wide">
+
+  <div class="explore-band">
+    <h2>New: the Career Explorer</h2>
+    <p>&ldquo;How do I become a software engineer / doctor / CA / psychologist?&rdquo; Get the stream, exams, colleges, salary and best-fit interests for India&rsquo;s most-searched careers — in one place.</p>
+    <a class="btn gold" href="career-explorer.html">Open the Career Explorer &rarr;</a>
+  </div>
+
+  <h2 class="cluster">Choosing a stream after Class 10</h2>
+  <p class="cluster-sub">The first big fork — Science, Commerce or Humanities — made on evidence, not pressure.</p>
   <div class="cards">
+    <a class="acard" href="stream-selector.html">
+      <div class="k">Free Tool · EN / हिं</div>
+      <h2>Stream Selector Quiz: Science, Commerce or Arts?</h2>
+      <p>An 8-question interactive quiz that shows which stream leans your way — with a career shortlist and next steps. In English or Hindi.</p>
+      <div class="read">Take the quiz &rarr;</div>
+    </a>
     <a class="acard" href="stream-selection-after-10th.html">
       <div class="k">Stream Selection</div>
       <h2>Class 10 ke Baad Stream Kaise Chunein: Science vs Commerce vs Arts</h2>
       <p>A calm, step-by-step framework to choose between Science, Commerce and Humanities — based on interest and aptitude, not peer pressure.</p>
       <div class="read">8 min read &rarr;</div>
-    </a>
-    <a class="acard" href="psychometric-career-test.html">
-      <div class="k">Assessments</div>
-      <h2>Psychometric Career Test Kya Hai? A Complete Guide for Students</h2>
-      <p>What a psychometric test actually measures, what it can and cannot tell you, and how to read your results sensibly.</p>
-      <div class="read">7 min read &rarr;</div>
     </a>
     <a class="acard" href="pcm-vs-pcb-vs-commerce.html">
       <div class="k">Subjects</div>
@@ -52,23 +71,39 @@
       <p>The real career doors each combination opens (and closes), and the questions to ask before you lock it in.</p>
       <div class="read">9 min read &rarr;</div>
     </a>
-    <a class="acard" href="career-counselling-when-needed.html">
-      <div class="k">Counselling</div>
-      <h2>Career Counselling Kab Leni Chahiye? 7 Signs It Will Help</h2>
-      <p>When professional career guidance genuinely helps a student — and when a simple conversation is enough.</p>
-      <div class="read">6 min read &rarr;</div>
-    </a>
-    <a class="acard" href="career-counselling-in-rohtak.html">
-      <div class="k">Rohtak</div>
-      <h2>Career Counselling in Rohtak — Meet Sachin Bajaj</h2>
-      <p>Rohtak's only founder-led career counsellor: M.Sc Clinical Psychology, real psychometric tests, and 1:1 sessions from ₹49.</p>
-      <div class="read">Read more &rarr;</div>
-    </a>
+  </div>
+
+  <h2 class="cluster">After Class 12 &amp; results season</h2>
+  <p class="cluster-sub">What to do when the boards are done and the next decision looms.</p>
+  <div class="cards">
     <a class="acard" href="career-counselling-after-12th.html">
       <div class="k">After 12th</div>
       <h2>Career Counselling After 12th in India: What To Do When You're Still Confused</h2>
       <p>Real career options beyond engineering, medicine, commerce and arts — plus a 3-step framework for families confused after board results.</p>
       <div class="read">10 min read &rarr;</div>
+    </a>
+    <a class="acard" href="what-to-do-after-board-results.html">
+      <div class="k">Results Season</div>
+      <h2>What To Do After Board Results: The 48-Hour Playbook</h2>
+      <p>For good results, bad results and everything between — what to do (and not do) in the two weeks that matter most.</p>
+      <div class="read">8 min read &rarr;</div>
+    </a>
+  </div>
+
+  <h2 class="cluster">Career tests, explained</h2>
+  <p class="cluster-sub">What psychometric tests really measure — and which ones to trust.</p>
+  <div class="cards">
+    <a class="acard" href="psychometric-career-test.html">
+      <div class="k">Assessments</div>
+      <h2>Psychometric Career Test Kya Hai? A Complete Guide for Students</h2>
+      <p>What a psychometric test actually measures, what it can and cannot tell you, and how to read your results sensibly.</p>
+      <div class="read">7 min read &rarr;</div>
+    </a>
+    <a class="acard" href="holland-riasec-test-explained.html">
+      <div class="k">Assessments</div>
+      <h2>What is the Holland RIASEC Test? Explained Simply</h2>
+      <p>The six career-interest types with Indian career examples — and what your code can and cannot tell you.</p>
+      <div class="read">8 min read &rarr;</div>
     </a>
     <a class="acard" href="is-dmit-test-scientific.html">
       <div class="k">Myth-Busting</div>
@@ -76,35 +111,22 @@
       <p>What the fingerprint test actually measures, why psychology doesn't recognise it, and what parents should use instead.</p>
       <div class="read">7 min read &rarr;</div>
     </a>
+  </div>
+
+  <h2 class="cluster">Understanding career counselling</h2>
+  <p class="cluster-sub">How it works, when it helps, and how to choose well in an unregulated market.</p>
+  <div class="cards">
     <a class="acard" href="what-is-career-counselling.html">
       <div class="k">Pillar Guide</div>
       <h2>What is Career Counselling? The Complete Guide for India</h2>
       <p>How it works, who needs it, what it costs, and the 5-question checklist for choosing a counsellor in an unregulated market.</p>
       <div class="read">11 min read &rarr;</div>
     </a>
-    <a class="acard" href="board-exam-stress-guide.html">
-      <div class="k">For Parents</div>
-      <h2>Board Exam Stress: How to Support Your Child Without Adding More</h2>
-      <p>The signs that matter, exact scripts to use (and retire), and when to bring in professional help.</p>
-      <div class="read">9 min read &rarr;</div>
-    </a>
-    <a class="acard" href="how-to-deal-with-exam-anxiety.html">
-      <div class="k">For Students</div>
-      <h2>How to Deal With Exam Anxiety: 7 Techniques That Actually Work</h2>
-      <p>Why you blank out despite studying, and the evidence-based techniques that bring your memory back online.</p>
-      <div class="read">8 min read &rarr;</div>
-    </a>
-    <a class="acard" href="how-to-talk-to-your-child-about-career.html">
-      <div class="k">For Parents</div>
-      <h2>How to Talk to Your Child About Career — Without It Becoming a Fight</h2>
-      <p>Why career talks turn into arguments, and the scripts and framework that break the script.</p>
-      <div class="read">8 min read &rarr;</div>
-    </a>
-    <a class="acard" href="holland-riasec-test-explained.html">
-      <div class="k">Assessments</div>
-      <h2>What is the Holland RIASEC Test? Explained Simply</h2>
-      <p>The six career-interest types with Indian career examples — and what your code can and cannot tell you.</p>
-      <div class="read">8 min read &rarr;</div>
+    <a class="acard" href="career-counselling-when-needed.html">
+      <div class="k">Counselling</div>
+      <h2>Career Counselling Kab Leni Chahiye? 7 Signs It Will Help</h2>
+      <p>When professional career guidance genuinely helps a student — and when a simple conversation is enough.</p>
+      <div class="read">6 min read &rarr;</div>
     </a>
     <a class="acard" href="career-counsellor-vs-career-coach.html">
       <div class="k">Choosing Help</div>
@@ -118,17 +140,68 @@
       <p>Typical ranges, what should be included at any price, and the red flags that cost more than money.</p>
       <div class="read">8 min read &rarr;</div>
     </a>
+  </div>
+
+  <h2 class="cluster">For parents</h2>
+  <p class="cluster-sub">How to guide and support without the conversation turning into a fight.</p>
+  <div class="cards">
+    <a class="acard" href="how-to-talk-to-your-child-about-career.html">
+      <div class="k">For Parents</div>
+      <h2>How to Talk to Your Child About Career — Without It Becoming a Fight</h2>
+      <p>Why career talks turn into arguments, and the scripts and framework that break the script.</p>
+      <div class="read">8 min read &rarr;</div>
+    </a>
+    <a class="acard" href="board-exam-stress-guide.html">
+      <div class="k">For Parents</div>
+      <h2>Board Exam Stress: How to Support Your Child Without Adding More</h2>
+      <p>The signs that matter, exact scripts to use (and retire), and when to bring in professional help.</p>
+      <div class="read">9 min read &rarr;</div>
+    </a>
+  </div>
+
+  <h2 class="cluster">Exam stress &amp; mental health</h2>
+  <p class="cluster-sub">Because clarity and calm go together — practical, evidence-based support.</p>
+  <div class="cards">
+    <a class="acard" href="how-to-deal-with-exam-anxiety.html">
+      <div class="k">For Students</div>
+      <h2>How to Deal With Exam Anxiety: 7 Techniques That Actually Work</h2>
+      <p>Why you blank out despite studying, and the evidence-based techniques that bring your memory back online.</p>
+      <div class="read">8 min read &rarr;</div>
+    </a>
     <a class="acard" href="student-mental-health-india.html">
       <div class="k">Mental Health</div>
       <h2>Student Mental Health in India: A Practical Guide for Families</h2>
       <p>Why the pressure stacks so high, the signs that matter, and where to get support — including free helplines.</p>
       <div class="read">10 min read &rarr;</div>
     </a>
-    <a class="acard" href="what-to-do-after-board-results.html">
-      <div class="k">Results Season</div>
-      <h2>What To Do After Board Results: The 48-Hour Playbook</h2>
-      <p>For good results, bad results and everything between — what to do (and not do) in the two weeks that matter most.</p>
-      <div class="read">8 min read &rarr;</div>
+  </div>
+
+  <h2 class="cluster">Career counselling near you</h2>
+  <p class="cluster-sub">Online 1:1 guidance, founder-led — with local pages across Haryana &amp; Delhi NCR.</p>
+  <div class="cards">
+    <a class="acard" href="career-counselling-in-rohtak.html">
+      <div class="k">Rohtak</div>
+      <h2>Career Counselling in Rohtak — Meet Sachin Bajaj</h2>
+      <p>Rohtak's only founder-led career counsellor: M.Sc Clinical Psychology, real psychometric tests, and 1:1 sessions from ₹49.</p>
+      <div class="read">Read more &rarr;</div>
+    </a>
+    <a class="acard" href="career-counselling-haryana.html">
+      <div class="k">Haryana</div>
+      <h2>Career Counselling in Haryana — Every City, One Counsellor</h2>
+      <p>Online 1:1 guidance for Rohtak, Hisar, Gurugram, Faridabad, Panipat, Sonipat, Bhiwani and beyond.</p>
+      <div class="read">Read more &rarr;</div>
+    </a>
+    <a class="acard" href="career-counselling-in-gurugram.html">
+      <div class="k">Gurugram</div>
+      <h2>Career Counselling in Gurugram — Clarity Beneath the Pressure</h2>
+      <p>For Gurugram's high-expectation families: an honest, evidence-based check that the plan fits the child.</p>
+      <div class="read">Read more &rarr;</div>
+    </a>
+    <a class="acard" href="career-counselling-in-noida.html">
+      <div class="k">Noida</div>
+      <h2>Career Counselling in Noida — Direction in a Sea of Options</h2>
+      <p>Turning Noida's abundance of options into a clear, confident shortlist the student actually owns.</p>
+      <div class="read">Read more &rarr;</div>
     </a>
   </div>
 
@@ -141,7 +214,7 @@
 
 <footer class="foot">
   Lume Live &middot; Online career counselling &amp; mental-health support across India &middot; WhatsApp +91 70156 71280<br>
-  <a href="index.html">Home</a> &middot; <a href="career-library.html">Library</a> &middot; <a href="services-pricing.html">Services &amp; Pricing</a> &middot; <a href="refund-policy.html">Refund Policy</a> &middot; <a href="privacy-policy.html">Privacy Policy</a> · <a href="terms.html">Terms of Service</a>
+  <a href="index.html">Home</a> &middot; <a href="career-explorer.html">Careers</a> &middot; <a href="career-library.html">Library</a> &middot; <a href="services-pricing.html">Services &amp; Pricing</a> &middot; <a href="refund-policy.html">Refund Policy</a> &middot; <a href="privacy-policy.html">Privacy Policy</a> · <a href="terms.html">Terms of Service</a>
 </footer>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-1CZ93P4P3V"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1CZ93P4P3V');</script>
