@@ -3213,7 +3213,7 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
           <aside class="sa-pay">
             <span class="sa-pay-label">Full Clarity Report</span>
             <div class="sa-pay-price"><strong>&#8377;999</strong><s>&#8377;1999</s><span>one-time fee</span></div>
-            <p style="font-size:.78rem;color:var(--mid);line-height:1.55;">Payable once before you begin &mdash; covers all five assessments and your combined report.</p>
+            <p style="font-size:.78rem;color:var(--mid);line-height:1.55;">Payable once before you begin &mdash; covers all four assessments and your combined report.</p>
             <div class="sa-pay-trust" aria-label="Why families trust Lume Live">
               <div><b>500+</b><span>Guided</span></div>
               <div><b>4.9&#9733;</b><span>Avg Rating</span></div>
@@ -3431,30 +3431,6 @@ var varkItems=[
  {q:"I feel most confident after learning when I have:",o:["a visual map of the topic in my mind.","talked through the idea and answered questions.","written the key points in my own words.","used the idea in a real or simulated task."],map:["V","A","R","K"]},
  {q:"When a topic is abstract, I make it clearer by:",o:["turning it into a diagram or comparison table.","discussing the idea until it sounds simpler.","reading and rewriting definitions carefully.","connecting it to an example, activity or case."],map:["V","A","R","K"]}
 ];
-/* ─── Aptitude (ability test — single correct answer per item) ─── */
-var aptitudeAreas={NUM:"Numerical Reasoning",VER:"Verbal Reasoning",LOG:"Logical Reasoning",SPA:"Spatial Reasoning"};
-var aptitudeItems=[
- {area:"NUM",q:"What is 15% of 200?",o:["20","30","45","25"],a:1},
- {area:"NUM",q:"Find the next number: 2, 6, 12, 20, ?",o:["28","30","26","32"],a:1},
- {area:"NUM",q:"If 5 pens cost ₹60, how much do 8 pens cost?",o:["₹84","₹96","₹108","₹90"],a:1},
- {area:"NUM",q:"A shirt priced ₹800 is sold at a 25% discount. What is the final price?",o:["₹600","₹650","₹575","₹620"],a:0},
- {area:"NUM",q:"What is the average of 10, 20 and 30?",o:["15","25","20","30"],a:2},
- {area:"VER",q:"Choose the word closest in meaning to ABUNDANT:",o:["scarce","plentiful","tiny","weak"],a:1},
- {area:"VER",q:"Choose the OPPOSITE of GENEROUS:",o:["kind","selfish","wealthy","cheerful"],a:1},
- {area:"VER",q:"Pen is to Write as Knife is to ___:",o:["cook","cut","sharp","metal"],a:1},
- {area:"VER",q:"Find the odd word out:",o:["rose","lily","oak","jasmine"],a:2},
- {area:"VER",q:"Complete the sentence: She was so tired that she could ___ keep her eyes open.",o:["hardly","easily","never","always"],a:0},
- {area:"LOG",q:"Find the next number in the series: 1, 4, 9, 16, ?",o:["20","25","24","30"],a:1},
- {area:"LOG",q:"All roses are flowers. Which statement is definitely true?",o:["All roses fade quickly","Some roses are flowers","No roses are flowers","All flowers are roses"],a:1},
- {area:"LOG",q:"Which number is the odd one out: 3, 5, 7, 9, 11?",o:["5","7","9","11"],a:2},
- {area:"LOG",q:"Complete the pattern: A, C, E, G, ?",o:["H","I","J","K"],a:1},
- {area:"LOG",q:"If MONDAY is coded as NPOEBZ (each letter moves +1), how is FRIDAY coded?",o:["GSJEBZ","GSJECZ","ESJECZ","GTJEBZ"],a:0},
- {area:"SPA",q:"How many faces does a cube have?",o:["4","6","8","12"],a:1},
- {area:"SPA",q:"If you turn the letter 'b' upside down (rotate it 180°), which letter does it most resemble?",o:["d","p","q","b"],a:2},
- {area:"SPA",q:"A cube has 6 faces and 8 corners. How many edges does it have?",o:["10","12","8","14"],a:1},
- {area:"SPA",q:"Which shape has more sides — a hexagon or a pentagon?",o:["pentagon","hexagon","both equal","cannot say"],a:1},
- {area:"SPA",q:"If you stack 3 identical cubes into a vertical tower, how many cube faces are hidden where they touch?",o:["2","4","6","3"],a:1}
-];
 var varkMeta={
  V:{name:"Visual Structure",desc:"You learn well when ideas are arranged in clear layouts, diagrams, charts, timelines or maps.",tip:"Turn notes into charts, mind maps, comparison tables and colour-coded structures."},
  A:{name:"Spoken Discussion",desc:"You learn well through explanation, dialogue, questions, teaching back and hearing ideas in words.",tip:"Talk topics through, explain them aloud, use study conversations and record short verbal summaries."},
@@ -3499,22 +3475,19 @@ var saReportCopy={
 /* ─── Tool registry & part order ─── */
 var tools={
  personality:{id:"personality",icon:"🧭",name:"Personality Patterns",tag:"50 reflection items",type:"likert",scale:scP,items:personalityItems,
-   blurb:"Profiles the five core personality dimensions.",
-   howto:{steps:["Read each short sentence about yourself.","Tap one button from 1 to 5 to show how much it sounds like you.","Answer for how you usually are — not how you would like to be."],note:"Go with your honest first reaction. There are no right or wrong answers."}},
+   blurb:"Shows your five main personality traits.",
+   howto:{steps:["Read each short sentence about yourself.","Tap a button from 1 to 5 to show how much it sounds like you.","Answer for how you usually are — not how you wish to be."],note:"Go with your first honest reaction. There are no right or wrong answers."}},
  riasec:{id:"riasec",icon:"🎨",name:"Career Interest Themes",tag:"42 interest items",type:"binary",scale:scBin,items:riasecItems,
-   blurb:"Reveals your strongest career-interest areas.",
-   howto:{steps:["Read each statement about activities and interests.","Tap 'Agree' if it sounds like you, or 'Not for me' if it does not.","Pick what feels true for you, not what sounds impressive."],note:"Don't overthink it — your first instinct is usually the most honest."}},
+   blurb:"Shows the career areas you are most drawn to.",
+   howto:{steps:["Read each statement about activities and interests.","Tap 'Agree' if it sounds like you, or 'Not for me' if it does not.","Pick what feels true for you, not what sounds impressive."],note:"Don't overthink it — your first answer is usually the most honest."}},
  anchors:{id:"anchors",icon:"⚓",name:"Career Values & Work Drivers",tag:"40 work-driver items",type:"likert",scale:scA,items:anchorItems,
-   blurb:"Identifies the values and working conditions that matter most to you.",
-   howto:{steps:["Read each statement about what matters to you in your work and career.","Tap one button from 1 to 6 to show how true it is for you.","After the questions, you will pick the three statements that feel most true."],note:"Work quickly and honestly — avoid the extreme ends unless you truly feel strongly."}},
+   blurb:"Shows what matters most to you in work — your career values.",
+   howto:{steps:["Read each statement about what matters to you in work and career.","Tap a button from 1 to 6 to show how true it is for you.","At the end, you will pick the three statements that feel most true."],note:"Work quickly and honestly — pick the ends (1 or 6) only when you really feel strongly."}},
  vark:{id:"vark",icon:"📚",name:"Learning Preferences",tag:"Study Supports — 16 questions",type:"multi",items:varkItems,
-   blurb:"Shows which study supports make learning feel more workable.",
-   howto:{steps:["Read each everyday situation.","Tap the option or options you would really choose — you can pick more than one.","If none of the options fit you, you may leave that question blank."],note:"Choose what you would genuinely do in real life."}},
- aptitude:{id:"aptitude",icon:"🧩",name:"Aptitude Snapshot",tag:"20 ability questions",type:"aptitude",items:aptitudeItems,
-   blurb:"A short look at numerical, verbal, logical and spatial reasoning.",
-   howto:{steps:["Read each question and pick the one best answer.","Unlike the other parts, these questions have a correct answer.","Take your time — there is no timer — and skip nothing; give your best attempt."],note:"This is a short snapshot of relative strengths across four reasoning areas, not a formal IQ or selection test."}}
+   blurb:"Shows how you learn and study best.",
+   howto:{steps:["Read each everyday situation.","Tap the option you would really choose — you can pick more than one.","If none of them fit you, you can leave that question blank."],note:"Choose what you would really do in real life."}}
 };
-var order=["personality","riasec","anchors","vark","aptitude"];
+var order=["personality","riasec","anchors","vark"];
 var TOTAL=order.reduce(function(t,k){return t+tools[k].items.length;},0);
 
 /* ─── State ─── */
@@ -3775,18 +3748,7 @@ function renderPart(){
  el("saQMeta").innerHTML=partInstructions(t);
  el("saTestError").textContent="";
  var html;
- if(t.type==="aptitude"){
-  html=t.items.map(function(item,i){
-   var qid=i+1,cur=S.answers[k][qid];
-   return '<div class="sa-q" id="saQ'+qid+'"><div class="sa-q-num">Q'+qid+'</div>'+
-    '<div class="sa-q-text">'+esc(item.q)+'</div>'+
-    '<div class="sa-opts">'+item.o.map(function(opt,oi){
-      var ck=(cur===oi)?" checked":"";
-      return '<label class="sa-opt"><input type="radio" name="sa_'+k+'_'+qid+'" value="'+oi+'"'+ck+
-        ' onchange="saSetApt(\''+k+'\','+qid+','+oi+')"><span>'+esc(opt)+'</span></label>';
-     }).join("")+'</div></div>';
-  }).join("");
- }else if(t.type==="likert"||t.type==="binary"){
+ if(t.type==="likert"||t.type==="binary"){
   html=t.items.map(function(text,i){
    var qid=i+1,cur=S.answers[k][qid];
    return '<div class="sa-q" id="saQ'+qid+'"><div class="sa-q-num">Q'+qid+'</div>'+
@@ -3832,12 +3794,6 @@ function renderPart(){
 }
 window.saSetRadio=function(k,qid,v){
  S.answers[k][qid]=Number(v);
- var q=el("saQ"+qid);if(q)q.classList.remove("flag");
- persistAssessmentProgress();
- renderSteps();updateProgress();
-};
-window.saSetApt=function(k,qid,oi){
- S.answers[k][qid]=Number(oi);
  var q=el("saQ"+qid);if(q)q.classList.remove("flag");
  persistAssessmentProgress();
  renderSteps();updateProgress();
@@ -3922,20 +3878,6 @@ function scoreRiasec(){
  });
  rows.sort(function(x,y){return y.score-x.score;});
  return rows;
-}
-function scoreAptitude(){
- var a=S.answers.aptitude||{},by={};
- Object.keys(aptitudeAreas).forEach(function(k){by[k]={correct:0,total:0};});
- aptitudeItems.forEach(function(item,i){
-  by[item.area].total++;
-  if(S.answers.aptitude&&S.answers.aptitude[i+1]===item.a)by[item.area].correct++;
- });
- var rows=Object.keys(aptitudeAreas).map(function(k){
-  var c=by[k].correct,t=by[k].total;
-  return {key:k,name:aptitudeAreas[k],score:c,max:t,pct:t?Math.round(c/t*100):0};
- }).sort(function(x,y){return y.score-x.score;});
- var totalC=rows.reduce(function(s,r){return s+r.score;},0),totalM=rows.reduce(function(s,r){return s+r.max;},0);
- return {rows:rows,total:totalC,max:totalM,top:rows[0],band:function(p){return p>=70?"hi":(p>=40?"mid":"lo");}};
 }
 function scoreAnchors(){
  var tot={},a=S.answers.anchors;anchorOrder.forEach(function(x){tot[x]=0;});
@@ -4229,7 +4171,7 @@ function buildReportLegacy(){
   '<nav class="sa-rtabs">'+tabs+'</nav>'+
   '<div class="sa-rbody"><div id="saRPanels">'+panels+'</div>'+
    '<p style="font-size:.74rem;color:var(--mid);margin-top:18px;">Report generated '+date+' for '+disp+'.</p>'+
-   '<div class="sa-disclaim"><strong>Important note</strong>This combined report brings together five short assessments completed for personal reflection and as a starting point for a counselling discussion. It is not a clinical diagnosis or a selection or admissions decision tool, and the aptitude snapshot is a brief indicator rather than a formal aptitude or IQ test. Results describe self-reported preferences on the day the assessment was completed and can change over time.</div>'+
+   '<div class="sa-disclaim"><strong>Important note</strong>This combined report brings together four short assessments completed for personal reflection and as a starting point for a counselling discussion. It is not a clinical diagnosis or a selection or admissions decision tool. Results describe self-reported preferences on the day the assessment was completed and can change over time.</div>'+
   '</div></div>';
 }
 
@@ -4263,7 +4205,7 @@ function buildReport(){
  var cover='<div class="lrt-cover"><div class="lrt-cover-top"><div class="lrt-brand"><img src="logo.png" alt="Lume Live" onerror="this.style.display=\'none\'"><div class="lrt-brand-text"><b>Lume Live</b><span>Mental Health &amp; Career Guidance</span></div></div><div class="lrt-cover-meta"><b>Full Clarity Report</b><span>Generated '+esc(date)+'</span><span>4 assessments completed</span></div></div><div class="lrt-cover-hero"><span class="lrt-cover-eyebrow">Your Personal Report</span><h1 class="lrt-cover-name">'+esc(rawName||"Your Report")+'</h1><p class="lrt-cover-tagline">A combined clarity report for career reflection, counselling discussion, and practical next steps.</p>'+coverChips+'</div><div class="lrt-code-badges">'+codeBadges+'</div></div>';
 
  /* Greeting */
- var greeting='<div class="lrt-greeting"><p>Hi <strong>'+esc(firstName)+'</strong>, here is what your responses across five short assessments reveal about your interests, values, personality and learning preferences.</p><p style="margin-top:10px;">This report is not a verdict. It is a starting point — a structured mirror that helps you and your counsellor have a more focused conversation about the directions that actually fit <em>you</em>.</p><div class="lrt-greeting-highlight">'+narrative+' These patterns, taken together, point toward the career directions in Section 01.</div></div>';
+ var greeting='<div class="lrt-greeting"><p>Hi <strong>'+esc(firstName)+'</strong>, here is what your responses across four short assessments reveal about your interests, values, personality and learning preferences.</p><p style="margin-top:10px;">This report is not a verdict. It is a starting point — a structured mirror that helps you and your counsellor have a more focused conversation about the directions that actually fit <em>you</em>.</p><div class="lrt-greeting-highlight">'+narrative+' These patterns, taken together, point toward the career directions in Section 01.</div></div>';
 
  /* Insight map */
  function mapCard(label,value,sub,score,max,accent){return '<div class="lrt-map-card" style="--card-accent:'+accent+'"><small>'+esc(label)+'</small><b>'+esc(value)+'</b><span>'+esc(sub)+'</span><div class="lrt-map-meter"><div class="lrt-map-meter-fill" data-w="'+pct(score,max)+'" style="width:0%"></div></div></div>';}
@@ -4322,28 +4264,16 @@ function buildReport(){
  var sec05=sectionWrap('05','Learning Preferences (VARK)','16 items · how you absorb information best',
   '<p style="font-size:.84rem;line-height:1.7;color:var(--lrt-ink-mute);margin-bottom:14px;">This is not about how smart you are — it is about <em>how</em> your brain prefers to take in new information. Using your preferred style can cut study time and improve recall.</p><p style="font-size:.88rem;line-height:1.7;color:var(--lrt-ink);margin-bottom:18px;">'+learnNote+'</p><div style="margin-bottom:18px;">'+varkRows+'</div>'+(varkTips?'<h3 style="font-size:.9rem;font-weight:700;color:var(--lrt-navy);margin-bottom:12px;">⚡ Study Strategies for Your Profile</h3>'+varkTips:''));
 
- /* 06 Aptitude Snapshot */
- var APT=scoreAptitude();
- var aptColors={NUM:"#2563EB",VER:"#C97A2B",LOG:"#16A34A",SPA:"#7C3AED"};
- var aptBg={NUM:"#E0EAFF",VER:"#FBEFE0",LOG:"#DCFCE7",SPA:"#F1EBFF"};
- var aptRows=APT.rows.map(function(r){
-  var col=aptColors[r.key],bg=aptBg[r.key];
-  return '<div class="lrt-score-bar" style="--score-bg:'+bg+'"><div class="lrt-score-badge" style="background:'+col+'">'+esc(r.key)+'</div><div class="lrt-score-info"><b>'+esc(r.name)+'</b><span>'+r.score+' of '+r.max+' correct</span><div class="lrt-score-track"><div class="lrt-score-fill" data-w="'+r.pct+'" style="background:'+col+';width:0%"></div></div></div><div class="lrt-score-pct" style="color:'+col+'">'+r.pct+'%</div></div>';
- }).join("");
- var sec_apt=sectionWrap('06','Aptitude Snapshot','20 questions · relative strengths across four reasoning areas',
-  '<p style="font-size:.84rem;line-height:1.7;color:var(--lrt-ink-mute);margin-bottom:16px;">Unlike the other parts, these questions had a correct answer. This is a short, untimed snapshot of your <em>relative</em> strengths across four reasoning areas — not an IQ score or a norm-referenced (percentile) result.</p><div style="margin-bottom:16px;">'+aptRows+'</div><div style="background:#F0F4FA;border-left:3px solid #4E79A7;border-radius:12px;padding:14px 16px;"><b style="display:block;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;color:#4E79A7">What this means for you</b><p style="font-size:.84rem;line-height:1.6;color:var(--lrt-ink);margin:0;">Your strongest area here is '+esc(APT.top.name.toLowerCase())+' ('+APT.top.score+' of '+APT.top.max+'). Aptitude can be built with practice — a lower area is a chance to grow, not a ceiling.</p></div>');
-
-
  /* Counsellor's note */
- var counsellor='<div class="lrt-counsellor"><div class="lrt-counsellor-inner"><div class="lrt-counsellor-photo-fallback">SB</div><div class="lrt-counsellor-text"><span class="lrt-counsellor-eyebrow">A Note from Your Counsellor</span><p>Hi '+esc(firstName)+', thank you for completing all five assessments. Reading your responses carefully, I can see a genuine, thoughtful pattern emerging — and that is exactly what makes a good counselling conversation possible.</p><p>These results are not a label or a limitation. They are a mirror. In our session, we will look at the patterns that surprised you, the ones that felt deeply true, and the ones you are still questioning — and use those to narrow down your next concrete step.</p><p>Remember: career clarity is rarely a single "aha" moment. It is a series of small, honest conversations — and this report is a great foundation for ours.</p><div class="lrt-counsellor-sig"><b>Sachin Bajaj</b><span>Counselling Psychologist · Founder, Lume Live</span><span style="margin-top:4px;display:block;color:rgba(255,255,255,.4);font-size:.72rem;">Rohtak, Haryana · hello@lumelive.co.in</span></div></div></div></div>';
+ var counsellor='<div class="lrt-counsellor"><div class="lrt-counsellor-inner"><div class="lrt-counsellor-photo-fallback">SB</div><div class="lrt-counsellor-text"><span class="lrt-counsellor-eyebrow">A Note from Your Counsellor</span><p>Hi '+esc(firstName)+', thank you for completing all four assessments. Reading your responses carefully, I can see a genuine, thoughtful pattern emerging — and that is exactly what makes a good counselling conversation possible.</p><p>These results are not a label or a limitation. They are a mirror. In our session, we will look at the patterns that surprised you, the ones that felt deeply true, and the ones you are still questioning — and use those to narrow down your next concrete step.</p><p>Remember: career clarity is rarely a single "aha" moment. It is a series of small, honest conversations — and this report is a great foundation for ours.</p><div class="lrt-counsellor-sig"><b>Sachin Bajaj</b><span>Counselling Psychologist · Founder, Lume Live</span><span style="margin-top:4px;display:block;color:rgba(255,255,255,.4);font-size:.72rem;">Rohtak, Haryana · hello@lumelive.co.in</span></div></div></div></div>';
 
  /* Disclaimer */
- var disclaimer='<div class="lrt-disclaimer"><div class="lrt-disclaimer-inner"><div class="lrt-disclaimer-icon">ℹ️</div><p><strong>Important note:</strong> These results describe your <strong>self-reported preferences today</strong>. They are a starting point for your counselling conversation, not a psychological diagnosis or selection decision. The assessments are educational self-reflection tools, and the aptitude snapshot is a brief indicator, not a formal aptitude or IQ test. Preferences change over time and may not capture all of your personality or abilities. Please discuss these results with a qualified counsellor before making any major academic or career decision.</p></div></div>';
+ var disclaimer='<div class="lrt-disclaimer"><div class="lrt-disclaimer-inner"><div class="lrt-disclaimer-icon">ℹ️</div><p><strong>Important note:</strong> These results describe your <strong>self-reported preferences today</strong>. They are a starting point for your counselling conversation, not a psychological diagnosis or selection decision. The assessments are educational self-reflection tools. Preferences change over time and may not capture all of your personality or abilities. Please discuss these results with a qualified counsellor before making any major academic or career decision.</p></div></div>';
 
  /* Footer */
  var footer='<div class="lrt-footer"><div class="lrt-footer-brand"><img src="logo.png" alt="Lume Live" onerror="this.style.display=\'none\'"><b>Lume Live</b></div><div class="lrt-footer-links"><a href="https://lumelive.co.in">lumelive.co.in</a><a href="https://wa.me/917015671280">+91 70156 71280</a><a href="mailto:hello@lumelive.co.in">hello@lumelive.co.in</a></div></div>';
 
- var doc='<div class="lrt-doc">'+cover+greeting+insightMap+sec01+sec02+sec03+sec04+sec05+sec_apt+counsellor+disclaimer+footer+'</div>';
+ var doc='<div class="lrt-doc">'+cover+greeting+insightMap+sec01+sec02+sec03+sec04+sec05+counsellor+disclaimer+footer+'</div>';
 
  /* Existing share/download actions (PDF + WhatsApp) preserved */
  var actions='<div class="sa-report-actions"><h4>Save &amp; Share Your Report</h4><p>Download the full PDF report, open matching careers in Lume Career Intelligence India, or send it to a Lume Live counsellor on WhatsApp. <a class="sa-help-link" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20need%20help%20understanding%20my%20assessment%20report." target="_blank" rel="noopener">Need help reading this?</a></p><label class="sa-check"><input type="checkbox" id="saShareConsent"><span>I consent to share my report with a Lume Live counsellor on WhatsApp.</span></label><p class="sa-error" id="saShareError"></p><div class="sa-actions"><a class="sa-btn ghost" href="'+atlasHref+'" style="text-decoration:none;">Explore Matching Careers</a><button class="sa-btn gold" type="button" onclick="saSharePDF()">Send Report PDF on WhatsApp</button><button class="sa-btn ghost" type="button" onclick="saDownloadPDF()">Download Report PDF</button></div><p class="sa-pay-note" style="margin-top:11px;">On a phone, this opens your share menu. On a computer, the PDF downloads and WhatsApp opens so you can attach it.</p></div>';
@@ -4427,7 +4357,7 @@ window.saPrint=function(){
    '<div class="chip"><small>Work Driver</small><b>'+esc(d.anchor.short)+'</b></div>'+
    '<div class="chip"><small>Learning Preferences</small><b>'+esc(d.learnLabel)+'</b></div>'+
   '</div></div>'+allPanels+
-  '<div class="disc"><strong>Important note:</strong> This combined report brings together five short assessments for personal reflection and counselling discussion. It is not a clinical diagnosis or selection/admissions decision tool; the aptitude snapshot is a brief indicator, not a formal aptitude or IQ test.</div>'+
+  '<div class="disc"><strong>Important note:</strong> This combined report brings together four short assessments for personal reflection and counselling discussion. It is not a clinical diagnosis or selection/admissions decision tool.</div>'+
   '</body></html>');
  w.document.close();w.focus();
  /* fill print bars */
@@ -4571,7 +4501,7 @@ function saBuildPdfDocLegacy(){
  /* DISCLAIMER */
  ensure(26);y+=3;
  doc.setFillColor(255,247,233);doc.setDrawColor(240,223,186);doc.setLineWidth(0.3);
- var dl=doc.splitTextToSize(saPdfSafe('Important note: This combined report brings together five short assessments completed for personal reflection and as a starting point for a counselling discussion. It is not a clinical diagnosis or a selection or admissions decision tool, and the aptitude snapshot is a brief indicator rather than a formal aptitude or IQ test. Results describe self-reported preferences on the day the assessment was completed and can change over time.'),W-2*M-12);
+ var dl=doc.splitTextToSize(saPdfSafe('Important note: This combined report brings together four short assessments completed for personal reflection and as a starting point for a counselling discussion. It is not a clinical diagnosis or a selection or admissions decision tool. Results describe self-reported preferences on the day the assessment was completed and can change over time.'),W-2*M-12);
  var dh=10+dl.length*4;
  doc.roundedRect(M,y,W-2*M,dh,2.5,2.5,'FD');
  doc.setFont('helvetica','bold');doc.setFontSize(8.4);doc.setTextColor(117,83,29);
@@ -4806,8 +4736,7 @@ function saBuildPdfDoc(){
   ['02','Career Interest Themes','Your Holland RIASEC interest shape'],
   ['03','Top Career Matches','Careers that fit your interest profile'],
   ['04','Career Values & Work Drivers','What matters most to you in work'],
-  ['05','Learning Preferences','How you absorb information best'],
-  ['06','Aptitude Snapshot','Numerical, verbal, logical and spatial reasoning']];
+  ['05','Learning Preferences','How you absorb information best']];
  toc.forEach(function(t){
   ensure(15);
   fill(CARD);stroke(LINE);doc.setLineWidth(.25);doc.roundedRect(M,y,W-2*M,12.5,2.2,2.2,'FD');
@@ -4930,24 +4859,6 @@ function saBuildPdfDoc(){
   y+=lines.length*4.5+3.2;
  });
 
- /* Aptitude Snapshot */
- var APT=scoreAptitude(),APTC={NUM:[37,99,235],VER:[201,122,43],LOG:[22,163,74],SPA:[124,58,237]};
- section('06','Aptitude Snapshot','Relative reasoning strengths',[78,121,167]);
- para('A short, untimed look at four reasoning areas. Unlike the other parts, these had correct answers. This shows your relative strengths across the four areas - it is not an IQ score or a norm-referenced (percentile) result.',M,W-2*M,9.2,INK_SOFT,6);
- APT.rows.forEach(function(r){
-  var rowH=15;ensure(rowH);
-  lineText(r.name,M,y+4,10,INK,'helvetica','bold');
-  lineText(r.score+' of '+r.max+' correct',M,y+9.4,6.6,MUTE,'helvetica','bold');
-  bar(M+96,y+1.5,70,r.pct,APTC[r.key]||NAVY);
-  lineText(r.pct+'%',W-M,y+6,12,INK,'times','bold',{align:'right'});
-  y+=rowH;
- });
- y+=3;
- var aptH=26;ensure(aptH);fill([240,244,250]);stroke([210,222,238]);doc.roundedRect(M,y,W-2*M,aptH,2.6,2.6,'FD');fill([78,121,167]);doc.rect(M,y,2,aptH,'F');
- lineText('WHAT THIS MEANS FOR YOU',M+7,y+8,6.8,[78,121,167],'helvetica','bold');
- textAt('Your strongest area here is '+APT.top.name.toLowerCase()+' ('+APT.top.score+' of '+APT.top.max+'). Aptitude can be built with practice - a lower area is a chance to grow, not a ceiling. Bring this to your counselling session to weigh alongside your interests and personality.',M+7,y+14,W-2*M-14,8.8,INK_SOFT,4.6);
- y+=aptH+4;
-
  /* Your strengths & growth areas */
  doc.addPage();paint();y=TOP+1;
  fill(SAGE);doc.roundedRect(M,y-5.6,8.5,8.5,1.8,1.8,'F');
@@ -4988,7 +4899,7 @@ function saBuildPdfDoc(){
  doc.addPage();paint();y=TOP+1;
  var firstName=(S.name||'').trim().split(/\s+/)[0]||'there';
  var cnPara=[
-  'Hi '+firstName+', thank you for completing all five assessments. Reading your responses carefully, I can see a genuine, thoughtful pattern emerging — and that is exactly what makes a good counselling conversation possible.',
+  'Hi '+firstName+', thank you for completing all four assessments. Reading your responses carefully, I can see a genuine, thoughtful pattern emerging — and that is exactly what makes a good counselling conversation possible.',
   'These results are not a label or a limitation. They are a mirror. In our session, we will look at the patterns that surprised you, the ones that felt deeply true, and the ones you are still questioning — and use those to narrow down your next concrete step.',
   'Remember: career clarity is rarely a single moment. It is a series of small, honest conversations — and this report is a great foundation for ours.'
  ].join(' ');
@@ -5005,7 +4916,7 @@ function saBuildPdfDoc(){
  lineText('Counselling Psychologist · Founder, Lume Live · Rohtak, Haryana',M+26,sigY+4.4,6.6,[160,174,200],'helvetica','normal');
  y+=cnH+6;
 
- var noteText='These results describe your self-reported preferences today. They are a starting point for your counselling conversation, not a psychological diagnosis or selection decision. The assessments are educational self-reflection tools, and the aptitude snapshot is a brief indicator, not a formal aptitude or IQ test. Preferences change over time and may not capture all of your personality or abilities. Please discuss these results with a qualified counsellor before any major academic or career decision.';
+ var noteText='These results describe your self-reported preferences today. They are a starting point for your counselling conversation, not a psychological diagnosis or selection decision. The assessments are educational self-reflection tools. Preferences change over time and may not capture all of your personality or abilities. Please discuss these results with a qualified counsellor before any major academic or career decision.';
  doc.setFont('helvetica','normal');doc.setFontSize(9.2);
  var noteLines=doc.splitTextToSize(safe(noteText),W-2*M-14);
  var noteH=Math.max(32,18+(noteLines.length*4.9));
@@ -5070,7 +4981,6 @@ function saSummaryText(){
   "• Top personality pattern: "+topP.name+" ("+topP.score+"/40)",
   "• Primary work driver: "+A[0].short+" ("+A[0].score+" pts)",
   "• Learning preferences: "+(multiV.length>1?"Multimodal":topV.name),
-  "• Strongest aptitude: "+scoreAptitude().top.name,
   saIsStreamStage()?"🎓 Stream selection note: Please help us compare suitable stream/subject lanes for the Class 9-12 decision.":"",
   "",
   "I am ready to share my PDF report for review."]);
@@ -5124,13 +5034,6 @@ S.name="Nishant Malik";S.phone="+91 98765 43210";S.age="17";S.stage="Class 11-12
  var anchorVals={MA:4,IN:3,AU:4,ST:3,EN:3,SV:5,CH:4,WF:6};
  for(q=1;q<=40;q++){S.answers.anchors[q]=anchorVals[anchorOrder[(q-1)%8]];}
  for(q=1;q<=16;q++){S.answers.vark[q]=q%4===0?[3,0]:[3];}
- /* aptitude: stronger numerical/logical, weaker spatial, for a plausible sample */
- S.answers.aptitude={};
- aptitudeItems.forEach(function(item,i){
-  var qid=i+1,correct=item.a,wrong=(item.a+1)%item.o.length;
-  var getRight=item.area==="NUM"?true:item.area==="LOG"?(qid%5!==0):item.area==="VER"?(qid%3!==0):(qid%2===0);
-  S.answers.aptitude[qid]=getRight?correct:wrong;
- });
 }
 window.saShowSampleReport=function(){
  saFillSampleReport();
