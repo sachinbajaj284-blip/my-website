@@ -70,6 +70,14 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
 .reassure{font-size:.8rem;color:var(--muted);text-align:center;margin-top:12px}
 .foot{background:var(--navy);color:rgba(255,255,255,.72);padding:26px 18px;text-align:center;font-size:.82rem;margin-top:24px}
 .foot a{color:var(--gold2)}
+.gbook{background:linear-gradient(135deg,#0D1B40,#16264f);color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:30px 26px;margin:26px 0 8px;text-align:center;position:relative;overflow:hidden}
+.gbook::before{content:"";position:absolute;inset:0;background:radial-gradient(50% 70% at 50% -10%,rgba(10,110,110,.4),transparent 60%);pointer-events:none}
+.gbook-tag{position:relative;display:inline-block;background:#1EAE5C;color:#fff;font-size:.64rem;font-weight:900;letter-spacing:.6px;text-transform:uppercase;padding:5px 13px;border-radius:999px;margin-bottom:14px}
+.gbook h2{position:relative;font-family:Georgia,serif;font-size:1.4rem;margin-bottom:8px}
+.gbook p{position:relative;color:rgba(255,255,255,.78);max-width:520px;margin:0 auto 18px;font-size:.94rem}
+.btn.gbtn{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);width:auto;display:inline-flex;padding:15px 32px;position:relative}
+.or-divider{display:flex;align-items:center;gap:14px;color:var(--muted);font-size:.82rem;font-weight:700;margin:26px 4px 2px;text-transform:uppercase;letter-spacing:.5px}
+.or-divider::before,.or-divider::after{content:"";flex:1;height:1px;background:var(--line)}
 @media(max-width:520px){.stats{grid-template-columns:1fr 1fr}}
 </style>
 </head>
@@ -92,6 +100,15 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
 </div></section>
 
 <main class="wrap">
+  <div class="gbook">
+    <span class="gbook-tag">✅ Fastest · Confirmed instantly</span>
+    <h2>Book from live available times</h2>
+    <p>Pick a slot from Sachin's real calendar — you'll get an instant Google Calendar invite with the video-call link and reminders. No back-and-forth.</p>
+    <a class="btn gbtn" id="gBookBtn" href="https://calendar.app.google/rzegv6fxmus1r1sJA" target="_blank" rel="noopener">See available times &amp; book &rarr;</a>
+  </div>
+
+  <div class="or-divider">or request a slot on WhatsApp</div>
+
   <div class="card">
     <div class="step">
       <div class="step-h"><span class="step-n">1</span><h2>Your name</h2></div>
@@ -231,6 +248,8 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
     if(this.getAttribute('aria-disabled')==='true'){ e.preventDefault(); return; }
     if(window.gtag) gtag('event','booking_addtocal',{event_category:'booking'});
   });
+  var gb=document.getElementById('gBookBtn');
+  if(gb) gb.addEventListener('click',function(){ if(window.gtag) gtag('event','booking_google_click',{event_category:'booking'}); });
 })();
 </script>
 </body>
