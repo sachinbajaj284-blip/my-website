@@ -2028,6 +2028,24 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
   .ft-stat:hover,.ft-start:hover,.ft-opt:hover,.sa-video-guide:hover,.sa-video-guide:hover .sa-video-thumb img,.sa-video-guide:hover .sa-video-play{transform:none!important;}
 }
 
+
+  #free-tools::before{content:"";position:absolute;inset:0;background:radial-gradient(50% 60% at 8% 0%,rgba(10,110,110,.4),transparent 60%),radial-gradient(45% 60% at 100% 110%,rgba(201,147,58,.22),transparent 60%);pointer-events:none}
+  .ftl-wrap{max-width:1120px;margin:0 auto;position:relative}
+  .ftl-head{text-align:center;margin-bottom:34px}
+  .ftl-eyebrow{display:inline-block;color:#E8B95A;font-size:.72rem;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:12px}
+  .ftl-head h2{font-family:'Playfair Display',Georgia,serif;color:#fff;font-size:clamp(1.7rem,3.6vw,2.4rem);line-height:1.15;margin-bottom:10px}
+  .ftl-head p{color:rgba(255,255,255,.72);max-width:560px;margin:0 auto;font-size:1rem}
+  .ftl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .ftl-card{display:flex;flex-direction:column;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:24px 22px;text-decoration:none;transition:transform .18s,border-color .18s,background .18s}
+  .ftl-card:hover{transform:translateY(-4px);border-color:rgba(232,185,90,.55);background:rgba(255,255,255,.09)}
+  .ftl-ic{font-size:1.8rem;margin-bottom:12px}
+  .ftl-tag{display:inline-block;color:#0D1B40;background:#E8B95A;font-size:.6rem;font-weight:900;letter-spacing:.5px;text-transform:uppercase;padding:3px 9px;border-radius:999px;margin-bottom:10px;width:max-content}
+  .ftl-card h3{font-family:Georgia,serif;color:#fff;font-size:1.14rem;margin-bottom:6px;line-height:1.25}
+  .ftl-card p{color:rgba(255,255,255,.68);font-size:.88rem;flex:1;margin:0 0 14px}
+  .ftl-go{color:#E8B95A;font-weight:800;font-size:.8rem;letter-spacing:.3px}
+  @media(max-width:860px){.ftl-grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.ftl-grid{grid-template-columns:1fr}}
+  
 '+css+'
 
 .sess-reassure{background:linear-gradient(135deg,#ECF7F6,#F3F9EC);border:1px solid #D6EAE7;border-radius:14px;padding:15px 17px;margin-bottom:16px;}
