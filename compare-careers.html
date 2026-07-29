@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' www.googletagmanager.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com; img-src 'self' data: www.google-analytics.com www.googletagmanager.com; connect-src 'self' www.googletagmanager.com *.google-analytics.com *.analytics.google.com; object-src 'none'; base-uri 'self';">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compare Careers Side by Side — Salary, Stream, Exams & Fit | Lume Live</title>
+<meta name="description" content="Compare Indian careers side by side — doctor, engineer, CA, data scientist, lawyer, IAS and more. See stream, exams, degree, salary and interest-fit next to each other in one free tool.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://lumelive.co.in/compare-careers.html">
+<link rel="icon" type="image/png" href="logo.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Compare Careers Side by Side — Salary, Stream, Exams & Fit">
+<meta property="og:description" content="Compare Indian careers side by side — stream, exams, degree, salary and interest-fit — in one free tool.">
+<meta property="og:url" content="https://lumelive.co.in/compare-careers.html">
+<meta property="og:image" content="https://lumelive.co.in/og/compare-careers.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://lumelive.co.in/og/compare-careers.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Lume Live Compare Careers Tool","applicationCategory":"EducationalApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"},"description":"A free tool to compare Indian careers side by side — stream, exams, degree, salary and interest-fit.","url":"https://lumelive.co.in/compare-careers.html","publisher":{"@type":"Organization","name":"Lume Live","url":"https://lumelive.co.in/"}}</script>
+<style>
+:root{--navy:#0D1B40;--navy2:#1A2E5E;--teal:#0A6E6E;--gold:#C9933A;--gold2:#E8B95A;--paper:#F7FAF9;--ink:#1A2C2C;--muted:#4A6060;--line:#DDE7E5}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter','Segoe UI',system-ui,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.6}
+a{color:var(--teal);text-decoration:none}
+.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav{max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 18px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;color:var(--navy)}
+.brand img{width:36px;height:36px;border-radius:50%;border:2px solid var(--gold)}
+.nlinks{display:flex;gap:14px;font-size:.84rem;font-weight:800;color:var(--muted)}
+.nlinks a{color:var(--muted)}
+.nlinks .cta{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border-radius:999px;padding:8px 14px}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px}
+.hero{text-align:center;padding:40px 18px 6px}
+.eyebrow{display:inline-block;color:var(--gold);font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}
+.hero h1{font-family:Georgia,serif;color:var(--navy);font-size:clamp(1.7rem,4.6vw,2.5rem);line-height:1.15;margin-bottom:12px}
+.hero p{color:var(--muted);max-width:600px;margin:0 auto;font-size:1rem}
+.pickers{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:26px 0 6px}
+.pick{display:flex;flex-direction:column;gap:5px;text-align:left}
+.pick label{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+select{font-family:inherit;font-size:.95rem;font-weight:700;color:var(--navy);border:1.5px solid var(--line);border-radius:12px;padding:11px 14px;background:#fff;min-width:190px;cursor:pointer}
+select:focus{outline:2px solid var(--teal);outline-offset:1px;border-color:var(--teal)}
+.vs{align-self:center;font-family:Georgia,serif;font-weight:800;color:var(--gold);font-size:1.1rem;padding-top:18px}
+.addbtn{background:none;border:1.5px dashed var(--line);border-radius:12px;color:var(--teal);font-weight:800;font-family:inherit;padding:0 14px;cursor:pointer;align-self:flex-end;height:44px;margin-top:19px}
+.presets{text-align:center;margin:6px 0 8px}
+.presets span{font-size:.76rem;color:var(--muted);font-weight:700;margin-right:6px}
+.chip{display:inline-block;background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 13px;font-size:.8rem;font-weight:700;color:var(--navy);margin:4px;cursor:pointer}
+.chip:hover{border-color:var(--teal);color:var(--teal)}
+.tablewrap{overflow-x:auto;margin:22px 0;border:1px solid var(--line);border-radius:18px;background:#fff;box-shadow:0 18px 50px rgba(13,27,64,.06)}
+table{border-collapse:collapse;width:100%;min-width:520px}
+th,td{padding:14px 16px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);font-size:.9rem}
+thead th{background:var(--navy);color:#fff;font-family:Georgia,serif;font-size:1.05rem;position:sticky;top:0}
+thead th:first-child{background:var(--navy2)}
+tbody th{background:var(--paper);color:var(--muted);font-weight:800;font-size:.72rem;text-transform:uppercase;letter-spacing:.6px;white-space:nowrap;width:150px}
+td strong{color:var(--navy)}
+.rowlink a{font-weight:800}
+tr:last-child td,tr:last-child th{border-bottom:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;border-radius:999px;padding:13px 26px;font-weight:800;font-size:.92rem;border:0;cursor:pointer;font-family:inherit}
+.btn.gold{background:var(--gold);color:#fff}
+.btn.gold:hover{background:#b5832e}
+.cta-box{background:#fff;border:1px solid var(--line);border-radius:18px;padding:32px 26px;text-align:center;margin:30px 0}
+.cta-box h3{font-family:Georgia,serif;color:var(--navy);font-size:1.35rem;margin-bottom:10px}
+.cta-box p{color:var(--muted);max-width:560px;margin:0 auto 18px}
+.related{border-top:1px solid var(--line);margin-top:10px;padding:24px 0}
+.related h2{font-size:1.05rem;color:var(--navy);margin-bottom:12px}
+.related a{display:block;padding:9px 0;border-bottom:1px solid var(--line);font-weight:700;color:var(--navy)}
+.related a:hover{color:var(--teal)}
+.foot{background:var(--navy);color:rgba(255,255,255,.72);padding:26px 18px;text-align:center;font-size:.82rem;margin-top:24px}
+.foot a{color:var(--gold2)}
+.disclaimer{font-size:.76rem;color:var(--muted);text-align:center;margin:4px 0 0}
+@media(max-width:620px){tbody th{width:110px;font-size:.66rem}th,td{padding:11px 12px;font-size:.84rem}}
+</style>
+</head>
+<body>
+<header class="top"><nav class="nav">
+  <a class="brand" href="index.html"><img src="logo.png" alt="Lume Live logo"><span>LUME LIVE</span></a>
+  <div class="nlinks"><a href="career-explorer.html">Careers</a><a href="career-library.html">Library</a><a class="cta" href="assessment.html#free-test">Free Career Test</a></div>
+</nav></header>
+
+<div class="hero">
+  <span class="eyebrow">Free Tool</span>
+  <h1>Compare careers side by side</h1>
+  <p>Doctor or engineer? CA or data scientist? Put any two (or three) careers next to each other — stream, exams, degree, salary and the interests each one suits.</p>
+</div>
+
+<main class="wrap">
+  <div class="pickers" id="pickers">
+    <div class="pick"><label>Career A</label><select id="selA" aria-label="Choose the first career to compare"></select></div>
+    <div class="vs">vs</div>
+    <div class="pick"><label>Career B</label><select id="selB" aria-label="Choose the second career to compare"></select></div>
+    <button class="addbtn" id="addBtn" title="Add a third career">+ Add</button>
+  </div>
+
+  <div class="presets">
+    <span>Popular:</span>
+    <a class="chip" href="doctor-vs-engineer.html">Doctor vs Engineer</a>
+    <a class="chip" href="data-scientist-vs-software-engineer.html">Data Scientist vs Software Engineer</a>
+    <a class="chip" href="lawyer-vs-civil-services.html">Lawyer vs Civil Services</a>
+  </div>
+
+  <div class="tablewrap"><table id="cmp"><thead><tr id="hrow"></tr></thead><tbody id="brows"></tbody></table></div>
+  <p class="disclaimer">Salary ranges are indicative for India (2026) and vary widely by employer, city and skill. Use this as a starting point, not a promise.</p>
+
+  <div class="cta-box">
+    <h3>Comparing is easy. Choosing is the hard part.</h3>
+    <p>A side-by-side table shows the facts — but not which one fits <em>you</em>. Take the free 60-second Career Snapshot to see your interest themes, then decide on evidence.</p>
+    <a class="btn gold" href="assessment.html#free-test">Start the Free Career Snapshot</a>
+  </div>
+
+  <div class="related">
+    <h2>Prefer to read the full comparisons?</h2>
+    <a href="doctor-vs-engineer.html">Doctor vs Engineer: which is right for you?</a>
+    <a href="data-scientist-vs-software-engineer.html">Data Scientist vs Software Engineer</a>
+    <a href="lawyer-vs-civil-services.html">Lawyer vs Civil Services (IAS)</a>
+    <a href="career-explorer.html">Or browse all 11 career guides in the Career Explorer</a>
+  </div>
+</main>
+
+<footer class="foot">
+  Lume Live &middot; Online career counselling &amp; mental-health support across India &middot; WhatsApp +91 70156 71280<br>
+  <a href="index.html">Home</a> &middot; <a href="career-explorer.html">Careers</a> &middot; <a href="career-library.html">Library</a> &middot; <a href="services-pricing.html">Services &amp; Pricing</a> &middot; <a href="privacy-policy.html">Privacy Policy</a>
+</footer>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1CZ93P4P3V"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1CZ93P4P3V');</script>
+<script>
+var CAREERS={
+ se:{name:"Software Engineer",url:"career-as-software-engineer.html",stream:"Science (PCM) — BCA/B.Sc open to any",exam:"JEE / state CET / CUET",path:"B.Tech or BCA · ~4 yrs",fresher:"₹4–25 LPA",mid:"₹15–40 LPA",senior:"₹40 LPA–₹1 Cr+",fit:"Investigative + Realistic",note:"Merit- and skill-driven; the widest tech door."},
+ ds:{name:"Data Scientist",url:"career-as-data-scientist.html",stream:"Science (PCM) — maths-heavy",exam:"JEE / IIT JAM / CUET",path:"B.Tech or B.Sc + PG · ~5 yrs",fresher:"₹6–14 LPA",mid:"₹18–35 LPA",senior:"₹40–80 LPA+",fit:"Investigative + Conventional",note:"Statistics + coding; high demand, now competitive."},
+ dr:{name:"Doctor (MBBS)",url:"career-as-doctor-mbbs.html",stream:"Science (PCB) — required",exam:"NEET-UG",path:"MBBS 5.5 yrs (+PG to specialise)",fresher:"₹6–12 LPA",mid:"₹15–40 LPA",senior:"₹40 LPA–₹1 Cr+",fit:"Investigative + Social",note:"A long calling; needs resilience, not just marks."},
+ ca:{name:"Chartered Accountant",url:"career-as-chartered-accountant.html",stream:"Commerce best — any allowed",exam:"CA Foundation (ICAI)",path:"Foundation→Inter→Articleship→Final · ~5 yrs",fresher:"₹8–12 LPA",mid:"₹20–50 LPA",senior:"₹50 LPA–₹1 Cr+",fit:"Conventional + Enterprising",note:"No admission lottery; rewards years of discipline."},
+ ps:{name:"Psychologist",url:"career-as-psychologist.html",stream:"Any (Arts natural)",exam:"CUET / institute tests",path:"BA/BSc→MA→M.Phil (clinical) · long",fresher:"₹3–6 LPA",mid:"₹6–15 LPA",senior:"₹15 LPA+ (practice scales)",fit:"Social + Investigative",note:"Meaningful, qualification-heavy; rising demand."},
+ pi:{name:"Commercial Pilot",url:"career-as-commercial-pilot.html",stream:"Science (PCM) — required",exam:"DGCA exams + CPL",path:"Flying school · ~1.5–3 yrs (₹35–60L cost)",fresher:"₹12–30 LPA",mid:"₹30–50 LPA",senior:"₹50 LPA–₹1 Cr+",fit:"Realistic + Investigative",note:"Capital-heavy; check the Class-1 medical first."},
+ law:{name:"Lawyer",url:"career-as-lawyer.html",stream:"Any (Humanities natural)",exam:"CLAT / AILET",path:"BA LLB 5 yrs → Bar (AIBE)",fresher:"₹3–20 LPA",mid:"₹15–40 LPA",senior:"₹40 LPA–₹1 Cr+",fit:"Enterprising + Social",note:"Versatile; early litigation years can be slow."},
+ ias:{name:"Civil Services (IAS)",url:"career-as-civil-services-ias.html",stream:"Any degree qualifies",exam:"UPSC CSE",path:"Any degree + 1–3 yrs prep",fresher:"Govt pay scale",mid:"Govt pay + prestige",senior:"Senior govt leadership",fit:"Social + Enterprising",note:"Extremely competitive; a calling, not a salary."},
+ ar:{name:"Architect",url:"career-as-architect.html",stream:"Science (PCM) — maths req.",exam:"NATA / JEE Paper 2",path:"B.Arch 5 yrs → COA registration",fresher:"₹3–6 LPA",mid:"₹8–15 LPA",senior:"₹15–30 LPA+ (practice scales)",fit:"Artistic + Realistic",note:"Art meets engineering; modest early pay."},
+ pd:{name:"Product Designer (UX)",url:"career-as-product-designer.html",stream:"Any",exam:"UCEED / NID / NIFT or portfolio",path:"B.Des or any degree + portfolio",fresher:"₹6–12 LPA",mid:"₹15–30 LPA",senior:"₹35 LPA+",fit:"Artistic + Investigative",note:"Portfolio beats pedigree; empathy over illustration."},
+ dm:{name:"Digital Marketer",url:"career-as-digital-marketer.html",stream:"Any",exam:"None — certs + portfolio",path:"BBA/BA/any + certifications",fresher:"₹3–6 LPA",mid:"₹8–18 LPA",senior:"₹20 LPA+",fit:"Enterprising + Artistic",note:"Low barrier to start; results-driven."}
+};
+var ROWS=[["stream","Best-fit stream"],["exam","Key exams"],["path","Degree & duration"],["fresher","Fresher salary"],["mid","Mid-level salary"],["senior","Senior salary"],["fit","Interest fit (RIASEC)"],["note","In one line"]];
+var ORDER=["se","ds","dr","ca","ps","pi","law","ias","ar","pd","dm"];
+var selects=[document.getElementById('selA'),document.getElementById('selB')];
+var third=null;
+
+function fillSelect(sel,val){
+  sel.innerHTML=ORDER.map(function(k){return '<option value="'+k+'">'+CAREERS[k].name+'</option>';}).join('');
+  sel.value=val;
+}
+function currentKeys(){return selects.map(function(s){return s.value;});}
+function render(){
+  var keys=currentKeys();
+  // header
+  var h='<th>&nbsp;</th>'+keys.map(function(k){return '<th>'+CAREERS[k].name+'</th>';}).join('');
+  document.getElementById('hrow').innerHTML=h;
+  // body
+  var b=ROWS.map(function(r){
+    return '<tr><th>'+r[1]+'</th>'+keys.map(function(k){return '<td>'+CAREERS[k][r[0]]+'</td>';}).join('')+'</tr>';
+  }).join('');
+  // full-guide links row
+  b+='<tr class="rowlink"><th>Full guide</th>'+keys.map(function(k){return '<td><a href="'+CAREERS[k].url+'">Read &rarr;</a></td>';}).join('')+'</tr>';
+  document.getElementById('brows').innerHTML=b;
+  if(window.gtag) gtag('event','compare_used',{event_category:'lead_tools',event_label:keys.join(' vs ')});
+}
+fillSelect(selects[0],'dr'); fillSelect(selects[1],'se');
+selects[0].addEventListener('change',render); selects[1].addEventListener('change',render);
+document.getElementById('addBtn').addEventListener('click',function(){
+  if(third) return;
+  var d=document.createElement('div'); d.className='pick';
+  d.innerHTML='<label>Career C</label><select id="selC" aria-label="Choose a third career to compare"></select>';
+  document.getElementById('pickers').insertBefore(d,document.getElementById('addBtn'));
+  third=document.getElementById('selC'); selects.push(third);
+  fillSelect(third,'ca'); third.addEventListener('change',render);
+  this.style.display='none'; render();
+});
+render();
+</script>
+</body>
+</html>

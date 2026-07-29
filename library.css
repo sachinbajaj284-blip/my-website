@@ -24,7 +24,8 @@ a:hover{color:var(--navy)}
 .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin:56px 0;box-shadow:none}
 .acard{display:flex;flex-direction:column;background:#fff;border:0;border-radius:0;padding:32px 30px;transition:background .2s,transform .2s}
 .acard:hover{background:#FCFEFE;transform:none}
-.acard .k{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:1.4px;color:var(--gold)}
+.acard .k{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:1.4px;color:#8a6a1e}
+article p a,article li a,.lead a,.faq-item p a{text-decoration:underline}
 .acard h2{font-family:Georgia,serif;font-weight:700;font-size:1.22rem;color:var(--navy);margin:12px 0 10px;line-height:1.28;letter-spacing:-.2px}
 .acard p{font-size:.9rem;color:var(--muted);flex:1}
 .acard .read{margin-top:18px;font-size:.78rem;font-weight:800;color:var(--teal);transition:letter-spacing .2s}
