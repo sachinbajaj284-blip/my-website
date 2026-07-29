@@ -65,6 +65,8 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
 .btn.wa:hover{background:#178f4a}
 .btn.wa[aria-disabled=true]{background:#b7c3bd;cursor:not-allowed;pointer-events:none}
 .btn.call{background:#fff;color:var(--navy);border:1.5px solid var(--line);margin-top:10px}
+.btn.gcal{background:#fff;color:var(--navy);border:1.5px solid var(--line);margin-top:10px}
+.btn.gcal[aria-disabled=true]{opacity:.5;cursor:not-allowed;pointer-events:none}
 .reassure{font-size:.8rem;color:var(--muted);text-align:center;margin-top:12px}
 .foot{background:var(--navy);color:rgba(255,255,255,.72);padding:26px 18px;text-align:center;font-size:.82rem;margin-top:24px}
 .foot a{color:var(--gold2)}
@@ -122,6 +124,7 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
     </div>
 
     <a class="btn wa" id="waBtn" href="#" aria-disabled="true" target="_blank" rel="noopener">💬 Send my booking request on WhatsApp</a>
+    <a class="btn gcal" id="gcalBtn" href="#" aria-disabled="true" target="_blank" rel="noopener">📅 Add this slot to my Google Calendar</a>
     <a class="btn call" href="tel:+917015671280">📞 Prefer to call? +91 70156 71280</a>
     <div class="reassure">No payment now — we confirm your slot on WhatsApp first. ₹49 is the introductory price (regular ₹499). Both parents welcome to join.</div>
   </div>
@@ -141,7 +144,7 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
 <script>
 (function(){
   var WA='917015671280';
-  var state={name:'',forWhom:'',date:'',time:''}, started=false;
+  var state={name:'',forWhom:'',date:'',time:'',iso:''}, started=false;
   var DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
@@ -153,10 +156,11 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
     if(d.getDay()!==0){
       var label=DOW[d.getDay()], dm=d.getDate()+' '+MON[d.getMonth()];
       var full=DOW[d.getDay()]+', '+d.getDate()+' '+MON[d.getMonth()];
+      var iso=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
       var b=document.createElement('button');
-      b.type='button'; b.className='chip'; b.setAttribute('data-date',full);
+      b.type='button'; b.className='chip'; b.setAttribute('data-date',full); b.setAttribute('data-iso',iso);
       b.innerHTML=label+'<small>'+dm+'</small>';
-      b.addEventListener('click',function(){ selectIn(dateRow,this); state.date=this.getAttribute('data-date'); markStarted(); update(); });
+      b.addEventListener('click',function(){ selectIn(dateRow,this); state.date=this.getAttribute('data-date'); state.iso=this.getAttribute('data-iso'); markStarted(); update(); });
       dateRow.appendChild(b); added++;
     }
     d.setDate(d.getDate()+1);
@@ -191,6 +195,19 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
     return lines.join('\n');
   }
 
+  function to24(t){ var m=t.match(/(\d+):(\d+)\s*(AM|PM)/i); if(!m) return null; var h=(+m[1])%12; if(/PM/i.test(m[3]))h+=12; return {h:h,mm:+m[2]}; }
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function gcalUrl(){
+    if(!(state.iso&&state.time)) return '#';
+    var t=to24(state.time); if(!t) return '#';
+    var ymd=state.iso.replace(/-/g,'');
+    var start=ymd+'T'+pad(t.h)+pad(t.mm)+'00';
+    var eh=t.h, em=t.mm+45; if(em>=60){eh+=1;em-=60;}
+    var end=ymd+'T'+pad(eh)+pad(em)+'00';
+    var text=encodeURIComponent('Lume Live — ₹49 Career Counselling Session');
+    var det=encodeURIComponent('Introductory 1:1 session with Sachin Bajaj (M.Sc Clinical Psychology).\nTentative — please confirm your slot on WhatsApp: https://wa.me/'+WA);
+    return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='+text+'&dates='+start+'/'+end+'&ctz=Asia/Kolkata&details='+det+'&location='+encodeURIComponent('Online video call');
+  }
   function update(){
     var ready=state.name && state.date && state.time;
     document.getElementById('preview').textContent = (state.name||state.date||state.time) ? buildMsg() : 'Fill in your name, day and time — your request will appear here.';
@@ -201,11 +218,18 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
     } else {
       btn.setAttribute('href','#'); btn.setAttribute('aria-disabled','true');
     }
+    var g=document.getElementById('gcalBtn'), slot=state.date&&state.time;
+    if(slot){ g.setAttribute('href',gcalUrl()); g.setAttribute('aria-disabled','false'); }
+    else { g.setAttribute('href','#'); g.setAttribute('aria-disabled','true'); }
   }
 
   document.getElementById('waBtn').addEventListener('click',function(e){
     if(this.getAttribute('aria-disabled')==='true'){ e.preventDefault(); return; }
     if(window.gtag) gtag('event','booking_whatsapp_click',{event_category:'booking',event_label:state.forWhom||'unspecified'});
+  });
+  document.getElementById('gcalBtn').addEventListener('click',function(e){
+    if(this.getAttribute('aria-disabled')==='true'){ e.preventDefault(); return; }
+    if(window.gtag) gtag('event','booking_addtocal',{event_category:'booking'});
   });
 })();
 </script>
