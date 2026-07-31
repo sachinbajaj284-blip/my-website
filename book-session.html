@@ -8,7 +8,9 @@
 <meta name="description" content="Book your ₹49 introductory 1:1 career &amp; mental-health counselling session with Sachin Bajaj (M.Sc Clinical Psychology). Pick a day and time — we confirm on WhatsApp in minutes.">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://lumelive.co.in/book-session.html">
-<link rel="icon" type="image/png" href="logo.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="icon" href="favicon.ico" sizes="any">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Book Your ₹49 Career Counselling Session">
 <meta property="og:description" content="Pick a day and time for your ₹49 introductory 1:1 session with a qualified counsellor — confirmed on WhatsApp in minutes.">
@@ -78,7 +80,21 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
 .btn.gbtn{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);width:auto;display:inline-flex;padding:15px 32px;position:relative}
 .or-divider{display:flex;align-items:center;gap:14px;color:var(--muted);font-size:.82rem;font-weight:700;margin:26px 4px 2px;text-transform:uppercase;letter-spacing:.5px}
 .or-divider::before,.or-divider::after{content:"";flex:1;height:1px;background:var(--line)}
-@media(max-width:520px){.stats{grid-template-columns:1fr 1fr}}
+.sess-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sess{position:relative;text-align:left;border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:13px 14px;cursor:pointer;font-family:inherit;transition:border-color .15s,background .15s}
+.sess:hover{border-color:var(--teal)}
+.sess.sel{border-color:var(--teal);background:#ECF7F6}
+.sess .s-name{font-weight:800;color:var(--navy);font-size:.92rem;line-height:1.25}
+.sess .s-meta{display:block;margin-top:3px;font-size:.74rem;font-weight:800;color:var(--teal)}
+.sess .s-desc{display:block;margin-top:6px;font-size:.76rem;color:var(--muted);font-weight:600;line-height:1.35}
+.gbook-sess{position:relative;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:11px 14px;margin:0 auto 16px;max-width:520px;font-size:.86rem;color:rgba(255,255,255,.9);text-align:left}
+.gbook-sess b{color:var(--gold2)}
+.gbook-note{position:relative;max-width:520px;margin:14px auto 0;font-size:.78rem;color:rgba(255,255,255,.72);line-height:1.5}
+.gbook-copy{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
+.gbook-copy code{flex:1;min-width:180px;background:rgba(0,0,0,.28);border:1px dashed rgba(255,255,255,.22);border-radius:8px;padding:9px 11px;color:#fff;font-size:.8rem;word-break:break-word}
+.gbook-copy button{border:0;border-radius:8px;padding:9px 16px;font:inherit;font-weight:800;font-size:.8rem;background:var(--gold2);color:var(--navy);cursor:pointer;transition:background .15s}
+.gbook-copy button.done{background:#1EAE5C;color:#fff}
+@media(max-width:520px){.stats{grid-template-columns:1fr 1fr}.sess-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -88,35 +104,46 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
 </nav></header>
 
 <section class="hero"><div class="in">
-  <span class="eyebrow">Introductory Session · ₹49</span>
-  <h1>Book your 1:1 session — pick a slot</h1>
-  <p>A 45-minute video call with Sachin Bajaj (M.Sc Clinical Psychology). Choose a day and time; we confirm on WhatsApp, usually within the hour.</p>
+  <span class="eyebrow">Book a 1:1 session</span>
+  <h1>Book your session — pick a slot</h1>
+  <p>A live video call with Sachin Bajaj (M.Sc Clinical Psychology). Choose your session below, then a day and time; we confirm on WhatsApp, usually within the hour.</p>
   <div class="stats">
-    <div class="stat"><b>₹49</b><span>First session</span></div>
-    <div class="stat"><b>45 min</b><span>1:1 video call</span></div>
+    <div class="stat"><b>From ₹49</b><span>First session</span></div>
+    <div class="stat"><b>Live</b><span>1:1 video call</span></div>
     <div class="stat"><b>M.Sc</b><span>Clinical Psych</span></div>
     <div class="stat"><b>500+</b><span>Guided</span></div>
   </div>
 </div></section>
 
 <main class="wrap">
+  <div class="card" style="margin-bottom:0">
+    <div class="step" style="margin-bottom:0">
+      <div class="step-h"><span class="step-n">1</span><h2>Choose your session</h2></div>
+      <div class="sess-grid" id="sessGrid"></div>
+    </div>
+  </div>
+
   <div class="gbook">
     <span class="gbook-tag">✅ Fastest · Confirmed instantly</span>
     <h2>Book from live available times</h2>
     <p>Pick a slot from Sachin's real calendar — you'll get an instant Google Calendar invite with the video-call link and reminders. No back-and-forth.</p>
+    <div class="gbook-sess" id="gbookSess">You're booking: <b>Introductory Session</b> · 45 min · ₹49</div>
     <a class="btn gbtn" id="gBookBtn" href="https://calendar.app.google/rzegv6fxmus1r1sJA" target="_blank" rel="noopener">See available times &amp; book &rarr;</a>
+    <p class="gbook-note" id="gbookNote" hidden><span id="gbookNoteMsg">Tap <b>Book</b> above and we'll copy your session name — just paste it into the <b>Notes</b> box on the Google form so Sachin knows which one.</span>
+      <span class="gbook-copy"><code id="gbookNoteCode">Session: Introductory Session (45 min, ₹49)</code><button type="button" id="gbookCopy">Copy</button></span>
+    </p>
   </div>
 
   <div class="or-divider">or request a slot on WhatsApp</div>
 
   <div class="card">
     <div class="step">
-      <div class="step-h"><span class="step-n">1</span><h2>Your name</h2></div>
+      <div class="step-h"><span class="step-n">2</span><h2>Your name</h2></div>
       <input type="text" id="bName" placeholder="e.g. Aarav / Aarav's parent" autocomplete="name">
     </div>
 
     <div class="step">
-      <div class="step-h"><span class="step-n">2</span><h2>This session is for</h2><span class="opt">optional</span></div>
+      <div class="step-h"><span class="step-n">3</span><h2>This session is for</h2><span class="opt">optional</span></div>
       <div class="chips" id="forChips">
         <button type="button" class="chip" data-for="a Class 10 student (stream selection)">Class 10<small>Stream choice</small></button>
         <button type="button" class="chip" data-for="a Class 11–12 student (after 12th plans)">Class 11–12<small>After 12th</small></button>
@@ -126,25 +153,71 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
     </div>
 
     <div class="step">
-      <div class="step-h"><span class="step-n">3</span><h2>Pick a day</h2></div>
+      <div class="step-h"><span class="step-n">4</span><h2>Pick a day</h2></div>
       <div class="date-row" id="dateRow"></div>
     </div>
 
     <div class="step">
-      <div class="step-h"><span class="step-n">4</span><h2>Pick a time</h2><span class="opt">IST</span></div>
+      <div class="step-h"><span class="step-n">5</span><h2>Pick a time</h2><span class="opt">IST</span></div>
       <div class="time-row" id="timeRow"></div>
     </div>
 
     <div class="step" style="margin-bottom:16px">
-      <div class="step-h"><span class="step-n">5</span><h2>Confirm on WhatsApp</h2></div>
+      <div class="step-h"><span class="step-n">6</span><h2>Confirm on WhatsApp</h2></div>
       <div class="preview" id="preview">Fill in your name, day and time — your request will appear here.</div>
     </div>
 
     <a class="btn wa" id="waBtn" href="#" aria-disabled="true" target="_blank" rel="noopener">💬 Send my booking request on WhatsApp</a>
     <a class="btn gcal" id="gcalBtn" href="#" aria-disabled="true" target="_blank" rel="noopener">📅 Add this slot to my Google Calendar</a>
     <a class="btn call" href="tel:+917015671280">📞 Prefer to call? +91 70156 71280</a>
-    <div class="reassure">No payment now — we confirm your slot on WhatsApp first. ₹49 is the introductory price (regular ₹499). Both parents welcome to join.</div>
+    <div class="reassure">No payment now — we confirm your slot on WhatsApp first. The ₹49 introductory price is for your first session (regular ₹499). Both parents welcome to join.</div>
   </div>
+
+  <!-- Refer a friend — viral loop (lumeRefer) -->
+  <section class="lume-ref" id="lumeRefer">
+    <div class="lume-ref-eyebrow">🤝 Refer a friend</div>
+    <h2 class="lume-ref-h">Refer a friend — they book free, you save ₹200</h2>
+    <p class="lume-ref-p">Share Lume Live with a friend deciding their path. Their first 1:1 session is on us — free instead of ₹49 — and once they book, you get ₹200 off the ₹999 Full Clarity Report. Just have them mention your name on WhatsApp.</p>
+    <div class="lume-ref-row">
+      <button type="button" class="lume-ref-btn primary" onclick="lumeReferShare()">📲 Refer a friend</button>
+      <button type="button" class="lume-ref-btn ghost" onclick="lumeReferCopy()">🔗 Copy link</button>
+    </div>
+    <div class="lume-ref-note" id="lumeRefMsg" aria-live="polite"></div>
+  </section>
+  <style>
+  .lume-ref{max-width:560px;margin:26px auto;background:#fff;border:1px solid #E2E9E8;border-radius:20px;padding:26px 24px;text-align:center;box-shadow:0 14px 44px rgba(13,27,64,.10);font-family:'Inter',Arial,Helvetica,sans-serif}
+  .lume-ref-eyebrow{font-size:.7rem;font-weight:900;letter-spacing:.6px;text-transform:uppercase;color:#0A6E6E;margin-bottom:8px}
+  .lume-ref-h{font-family:Georgia,serif;font-size:1.2rem;color:#0D1B40;margin:0 0 8px;line-height:1.25}
+  .lume-ref-p{font-size:.9rem;color:#4A6060;max-width:440px;margin:0 auto 16px;line-height:1.6}
+  .lume-ref-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+  .lume-ref-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:12px 22px;font-size:.85rem;font-weight:800;cursor:pointer;text-decoration:none;transition:all .2s;font-family:inherit}
+  .lume-ref-btn.primary{background:#25D366;color:#fff;box-shadow:0 8px 22px rgba(37,211,102,.28)}
+  .lume-ref-btn.primary:hover{background:#1ebe57;transform:translateY(-1px)}
+  .lume-ref-btn.ghost{background:#fff;border:1.5px solid #DDEBE9;color:#0D1B40}
+  .lume-ref-btn.ghost:hover{border-color:#0A6E6E;color:#0A6E6E}
+  .lume-ref-note{font-size:.75rem;font-weight:800;color:#0A6E6E;margin-top:12px;min-height:16px;opacity:0;transition:opacity .2s}
+  </style>
+  <script>
+  (function(){
+    var SNAP='https://lumelive.co.in/assessment.html#free-test';
+    function msg(){
+      return "I've been using Lume Live for career guidance — real psychometric tests and a 1:1 with a qualified psychologist (M.Sc Clinical Psychology).\n\nI can get you your first 1:1 session FREE (normally ₹49) — just tell them I referred you when you book on WhatsApp. 🎁\n\nStart with their free 60-second Career Snapshot here:\n"+SNAP;
+    }
+    function flash(t){var m=document.getElementById('lumeRefMsg');if(!m)return;m.textContent=t;m.style.opacity='1';clearTimeout(m._t);m._t=setTimeout(function(){m.style.opacity='0';},2600);}
+    window.lumeReferShare=function(){
+      var text=msg();
+      if(window.gtag)gtag('event','referral_shared',{event_category:'referral'});
+      if(navigator.share){navigator.share({title:'Lume Live — Career Counselling',text:text,url:SNAP}).catch(function(){});return;}
+      window.open('https://api.whatsapp.com/send?text='+encodeURIComponent(text),'_blank','noopener');
+    };
+    window.lumeReferCopy=function(){
+      if(window.gtag)gtag('event','referral_link_copied',{event_category:'referral'});
+      var done=function(){flash('✓ Link copied — send it to a friend');};
+      if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(SNAP).then(done).catch(function(){window.prompt('Copy this link:',SNAP);});}
+      else{window.prompt('Copy this link:',SNAP);}
+    };
+  })();
+  </script>
 
   <p style="text-align:center;font-size:.86rem;color:var(--muted);margin-bottom:30px">
     Not ready to book? <a href="assessment.html#free-test">Take the free 60-second Career Snapshot</a> or <a href="career-explorer.html">explore careers</a> first.
@@ -161,11 +234,38 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
 <script>
 (function(){
   var WA='917015671280';
-  var state={name:'',forWhom:'',date:'',time:'',iso:''}, started=false;
+  // All bookable live sessions run through the single Google Calendar link.
+  // The visitor picks one here; the choice drives the WhatsApp message, the
+  // "add to calendar" event and the notes line for the Google booking form.
+  // aud = the "This session is for" chip to pre-select. Set only where the
+  // audience is unambiguous, so we never pre-fill a wrong guess.
+  var SESSIONS=[
+    {key:'intro',    name:'Introductory Session',              mins:45, priceLabel:'₹49',       desc:'First 1:1 call — understand your concern and the right next step.', aud:''},
+    {key:'counsel',  name:'1:1 Career & Mental-Health Session',mins:60, priceLabel:'as per plan',desc:'Full guidance for career confusion, exam stress or emotional pressure.', aud:''},
+    {key:'parent',   name:'Parent / Joint Session',            mins:45, priceLabel:'as per plan',desc:'Parent guidance or a joint parent-child conversation.', aud:'a parent enquiry'},
+    {key:'debrief',  name:'₹999 Report Debrief',               mins:30, priceLabel:'incl. in ₹999',desc:'Expert walkthrough of your Full Clarity Report.', aud:''}
+  ];
+  var state={session:SESSIONS[0],name:'',forWhom:'',date:'',time:'',iso:''}, started=false;
   var DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
   function markStarted(){ if(!started){started=true; if(window.gtag) gtag('event','booking_started',{event_category:'booking'}); } }
+
+  // build the session picker
+  var sessGrid=document.getElementById('sessGrid');
+  SESSIONS.forEach(function(s,i){
+    var b=document.createElement('button');
+    b.type='button'; b.className='sess'+(i===0?' sel':''); b.setAttribute('data-key',s.key);
+    b.innerHTML='<span class="s-name">'+s.name+'</span><span class="s-meta">'+s.mins+' min · '+s.priceLabel+'</span><span class="s-desc">'+s.desc+'</span>';
+    b.addEventListener('click',function(){
+      Array.prototype.forEach.call(sessGrid.querySelectorAll('.sess'),function(c){c.classList.remove('sel');});
+      this.classList.add('sel'); state.session=s; markStarted();
+      applyAudience(s);
+      if(window.gtag) gtag('event','booking_session_selected',{event_category:'booking',event_label:s.key});
+      update();
+    });
+    sessGrid.appendChild(b);
+  });
 
   // build next 12 available days (Mon–Sat), skipping Sundays
   var dateRow=document.getElementById('dateRow'), added=0, d=new Date();
@@ -203,8 +303,22 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
     btn.classList.add('sel');
   }
 
+  // Pre-select the matching "This session is for" chip so the client isn't
+  // asked something the session already implies. Only fires when the session
+  // maps cleanly (aud set); otherwise the client's own choice is untouched.
+  function applyAudience(s){
+    if(!s.aud) return;
+    Array.prototype.forEach.call(document.querySelectorAll('#forChips .chip'),function(c){
+      var match=c.getAttribute('data-for')===s.aud;
+      c.classList.toggle('sel',match);
+      if(match) state.forWhom=s.aud;
+    });
+  }
+
   function buildMsg(){
-    var lines=['Hello Lume Live! I would like to book my ₹49 introductory session.'];
+    var s=state.session;
+    var lines=['Hello Lume Live! I would like to book a session.'];
+    lines.push('• Session: '+s.name+' ('+s.mins+' min · '+s.priceLabel+')');
     lines.push('• Name: '+(state.name||'—'));
     if(state.forWhom) lines.push('• For: '+state.forWhom);
     lines.push('• Preferred: '+(state.date||'—')+(state.time?' at '+state.time:''));
@@ -217,15 +331,23 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
   function gcalUrl(){
     if(!(state.iso&&state.time)) return '#';
     var t=to24(state.time); if(!t) return '#';
-    var ymd=state.iso.replace(/-/g,'');
+    var s=state.session, ymd=state.iso.replace(/-/g,'');
     var start=ymd+'T'+pad(t.h)+pad(t.mm)+'00';
-    var eh=t.h, em=t.mm+45; if(em>=60){eh+=1;em-=60;}
+    var em=t.mm+s.mins, eh=t.h+Math.floor(em/60); em=em%60;
     var end=ymd+'T'+pad(eh)+pad(em)+'00';
-    var text=encodeURIComponent('Lume Live — ₹49 Career Counselling Session');
-    var det=encodeURIComponent('Introductory 1:1 session with Sachin Bajaj (M.Sc Clinical Psychology).\nTentative — please confirm your slot on WhatsApp: https://wa.me/'+WA);
+    var text=encodeURIComponent('Lume Live — '+s.name);
+    var det=encodeURIComponent(s.name+' with Sachin Bajaj (M.Sc Clinical Psychology).\nTentative — please confirm your slot on WhatsApp: https://wa.me/'+WA);
     return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='+text+'&dates='+start+'/'+end+'&ctz=Asia/Kolkata&details='+det+'&location='+encodeURIComponent('Online video call');
   }
   function update(){
+    var s=state.session;
+    document.getElementById('gbookSess').innerHTML='You’re booking: <b>'+s.name+'</b> · '+s.mins+' min · '+s.priceLabel;
+    document.getElementById('gbookNoteCode').textContent=noteLine();
+    // The single Google page already IS the intro, so only nudge for the
+    // other sessions — the common ₹49 path stays one tap, no notes chore.
+    var note=document.getElementById('gbookNote');
+    if(s.key==='intro'){ note.setAttribute('hidden',''); }
+    else { note.removeAttribute('hidden'); resetCopy(); }
     var ready=state.name && state.date && state.time;
     document.getElementById('preview').textContent = (state.name||state.date||state.time) ? buildMsg() : 'Fill in your name, day and time — your request will appear here.';
     var btn=document.getElementById('waBtn');
@@ -248,8 +370,22 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
     if(this.getAttribute('aria-disabled')==='true'){ e.preventDefault(); return; }
     if(window.gtag) gtag('event','booking_addtocal',{event_category:'booking'});
   });
+  function noteLine(){ var s=state.session; return 'Session: '+s.name+' ('+s.mins+' min, '+s.priceLabel+')'; }
+  function resetCopy(){ var b=document.getElementById('gbookCopy'); if(b){ b.textContent='Copy'; b.classList.remove('done'); } }
+  function copyNote(){
+    var text=noteLine(), b=document.getElementById('gbookCopy');
+    function done(){ if(b){ b.textContent='✓ Copied'; b.classList.add('done'); } }
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(done,function(){}); }
+    else { var t=document.createElement('textarea'); t.value=text; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');done();}catch(e){} document.body.removeChild(t); }
+  }
+  document.getElementById('gbookCopy').addEventListener('click',copyNote);
   var gb=document.getElementById('gBookBtn');
-  if(gb) gb.addEventListener('click',function(){ if(window.gtag) gtag('event','booking_google_click',{event_category:'booking'}); });
+  if(gb) gb.addEventListener('click',function(){
+    // Auto-copy the session name for non-intro sessions so the only manual
+    // step on Google's form is a single paste — no typing, no re-entry.
+    if(state.session.key!=='intro') copyNote();
+    if(window.gtag) gtag('event','booking_google_click',{event_category:'booking',event_label:state.session.key});
+  });
 })();
 </script>
 </body>

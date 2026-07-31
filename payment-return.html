@@ -34,6 +34,53 @@ a{display:flex;align-items:center;justify-content:center;min-height:46px;border-
       <a class="ghost" href="index.html">Back To Home</a>
     </div>
   </main>
+
+  <!-- Refer a friend — viral loop (lumeRefer) -->
+  <section class="lume-ref" id="lumeRefer">
+    <div class="lume-ref-eyebrow">🤝 Refer a friend</div>
+    <h2 class="lume-ref-h">Refer a friend — they book free, you save ₹200</h2>
+    <p class="lume-ref-p">Career decisions happen in cohorts — your friends and cousins are deciding right now too. Refer one and their first 1:1 session is free (instead of ₹49); once they book, you get ₹200 off the ₹999 Full Clarity Report. Just have them mention your name on WhatsApp.</p>
+    <div class="lume-ref-row">
+      <button type="button" class="lume-ref-btn primary" onclick="lumeReferShare()">📲 Refer a friend</button>
+      <button type="button" class="lume-ref-btn ghost" onclick="lumeReferCopy()">🔗 Copy link</button>
+    </div>
+    <div class="lume-ref-note" id="lumeRefMsg" aria-live="polite"></div>
+  </section>
+  <style>
+  .lume-ref{width:min(520px,100%);margin:20px auto 0;background:#fff;border:1px solid #E2E9E8;border-radius:24px;padding:26px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.22);font-family:'Inter',Arial,Helvetica,sans-serif}
+  .lume-ref-eyebrow{font-size:.7rem;font-weight:900;letter-spacing:.6px;text-transform:uppercase;color:#0A6E6E;margin-bottom:8px}
+  .lume-ref-h{font-family:Georgia,'Times New Roman',serif;font-size:1.2rem;color:#0D1B40;margin:0 0 8px;line-height:1.25}
+  .lume-ref-p{font-size:.9rem;color:#4A6060;max-width:440px;margin:0 auto 16px;line-height:1.6}
+  .lume-ref-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+  .lume-ref-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:12px 22px;font-size:.85rem;font-weight:800;cursor:pointer;text-decoration:none;transition:all .2s;font-family:inherit}
+  .lume-ref-btn.primary{background:#25D366;color:#fff;box-shadow:0 8px 22px rgba(37,211,102,.28)}
+  .lume-ref-btn.primary:hover{background:#1ebe57;transform:translateY(-1px)}
+  .lume-ref-btn.ghost{background:#fff;border:1.5px solid #DDEBE9;color:#0D1B40}
+  .lume-ref-btn.ghost:hover{border-color:#0A6E6E;color:#0A6E6E}
+  .lume-ref-note{font-size:.75rem;font-weight:800;color:#0A6E6E;margin-top:12px;min-height:16px;opacity:0;transition:opacity .2s}
+  </style>
+  <script>
+  (function(){
+    var SNAP='https://lumelive.co.in/assessment.html#free-test';
+    function msg(){
+      return "I've been using Lume Live for career guidance — real psychometric tests and a 1:1 with a qualified psychologist (M.Sc Clinical Psychology).\n\nI can get you your first 1:1 session FREE (normally ₹49) — just tell them I referred you when you book on WhatsApp. 🎁\n\nStart with their free 60-second Career Snapshot here:\n"+SNAP;
+    }
+    function flash(t){var m=document.getElementById('lumeRefMsg');if(!m)return;m.textContent=t;m.style.opacity='1';clearTimeout(m._t);m._t=setTimeout(function(){m.style.opacity='0';},2600);}
+    window.lumeReferShare=function(){
+      var text=msg();
+      if(window.gtag)gtag('event','referral_shared',{event_category:'referral'});
+      if(navigator.share){navigator.share({title:'Lume Live — Career Counselling',text:text,url:SNAP}).catch(function(){});return;}
+      window.open('https://api.whatsapp.com/send?text='+encodeURIComponent(text),'_blank','noopener');
+    };
+    window.lumeReferCopy=function(){
+      if(window.gtag)gtag('event','referral_link_copied',{event_category:'referral'});
+      var done=function(){flash('✓ Link copied — send it to a friend');};
+      if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(SNAP).then(done).catch(function(){window.prompt('Copy this link:',SNAP);});}
+      else{window.prompt('Copy this link:',SNAP);}
+    };
+  })();
+  </script>
+
 <script src="cashfree-payments.js"></script>
 <script>
 (function(){
@@ -51,7 +98,7 @@ a{display:flex;align-items:center;justify-content:center;min-height:46px;border-
     "career-intelligence-roadmap": { href:"career-intelligence.html?access=assessment#career-intelligence", label:"Open Career Intelligence", title:"Payment Verified" },
     "parents-handbook": { href:"for-parents.html#parents-handbook", label:"Return To Parent Guide", title:"Payment Received" },
     "intro-session": { href:"index.html#contact", label:"Return To Booking", title:"Payment Received" },
-    "stream-clarity-session": { href:"index.html#contact", label:"Return To Booking", title:"Payment Received" },
+    "stream-clarity-session": { href:"assessment.html#self-assessments", label:"Start Assessment Now", title:"Payment Verified" },
     "career-direction-session": { href:"index.html#contact", label:"Return To Booking", title:"Payment Received" }
   };
   if(skuTargets[sku]){
