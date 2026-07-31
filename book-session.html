@@ -90,7 +90,10 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
 .gbook-sess{position:relative;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:11px 14px;margin:0 auto 16px;max-width:520px;font-size:.86rem;color:rgba(255,255,255,.9);text-align:left}
 .gbook-sess b{color:var(--gold2)}
 .gbook-note{position:relative;max-width:520px;margin:14px auto 0;font-size:.78rem;color:rgba(255,255,255,.72);line-height:1.5}
-.gbook-note code{display:block;margin-top:6px;background:rgba(0,0,0,.28);border:1px dashed rgba(255,255,255,.22);border-radius:8px;padding:9px 11px;color:#fff;font-size:.8rem;word-break:break-word}
+.gbook-copy{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
+.gbook-copy code{flex:1;min-width:180px;background:rgba(0,0,0,.28);border:1px dashed rgba(255,255,255,.22);border-radius:8px;padding:9px 11px;color:#fff;font-size:.8rem;word-break:break-word}
+.gbook-copy button{border:0;border-radius:8px;padding:9px 16px;font:inherit;font-weight:800;font-size:.8rem;background:var(--gold2);color:var(--navy);cursor:pointer;transition:background .15s}
+.gbook-copy button.done{background:#1EAE5C;color:#fff}
 @media(max-width:520px){.stats{grid-template-columns:1fr 1fr}.sess-grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -126,8 +129,8 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
     <p>Pick a slot from Sachin's real calendar — you'll get an instant Google Calendar invite with the video-call link and reminders. No back-and-forth.</p>
     <div class="gbook-sess" id="gbookSess">You're booking: <b>Introductory Session</b> · 45 min · ₹49</div>
     <a class="btn gbtn" id="gBookBtn" href="https://calendar.app.google/rzegv6fxmus1r1sJA" target="_blank" rel="noopener">See available times &amp; book &rarr;</a>
-    <p class="gbook-note">One tip: on the Google booking form, paste this line into the <b>notes</b> box so we know which session you picked —
-      <code id="gbookNote">Session: Introductory Session (45 min, ₹49)</code>
+    <p class="gbook-note" id="gbookNote" hidden><span id="gbookNoteMsg">Tap <b>Book</b> above and we'll copy your session name — just paste it into the <b>Notes</b> box on the Google form so Sachin knows which one.</span>
+      <span class="gbook-copy"><code id="gbookNoteCode">Session: Introductory Session (45 min, ₹49)</code><button type="button" id="gbookCopy">Copy</button></span>
     </p>
   </div>
 
@@ -278,7 +281,12 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
   function update(){
     var s=state.session;
     document.getElementById('gbookSess').innerHTML='You’re booking: <b>'+s.name+'</b> · '+s.mins+' min · '+s.priceLabel;
-    document.getElementById('gbookNote').textContent='Session: '+s.name+' ('+s.mins+' min, '+s.priceLabel+')';
+    document.getElementById('gbookNoteCode').textContent=noteLine();
+    // The single Google page already IS the intro, so only nudge for the
+    // other sessions — the common ₹49 path stays one tap, no notes chore.
+    var note=document.getElementById('gbookNote');
+    if(s.key==='intro'){ note.setAttribute('hidden',''); }
+    else { note.removeAttribute('hidden'); resetCopy(); }
     var ready=state.name && state.date && state.time;
     document.getElementById('preview').textContent = (state.name||state.date||state.time) ? buildMsg() : 'Fill in your name, day and time — your request will appear here.';
     var btn=document.getElementById('waBtn');
@@ -301,8 +309,22 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
     if(this.getAttribute('aria-disabled')==='true'){ e.preventDefault(); return; }
     if(window.gtag) gtag('event','booking_addtocal',{event_category:'booking'});
   });
+  function noteLine(){ var s=state.session; return 'Session: '+s.name+' ('+s.mins+' min, '+s.priceLabel+')'; }
+  function resetCopy(){ var b=document.getElementById('gbookCopy'); if(b){ b.textContent='Copy'; b.classList.remove('done'); } }
+  function copyNote(){
+    var text=noteLine(), b=document.getElementById('gbookCopy');
+    function done(){ if(b){ b.textContent='✓ Copied'; b.classList.add('done'); } }
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(done,function(){}); }
+    else { var t=document.createElement('textarea'); t.value=text; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');done();}catch(e){} document.body.removeChild(t); }
+  }
+  document.getElementById('gbookCopy').addEventListener('click',copyNote);
   var gb=document.getElementById('gBookBtn');
-  if(gb) gb.addEventListener('click',function(){ if(window.gtag) gtag('event','booking_google_click',{event_category:'booking'}); });
+  if(gb) gb.addEventListener('click',function(){
+    // Auto-copy the session name for non-intro sessions so the only manual
+    // step on Google's form is a single paste — no typing, no re-entry.
+    if(state.session.key!=='intro') copyNote();
+    if(window.gtag) gtag('event','booking_google_click',{event_category:'booking',event_label:state.session.key});
+  });
 })();
 </script>
 </body>
