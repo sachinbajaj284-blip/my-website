@@ -191,11 +191,13 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
   // All bookable live sessions run through the single Google Calendar link.
   // The visitor picks one here; the choice drives the WhatsApp message, the
   // "add to calendar" event and the notes line for the Google booking form.
+  // aud = the "This session is for" chip to pre-select. Set only where the
+  // audience is unambiguous, so we never pre-fill a wrong guess.
   var SESSIONS=[
-    {key:'intro',    name:'Introductory Session',              mins:45, priceLabel:'₹49',       desc:'First 1:1 call — understand your concern and the right next step.'},
-    {key:'counsel',  name:'1:1 Career & Mental-Health Session',mins:60, priceLabel:'as per plan',desc:'Full guidance for career confusion, exam stress or emotional pressure.'},
-    {key:'parent',   name:'Parent / Joint Session',            mins:45, priceLabel:'as per plan',desc:'Parent guidance or a joint parent-child conversation.'},
-    {key:'debrief',  name:'₹999 Report Debrief',               mins:30, priceLabel:'incl. in ₹999',desc:'Expert walkthrough of your Full Clarity Report.'}
+    {key:'intro',    name:'Introductory Session',              mins:45, priceLabel:'₹49',       desc:'First 1:1 call — understand your concern and the right next step.', aud:''},
+    {key:'counsel',  name:'1:1 Career & Mental-Health Session',mins:60, priceLabel:'as per plan',desc:'Full guidance for career confusion, exam stress or emotional pressure.', aud:''},
+    {key:'parent',   name:'Parent / Joint Session',            mins:45, priceLabel:'as per plan',desc:'Parent guidance or a joint parent-child conversation.', aud:'a parent enquiry'},
+    {key:'debrief',  name:'₹999 Report Debrief',               mins:30, priceLabel:'incl. in ₹999',desc:'Expert walkthrough of your Full Clarity Report.', aud:''}
   ];
   var state={session:SESSIONS[0],name:'',forWhom:'',date:'',time:'',iso:''}, started=false;
   var DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -212,6 +214,7 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
     b.addEventListener('click',function(){
       Array.prototype.forEach.call(sessGrid.querySelectorAll('.sess'),function(c){c.classList.remove('sel');});
       this.classList.add('sel'); state.session=s; markStarted();
+      applyAudience(s);
       if(window.gtag) gtag('event','booking_session_selected',{event_category:'booking',event_label:s.key});
       update();
     });
@@ -252,6 +255,18 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
   function selectIn(container,btn){
     Array.prototype.forEach.call(container.querySelectorAll('.chip'),function(c){c.classList.remove('sel');});
     btn.classList.add('sel');
+  }
+
+  // Pre-select the matching "This session is for" chip so the client isn't
+  // asked something the session already implies. Only fires when the session
+  // maps cleanly (aud set); otherwise the client's own choice is untouched.
+  function applyAudience(s){
+    if(!s.aud) return;
+    Array.prototype.forEach.call(document.querySelectorAll('#forChips .chip'),function(c){
+      var match=c.getAttribute('data-for')===s.aud;
+      c.classList.toggle('sel',match);
+      if(match) state.forWhom=s.aud;
+    });
   }
 
   function buildMsg(){
