@@ -9,11 +9,39 @@ few times a year, check it, and commit it.
 JoSAA publishes final ranks once per admission cycle. Scraping a government server on
 every Vercel deploy would be rude and pointless. The ingest is a manual, deliberate step.
 
+## Where to run it
+
+The ingest needs to reach `josaa.admissions.nic.in`. Many networks — corporate VPNs, some
+cloud sandboxes, and the Claude Code web environment — block `.nic.in` outright. Pick
+whichever of these works for you:
+
+**A. GitHub Actions (recommended, nothing to install).** Actions tab → *Refresh JoSAA
+dataset* → *Run workflow*. Leave `smoke_test` ticked for the first run: it pulls a few
+hundred rows, proves the scraper still matches the live page, and commits nothing. If that
+succeeds, run it again with `smoke_test` unticked and it will ingest, validate, generate
+the browse pages, and commit everything back to the branch. It also runs monthly through
+July–September, when JoSAA publishes.
+
+**B. Your own machine.** Node 18+ and ordinary broadband:
+
+```bash
+git clone <this repo> && cd my-website
+npm run josaa:probe      # confirm JoSAA is reachable and the form still matches
+npm run josaa:refresh    # ingest -> validate -> generate
+git add data/josaa colleges sitemap-colleges.xml && git commit && git push
+```
+
+**C. The environment's network policy.** If you want this to work inside a Claude Code web
+session, the environment has to allow `josaa.admissions.nic.in`. See
+<https://code.claude.com/docs/en/claude-code-on-the-web> for how network policies are
+configured.
+
+If `--probe` times out from a runner but works from your laptop, JoSAA is likely
+throttling or geo-blocking non-Indian IPs — use option B.
+
 ## Prerequisites
 
-Node 18+, and a machine that can actually reach `josaa.admissions.nic.in`. Some networks
-and cloud sandboxes block `.nic.in`; if `npm run josaa:probe` times out, run it from a
-normal broadband connection.
+Node 18+. The ingest tools use only Node built-ins, so there is nothing to `npm install`.
 
 ## Steps
 
@@ -44,6 +72,30 @@ To render a staging dataset without touching the live pages:
 ```bash
 node tools/josaa-pages.mjs --data /tmp/staging/josaa --out /tmp/staging/colleges
 ```
+
+## Last resort: feed it pages by hand
+
+If nothing can reach JoSAA programmatically, you can still build the dataset. Open the
+[archive page](https://josaa.admissions.nic.in/applicant/seatmatrix/openingclosingrankarchieve.aspx)
+in a browser, run one query per institute type for each year, save each result page
+(Ctrl+S, "HTML only"), and drop the files here with exactly these names:
+
+```
+tools/.cache/josaa/orcr__2026__iit__final.html
+tools/.cache/josaa/orcr__2026__nit__final.html
+tools/.cache/josaa/orcr__2026__iiit__final.html
+tools/.cache/josaa/orcr__2026__other-gfti__final.html
+```
+
+…and the same for each other year. Then:
+
+```bash
+node tools/josaa-ingest.mjs --years 2024,2025,2026 --from-cache
+npm run josaa:validate && npm run josaa:pages
+```
+
+`--from-cache` makes no network calls at all — it just re-parses whatever is in the cache
+directory. This is also how you re-apply a parser fix without re-scraping.
 
 ## When the probe fails
 
