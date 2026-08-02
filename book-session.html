@@ -298,6 +298,23 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
 
   document.getElementById('bName').addEventListener('input',function(){ state.name=this.value.trim(); markStarted(); update(); });
 
+  // Pre-select "This session is for" when arriving from the start.html triage
+  // link (?for=s10|s1112|parent|pro), so the answer given there isn't asked twice.
+  (function applyTriageParam(){
+    var params=new URLSearchParams(location.search);
+    var forKey=params.get('for');
+    if(!forKey) return;
+    var FOR_MAP={s10:'a Class 10 student (stream selection)', s1112:'a Class 11–12 student (after 12th plans)', parent:'a parent enquiry', pro:'a working professional'};
+    var val=FOR_MAP[forKey];
+    if(!val) return;
+    Array.prototype.forEach.call(document.querySelectorAll('#forChips .chip'),function(c){
+      var match=c.getAttribute('data-for')===val;
+      c.classList.toggle('sel',match);
+      if(match) state.forWhom=val;
+    });
+    if(window.gtag) gtag('event','booking_source_triage',{event_category:'booking',event_label:forKey});
+  })();
+
   function selectIn(container,btn){
     Array.prototype.forEach.call(container.querySelectorAll('.chip'),function(c){c.classList.remove('sel');});
     btn.classList.add('sel');
