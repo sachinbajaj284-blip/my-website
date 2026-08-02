@@ -13,6 +13,7 @@
 */
 
 const crypto = require("crypto");
+const { checkRateLimit, clientKey } = require("../_lib/rateLimit");
 
 const SKU_PRICES = {
   "student-full-report": { amount: 999, label: "Lume Live Full Clarity Report", alias: "student999" },
@@ -95,6 +96,15 @@ module.exports = async function handler(req, res){
 
   if(req.method !== "POST"){
     return json(res, 405, { error: "Method not allowed" });
+  }
+
+  const allowed = await checkRateLimit({
+    key: "create-order:" + clientKey(req),
+    limit: 8,
+    windowMs: 10 * 60 * 1000
+  });
+  if(!allowed){
+    return json(res, 429, { error: "Too many requests. Please wait a few minutes and try again, or pay by UPI." });
   }
 
   const clientId = process.env.CASHFREE_CLIENT_ID;
