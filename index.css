@@ -844,6 +844,12 @@ body.js-ready .anim.left{transform:translateX(-32px);}
 body.js-ready .anim.right{transform:translateX(32px);}
 body.js-ready .anim.scale{transform:scale(.9);}
 .anim.visible,body.js-ready .anim.visible{opacity:1;transform:translate(0) scale(1);}
+.anim.d1{transition-delay:.08s;}
+.anim.d2{transition-delay:.16s;}
+.anim.d3{transition-delay:.24s;}
+.anim.d4{transition-delay:.32s;}
+.anim.d5{transition-delay:.4s;}
+.anim.d6{transition-delay:.48s;}
 
 /* ══ ENHANCED CTA BUTTONS ══ */
 .btn-cta{

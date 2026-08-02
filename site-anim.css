@@ -1,0 +1,4 @@
+/* Lume Live — shared scroll-reveal animations (applied by site-anim.js) */
+.sa-reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.25,.46,.45,.94),transform .7s cubic-bezier(.25,.46,.45,.94);}
+.sa-reveal.sa-in{opacity:1;transform:none;}
+@media(prefers-reduced-motion:reduce){.sa-reveal{opacity:1;transform:none;transition:none;}}
