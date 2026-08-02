@@ -144,7 +144,7 @@ function tail(depth) {
 
 <footer class="foot">
   Lume Live &middot; Online career counselling &amp; mental-health support across India &middot; WhatsApp +91 70156 71280<br>
-  <a href="${up}index.html">Home</a> &middot; <a href="${up}colleges.html">All colleges</a> &middot; <a href="${up}college-predictor.html">Rank predictor</a> &middot; <a href="${up}career-explorer.html">Careers</a>
+  <a href="${up}index.html">Home</a> &middot; <a href="${up}colleges.html">All colleges</a> &middot; <a href="${up}college-predictor.html">Rank predictor</a> &middot; <a href="${up}choice-list.html">Choice filling</a> &middot; <a href="${up}career-explorer.html">Careers</a>
 </footer>
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-1CZ93P4P3V"></script>
