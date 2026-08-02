@@ -24,6 +24,7 @@
     mode: "production",
     createOrderEndpoint: "/api/cashfree/create-order",
     orderStatusEndpoint: "/api/cashfree/order-status",
+    restoreAccessEndpoint: "/api/cashfree/restore-access",
     redirectTarget: "_modal",
     whatsappNumber: "917015671280",
     upiId: "sachinbajaj284@okaxis",
@@ -111,12 +112,170 @@
     var store = readAccessStore();
     store[sku] = Object.assign({ status:"PAID", grantedAt:new Date().toISOString() }, details || {});
     writeAccessStore(store);
+    // A prior lumeCashfreeVerifyAccess(sku) call earlier on this same page
+    // load (e.g. the initial "is this already unlocked?" check that runs
+    // before the user has paid) may have cached a negative result. Without
+    // clearing it here, a customer who pays via the in-page modal — no
+    // full reload, so the cache survives — could see "payment not
+    // received" for up to 5 minutes despite having just paid. Also tell
+    // any listening page to re-check and refresh its unlocked UI now,
+    // not just after the restore-access flow.
+    _verifyCache = {};
+    try{ window.dispatchEvent(new CustomEvent("lume:access-restored")); }catch(err){}
   };
   window.lumeCashfreeHasAccess = function(sku){
     var store = readAccessStore();
     return Boolean(store[sku] && String(store[sku].status || "").toUpperCase() === "PAID");
   };
   window.lumeCashfreeGetConfig = getConfig;
+
+  /* ------------------------------------------------------------
+     Server-verified access check.
+
+     localStorage.lumeCashfreeAccess is only ever a *hint* — anyone can
+     open devtools and set it to {status:"PAID"} without paying. Any page
+     gating real paid content must call lumeCashfreeVerifyAccess(sku)
+     instead of lumeCashfreeHasAccess(sku), and only unlock once it
+     resolves true. It re-checks the stored order_id against Cashfree's
+     own order-status endpoint (the source of truth) before trusting a
+     PAID claim, and revokes/ignores any entry that doesn't check out.
+     ------------------------------------------------------------ */
+  var _verifyCache = {};
+  var VERIFY_TTL_MS = 5 * 60 * 1000; // avoid re-hitting the API on every re-render
+
+  window.lumeCashfreeVerifyAccess = function(sku){
+    if(!sku){ return Promise.resolve(false); }
+    var now = Date.now();
+    var cached = _verifyCache[sku];
+    if(cached && (now - cached.ts) < VERIFY_TTL_MS){ return cached.promise; }
+
+    var store = readAccessStore();
+    var entry = store[sku];
+    if(!entry || !entry.order_id){
+      // Nothing locally that even claims a real order — no network call needed.
+      return Promise.resolve(false);
+    }
+
+    var cfg = getConfig();
+    var promise = fetch(cfg.orderStatusEndpoint + "?order_id=" + encodeURIComponent(entry.order_id))
+      .then(function(res){ if(!res.ok){ throw new Error("status check failed"); } return res.json(); })
+      .then(function(data){
+        var status = String(data.order_status || "").toUpperCase();
+        // Every order create-order.js creates is tagged with its sku, so a
+        // real match is always possible — treating a missing/blank sku as
+        // "any sku is fine" would let a cheap order's order_id be reused
+        // (via a hand-edited localStorage entry) to unlock a pricier one.
+        var ok = status === "PAID" && data.sku === sku;
+        if(ok){
+          entry.status = "PAID";
+          entry.verifiedAt = new Date().toISOString();
+          store[sku] = entry;
+        } else {
+          // The stored claim didn't check out against Cashfree — drop it
+          // so a forged/expired entry can't be reused on the next call.
+          delete store[sku];
+        }
+        writeAccessStore(store);
+        return ok;
+      })
+      .catch(function(){
+        // Fail closed on a network hiccup: never grant paid content on an
+        // unverifiable claim. The calling page should show a friendly
+        // "couldn't verify, please retry" state, not a hard rejection.
+        return false;
+      });
+    _verifyCache[sku] = { ts: now, promise: promise };
+    return promise;
+  };
+
+  /* ------------------------------------------------------------
+     Restore access on a new device.
+
+     Access is normally tied to whichever browser was used at checkout
+     (that's where the order_id lives). Restoring it on a new device
+     requires proof of ownership: the visitor must be signed in (Firebase
+     Auth, shared across lumelive.co.in pages) with a *verified* email.
+     A signed, server-verified ID token is sent — never a typed-in phone
+     or email string — so this can't be used to pull up someone else's
+     paid content just by knowing their contact details. Looks up
+     purchases against that verified email (written by
+     /api/cashfree/order-status.js when Cashfree confirms PAID) and, if
+     found, repopulates local storage with the real order_id(s) so
+     lumeCashfreeVerifyAccess() can confirm them the normal way.
+     Returns { ok, count, needsAuth?, needsVerification?, error? }.
+     ------------------------------------------------------------ */
+  window.lumeCashfreeRestoreAccess = function(){
+    var user = window.firebaseAuth && window.firebaseAuth.currentUser;
+    if(!user){
+      return Promise.resolve({ ok:false, count:0, needsAuth:true, error:"Please sign in to restore your access." });
+    }
+    if(!user.emailVerified){
+      return Promise.resolve({ ok:false, count:0, needsVerification:true, error:"Please verify your email first — check your inbox for the verification link, then try again." });
+    }
+    var cfg = getConfig();
+    return user.getIdToken().then(function(idToken){
+      return fetch(cfg.restoreAccessEndpoint || "/api/cashfree/restore-access", {
+        method:"POST", headers:{ "Authorization":"Bearer " + idToken }
+      });
+    })
+      .then(function(res){ return res.json().then(function(data){ return { res:res, data:data }; }); })
+      .then(function(r){
+        if(!r.res.ok || !r.data || r.data.ok === false){
+          return {
+            ok:false, count:0,
+            needsAuth: r.data && r.data.code === "NO_TOKEN",
+            needsVerification: r.data && r.data.code === "EMAIL_NOT_VERIFIED",
+            error:(r.data && r.data.error) || "Could not look up your access. Please retry or message us on WhatsApp."
+          };
+        }
+        var found = Array.isArray(r.data.access) ? r.data.access : [];
+        if(found.length){
+          var store = readAccessStore();
+          found.forEach(function(item){
+            if(!item || !item.sku || !item.order_id) return;
+            store[item.sku] = { status:"PAID", order_id:item.order_id, grantedAt:item.grantedAt || new Date().toISOString(), restoredAt:new Date().toISOString() };
+          });
+          writeAccessStore(store);
+          // Clear the verify cache so the next check re-confirms these fresh entries.
+          _verifyCache = {};
+        }
+        return { ok:true, count:found.length };
+      })
+      .catch(function(){
+        return { ok:false, count:0, error:"Could not reach Lume Live right now. Please retry or message us on WhatsApp." };
+      });
+  };
+
+  // Convenience UI wrapper: checks sign-in state, restores access,
+  // notifies, and tells any listening page (via a custom event) to
+  // re-check its gates. Wire a "Paid on another device?" link/button to
+  // this rather than re-implementing the sign-in+refresh dance per page.
+  window.lumeCashfreeRestoreAccessPrompt = function(){
+    var user = window.firebaseAuth && window.firebaseAuth.currentUser;
+    if(!user){
+      notify("Please sign in first, then tap Restore access again.");
+      if(typeof window.openAuth === "function"){ window.openAuth("signin"); }
+      else { notify("Please sign in on the Assessment page (lumelive.co.in/assessment.html), then come back here and tap Restore access again."); }
+      return;
+    }
+    if(!user.emailVerified){
+      notify("Please verify your email first — check your inbox for the verification link, then try again.");
+      return;
+    }
+    notify("Checking your payment records…");
+    window.lumeCashfreeRestoreAccess().then(function(result){
+      if(!result.ok){
+        notify(result.error || "Could not look up your access. Please message us on WhatsApp.");
+        return;
+      }
+      if(result.count > 0){
+        notify("Access restored — you're all set on this device.");
+        window.dispatchEvent(new CustomEvent("lume:access-restored"));
+      } else {
+        notify("No completed payment found for your signed-in email. If you just paid, wait a minute and try again, or message us on WhatsApp.");
+      }
+    });
+  };
 
   /* ============================================================
      Firestore logging — metadata only (orderId, amount, timestamp,

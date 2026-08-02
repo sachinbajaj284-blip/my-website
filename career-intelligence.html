@@ -440,7 +440,7 @@ button,input,select{font:inherit}
           <div class="ca-gate-feature"><b>🏛</b><div><strong>"What about a secure government job?"</strong><span>50+ UPSC, SSC, railway, banking, defence, teaching and state routes with eligibility and pay.</span></div></div>
           <div class="ca-gate-feature"><b>✦</b><div><strong>"Is it right for my child specifically?"</strong><span>Take the free 60-second test to match every career to their real strengths, not random browsing.</span></div></div>
         </div>
-        <div class="ca-gate-note">Start browsing free below — no signup. Take the free Snapshot to match careers to your child and open compare, class-wise routes and the government-jobs explorer. Want a counsellor to build a personal plan? That's the ₹1,499 roadmap.</div>
+        <div class="ca-gate-note">Start browsing free below — no signup. Take the free Snapshot to match careers to your child and open compare, class-wise routes and the government-jobs explorer. Want a counsellor to build a personal plan? That's the ₹1,499 roadmap. Already bought the roadmap on another device? <a href="#" onclick="if(typeof lumeCashfreeRestoreAccessPrompt==='function')lumeCashfreeRestoreAccessPrompt();return false;">Restore access</a>.</div>
       </aside>
     </div>
 
@@ -667,30 +667,50 @@ const SOURCE_REGISTRY=[
 ];
 const THEMES={R:"Hands-on / Technical",I:"Science / Research",A:"Creative / Design",S:"People / Helping",E:"Business / Leadership",C:"Data / Structure"};
 const ATLAS_ACCESS_KEY="lumeCareerAtlasAccess";
-function hasAtlasAccess(){
+const ATLAS_PAID_SKUS=["student-full-report","lume-lens-working-profile","career-intelligence-roadmap"];
+
+// Free preview tier: unlocked instantly for anyone arriving from the free
+// assessment/snapshot flow. This tier is intentionally free and needs no
+// payment verification — do not add paid-only data/features behind it.
+function hasFreePreviewAccess(){
   const p=new URLSearchParams(location.search);
   const token=String(p.get("access")||p.get("unlock")||p.get("from")||"").toLowerCase();
   const fromAssessment=["assessment","snapshot","report","paid-report"].includes(token);
   let stored=false;
-  let paidAccess=false;
   try{stored=localStorage.getItem(ATLAS_ACCESS_KEY)==="1";}catch(e){}
-  try{
-    const paid=JSON.parse(localStorage.getItem("lumeCashfreeAccess")||"{}")||{};
-    paidAccess=["student-full-report","lume-lens-working-profile","career-intelligence-roadmap"].some(k=>paid[k]&&String(paid[k].status||"").toUpperCase()==="PAID");
-  }catch(e){}
   if(fromAssessment){
     try{
       localStorage.setItem(ATLAS_ACCESS_KEY,"1");
       localStorage.setItem("lumeCareerAtlasUnlockedAt",new Date().toISOString());
     }catch(e){}
   }
-  return fromAssessment||stored||paidAccess;
+  return fromAssessment||stored;
 }
+
 function initAtlasAccess(){
-  const unlocked=hasAtlasAccess();
+  const unlocked=hasFreePreviewAccess();
   document.body.classList.toggle("atlas-locked",!unlocked);
   document.body.classList.toggle("atlas-unlocked",unlocked);
+  // Paid tiers are never trusted from localStorage alone — that can be
+  // forged in devtools. This checks the real order status on Cashfree's
+  // side and only upgrades the view once the server confirms payment.
+  verifyPaidAtlasAccess();
   return unlocked;
+}
+
+function runPaidAtlasCheck(){
+  if(typeof window.lumeCashfreeVerifyAccess!=="function")return;
+  Promise.all(ATLAS_PAID_SKUS.map(sku=>window.lumeCashfreeVerifyAccess(sku))).then(results=>{
+    if(!results.some(Boolean))return;
+    document.body.classList.remove("atlas-locked");
+    document.body.classList.add("atlas-unlocked");
+    if(typeof render==="function")render();
+    track("ci_paid_access_verified",{});
+  });
+}
+function verifyPaidAtlasAccess(){
+  window.addEventListener("lume:cashfree-ready",runPaidAtlasCheck,{once:true});
+  window.addEventListener("lume:access-restored",runPaidAtlasCheck);
 }
 function career(id,title,sector,themes,streams,paths,style,setting,future,entry,mid,confidence,work,qualifications,exams,skills,ai,risks,parentNote){
   return {id,title,sector,themes,streams,paths,style,setting,future,salary:{entry,mid,confidence},work,qualifications,exams,skills,ai,risks,parentNote,
@@ -1404,6 +1424,28 @@ if(atlasUnlocked){[80,320,760].forEach(t=>setTimeout(scrollToHashTarget,t));}
   <a href="refund-policy.html" style="color:#E8B95A;font-weight:800;text-decoration:none">Refund Policy</a> ·
   <a href="index.html#contact" style="color:#E8B95A;font-weight:800;text-decoration:none">Contact</a>
 </footer>
+<!-- Minimal Firebase Auth detection (no sign-in UI on this page) — picks
+     up a session already signed in on assessment.html/for-working-
+     professionals.html (same Firebase project, shared browser-local
+     persistence) so "Restore access" here can use a verified identity
+     without duplicating the full sign-in modal on this page. -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyDWifVIos_IGC7RT0xojH8gjMZekacR6bk",
+    authDomain: "lume-live-cf865.firebaseapp.com",
+    projectId: "lume-live-cf865",
+    storageBucket: "lume-live-cf865.firebasestorage.app",
+    messagingSenderId: "524991686804",
+    appId: "1:524991686804:web:e7019de465f5065901ec81"
+  };
+  const app = initializeApp(firebaseConfig);
+  const fbAuth = getAuth(app);
+  window.firebaseApp = app;
+  window.firebaseAuth = fbAuth;
+  onAuthStateChanged(fbAuth, user => { window.currentFirebaseUser = user || null; });
+</script>
 <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
 <script src="cashfree-payments.js"></script>
 <script>

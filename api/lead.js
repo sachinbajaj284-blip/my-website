@@ -59,10 +59,21 @@ function readBody(req){
 
 var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+var rateLimit = require("./_lib/rateLimit");
+
 module.exports = async function handler(req, res){
   applyCors(req, res);
   if (req.method === "OPTIONS") return json(res, 204, {});
   if (req.method !== "POST") return json(res, 405, { ok:false, error:"Method not allowed" });
+
+  var allowed = await rateLimit.checkRateLimit({
+    key: "lead:" + rateLimit.clientKey(req),
+    limit: 10,
+    windowMs: 10 * 60 * 1000
+  });
+  if (!allowed){
+    return json(res, 429, { ok:false, error:"Too many requests. Please try again in a few minutes." });
+  }
 
   var body = await readBody(req);
   var email = String(body.email || "").trim().toLowerCase();

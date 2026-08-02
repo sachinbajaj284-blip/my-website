@@ -25,8 +25,7 @@
 <meta http-equiv="content-language" content="en-IN">
 <link rel="canonical" href="https://lumelive.co.in/for-working-professionals.html">
 <link rel="alternate" hreflang="en-in" href="https://lumelive.co.in/for-working-professionals.html">
-<link rel="alternate" hreflang="hi-in" href="https://lumelive.co.in/index-hi.html">
-<link rel="alternate" hreflang="x-default" href="https://lumelive.co.in/">
+<link rel="alternate" hreflang="x-default" href="https://lumelive.co.in/for-working-professionals.html">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
 <link rel="icon" href="favicon.ico" sizes="any">
@@ -3273,6 +3272,7 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
             </div>
             <button class="sa-btn primary" type="button" onclick="saBegin()">Begin Lume Lens &rarr;</button>
             <p class="sa-pay-note">Cashfree payments verify automatically and return you here to begin. <a class="sa-help-link" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20need%20help%20with%20the%20assessment%20payment%20or%20report." target="_blank" rel="noopener">Need help? Message Lume Live.</a></p>
+            <p class="sa-pay-note"><a href="#" onclick="if(typeof lumeCashfreeRestoreAccessPrompt==='function')lumeCashfreeRestoreAccessPrompt();return false;">Paid on your phone and now on another device? Restore access</a></p>
           </aside>
         </div>
       </div>
@@ -3570,7 +3570,11 @@ function restoreAssessmentProgress(saved){
  S.course=typeof saved.course==="string"?saved.course:"";
  S.concern=typeof saved.concern==="string"?saved.concern:"";
  S.guardian=typeof saved.guardian==="string"?saved.guardian:"";
- S.paid=Boolean(saved.paid);
+ // Never trust a restored "paid" claim at face value — it's just JSON in
+ // localStorage and can be hand-edited. Show the gate immediately and
+ // only unlock once the server confirms the claim against a real order.
+ var claimedPaid=Boolean(saved.paid);
+ S.paid=false;
  S.handoff=Boolean(saved.handoff);
  S.identity=typeof saved.identity==="string"?saved.identity:"";
  S.part=Math.max(0,Math.min(order.length-1,Number(saved.part)||0));
@@ -3585,7 +3589,13 @@ function restoreAssessmentProgress(saved){
  if(el("saGuardian"))el("saGuardian").value=S.guardian;
  if(el("saPurpose"))el("saPurpose").checked=Boolean(saved.purpose);
  if(el("saPaid"))el("saPaid").checked=Boolean(saved.paidChecked||saved.paid);
- if(S.paid){show("saTest");renderPart();}else{show("saGate");}
+ show("saGate");
+ if(claimedPaid&&typeof window.lumeCashfreeVerifyAccess==="function"){
+  window.lumeCashfreeVerifyAccess("lume-lens-working-profile").then(function(verified){
+   if(verified){S.paid=true;persistAssessmentProgress();show("saTest");renderPart();}
+   else{persistAssessmentProgress();}
+  });
+ }
  return true;
 }
 window.saUseAccountProgress=function(user){
@@ -3635,14 +3645,18 @@ function requireAssessmentSignin(){
  return false;
 }
 function applyVerifiedCashfreeAccess(){
- var verified=typeof window.lumeCashfreeHasAccess==="function"&&window.lumeCashfreeHasAccess("lume-lens-working-profile");
- if(!verified)return false;
- var paid=el("saPaid");
- if(paid)paid.checked=true;
- S.handoff=true;
- S.identity=profileIdentity();
- persistAssessmentProgress(true);
- return true;
+ // Real gate: verified server-side against the Cashfree order, never
+ // trusted from localStorage alone (that can be forged in devtools).
+ if(typeof window.lumeCashfreeVerifyAccess!=="function")return Promise.resolve(false);
+ return window.lumeCashfreeVerifyAccess("lume-lens-working-profile").then(function(verified){
+  if(!verified)return false;
+  var paid=el("saPaid");
+  if(paid)paid.checked=true;
+  S.handoff=true;
+  S.identity=profileIdentity();
+  persistAssessmentProgress(true);
+  return true;
+ });
 }
 window.saSendPayment=function(){
  if(!requireAssessmentSignin())return;
@@ -3693,13 +3707,16 @@ window.saBegin=function(){
  var err=el("saGateError");
  if(!requireAssessmentSignin())return;
  if(!validateGate())return;
- var verified=applyVerifiedCashfreeAccess();
- if(!verified){
-  err.textContent="Please complete the ₹1,999 Cashfree payment before starting. If you have just paid, wait a few seconds for it to verify and tap Begin again — or message us on WhatsApp to confirm your access.";return;
- }
- S.paid=true;persistAssessmentProgress();
- show("saTest");renderPart();el("saTest").scrollIntoView({behavior:"smooth",block:"start"});
- toast("You are in. One honest answer at a time.");
+ err.textContent="Checking your payment status…";
+ applyVerifiedCashfreeAccess().then(function(verified){
+  if(!verified){
+   err.textContent="Please complete the ₹1,999 Cashfree payment before starting. If you have just paid, wait a few seconds for it to verify and tap Begin again — or message us on WhatsApp to confirm your access.";return;
+  }
+  err.textContent="";
+  S.paid=true;persistAssessmentProgress();
+  show("saTest");renderPart();el("saTest").scrollIntoView({behavior:"smooth",block:"start"});
+  toast("You are in. One honest answer at a time.");
+ });
 };
 
 /* ─── Stepper ─── */
@@ -3707,6 +3724,7 @@ function scheduleVerifiedCashfreeAccess(){
  [0,300,1200].forEach(function(ms){setTimeout(applyVerifiedCashfreeAccess,ms);});
 }
 window.addEventListener("lume:cashfree-ready",scheduleVerifiedCashfreeAccess);
+window.addEventListener("lume:access-restored",scheduleVerifiedCashfreeAccess);
 if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",scheduleVerifiedCashfreeAccess);}
 else{scheduleVerifiedCashfreeAccess();}
 function renderSteps(){
@@ -5534,6 +5552,7 @@ if(new URLSearchParams(window.location.search).has("sample-report")){window.saSh
         <h3>You are signed in</h3>
         <div class="auth-email" id="authUserEmail"></div>
         <p class="auth-status" id="authUserStatus"></p>
+        <button class="auth-reset" type="button" id="authResendVerify" onclick="resendVerificationEmail()" hidden>Resend verification email</button>
         <button class="auth-signout" type="button" onclick="signOutUser()">Sign Out</button>
       </div>
     </div>
@@ -5856,11 +5875,21 @@ function renderAuthUser(user){
   if(signedIn){
     document.getElementById('authUserEmail').textContent=user.email||'Signed-in client';
     document.getElementById('authUserStatus').textContent=user.emailVerified?'Your email address is verified.':'Please open the verification email sent to you to confirm your address.';
+    document.getElementById('authResendVerify').hidden=user.emailVerified;
   }else{
     setAuthMode('signin');
   }
   if(typeof window.saUseAccountProgress==='function'){window.saUseAccountProgress(user);}
   if(signedIn){closeScrollEndPopup();}else{checkScrollEndPrompt();}
+}
+async function resendVerificationEmail(){
+  if(!window.lumeAuth){showToast('Account service is still loading. Please try again in a moment.');return;}
+  try{
+    await window.lumeAuth.resendVerification();
+    showToast('Verification email sent — check your inbox.');
+  }catch(error){
+    showToast(error.message||'Could not send the verification email right now.');
+  }
 }
 async function signOutUser(){
   if(!window.lumeAuth){return;}
@@ -6558,6 +6587,14 @@ function setMode(el, mode){
         await sendPasswordResetEmail(auth,email);
       }catch(error){
         if(error && error.code==='auth/user-not-found'){return;}
+        throw new Error(authErrorMessage(error));
+      }
+    },
+    async resendVerification(){
+      if(!auth.currentUser){throw new Error('Please sign in first.');}
+      try{
+        await sendEmailVerification(auth.currentUser);
+      }catch(error){
         throw new Error(authErrorMessage(error));
       }
     },
