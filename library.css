@@ -7,7 +7,7 @@ a:hover{color:var(--navy)}
 .top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.95);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 .nav{max-width:1080px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 18px}
 .brand{display:flex;align-items:center;gap:10px;font-weight:900;color:var(--navy)}
-.brand img{width:40px;height:40px;border-radius:50%;border:2px solid var(--gold)}
+.brand img{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--gold)}
 .nlinks{display:flex;align-items:center;gap:14px;font-size:.84rem;font-weight:800;color:var(--muted)}
 .nlinks a{color:var(--muted)}
 .nlinks .cta{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border-radius:999px;padding:8px 14px}
