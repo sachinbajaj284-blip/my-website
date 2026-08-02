@@ -2157,9 +2157,9 @@ body.js-ready .jr-step{opacity:0;transform:translateY(22px);}
   .jr-steps::before{left:23px;right:auto;top:6%;bottom:6%;width:2px;height:auto;background:linear-gradient(180deg,var(--teal),var(--gold),var(--gold2));transform-origin:top;}
   body.js-ready .jr-steps::before{transform:scaleY(0);}
   .jr-steps.visible::before,body.js-ready .jr-steps.visible::before{transform:scaleY(1);}
-  .jr-step{display:grid;grid-template-columns:48px 1fr;gap:16px;text-align:left;align-items:start;}
-  .jr-dot{margin:0;}
-  .jr-step p{margin:0;max-width:none;}
+  .jr-step{display:grid;grid-template-columns:48px minmax(0,1fr);column-gap:16px;row-gap:4px;text-align:left;align-items:start;}
+  .jr-dot{margin:0;grid-row:1/span 2;}
+  .jr-step h3,.jr-step p{grid-column:2;margin:0;max-width:none;}
 }
 /* Countdown digit tick */
 .cd-num{display:inline-block;}
@@ -2188,4 +2188,30 @@ img.blur-up.loaded{filter:blur(0);opacity:1;}
   .tilt-active{transition:none!important;transform:none!important;}
   img.blur-up{filter:none;opacity:1;transition:none;}
   .anim .ic-draw :is(path,circle,line,polyline,rect){stroke-dasharray:none;stroke-dashoffset:0;}
+}
+
+/* ===== Touch / small-screen behaviour for the round-3 effects ===== */
+@media(hover:none){
+  /* Hover-only reveals never fire on touch — show gallery captions permanently */
+  .gallery-overlay{opacity:1;background:linear-gradient(to top,rgba(13,27,64,.78) 0%,rgba(13,27,64,.15) 42%,transparent 65%);}
+  .gallery-zoom{opacity:0;}
+  .gallery-cap{opacity:1;transform:none;}
+  /* Auto-scroll cannot be paused by hover on touch — swipe instead */
+  .test-scroll.marquee{overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .test-scroll.marquee::-webkit-scrollbar{display:none;}
+  .test-track{animation:none!important;}
+  .test-track>.test-set[aria-hidden="true"]{display:none;}
+  .test-set .test-card{scroll-snap-align:center;}
+  /* No hover state to trigger these, so keep them at rest */
+  .svc-card:hover .svc-cta::after{animation:none;}
+}
+@media(max-width:860px){
+  .test-set .test-card{flex-basis:min(78vw,300px);max-width:min(78vw,300px);}
+  .test-scroll.marquee{-webkit-mask-image:none;mask-image:none;}
+  #journey{padding:56px 16px;}
+  .jr-steps{margin-top:34px;}
+}
+@media(max-width:380px){
+  .jr-steps{grid-template-columns:1fr;}
+  .jr-step h3{font-size:.88rem;}
 }

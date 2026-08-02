@@ -2294,6 +2294,8 @@ var track=document.createElement("div");track.className="test-track";
 track.style.animationDuration=(cards.length*9)+"s";
 track.appendChild(set);track.appendChild(clone);
 wrap.classList.add("marquee");wrap.appendChild(track);
+/* don't burn battery animating off-screen */
+new IntersectionObserver(function(en){track.style.animationPlayState=en[0].isIntersecting?"":"paused"},{threshold:0}).observe(wrap);
 })();}
 /* countdown digit tick */
 if(!reduced){document.querySelectorAll("[data-offer-days],[data-offer-hours],[data-offer-mins],[data-offer-secs]").forEach(function(el){
@@ -2318,7 +2320,7 @@ var done=function(){img.classList.add("loaded");setTimeout(function(){img.classL
 img.addEventListener("load",done,{once:!0});img.addEventListener("error",done,{once:!0});
 });
 /* gallery captions */
-var caps=["School career-awareness session","Live student workshop","Classroom guidance session","Group career activity","Recognition ceremony","Student interaction round","Seminar for senior students","Career talk in progress","Session Q&A with students"];
+var caps=["Career session with students","Classroom guidance session","Career awareness workshop","Group session in progress","Classroom career session","Student interaction round","Career talk with students","Guidance session in progress","Session Q&A with students"];
 document.querySelectorAll(".gallery-item").forEach(function(it,i){
 var ov=it.querySelector(".gallery-overlay");
 if(ov&&caps[i]){var d=document.createElement("div");d.className="gallery-cap";d.textContent=caps[i];ov.appendChild(d)}
