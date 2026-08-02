@@ -313,8 +313,13 @@ function renderResult(){
   document.getElementById('resBlurb').textContent=RES[key][lang].blurb;
   // bars
   var barsHtml='';
+  // Only scoring questions (2 points each) count toward the max — the
+  // "what's driving your stream thinking" question awards 0 points to
+  // every option, so Q.length*2 overstated the denominator and a
+  // maximally one-sided result could never show 100%.
+  var maxPossible=Q.reduce(function(sum,q){return sum+(q.note?0:2);},0)||1;
   ['s','c','h'].forEach(function(k){
-    var pct=Math.round(scores[k]/ (Q.length*2) *100);
+    var pct=Math.round(scores[k]/maxPossible*100);
     barsHtml+='<div class="bar '+k+'"><div class="lab"><span>'+STREAMS[k][lang]+'</span><span>'+pct+'%</span></div><div class="track"><div class="fill" style="width:'+pct+'%"></div></div></div>';
   });
   document.getElementById('bars').innerHTML=barsHtml;
