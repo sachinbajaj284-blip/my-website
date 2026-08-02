@@ -12,6 +12,9 @@ const skipDirs = new Set([
   "node_modules",
   "previews",
   "public",
+  // Dataset build scripts and their raw-HTML cache. data/ IS published (the
+  // predictor fetches it at runtime); the tooling that generates it is not.
+  "tools",
   "work"
 ]);
 

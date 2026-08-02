@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "node vercel-build.js"
+    "build": "node vercel-build.js",
+    "josaa:probe": "node tools/josaa-ingest.mjs --probe",
+    "josaa:ingest": "node tools/josaa-ingest.mjs",
+    "josaa:validate": "node tools/josaa-validate.mjs",
+    "josaa:test": "node tools/josaa-parser.test.mjs"
   },
   "engines": {
     "node": ">=18"

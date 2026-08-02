@@ -1,0 +1,74 @@
+# JoSAA cutoff dataset — runbook
+
+The college predictor (`college-predictor.html`) reads a static dataset in `data/josaa/`.
+That dataset is **not** in git and **not** built during deploy. You generate it by hand a
+few times a year, check it, and commit it.
+
+## Why it is not automated
+
+JoSAA publishes final ranks once per admission cycle. Scraping a government server on
+every Vercel deploy would be rude and pointless. The ingest is a manual, deliberate step.
+
+## Prerequisites
+
+Node 18+, and a machine that can actually reach `josaa.admissions.nic.in`. Some networks
+and cloud sandboxes block `.nic.in`; if `npm run josaa:probe` times out, run it from a
+normal broadband connection.
+
+## Steps
+
+```bash
+# 1. Check that JoSAA has not renamed its form controls since the last run.
+npm run josaa:probe
+
+# 2. Pull the data. Raw HTML is cached in tools/.cache/josaa/ (gitignored).
+npm run josaa:ingest -- --years 2024,2025,2026
+
+# 3. Gate: refuses to pass on swapped columns, bad ranks, partial pulls.
+npm run josaa:validate
+
+# 4. Eyeball the predictor locally, then commit data/josaa/.
+```
+
+`npm run josaa:test` runs the parser unit tests against a fixture and needs no network —
+run it after touching `tools/josaa-ingest.mjs`.
+
+## When the probe fails
+
+JoSAA is an ASP.NET WebForms app and its control ids change between years. The ingest
+discovers controls by their **option vocabulary** rather than their id, so most
+year-to-year changes are absorbed automatically. If `--probe` still reports `NOT FOUND`,
+open `discoverFields()` in `tools/josaa-ingest.mjs` and widen the matcher for the control
+in question. Do not hardcode an id you have not seen in the live page, and do not guess.
+
+## What the data looks like
+
+- `manifest.json` — dictionaries (institutes, branches, quotas), the years covered, the
+  source attribution, and a `problems` array recording anything the ingest could not pull.
+- `<seat-type>__<gender>.json` — one shard per combination, so a student downloads only
+  their slice. Rows are `[institute, branch, quota, year, openingRank, closingRank]`
+  against dictionary indices.
+- `institute-states.json` — hand-maintained institute→state map powering the Home State
+  quota filter. Extend it when the ingest reports an unmatched NIT/IIIT/GFTI.
+
+## Correctness rules that must not be broken
+
+1. **IIT rows are JEE Advanced ranks. Everything else is JEE Main.** Different exams,
+   different scales. Never compare one to the other.
+2. **Reserved seat types use category ranks, not CRL.** An OBC-NCL cutoff is an OBC-NCL
+   rank.
+3. **Preparatory-course ranks (`1234P`) are discarded**, not parsed as `1234`.
+4. **Opening rank ≤ closing rank.** The validator treats an inversion as a parsing error,
+   because it almost always means the columns were read in the wrong order.
+
+## Attribution
+
+Source: JoSAA Opening & Closing Rank archive, Government of India, reused under
+GODL-India. The attribution line at the foot of `college-predictor.html` is required —
+do not remove it.
+
+## Refresh cadence
+
+Re-run after JoSAA publishes its final round, typically late July or August. The
+validator warns if the newest year in the dataset is stale once counselling season has
+started.
