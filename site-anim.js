@@ -2,7 +2,23 @@
   "use strict";
   if(!("IntersectionObserver" in window))return;
   if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  function initBar(){
+    if(document.getElementById("scrollProgress"))return;
+    var bar=document.createElement("div");
+    bar.className="sa-progress";
+    document.body.appendChild(bar);
+    var ticking=false;
+    function upd(){
+      var h=document.documentElement.scrollHeight-window.innerHeight;
+      bar.style.transform="scaleX("+(h>0?Math.min(1,window.scrollY/h):0)+")";
+      ticking=false;
+    }
+    window.addEventListener("scroll",function(){if(!ticking){ticking=true;requestAnimationFrame(upd);}},{passive:true});
+    window.addEventListener("resize",upd);
+    upd();
+  }
   function init(){
+    initBar();
     var sel="section h2,.card,.faq-item,.stat,.step,.cred,.cta-box,.panel,.tp-card,.price-card,.ftl-card,.tool-card,.related a";
     var els=document.querySelectorAll(sel);
     if(!els.length)return;

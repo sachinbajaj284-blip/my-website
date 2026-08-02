@@ -2076,3 +2076,29 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
 .sess-reassure .sr-points{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
 .sess-reassure .sr-points span{font-size:.71rem;font-weight:700;color:#0A6E6E;background:#fff;border:1px solid #D6EAE7;border-radius:20px;padding:5px 11px;}
 .sess-closing{text-align:center;font-size:.78rem;color:#0A6E6E;font-weight:600;margin-top:12px;line-height:1.55;}
+
+/* ===== Richer motion (round 2): progress bar, title underlines, sheens, star pops ===== */
+#scrollProgress{position:fixed;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--teal),var(--gold),var(--gold2));transform:scaleX(0);transform-origin:left;z-index:6000;pointer-events:none;}
+.s-title{position:relative;}
+.s-title::after{content:'';position:absolute;left:0;right:0;margin:0 auto;bottom:-9px;width:58px;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--gold),var(--gold2));transform:scaleX(0);transform-origin:center;transition:transform .8s cubic-bezier(.25,.46,.45,.94) .2s;}
+.s-title.line-in::after{transform:scaleX(1);}
+.s-title.line-left::after{margin:0;right:auto;transform-origin:left;}
+#modal-about .s-title::after{content:none;}
+.svc-cta{position:relative;overflow:hidden;}
+.svc-cta::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.3) 50%,transparent 70%);transform:translateX(-120%);pointer-events:none;}
+.svc-card:hover .svc-cta::after{animation:gentleSheen 1s ease .1s both;}
+.btn-gold-sm::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);transition:left .5s;}
+.btn-gold-sm:hover::before{left:100%;}
+@keyframes starsPop{0%{opacity:0;transform:scale(.5);}60%{transform:scale(1.18);}100%{opacity:1;transform:scale(1);}}
+.test-card .test-stars{transition:text-shadow .3s;transform-origin:left center;}
+.test-card.visible .test-stars{animation:starsPop .6s cubic-bezier(.34,1.56,.64,1) .3s both;}
+.test-card:hover .test-stars{text-shadow:0 0 12px rgba(232,185,90,.55);}
+.ts-num.animating,.ts-stat b.animating{color:var(--gold);}
+.ts-num,.ts-stat b{transition:color .3s;}
+@media(prefers-reduced-motion:reduce){
+  #scrollProgress{display:none;}
+  .s-title::after{transition:none!important;transform:scaleX(1)!important;}
+  .svc-card:hover .svc-cta::after{animation:none!important;}
+  .test-card.visible .test-stars{animation:none!important;}
+  .btn-gold-sm::before{transition:none!important;}
+}
