@@ -3635,14 +3635,18 @@ function requireAssessmentSignin(){
  return false;
 }
 function applyVerifiedCashfreeAccess(){
- var verified=typeof window.lumeCashfreeHasAccess==="function"&&window.lumeCashfreeHasAccess("lume-lens-working-profile");
- if(!verified)return false;
- var paid=el("saPaid");
- if(paid)paid.checked=true;
- S.handoff=true;
- S.identity=profileIdentity();
- persistAssessmentProgress(true);
- return true;
+ // Real gate: verified server-side against the Cashfree order, never
+ // trusted from localStorage alone (that can be forged in devtools).
+ if(typeof window.lumeCashfreeVerifyAccess!=="function")return Promise.resolve(false);
+ return window.lumeCashfreeVerifyAccess("lume-lens-working-profile").then(function(verified){
+  if(!verified)return false;
+  var paid=el("saPaid");
+  if(paid)paid.checked=true;
+  S.handoff=true;
+  S.identity=profileIdentity();
+  persistAssessmentProgress(true);
+  return true;
+ });
 }
 window.saSendPayment=function(){
  if(!requireAssessmentSignin())return;
@@ -3693,13 +3697,16 @@ window.saBegin=function(){
  var err=el("saGateError");
  if(!requireAssessmentSignin())return;
  if(!validateGate())return;
- var verified=applyVerifiedCashfreeAccess();
- if(!verified){
-  err.textContent="Please complete the ₹1,999 Cashfree payment before starting. If you have just paid, wait a few seconds for it to verify and tap Begin again — or message us on WhatsApp to confirm your access.";return;
- }
- S.paid=true;persistAssessmentProgress();
- show("saTest");renderPart();el("saTest").scrollIntoView({behavior:"smooth",block:"start"});
- toast("You are in. One honest answer at a time.");
+ err.textContent="Checking your payment status…";
+ applyVerifiedCashfreeAccess().then(function(verified){
+  if(!verified){
+   err.textContent="Please complete the ₹1,999 Cashfree payment before starting. If you have just paid, wait a few seconds for it to verify and tap Begin again — or message us on WhatsApp to confirm your access.";return;
+  }
+  err.textContent="";
+  S.paid=true;persistAssessmentProgress();
+  show("saTest");renderPart();el("saTest").scrollIntoView({behavior:"smooth",block:"start"});
+  toast("You are in. One honest answer at a time.");
+ });
 };
 
 /* ─── Stepper ─── */

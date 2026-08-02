@@ -667,30 +667,48 @@ const SOURCE_REGISTRY=[
 ];
 const THEMES={R:"Hands-on / Technical",I:"Science / Research",A:"Creative / Design",S:"People / Helping",E:"Business / Leadership",C:"Data / Structure"};
 const ATLAS_ACCESS_KEY="lumeCareerAtlasAccess";
-function hasAtlasAccess(){
+const ATLAS_PAID_SKUS=["student-full-report","lume-lens-working-profile","career-intelligence-roadmap"];
+
+// Free preview tier: unlocked instantly for anyone arriving from the free
+// assessment/snapshot flow. This tier is intentionally free and needs no
+// payment verification — do not add paid-only data/features behind it.
+function hasFreePreviewAccess(){
   const p=new URLSearchParams(location.search);
   const token=String(p.get("access")||p.get("unlock")||p.get("from")||"").toLowerCase();
   const fromAssessment=["assessment","snapshot","report","paid-report"].includes(token);
   let stored=false;
-  let paidAccess=false;
   try{stored=localStorage.getItem(ATLAS_ACCESS_KEY)==="1";}catch(e){}
-  try{
-    const paid=JSON.parse(localStorage.getItem("lumeCashfreeAccess")||"{}")||{};
-    paidAccess=["student-full-report","lume-lens-working-profile","career-intelligence-roadmap"].some(k=>paid[k]&&String(paid[k].status||"").toUpperCase()==="PAID");
-  }catch(e){}
   if(fromAssessment){
     try{
       localStorage.setItem(ATLAS_ACCESS_KEY,"1");
       localStorage.setItem("lumeCareerAtlasUnlockedAt",new Date().toISOString());
     }catch(e){}
   }
-  return fromAssessment||stored||paidAccess;
+  return fromAssessment||stored;
 }
+
 function initAtlasAccess(){
-  const unlocked=hasAtlasAccess();
+  const unlocked=hasFreePreviewAccess();
   document.body.classList.toggle("atlas-locked",!unlocked);
   document.body.classList.toggle("atlas-unlocked",unlocked);
+  // Paid tiers are never trusted from localStorage alone — that can be
+  // forged in devtools. This checks the real order status on Cashfree's
+  // side and only upgrades the view once the server confirms payment.
+  verifyPaidAtlasAccess();
   return unlocked;
+}
+
+function verifyPaidAtlasAccess(){
+  window.addEventListener("lume:cashfree-ready",function(){
+    if(typeof window.lumeCashfreeVerifyAccess!=="function")return;
+    Promise.all(ATLAS_PAID_SKUS.map(sku=>window.lumeCashfreeVerifyAccess(sku))).then(results=>{
+      if(!results.some(Boolean))return;
+      document.body.classList.remove("atlas-locked");
+      document.body.classList.add("atlas-unlocked");
+      if(typeof render==="function")render();
+      track("ci_paid_access_verified",{});
+    });
+  },{once:true});
 }
 function career(id,title,sector,themes,streams,paths,style,setting,future,entry,mid,confidence,work,qualifications,exams,skills,ai,risks,parentNote){
   return {id,title,sector,themes,streams,paths,style,setting,future,salary:{entry,mid,confidence},work,qualifications,exams,skills,ai,risks,parentNote,

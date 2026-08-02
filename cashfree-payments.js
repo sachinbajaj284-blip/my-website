@@ -118,6 +118,62 @@
   };
   window.lumeCashfreeGetConfig = getConfig;
 
+  /* ------------------------------------------------------------
+     Server-verified access check.
+
+     localStorage.lumeCashfreeAccess is only ever a *hint* — anyone can
+     open devtools and set it to {status:"PAID"} without paying. Any page
+     gating real paid content must call lumeCashfreeVerifyAccess(sku)
+     instead of lumeCashfreeHasAccess(sku), and only unlock once it
+     resolves true. It re-checks the stored order_id against Cashfree's
+     own order-status endpoint (the source of truth) before trusting a
+     PAID claim, and revokes/ignores any entry that doesn't check out.
+     ------------------------------------------------------------ */
+  var _verifyCache = {};
+  var VERIFY_TTL_MS = 5 * 60 * 1000; // avoid re-hitting the API on every re-render
+
+  window.lumeCashfreeVerifyAccess = function(sku){
+    if(!sku){ return Promise.resolve(false); }
+    var now = Date.now();
+    var cached = _verifyCache[sku];
+    if(cached && (now - cached.ts) < VERIFY_TTL_MS){ return cached.promise; }
+
+    var store = readAccessStore();
+    var entry = store[sku];
+    if(!entry || !entry.order_id){
+      // Nothing locally that even claims a real order — no network call needed.
+      return Promise.resolve(false);
+    }
+
+    var cfg = getConfig();
+    var promise = fetch(cfg.orderStatusEndpoint + "?order_id=" + encodeURIComponent(entry.order_id))
+      .then(function(res){ if(!res.ok){ throw new Error("status check failed"); } return res.json(); })
+      .then(function(data){
+        var status = String(data.order_status || "").toUpperCase();
+        var skuMatches = !data.sku || data.sku === sku;
+        var ok = status === "PAID" && skuMatches;
+        if(ok){
+          entry.status = "PAID";
+          entry.verifiedAt = new Date().toISOString();
+          store[sku] = entry;
+        } else {
+          // The stored claim didn't check out against Cashfree — drop it
+          // so a forged/expired entry can't be reused on the next call.
+          delete store[sku];
+        }
+        writeAccessStore(store);
+        return ok;
+      })
+      .catch(function(){
+        // Fail closed on a network hiccup: never grant paid content on an
+        // unverifiable claim. The calling page should show a friendly
+        // "couldn't verify, please retry" state, not a hard rejection.
+        return false;
+      });
+    _verifyCache[sku] = { ts: now, promise: promise };
+    return promise;
+  };
+
   /* ============================================================
      Firestore logging — metadata only (orderId, amount, timestamp,
      sku, status). Never stores psychometric answers. Fails silently
