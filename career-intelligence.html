@@ -1424,6 +1424,28 @@ if(atlasUnlocked){[80,320,760].forEach(t=>setTimeout(scrollToHashTarget,t));}
   <a href="refund-policy.html" style="color:#E8B95A;font-weight:800;text-decoration:none">Refund Policy</a> ·
   <a href="index.html#contact" style="color:#E8B95A;font-weight:800;text-decoration:none">Contact</a>
 </footer>
+<!-- Minimal Firebase Auth detection (no sign-in UI on this page) — picks
+     up a session already signed in on assessment.html/for-working-
+     professionals.html (same Firebase project, shared browser-local
+     persistence) so "Restore access" here can use a verified identity
+     without duplicating the full sign-in modal on this page. -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyDWifVIos_IGC7RT0xojH8gjMZekacR6bk",
+    authDomain: "lume-live-cf865.firebaseapp.com",
+    projectId: "lume-live-cf865",
+    storageBucket: "lume-live-cf865.firebasestorage.app",
+    messagingSenderId: "524991686804",
+    appId: "1:524991686804:web:e7019de465f5065901ec81"
+  };
+  const app = initializeApp(firebaseConfig);
+  const fbAuth = getAuth(app);
+  window.firebaseApp = app;
+  window.firebaseAuth = fbAuth;
+  onAuthStateChanged(fbAuth, user => { window.currentFirebaseUser = user || null; });
+</script>
 <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
 <script src="cashfree-payments.js"></script>
 <script>

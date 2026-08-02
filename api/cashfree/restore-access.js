@@ -2,13 +2,20 @@
   Restore-access endpoint for Lume Live.
 
   Lets a customer who paid on one device (e.g. their phone) unlock their
-  purchase on another device (e.g. a laptop) by looking up the phone
-  number or email they paid with, against the server-side purchase
-  records written by order-status.js when Cashfree confirms PAID.
+  purchase on another device (e.g. a laptop) by looking up purchases
+  against the email on their signed-in, verified Firebase account.
+
+  Ownership proof: the caller must send a valid Firebase ID token for a
+  signed-in user whose email is verified (Authorization: Bearer <token>).
+  The token is verified server-side with the Firebase Admin SDK — it
+  cannot be forged — and only the verified email inside it is ever used
+  for the lookup. A client-supplied phone/email string is never trusted;
+  this closes the earlier gap where anyone who merely knew someone else's
+  phone number or email could pull up that person's paid content.
 
   Endpoint:
   POST /api/cashfree/restore-access
-  Body (JSON): { "phone": "9876543210" } or { "email": "you@example.com" }
+  Headers: Authorization: Bearer <Firebase ID token>
 
   Response never distinguishes "no such customer" from "no purchase yet"
   beyond an empty access[] array, to avoid leaking who has an account.
@@ -19,6 +26,7 @@
   FIREBASE_PRIVATE_KEY=...
 */
 
+const { auth } = require("../_lib/firebaseAdmin");
 const { findPaidEntitlements } = require("../_lib/entitlements");
 
 function json(res, status, body){
@@ -50,24 +58,13 @@ function setCors(req, res){
     res.setHeader("Vary", "Origin");
   }
   res.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 }
 
-function readBody(req){
-  return new Promise((resolve, reject) => {
-    let raw = "";
-    let size = 0;
-    req.on("data", chunk => {
-      size += chunk.length;
-      if(size > 4096){ reject(new Error("Request body too large.")); req.destroy(); return; }
-      raw += chunk;
-    });
-    req.on("end", () => {
-      try{ resolve(raw ? JSON.parse(raw) : {}); }
-      catch(err){ reject(err); }
-    });
-    req.on("error", reject);
-  });
+function getBearerToken(req){
+  const header = String(req.headers.authorization || "");
+  const match = header.match(/^Bearer\s+(.+)$/i);
+  return match ? match[1].trim() : "";
 }
 
 module.exports = async function handler(req, res){
@@ -81,21 +78,29 @@ module.exports = async function handler(req, res){
     return json(res, 405, { error: "Method not allowed" });
   }
 
-  let body;
-  try{ body = await readBody(req); }
-  catch(err){ return json(res, 400, { error: "Invalid request." }); }
-
-  const phone = String(body.phone || "").replace(/\D/g, "").slice(-10);
-  const email = String(body.email || "").trim().toLowerCase();
-  if(!phone && !email){
-    return json(res, 400, { error: "Enter the phone number or email you paid with." });
+  const token = getBearerToken(req);
+  if(!token){
+    return json(res, 401, { ok: false, code: "NO_TOKEN", error: "Please sign in to restore your access." });
   }
-  if(phone && phone.length !== 10){
-    return json(res, 400, { error: "Enter a valid 10-digit phone number." });
+
+  let decoded;
+  try{
+    decoded = await auth().verifyIdToken(token);
+  }catch(err){
+    return json(res, 401, { ok: false, code: "INVALID_TOKEN", error: "Your sign-in has expired. Please sign in again." });
+  }
+
+  if(!decoded.email_verified){
+    return json(res, 403, { ok: false, code: "EMAIL_NOT_VERIFIED", error: "Please verify your email first — check your inbox for the verification link, then try again." });
+  }
+
+  const email = String(decoded.email || "").trim().toLowerCase();
+  if(!email){
+    return json(res, 403, { ok: false, code: "NO_EMAIL", error: "Your account has no verified email on file." });
   }
 
   try{
-    const access = await findPaidEntitlements({ phone, email });
+    const access = await findPaidEntitlements({ email });
     return json(res, 200, { ok: true, access: access });
   }catch(err){
     console.error("[lume restore-access]", String(err && err.message || err));

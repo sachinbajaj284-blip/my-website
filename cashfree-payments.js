@@ -192,28 +192,41 @@
      Restore access on a new device.
 
      Access is normally tied to whichever browser was used at checkout
-     (that's where the order_id lives). This looks up the phone/email the
-     customer paid with against the server-side purchase record (written
-     by /api/cashfree/order-status.js when Cashfree confirms PAID) and, if
+     (that's where the order_id lives). Restoring it on a new device
+     requires proof of ownership: the visitor must be signed in (Firebase
+     Auth, shared across lumelive.co.in pages) with a *verified* email.
+     A signed, server-verified ID token is sent — never a typed-in phone
+     or email string — so this can't be used to pull up someone else's
+     paid content just by knowing their contact details. Looks up
+     purchases against that verified email (written by
+     /api/cashfree/order-status.js when Cashfree confirms PAID) and, if
      found, repopulates local storage with the real order_id(s) so
      lumeCashfreeVerifyAccess() can confirm them the normal way.
-     Returns { ok, count, error? }.
+     Returns { ok, count, needsAuth?, needsVerification?, error? }.
      ------------------------------------------------------------ */
-  window.lumeCashfreeRestoreAccess = function(query){
-    var cfg = getConfig();
-    var payload = {};
-    if(query && query.phone){ payload.phone = String(query.phone); }
-    if(query && query.email){ payload.email = String(query.email); }
-    if(!payload.phone && !payload.email){
-      return Promise.resolve({ ok:false, count:0, error:"Enter the phone number or email you paid with." });
+  window.lumeCashfreeRestoreAccess = function(){
+    var user = window.firebaseAuth && window.firebaseAuth.currentUser;
+    if(!user){
+      return Promise.resolve({ ok:false, count:0, needsAuth:true, error:"Please sign in to restore your access." });
     }
-    return fetch(cfg.restoreAccessEndpoint || "/api/cashfree/restore-access", {
-      method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify(payload)
+    if(!user.emailVerified){
+      return Promise.resolve({ ok:false, count:0, needsVerification:true, error:"Please verify your email first — check your inbox for the verification link, then try again." });
+    }
+    var cfg = getConfig();
+    return user.getIdToken().then(function(idToken){
+      return fetch(cfg.restoreAccessEndpoint || "/api/cashfree/restore-access", {
+        method:"POST", headers:{ "Authorization":"Bearer " + idToken }
+      });
     })
       .then(function(res){ return res.json().then(function(data){ return { res:res, data:data }; }); })
       .then(function(r){
         if(!r.res.ok || !r.data || r.data.ok === false){
-          return { ok:false, count:0, error:(r.data && r.data.error) || "Could not look up your access. Please retry or message us on WhatsApp." };
+          return {
+            ok:false, count:0,
+            needsAuth: r.data && r.data.code === "NO_TOKEN",
+            needsVerification: r.data && r.data.code === "EMAIL_NOT_VERIFIED",
+            error:(r.data && r.data.error) || "Could not look up your access. Please retry or message us on WhatsApp."
+          };
         }
         var found = Array.isArray(r.data.access) ? r.data.access : [];
         if(found.length){
@@ -233,15 +246,24 @@
       });
   };
 
-  // Convenience UI wrapper: prompts for a phone number, restores access,
+  // Convenience UI wrapper: checks sign-in state, restores access,
   // notifies, and tells any listening page (via a custom event) to
   // re-check its gates. Wire a "Paid on another device?" link/button to
-  // this rather than re-implementing the prompt+refresh dance per page.
+  // this rather than re-implementing the sign-in+refresh dance per page.
   window.lumeCashfreeRestoreAccessPrompt = function(){
-    var phone = window.prompt("Enter the 10-digit phone number you paid with, to restore your access on this device:");
-    if(!phone) return;
+    var user = window.firebaseAuth && window.firebaseAuth.currentUser;
+    if(!user){
+      notify("Please sign in first, then tap Restore access again.");
+      if(typeof window.openAuth === "function"){ window.openAuth("signin"); }
+      else { notify("Please sign in on the Assessment page (lumelive.co.in/assessment.html), then come back here and tap Restore access again."); }
+      return;
+    }
+    if(!user.emailVerified){
+      notify("Please verify your email first — check your inbox for the verification link, then try again.");
+      return;
+    }
     notify("Checking your payment records…");
-    window.lumeCashfreeRestoreAccess({ phone: phone }).then(function(result){
+    window.lumeCashfreeRestoreAccess().then(function(result){
       if(!result.ok){
         notify(result.error || "Could not look up your access. Please message us on WhatsApp.");
         return;
@@ -250,7 +272,7 @@
         notify("Access restored — you're all set on this device.");
         window.dispatchEvent(new CustomEvent("lume:access-restored"));
       } else {
-        notify("No completed payment found for that number. If you just paid, wait a minute and try again, or message us on WhatsApp.");
+        notify("No completed payment found for your signed-in email. If you just paid, wait a minute and try again, or message us on WhatsApp.");
       }
     });
   };

@@ -39,4 +39,8 @@ function db(){
   return getAdmin().firestore();
 }
 
-module.exports = { getAdmin, db };
+function auth(){
+  return getAdmin().auth();
+}
+
+module.exports = { getAdmin, db, auth };
