@@ -112,8 +112,19 @@ module.exports = async function handler(req, res){
   }
 
   const sku = data.order_tags && data.order_tags.sku ? data.order_tags.sku : "";
+  const isPaid = String(data.order_status || "").toUpperCase() === "PAID";
 
-  if(String(data.order_status || "").toUpperCase() === "PAID" && sku){
+  if(isPaid && !sku){
+    // Every order create-order.js creates is tagged with a sku, so this
+    // should only happen for a legacy/manually-created order. Surfaced as
+    // a warning (not silently dropped) since it means no entitlement
+    // record gets written — that order will never show up in
+    // restore-access, and lumeCashfreeVerifyAccess requires an exact sku
+    // match, so it won't unlock anything either.
+    console.warn("[lume order-status] PAID order with no order_tags.sku — no entitlement recorded:", data.order_id);
+  }
+
+  if(isPaid && sku){
     // Write the durable, server-side purchase record. This is the actual
     // source of truth for "who paid for what" — never fails the status
     // check itself if Firebase isn't configured or the write hiccups, so

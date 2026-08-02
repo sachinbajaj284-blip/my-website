@@ -112,6 +112,16 @@
     var store = readAccessStore();
     store[sku] = Object.assign({ status:"PAID", grantedAt:new Date().toISOString() }, details || {});
     writeAccessStore(store);
+    // A prior lumeCashfreeVerifyAccess(sku) call earlier on this same page
+    // load (e.g. the initial "is this already unlocked?" check that runs
+    // before the user has paid) may have cached a negative result. Without
+    // clearing it here, a customer who pays via the in-page modal — no
+    // full reload, so the cache survives — could see "payment not
+    // received" for up to 5 minutes despite having just paid. Also tell
+    // any listening page to re-check and refresh its unlocked UI now,
+    // not just after the restore-access flow.
+    _verifyCache = {};
+    try{ window.dispatchEvent(new CustomEvent("lume:access-restored")); }catch(err){}
   };
   window.lumeCashfreeHasAccess = function(sku){
     var store = readAccessStore();
@@ -151,8 +161,11 @@
       .then(function(res){ if(!res.ok){ throw new Error("status check failed"); } return res.json(); })
       .then(function(data){
         var status = String(data.order_status || "").toUpperCase();
-        var skuMatches = !data.sku || data.sku === sku;
-        var ok = status === "PAID" && skuMatches;
+        // Every order create-order.js creates is tagged with its sku, so a
+        // real match is always possible — treating a missing/blank sku as
+        // "any sku is fine" would let a cheap order's order_id be reused
+        // (via a hand-edited localStorage entry) to unlock a pricier one.
+        var ok = status === "PAID" && data.sku === sku;
         if(ok){
           entry.status = "PAID";
           entry.verifiedAt = new Date().toISOString();

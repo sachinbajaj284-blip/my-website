@@ -18,8 +18,15 @@ const { db } = require("./firebaseAdmin");
 
 const COLLECTION = "entitlements";
 
+// create-order.js sends this placeholder to Cashfree for guest checkouts
+// (phone is optional for parents-handbook/intro-session). It is not a real
+// customer phone number — treating it as one would let restore-access
+// return every phone-less guest's purchase to anyone who queries it.
+const GUEST_PLACEHOLDER_PHONE = "9999999999";
+
 function normalizePhone(phone){
-  return String(phone || "").replace(/\D/g, "").slice(-10);
+  const digits = String(phone || "").replace(/\D/g, "").slice(-10);
+  return digits === GUEST_PLACEHOLDER_PHONE ? "" : digits;
 }
 
 function normalizeEmail(email){
