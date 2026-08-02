@@ -27,11 +27,23 @@ npm run josaa:ingest -- --years 2024,2025,2026
 # 3. Gate: refuses to pass on swapped columns, bad ranks, partial pulls.
 npm run josaa:validate
 
-# 4. Eyeball the predictor locally, then commit data/josaa/.
+# 4. Generate the static browse pages under colleges/ + sitemap-colleges.xml.
+npm run josaa:pages
+
+# 5. Eyeball the predictor and colleges.html locally, then commit
+#    data/josaa/, colleges/ and sitemap-colleges.xml together.
 ```
+
+`npm run josaa:refresh` chains steps 2-4 in order and stops on the first failure.
 
 `npm run josaa:test` runs the parser unit tests against a fixture and needs no network —
 run it after touching `tools/josaa-ingest.mjs`.
+
+To render a staging dataset without touching the live pages:
+
+```bash
+node tools/josaa-pages.mjs --data /tmp/staging/josaa --out /tmp/staging/colleges
+```
 
 ## When the probe fails
 
@@ -49,7 +61,27 @@ in question. Do not hardcode an id you have not seen in the live page, and do no
   their slice. Rows are `[institute, branch, quota, year, openingRank, closingRank]`
   against dictionary indices.
 - `institute-states.json` — hand-maintained institute→state map powering the Home State
-  quota filter. Extend it when the ingest reports an unmatched NIT/IIIT/GFTI.
+  quota filter and the state filter on `colleges.html`. Extend it when the ingest reports
+  an unmatched NIT/IIIT/GFTI.
+- `pagesGeneratedAt` — stamped into the manifest by `josaa-pages.mjs`. `colleges.html`
+  links to the generated per-institute pages only when this is present, so an ingest
+  without a generate cannot leave the browse index pointing at files that do not exist.
+
+## The generated pages
+
+`tools/josaa-pages.mjs` writes:
+
+- `colleges/<institute-slug>.html` — one per institute, with a cutoff table per seat type
+  (OPEN first, then EWS, OBC-NCL, SC, ST). Gender-neutral pool only; female-only seats are
+  a separate pool and are handled in the predictor rather than doubling every page.
+- `colleges/branch-<branch-slug>.html` — one per branch offered by at least
+  `MIN_INSTITUTES_FOR_BRANCH_PAGE` (8) institutes. The threshold exists to avoid publishing
+  thin pages that rank for nothing.
+- `sitemap-colleges.xml` — listed as a second `Sitemap:` line in `robots.txt`.
+
+These are committed to git like the dataset. The tables are written into the HTML rather
+than fetched by script: these pages exist to be indexed, and a client-rendered table
+indexes as an empty page.
 
 ## Correctness rules that must not be broken
 

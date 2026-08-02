@@ -7,6 +7,8 @@
     "josaa:probe": "node tools/josaa-ingest.mjs --probe",
     "josaa:ingest": "node tools/josaa-ingest.mjs",
     "josaa:validate": "node tools/josaa-validate.mjs",
+    "josaa:pages": "node tools/josaa-pages.mjs",
+    "josaa:refresh": "npm run josaa:ingest && npm run josaa:validate && npm run josaa:pages",
     "josaa:test": "node tools/josaa-parser.test.mjs"
   },
   "engines": {

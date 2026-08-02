@@ -7,3 +7,4 @@ Disallow: /*?*utm_
 Disallow: /*?*fbclid
 
 Sitemap: https://lumelive.co.in/sitemap.xml
+Sitemap: https://lumelive.co.in/sitemap-colleges.xml
