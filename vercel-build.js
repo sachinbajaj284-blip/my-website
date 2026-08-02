@@ -34,6 +34,12 @@ function shouldCopyFile(name){
   if(name.startsWith(".env")) return false;
   if(/apikey/i.test(name)) return false;
   if(/\.(zip|psd|ai)$/i.test(name)) return false;
+  // Backend/integration source files belong under api/ (which is never
+  // copied into public/, see skipDirs above). A .js file with one of
+  // these names sitting at the repo root is almost certainly a stray
+  // duplicate, not a page script — don't publish it by accident.
+  if(/^(create-order|order-status)\.js$/i.test(name)) return false;
+  if(/\.example\.js$/i.test(name)) return false;
   return true;
 }
 
