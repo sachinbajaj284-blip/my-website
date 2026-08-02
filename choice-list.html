@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' www.googletagmanager.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com; img-src 'self' data: www.google-analytics.com www.googletagmanager.com; connect-src 'self' www.googletagmanager.com *.google-analytics.com *.analytics.google.com; object-src 'none'; base-uri 'self';">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JoSAA Choice Filling Helper — Order Your Choice List Correctly | Lume Live</title>
+<meta name="description" content="Build and check your JoSAA choice list. Order options by true preference, and catch the two costly mistakes: burying an ambitious choice below a safe one, and having no safe option at all.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://lumelive.co.in/choice-list.html">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="icon" href="favicon.ico" sizes="any">
+<meta property="og:type" content="website">
+<meta property="og:title" content="JoSAA Choice Filling Helper — Order Your List Correctly">
+<meta property="og:description" content="JoSAA gives you the highest choice you qualify for. Listing an ambitious option higher costs you nothing — this tool checks your list for the mistakes that do cost you.">
+<meta property="og:url" content="https://lumelive.co.in/choice-list.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="colleges.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Lume Live JoSAA Choice Filling Helper","applicationCategory":"EducationalApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"},"description":"Build a JoSAA choice list and check it for ordering mistakes, using official JoSAA closing ranks.","url":"https://lumelive.co.in/choice-list.html","isBasedOn":"https://josaa.admissions.nic.in/applicant/seatmatrix/openingclosingrankarchieve.aspx","publisher":{"@type":"Organization","name":"Lume Live","url":"https://lumelive.co.in/"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Does putting an ambitious choice first reduce my chances?","acceptedAnswer":{"@type":"Answer","text":"No. JoSAA allots the highest choice on your list that your rank qualifies for. An ambitious choice placed first is simply skipped if you do not qualify, and the system moves to your next choice. Listing it higher costs you nothing."}},{"@type":"Question","name":"What is the most common choice filling mistake?","acceptedAnswer":{"@type":"Answer","text":"Placing safe options near the top to feel secure. Because allotment stops at the first choice you qualify for, a safe option high in the list guarantees you never receive the better options listed below it."}},{"@type":"Question","name":"How many choices should I fill?","acceptedAnswer":{"@type":"Answer","text":"There is no limit and no penalty for a long list. The real risk is a short list with no safe option at the bottom, which can leave you with no allotment at all."}}]}]}</script>
+<style>
+.hero{padding:34px 0 8px}
+.steps{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 0}
+.step{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 13px}
+.step.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+.searchrow{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end}
+@media(max-width:560px){.searchrow{grid-template-columns:1fr}}
+.results{list-style:none;margin-top:12px;max-height:340px;overflow-y:auto;border:1px solid var(--line);border-radius:12px}
+.results:empty{display:none}
+.results li{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:11px 14px;border-bottom:1px solid var(--line)}
+.results li:last-child{border-bottom:0}
+.results .oi{font-weight:800;color:var(--navy);font-size:.9rem;line-height:1.3}
+.results .ob{font-size:.85rem;color:var(--ink)}
+.results .om{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;align-items:center}
+.addbtn{flex:none;border:1.5px solid var(--teal);background:#fff;color:var(--teal);font-weight:800;font-family:inherit;border-radius:999px;padding:8px 15px;cursor:pointer;font-size:.82rem;min-height:40px}
+.addbtn:hover{background:var(--teal);color:#fff}
+.addbtn[disabled]{opacity:.4;cursor:default;border-color:var(--line);color:var(--muted);background:#fff}
+
+.band-safe{color:#fff;background:var(--teal);border-color:var(--teal)}
+.band-target{color:#fff;background:var(--gold);border-color:var(--gold)}
+.band-reach{color:#fff;background:#7A5AA8;border-color:#7A5AA8}
+.band-out{color:var(--muted)}
+
+ol.choices{list-style:none;counter-reset:ch}
+ol.choices li{counter-increment:ch;display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px 15px;margin-bottom:8px;position:relative}
+ol.choices li.flagged{border-color:#E0B44A;box-shadow:0 0 0 3px rgba(224,180,74,.14)}
+ol.choices li.likely{border-color:var(--teal);box-shadow:0 0 0 3px rgba(10,110,110,.12)}
+.num{flex:none;width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;font-weight:900;font-size:.8rem;display:flex;align-items:center;justify-content:center}
+.num::before{content:counter(ch)}
+.cmain{flex:1;min-width:0}
+.cinst{font-weight:800;color:var(--navy);font-size:.94rem;line-height:1.3}
+.cbranch{font-size:.87rem;color:var(--ink);margin-top:1px}
+.cmeta{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;align-items:center}
+.cclose{font-size:.76rem;color:var(--muted);font-weight:700;margin-top:5px}
+.cctl{flex:none;display:flex;flex-direction:column;gap:4px}
+.cctl button{width:32px;height:28px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer;font-family:inherit;font-weight:800;color:var(--navy);font-size:.8rem;line-height:1;padding:0}
+.cctl button:hover:not([disabled]){border-color:var(--teal);color:var(--teal)}
+.cctl button[disabled]{opacity:.3;cursor:default}
+.cctl .rm{color:#A2372F}
+.cflag{font-size:.79rem;color:#7A5500;background:#FFF8EC;border:1px solid rgba(201,147,58,.3);border-radius:9px;padding:8px 10px;margin-top:8px;line-height:1.45}
+
+.verdict{border-radius:16px;padding:20px 22px;margin:20px 0;border:1px solid var(--line);background:#fff}
+.verdict h3{font-family:Georgia,serif;color:var(--navy);font-size:1.15rem;margin-bottom:6px}
+.verdict p{font-size:.92rem;color:var(--muted)}
+.verdict .big{color:var(--navy);font-weight:800}
+.issues{list-style:none;margin-top:14px}
+.issues li{border-radius:12px;padding:13px 15px;margin-bottom:9px;font-size:.9rem;line-height:1.5}
+.issues li b{display:block;font-size:.74rem;text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px}
+.issues .high{background:#FDF3F2;border:1px solid #F0CFCB;color:#6B241E}
+.issues .high b{color:#A2372F}
+.issues .medium{background:#FFF8EC;border:1px solid rgba(201,147,58,.3);color:#5C4514}
+.issues .medium b{color:#9A6B12}
+.issues .low{background:#F4FAFA;border:1px solid #CFE4E4;color:#1F4444}
+.issues .low b{color:var(--teal)}
+.issues .good{background:#F1F9F4;border:1px solid #CBE7D6;color:#1D4A31}
+.issues .good b{color:#0B7A43}
+
+.exports{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.exports .btn{min-height:46px;padding:11px 20px;font-size:.88rem}
+.btn.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--line)}
+.btn.ghost:hover{border-color:var(--teal);color:var(--teal)}
+.emptyhint{color:var(--muted);font-size:.92rem;padding:16px;text-align:center;border:1px dashed var(--line);border-radius:14px}
+@media print{.top,.exports,.searchrow,.results,.cctl,.lead-box,.faq,.related,.foot{display:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top"><nav class="nav">
+  <a class="brand" href="index.html"><img src="logo.png" alt="Lume Live logo"><span>LUME LIVE</span></a>
+  <a class="navlink" href="college-predictor.html">← Back to predictor</a>
+</nav></header>
+
+<div class="wrap">
+  <nav class="crumbs"><a href="index.html">Home</a> › <a href="colleges.html">Colleges</a> › Choice filling</nav>
+
+  <div class="hero">
+    <span class="eyebrow">Free Tool · Official JoSAA Data</span>
+    <h1>Get your choice list in the right order</h1>
+    <p>JoSAA gives you the <strong>highest choice on your list that your rank qualifies for</strong>. That one rule decides everything — and it means most students order their list in a way that quietly costs them a better seat. Build your list here and this will tell you where it goes wrong.</p>
+    <div class="steps">
+      <span class="step on">1 · Your rank</span>
+      <span class="step">2 · Add choices</span>
+      <span class="step">3 · Order &amp; check</span>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>The rule that decides everything</b>
+    Allotment walks <em>down</em> your list and stops at the first choice you qualify for. So an ambitious choice placed first is simply skipped if your rank falls short — it never costs you anything. But a safe choice placed high is a wall: nothing below it can ever reach you.
+  </div>
+
+  <form class="card" id="setupForm">
+    <div class="filters">
+      <div class="field">
+        <label for="mainRank">JEE Main rank <span class="hint">NITs, IIITs, GFTIs</span></label>
+        <input id="mainRank" type="text" inputmode="numeric" autocomplete="off" placeholder="e.g. 24500">
+      </div>
+      <div class="field">
+        <label for="advRank">JEE Advanced rank <span class="hint">IITs only</span></label>
+        <input id="advRank" type="text" inputmode="numeric" autocomplete="off" placeholder="e.g. 4200">
+      </div>
+      <div class="field">
+        <label for="seatType">Category</label>
+        <select id="seatType">
+          <option value="OPEN">OPEN</option>
+          <option value="EWS">EWS</option>
+          <option value="OBC-NCL">OBC-NCL</option>
+          <option value="SC">SC</option>
+          <option value="ST">ST</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="gender">Gender pool</label>
+        <select id="gender">
+          <option value="Gender-Neutral">Gender-Neutral</option>
+          <option value="Female-only (including Supernumerary)">Female-only (incl. supernumerary)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="homeState">Home state</label>
+        <select id="homeState"><option value="">All India only</option></select>
+      </div>
+    </div>
+    <div style="margin-top:16px"><button class="btn gold" type="submit">Load my options</button></div>
+    <div class="status" id="status" hidden></div>
+  </form>
+
+  <div id="builder" hidden>
+    <div class="card">
+      <div class="searchrow">
+        <div class="field">
+          <label for="q">Add a choice</label>
+          <input id="q" type="search" autocomplete="off" placeholder="Search institute or branch, e.g. Warangal CSE">
+        </div>
+        <div class="field">
+          <label for="fBand">Show</label>
+          <select id="fBand">
+            <option value="">All within reach</option>
+            <option value="reach">Reach only</option>
+            <option value="target">Target only</option>
+            <option value="safe">Safe only</option>
+          </select>
+        </div>
+      </div>
+      <ul class="results" id="results"></ul>
+    </div>
+
+    <h2 class="grouphead">Your choice list <em id="count">0</em></h2>
+    <ol class="choices" id="choices"></ol>
+    <p class="emptyhint" id="emptyHint">Nothing added yet. Search above and add the options you would genuinely be happy with — ambitious ones included.</p>
+
+    <div class="verdict" id="verdict" hidden>
+      <h3 id="verdictTitle"></h3>
+      <p id="verdictBody"></p>
+      <ul class="issues" id="issues"></ul>
+      <div class="exports">
+        <a class="btn wa" id="waCta" href="#">Send my list on WhatsApp</a>
+        <button class="btn ghost" type="button" id="copyBtn">Copy as text</button>
+        <button class="btn ghost" type="button" id="printBtn">Print</button>
+        <button class="btn ghost" type="button" id="clearBtn">Clear list</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="lead-box">
+    <h2>This tool checks the order. It cannot tell you what you want.</h2>
+    <p>Whether a better branch at a lesser institute beats a lesser branch at a better one depends on what you actually want to do afterwards. That is the conversation worth having before you lock the list.</p>
+    <a class="btn gold" href="book-session.html">Talk it through before you submit</a>
+  </div>
+
+  <section class="faq">
+    <h2>What students get wrong</h2>
+    <details>
+      <summary>Does putting an ambitious choice first reduce my chances?</summary>
+      <p>No. If you do not qualify for it, the system simply moves to your next choice. There is no penalty, no "wasted" choice, and no signal sent to the institute. This is the single most common misunderstanding in JoSAA counselling.</p>
+    </details>
+    <details>
+      <summary>Then what actually goes wrong?</summary>
+      <p>Putting safe options near the top. Allotment stops at the first choice you qualify for — so a safe choice at number three means choices four onwards can never reach you, however much you would have preferred them.</p>
+    </details>
+    <details>
+      <summary>How many choices should I fill?</summary>
+      <p>More than you think. There is no limit and no cost to a long list. The real risk runs the other way: a short list of ambitious choices with no safe option at the bottom can leave you with no allotment at all.</p>
+    </details>
+    <details>
+      <summary>Should I include a branch I do not want?</summary>
+      <p>Only below everything you do want, and only if you would genuinely accept it. A choice list is a statement of what you will take — if a seat is allotted and you accept it, that closes your other options for the round.</p>
+    </details>
+    <details>
+      <summary>Is this list official?</summary>
+      <p>No. This is a planning aid built on published JoSAA closing ranks. You still have to enter and lock your actual choices on the JoSAA portal, and only what you submit there counts.</p>
+    </details>
+  </section>
+
+  <p class="src">Cutoff data source: <a href="https://josaa.admissions.nic.in/applicant/seatmatrix/openingclosingrankarchieve.aspx" rel="nofollow noopener" target="_blank">JoSAA Opening &amp; Closing Rank archive</a>, Government of India. Reproduced with attribution under GODL-India. Lume Live is not affiliated with JoSAA, the NTA or any institute.</p>
+</div>
+
+<footer class="foot">
+  Lume Live &middot; Online career counselling &amp; mental-health support across India &middot; WhatsApp +91 70156 71280<br>
+  <a href="index.html">Home</a> &middot; <a href="college-predictor.html">Rank predictor</a> &middot; <a href="colleges.html">All colleges</a> &middot; <a href="career-explorer.html">Careers</a>
+</footer>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1CZ93P4P3V"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1CZ93P4P3V');</script>
+<script src="josaa-data.js"></script>
+<script src="choice-list.js"></script>
+</body>
+</html>

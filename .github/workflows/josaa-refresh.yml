@@ -1,0 +1,148 @@
+name: Refresh JoSAA dataset
+
+# The JoSAA ingest needs to reach josaa.admissions.nic.in, which many networks — and the
+# Claude Code sandbox — block. GitHub's runners have unrestricted outbound access, so this
+# workflow is the reliable place to run it.
+#
+# Run it from the Actions tab: "Refresh JoSAA dataset" -> "Run workflow".
+# Start with smoke_test = true to confirm JoSAA is reachable and the parser still matches,
+# before pulling tens of thousands of rows.
+#
+# The ingest tools use only Node built-ins, so there is nothing to install.
+
+on:
+  workflow_dispatch:
+    inputs:
+      years:
+        description: 'Years to pull, comma separated'
+        required: true
+        default: '2024,2025,2026'
+      smoke_test:
+        description: 'Pull only a few hundred rows to check the scraper works. Never commits.'
+        type: boolean
+        default: true
+      commit:
+        description: 'Commit the dataset and generated pages back to this branch'
+        type: boolean
+        default: true
+  schedule:
+    # JoSAA publishes final ranks around late July / August. Check monthly through the
+    # counselling season; the validator warns if the newest year is stale.
+    - cron: '0 3 5 7,8,9 *'
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # Fail loudly and early if the runner cannot reach JoSAA at all. Indian government
+      # sites occasionally block or throttle non-Indian IPs; if that is what is happening,
+      # this step says so instead of leaving a confusing parser error later.
+      - name: Check JoSAA is reachable
+        run: |
+          set -e
+          URL="https://josaa.admissions.nic.in/applicant/seatmatrix/openingclosingrankarchieve.aspx"
+          CODE=$(curl -sS -o /tmp/josaa-probe.html -w '%{http_code}' -m 45 \
+            -A 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36' \
+            "$URL" || echo "000")
+          echo "HTTP $CODE"
+          if [ "$CODE" != "200" ]; then
+            echo "::error::Could not reach the JoSAA archive (HTTP $CODE)."
+            echo "If this is a geo-block, run the ingest from a machine in India instead:"
+            echo "  npm run josaa:probe && npm run josaa:refresh"
+            exit 1
+          fi
+          echo "Fetched $(wc -c < /tmp/josaa-probe.html) bytes"
+
+      # Parser unit tests need no network and catch a broken helper before we hit the
+      # government server thousands of times.
+      - name: Parser unit tests
+        run: node tools/josaa-parser.test.mjs
+
+      # JoSAA renames its ASP.NET controls between admission years. The probe reports
+      # whether field discovery still matches the live page.
+      - name: Probe the JoSAA form
+        run: node tools/josaa-ingest.mjs --probe
+
+      - name: Ingest cutoffs
+        run: |
+          if [ "${{ inputs.smoke_test }}" = "true" ]; then
+            node tools/josaa-ingest.mjs --years "${{ inputs.years || '2024,2025,2026' }}" --limit 300 --verbose
+          else
+            node tools/josaa-ingest.mjs --years "${{ inputs.years || '2024,2025,2026' }}"
+          fi
+
+      - name: Validate dataset
+        run: node tools/josaa-validate.mjs
+
+      - name: Generate browse pages
+        run: node tools/josaa-pages.mjs
+
+      # Always publish the result as an artifact, so a smoke test — or a run you choose not
+      # to commit — can still be inspected and downloaded.
+      - name: Upload dataset artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: josaa-dataset
+          path: |
+            data/josaa/
+            colleges/
+            sitemap-colleges.xml
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Summarise
+        if: always()
+        run: |
+          {
+            echo "### JoSAA refresh"
+            if [ -f data/josaa/manifest.json ]; then
+              node -e "
+                const m = require('./data/josaa/manifest.json');
+                console.log('- Years: ' + m.years.join(', '));
+                console.log('- Rows: ' + (m.counts?.records ?? 'n/a'));
+                console.log('- Institutes: ' + m.institutes.length + ', branches: ' + m.branches.length);
+                if (m.problems?.length) {
+                  console.log('- Problems:');
+                  m.problems.forEach(p => console.log('  - ' + p));
+                }
+              "
+              echo "- Generated pages: $(ls colleges 2>/dev/null | wc -l)"
+            else
+              echo "- No manifest produced."
+            fi
+            if [ "${{ inputs.smoke_test }}" = "true" ]; then
+              echo ""
+              echo "**Smoke test only — nothing was committed.** Re-run with smoke_test unchecked for the full pull."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # A smoke test pulls a deliberately partial dataset. Committing it would publish a
+      # dataset with most colleges missing, which is worse than having none.
+      - name: Commit dataset
+        if: ${{ inputs.smoke_test != true && inputs.commit != false }}
+        run: |
+          set -e
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/josaa colleges sitemap-colleges.xml
+          if git diff --staged --quiet; then
+            echo "Dataset unchanged — nothing to commit."
+            exit 0
+          fi
+          ROWS=$(node -e "console.log(require('./data/josaa/manifest.json').counts?.records ?? 0)")
+          YEARS=$(node -e "console.log(require('./data/josaa/manifest.json').years.join(', '))")
+          git commit -m "Refresh JoSAA dataset ($YEARS, $ROWS rows)" \
+                     -m "Generated by the josaa-refresh workflow from the official JoSAA archive."
+          git push origin HEAD:"${GITHUB_REF_NAME}"

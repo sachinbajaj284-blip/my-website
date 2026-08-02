@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' www.googletagmanager.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com; img-src 'self' data: www.google-analytics.com www.googletagmanager.com; connect-src 'self' www.googletagmanager.com *.google-analytics.com *.analytics.google.com; object-src 'none'; base-uri 'self';">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JoSAA Colleges — Browse IIT, NIT, IIIT &amp; GFTI Cutoffs by State | Lume Live</title>
+<meta name="description" content="Browse every institute in JoSAA counselling — IITs, NITs, IIITs and GFTIs — with branch-wise opening and closing ranks from the official JoSAA archive. Filter by state and institute type.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://lumelive.co.in/colleges.html">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="icon" href="favicon.ico" sizes="any">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Browse JoSAA Colleges — IIT, NIT, IIIT &amp; GFTI Cutoffs">
+<meta property="og:description" content="Every institute in JoSAA counselling, with branch-wise cutoffs from the official archive.">
+<meta property="og:url" content="https://lumelive.co.in/colleges.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="colleges.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"JoSAA Colleges — IIT, NIT, IIIT and GFTI Cutoffs","description":"Browse every institute participating in JoSAA counselling, with branch-wise opening and closing ranks from the official JoSAA archive.","url":"https://lumelive.co.in/colleges.html","isBasedOn":"https://josaa.admissions.nic.in/applicant/seatmatrix/openingclosingrankarchieve.aspx","publisher":{"@type":"Organization","name":"Lume Live","url":"https://lumelive.co.in/"}}</script>
+</head>
+<body>
+
+<header class="top"><nav class="nav">
+  <a class="brand" href="index.html"><img src="logo.png" alt="Lume Live logo"><span>LUME LIVE</span></a>
+  <a class="navlink" href="college-predictor.html">Predict by rank →</a>
+</nav></header>
+
+<div class="wrap">
+  <nav class="crumbs"><a href="index.html">Home</a> › Colleges</nav>
+
+  <div class="hero">
+    <span class="eyebrow">Official JoSAA Data</span>
+    <h1>Every college in JoSAA counselling</h1>
+    <p>All the IITs, NITs, IIITs and Government Funded Technical Institutes that take part in JoSAA seat allocation — each with branch-wise opening and closing ranks straight from the official archive. Filter by state or institute type, then open an institute to see how its cutoffs have moved.</p>
+  </div>
+
+  <div class="card">
+    <div class="filters">
+      <div class="field">
+        <label for="q">Search</label>
+        <input id="q" type="search" autocomplete="off" placeholder="Institute name, e.g. Warangal">
+      </div>
+      <div class="field">
+        <label for="fType">Institute type</label>
+        <select id="fType">
+          <option value="">All types</option>
+          <option value="IIT">IIT</option>
+          <option value="NIT">NIT</option>
+          <option value="IIIT">IIIT</option>
+          <option value="GFTI">GFTI</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="fState">State</label>
+        <select id="fState"><option value="">All states</option></select>
+      </div>
+    </div>
+    <div class="status" id="status" hidden></div>
+  </div>
+
+  <div id="list"></div>
+
+  <div class="lead-box">
+    <h2>Know your rank already?</h2>
+    <p>Skip the browsing. Enter your JEE rank, category and home state and see which of these are realistically within reach.</p>
+    <a class="btn gold" href="college-predictor.html">Open the rank predictor</a>
+  </div>
+
+  <section class="related">
+    <h2>Before you shortlist</h2>
+    <a href="choice-list.html">Choice filling helper — get your list in the right order</a>
+    <a href="is-jee-right-for-you.html">Is JEE actually right for you?</a>
+    <a href="career-as-software-engineer.html">What a software engineering career really looks like</a>
+    <a href="career-counselling-for-neet-jee-droppers.html">Thinking about a drop year?</a>
+    <a href="book-session.html">Talk it through with a counsellor</a>
+  </section>
+
+  <p class="src">Cutoff data source: <a href="https://josaa.admissions.nic.in/applicant/seatmatrix/openingclosingrankarchieve.aspx" rel="nofollow noopener" target="_blank">JoSAA Opening &amp; Closing Rank archive</a>, Government of India. Reproduced with attribution under GODL-India. Lume Live is not affiliated with JoSAA, the NTA or any institute.</p>
+</div>
+
+<footer class="foot">
+  Lume Live &middot; Online career counselling &amp; mental-health support across India &middot; WhatsApp +91 70156 71280<br>
+  <a href="index.html">Home</a> &middot; <a href="college-predictor.html">Rank predictor</a> &middot; <a href="choice-list.html">Choice filling</a> &middot; <a href="career-explorer.html">Careers</a> &middot; <a href="career-library.html">Library</a>
+</footer>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1CZ93P4P3V"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1CZ93P4P3V');</script>
+<script src="colleges.js"></script>
+</body>
+</html>
