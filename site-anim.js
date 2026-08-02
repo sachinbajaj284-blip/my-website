@@ -19,7 +19,7 @@
   }
   function init(){
     initBar();
-    var sel="section h2,.card,.faq-item,.stat,.step,.cred,.cta-box,.panel,.tp-card,.price-card,.ftl-card,.tool-card,.related a";
+    var sel="h2,.card,.faq-item,.stat,.step,.cred,.cta-box,.panel,.tp-card,.price-card,.ftl-card,.tool-card,.related a";
     var els=document.querySelectorAll(sel);
     if(!els.length)return;
     var fold=window.innerHeight*.88;
@@ -37,6 +37,10 @@
       var idx=groups.get(el.parentElement)||0;
       groups.set(el.parentElement,idx+1);
       el.classList.add("sa-reveal");
+      if(el.tagName==="H2"){
+        el.classList.add("sa-line");
+        if(getComputedStyle(el).textAlign!=="center")el.classList.add("sa-line-left");
+      }
       el.style.transitionDelay=(Math.min(idx,6)*.07).toFixed(2)+"s";
       obs.observe(el);
     });

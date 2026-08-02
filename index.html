@@ -665,6 +665,38 @@
 
 <!-- ══════════ WHY WE'RE DIFFERENT (comparison) ══════════ -->
 
+<section id="journey">
+  <div class="s-inner">
+    <div style="text-align:center;max-width:560px;margin:0 auto;">
+      <span class="s-tag">How It Works</span>
+      <h2 class="s-title">Your Journey to Clarity</h2>
+      <p class="s-sub" style="margin:0 auto;">Four calm, structured steps from confusion to a written plan you can act on.</p>
+    </div>
+    <div class="jr-steps anim">
+      <div class="jr-step">
+        <div class="jr-dot">1</div>
+        <h3>Book your &#8377;49 session</h3>
+        <p>Start with a low-pressure 45-minute introductory conversation &mdash; online, confidential.</p>
+      </div>
+      <div class="jr-step">
+        <div class="jr-dot">2</div>
+        <h3>Guided assessment</h3>
+        <p>Four reflection parts surface interests, personality patterns and work drivers.</p>
+      </div>
+      <div class="jr-step">
+        <div class="jr-dot">3</div>
+        <h3>1:1 counselling</h3>
+        <p>A founder-led session reads career direction and emotional wellbeing together.</p>
+      </div>
+      <div class="jr-step">
+        <div class="jr-dot">4</div>
+        <h3>Walk away with a roadmap</h3>
+        <p>A written, print-ready report and clear next steps the whole family understands.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="why-different">
   <div class="cmp-wrap">
     <div class="cmp-head anim">
@@ -2220,6 +2252,77 @@ var ticking=!1;function updBar(){var h=document.documentElement.scrollHeight-win
 window.addEventListener("scroll",function(){ticking||(ticking=!0,requestAnimationFrame(updBar))},{passive:!0});window.addEventListener("resize",updBar);updBar();
 if("IntersectionObserver"in window){var tObs=new IntersectionObserver(function(es){es.forEach(function(en){en.isIntersecting&&(en.target.classList.add("line-in"),tObs.unobserve(en.target))})},{threshold:.5});document.querySelectorAll(".s-title").forEach(function(t){t.closest(".modal-overlay")||("center"!==getComputedStyle(t).textAlign&&t.classList.add("line-left"),tObs.observe(t))})}
 "undefined"!=typeof counterObs&&document.querySelectorAll(".test-summary").forEach(function(e){counterObs.observe(e)});
+var reduced=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+/* inline SVG icon set (emoji in markup remain the no-JS fallback) */
+function ic(s){return '<svg class="ic-draw" viewBox="0 0 24 24" aria-hidden="true">'+s+'</svg>'}
+function p(d){return '<path pathLength="1" d="'+d+'"/>'}
+var ICONS={
+"🏫":ic(p("M3 21h18")+p("M5 21V8l7-4 7 4v13")+p("M9 21v-5h6v5")+p("M12 8v3")),
+"🎓":ic(p("M22 9L12 4 2 9l10 5 10-5z")+p("M6 11.5V16c0 1.2 2.7 2.5 6 2.5s6-1.3 6-2.5v-4.5")+p("M22 9v5")),
+"💼":ic(p("M4 8h16a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z")+p("M8 8V6a2 2 0 012-2h4a2 2 0 012 2v2")+p("M3 13h18")),
+"🧠":ic(p("M12 3a7 7 0 017 7c0 1.9-.8 3.4-2 4.6V21h-7v-3H8a1 1 0 01-1-1v-2.5H5.2c-.7 0-1.1-.8-.7-1.4L6 10.5A7 7 0 0112 3z")+p("M11 9.5a2 2 0 113 1.8")),
+"🚀":ic(p("M12 2.5c3.5 2 5.5 5.5 5.5 9.5l-2.7 3h-5.6L6.5 12c0-4 2-7.5 5.5-9.5z")+'<circle pathLength="1" cx="12" cy="9.5" r="1.6"/>'+p("M9 17.5L7.5 21")+p("M15 17.5l1.5 3.5")+p("M12 18.5V22")),
+"🧭":ic('<circle pathLength="1" cx="12" cy="12" r="9"/>'+p("M15.5 8.5l-2 5-5 2 2-5 5-2z")),
+"⚖️":ic(p("M12 4v14")+p("M6 6h12")+p("M6 6l-2.6 6a3.3 3.3 0 006.6 0L7.4 6")+p("M18 6l-2.6 6a3.3 3.3 0 006.6 0L19.4 6")+p("M8.5 21h7")),
+"📥":ic(p("M12 3v10")+p("M8 9l4 4 4-4")+p("M4 15v4a2 2 0 002 2h12a2 2 0 002-2v-4")),
+"📚":ic(p("M4 19.5V5a2 2 0 012-2h13v16H6.5A2.5 2.5 0 004 21.5v-2z")+p("M4 19.5a2.5 2.5 0 012.5-2.5H19")+p("M9 7h6")),
+"💛":ic(p("M12 21C7.2 16.7 3.5 13.4 3.5 9.6A4.6 4.6 0 0112 6.4a4.6 4.6 0 018.5 3.2c0 3.8-3.7 7.1-8.5 11.4z")),
+"😰":ic(p("M2.5 12H7l2-5.5L13 18l2-6h6.5")),
+"🌧️":ic(p("M17.5 16a4.5 4.5 0 10-.9-8.9A6 6 0 105.8 16h11.7z")+p("M8 19l-1 2.5")+p("M12 19l-1 2.5")+p("M16 19l-1 2.5")),
+"💞":ic(p("M12 21C7.2 16.7 3.5 13.4 3.5 9.6A4.6 4.6 0 0112 6.4a4.6 4.6 0 018.5 3.2c0 3.8-3.7 7.1-8.5 11.4z")+p("M7 12h3l1.3-1.8 1.8 3.4L14.7 12H17")),
+"🌟":ic(p("M12 3l2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.8-5.4 2.8 1-6.1L3.2 9.4l6.1-.9L12 3z")),
+"🏳️‍🌈":ic(p("M5 21V4")+p("M5 5c4.5-2.2 9 2.2 14 0v9.5c-5 2.2-9.5-2.2-14 0")),
+"🕊️":ic(p("M21 5.5c-5.5.3-8.6 2.8-9.7 6.6L7.5 10 4 11.8l4.9 2.7C9.3 17.7 11.3 20 15 20c4.7 0 7.3-5.6 6-14.5z")+p("M12.5 9.5C11 7.5 9 6.8 6.5 7.2")),
+"🔥":ic(p("M12 2.8c1.2 3.2 4.5 4.7 4.5 8.7a4.5 4.5 0 11-9 0c0-1.9.9-3.1 2-4.2 0 1.6.9 2.3 1.9 2.4-1-2.3-.8-4.6.6-6.9z")),
+"🧘":ic('<circle pathLength="1" cx="12" cy="5.5" r="2.5"/>'+p("M12 8.5v4.5")+p("M12 13l-5.5 4.5")+p("M12 13l5.5 4.5")+p("M4.5 21h15")),
+"🌱":ic(p("M12 21.5V12")+p("M12 13.5C12 9 8.8 6.5 4.5 6.5c0 4.5 3.2 7 7.5 7z")+p("M12 11.5c0-3.7 2.6-6 6.5-6 0 3.7-2.6 6-6.5 6z")),
+"🔒":ic('<rect pathLength="1" x="5" y="11" width="14" height="9" rx="2"/>'+p("M8 11V7.5a4 4 0 018 0V11")+'<circle pathLength="1" cx="12" cy="15.5" r="1.2"/>'),
+"💚":ic(p("M12 21C7.2 16.7 3.5 13.4 3.5 9.6A4.6 4.6 0 0112 6.4a4.6 4.6 0 018.5 3.2c0 3.8-3.7 7.1-8.5 11.4z")),
+"📊":ic(p("M4 20.5h16")+p("M7 20.5V14")+p("M12 20.5V8.5")+p("M17 20.5V11")),
+"🏠":ic(p("M3 11.5l9-7.5 9 7.5")+p("M5.5 9.5V21h13V9.5")+p("M10 21v-5.5h4V21"))
+};
+document.querySelectorAll(".svc-icon,.ftl-ic,.ewb-card-icon,.ewb-why-item .icon").forEach(function(el){var k=el.textContent.trim();if(ICONS[k]){el.innerHTML=ICONS[k];el.setAttribute("aria-hidden","true")}});
+/* testimonial marquee */
+if(!reduced){(function(){
+var wrap=document.querySelector(".test-scroll");if(!wrap)return;
+var cards=[].slice.call(wrap.children).filter(function(c){return c.classList.contains("test-card")});
+if(cards.length<3)return;
+var set=document.createElement("div");set.className="test-set";
+cards.forEach(function(c){c.classList.add("visible");set.appendChild(c)});
+var clone=set.cloneNode(true);clone.setAttribute("aria-hidden","true");
+var track=document.createElement("div");track.className="test-track";
+track.style.animationDuration=(cards.length*9)+"s";
+track.appendChild(set);track.appendChild(clone);
+wrap.classList.add("marquee");wrap.appendChild(track);
+})();}
+/* countdown digit tick */
+if(!reduced){document.querySelectorAll("[data-offer-days],[data-offer-hours],[data-offer-mins],[data-offer-secs]").forEach(function(el){
+var prev=el.textContent;
+new MutationObserver(function(){if(el.textContent!==prev){prev=el.textContent;el.classList.remove("tick");void el.offsetWidth;el.classList.add("tick")}}).observe(el,{childList:!0});
+});}
+/* 3D tilt on assessment video-guide card */
+if(!reduced&&matchMedia("(pointer:fine)").matches){document.querySelectorAll(".sa-video-guide,.hero-assessment-card").forEach(function(tg){
+tg.classList.add("tilt-active");
+var glare=document.createElement("div");glare.className="tilt-glare";tg.appendChild(glare);
+tg.addEventListener("mousemove",function(e){var r=tg.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
+tg.style.animation="none";
+tg.style.transform="perspective(950px) rotateX("+((.5-y)*5).toFixed(2)+"deg) rotateY("+((x-.5)*7).toFixed(2)+"deg)";
+tg.style.setProperty("--gx",(x*100).toFixed(1)+"%");tg.style.setProperty("--gy",(y*100).toFixed(1)+"%")});
+tg.addEventListener("mouseleave",function(){tg.style.transform=""});
+});}
+/* blur-up lazy images */
+document.querySelectorAll('img[loading="lazy"]').forEach(function(img){
+if(img.complete)return;
+img.classList.add("blur-up");
+var done=function(){img.classList.add("loaded");setTimeout(function(){img.classList.remove("blur-up","loaded")},700)};
+img.addEventListener("load",done,{once:!0});img.addEventListener("error",done,{once:!0});
+});
+/* gallery captions */
+var caps=["School career-awareness session","Live student workshop","Classroom guidance session","Group career activity","Recognition ceremony","Student interaction round","Seminar for senior students","Career talk in progress","Session Q&A with students"];
+document.querySelectorAll(".gallery-item").forEach(function(it,i){
+var ov=it.querySelector(".gallery-overlay");
+if(ov&&caps[i]){var d=document.createElement("div");d.className="gallery-cap";d.textContent=caps[i];ov.appendChild(d)}
+});
 }();</script>
 </body>
 </html>
