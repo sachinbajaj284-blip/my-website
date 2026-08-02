@@ -1,0 +1,9 @@
+/* Lume Live — shared scroll-reveal animations (applied by site-anim.js) */
+.sa-reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.25,.46,.45,.94),transform .7s cubic-bezier(.25,.46,.45,.94);}
+.sa-reveal.sa-in{opacity:1;transform:none;}
+.sa-progress{position:fixed;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,#0A6E6E,#C9933A,#E8B95A);transform:scaleX(0);transform-origin:left;z-index:6000;pointer-events:none;}
+h2.sa-line{position:relative;}
+h2.sa-line::after{content:'';position:absolute;left:0;right:0;margin:0 auto;bottom:-8px;width:52px;height:3px;border-radius:3px;background:linear-gradient(90deg,#C9933A,#E8B95A);transform:scaleX(0);transform-origin:center;transition:transform .8s cubic-bezier(.25,.46,.45,.94) .2s;}
+h2.sa-line.sa-in::after{transform:scaleX(1);}
+h2.sa-line.sa-line-left::after{margin:0;right:auto;transform-origin:left;}
+@media(prefers-reduced-motion:reduce){.sa-reveal{opacity:1;transform:none;transition:none;}.sa-progress{display:none;}}
