@@ -9,7 +9,15 @@
   CASHFREE_CLIENT_SECRET=...
   CASHFREE_ENV=production or sandbox
   CASHFREE_API_VERSION=2025-01-01
+
+  Optional (enables server-side purchase records so access can be
+  restored on a new device — see restore-access.js):
+  FIREBASE_PROJECT_ID=...
+  FIREBASE_CLIENT_EMAIL=...
+  FIREBASE_PRIVATE_KEY=...
 */
+
+const { recordPaidEntitlement } = require("../_lib/entitlements");
 
 function json(res, status, body){
   res.statusCode = status;
@@ -103,13 +111,35 @@ module.exports = async function handler(req, res){
     return json(res, response.status, { error: "Cashfree order status check failed.", details: data });
   }
 
+  const sku = data.order_tags && data.order_tags.sku ? data.order_tags.sku : "";
+
+  if(String(data.order_status || "").toUpperCase() === "PAID" && sku){
+    // Write the durable, server-side purchase record. This is the actual
+    // source of truth for "who paid for what" — never fails the status
+    // check itself if Firebase isn't configured or the write hiccups, so
+    // checkout never breaks over this.
+    try{
+      await recordPaidEntitlement({
+        orderId: data.order_id,
+        sku: sku,
+        amount: data.order_amount,
+        currency: data.order_currency,
+        phone: data.customer_details && data.customer_details.customer_phone,
+        email: data.customer_details && data.customer_details.customer_email,
+        name: data.customer_details && data.customer_details.customer_name
+      });
+    }catch(err){
+      console.error("[lume order-status] entitlement write failed:", String(err && err.message || err));
+    }
+  }
+
   return json(res, 200, {
     order_id: data.order_id,
     cf_order_id: data.cf_order_id,
     order_status: data.order_status,
     order_amount: data.order_amount,
     order_currency: data.order_currency,
-    sku: data.order_tags && data.order_tags.sku ? data.order_tags.sku : "",
+    sku: sku,
     // Only the first name is returned for a friendly greeting. Phone/email are
     // deliberately withheld so this public, order-id-only endpoint never leaks
     // personal contact details to anyone who guesses or shares an order id.

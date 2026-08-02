@@ -440,7 +440,7 @@ button,input,select{font:inherit}
           <div class="ca-gate-feature"><b>🏛</b><div><strong>"What about a secure government job?"</strong><span>50+ UPSC, SSC, railway, banking, defence, teaching and state routes with eligibility and pay.</span></div></div>
           <div class="ca-gate-feature"><b>✦</b><div><strong>"Is it right for my child specifically?"</strong><span>Take the free 60-second test to match every career to their real strengths, not random browsing.</span></div></div>
         </div>
-        <div class="ca-gate-note">Start browsing free below — no signup. Take the free Snapshot to match careers to your child and open compare, class-wise routes and the government-jobs explorer. Want a counsellor to build a personal plan? That's the ₹1,499 roadmap.</div>
+        <div class="ca-gate-note">Start browsing free below — no signup. Take the free Snapshot to match careers to your child and open compare, class-wise routes and the government-jobs explorer. Want a counsellor to build a personal plan? That's the ₹1,499 roadmap. Already bought the roadmap on another device? <a href="#" onclick="if(typeof lumeCashfreeRestoreAccessPrompt==='function')lumeCashfreeRestoreAccessPrompt();return false;">Restore access</a>.</div>
       </aside>
     </div>
 
@@ -698,17 +698,19 @@ function initAtlasAccess(){
   return unlocked;
 }
 
+function runPaidAtlasCheck(){
+  if(typeof window.lumeCashfreeVerifyAccess!=="function")return;
+  Promise.all(ATLAS_PAID_SKUS.map(sku=>window.lumeCashfreeVerifyAccess(sku))).then(results=>{
+    if(!results.some(Boolean))return;
+    document.body.classList.remove("atlas-locked");
+    document.body.classList.add("atlas-unlocked");
+    if(typeof render==="function")render();
+    track("ci_paid_access_verified",{});
+  });
+}
 function verifyPaidAtlasAccess(){
-  window.addEventListener("lume:cashfree-ready",function(){
-    if(typeof window.lumeCashfreeVerifyAccess!=="function")return;
-    Promise.all(ATLAS_PAID_SKUS.map(sku=>window.lumeCashfreeVerifyAccess(sku))).then(results=>{
-      if(!results.some(Boolean))return;
-      document.body.classList.remove("atlas-locked");
-      document.body.classList.add("atlas-unlocked");
-      if(typeof render==="function")render();
-      track("ci_paid_access_verified",{});
-    });
-  },{once:true});
+  window.addEventListener("lume:cashfree-ready",runPaidAtlasCheck,{once:true});
+  window.addEventListener("lume:access-restored",runPaidAtlasCheck);
 }
 function career(id,title,sector,themes,streams,paths,style,setting,future,entry,mid,confidence,work,qualifications,exams,skills,ai,risks,parentNote){
   return {id,title,sector,themes,streams,paths,style,setting,future,salary:{entry,mid,confidence},work,qualifications,exams,skills,ai,risks,parentNote,

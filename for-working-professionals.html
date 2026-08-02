@@ -3273,6 +3273,7 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
             </div>
             <button class="sa-btn primary" type="button" onclick="saBegin()">Begin Lume Lens &rarr;</button>
             <p class="sa-pay-note">Cashfree payments verify automatically and return you here to begin. <a class="sa-help-link" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20need%20help%20with%20the%20assessment%20payment%20or%20report." target="_blank" rel="noopener">Need help? Message Lume Live.</a></p>
+            <p class="sa-pay-note"><a href="#" onclick="if(typeof lumeCashfreeRestoreAccessPrompt==='function')lumeCashfreeRestoreAccessPrompt();return false;">Paid on your phone and now on another device? Restore access</a></p>
           </aside>
         </div>
       </div>
@@ -3714,6 +3715,7 @@ function scheduleVerifiedCashfreeAccess(){
  [0,300,1200].forEach(function(ms){setTimeout(applyVerifiedCashfreeAccess,ms);});
 }
 window.addEventListener("lume:cashfree-ready",scheduleVerifiedCashfreeAccess);
+window.addEventListener("lume:access-restored",scheduleVerifiedCashfreeAccess);
 if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",scheduleVerifiedCashfreeAccess);}
 else{scheduleVerifiedCashfreeAccess();}
 function renderSteps(){

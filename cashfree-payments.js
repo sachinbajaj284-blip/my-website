@@ -24,6 +24,7 @@
     mode: "production",
     createOrderEndpoint: "/api/cashfree/create-order",
     orderStatusEndpoint: "/api/cashfree/order-status",
+    restoreAccessEndpoint: "/api/cashfree/restore-access",
     redirectTarget: "_modal",
     whatsappNumber: "917015671280",
     upiId: "sachinbajaj284@okaxis",
@@ -172,6 +173,73 @@
       });
     _verifyCache[sku] = { ts: now, promise: promise };
     return promise;
+  };
+
+  /* ------------------------------------------------------------
+     Restore access on a new device.
+
+     Access is normally tied to whichever browser was used at checkout
+     (that's where the order_id lives). This looks up the phone/email the
+     customer paid with against the server-side purchase record (written
+     by /api/cashfree/order-status.js when Cashfree confirms PAID) and, if
+     found, repopulates local storage with the real order_id(s) so
+     lumeCashfreeVerifyAccess() can confirm them the normal way.
+     Returns { ok, count, error? }.
+     ------------------------------------------------------------ */
+  window.lumeCashfreeRestoreAccess = function(query){
+    var cfg = getConfig();
+    var payload = {};
+    if(query && query.phone){ payload.phone = String(query.phone); }
+    if(query && query.email){ payload.email = String(query.email); }
+    if(!payload.phone && !payload.email){
+      return Promise.resolve({ ok:false, count:0, error:"Enter the phone number or email you paid with." });
+    }
+    return fetch(cfg.restoreAccessEndpoint || "/api/cashfree/restore-access", {
+      method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify(payload)
+    })
+      .then(function(res){ return res.json().then(function(data){ return { res:res, data:data }; }); })
+      .then(function(r){
+        if(!r.res.ok || !r.data || r.data.ok === false){
+          return { ok:false, count:0, error:(r.data && r.data.error) || "Could not look up your access. Please retry or message us on WhatsApp." };
+        }
+        var found = Array.isArray(r.data.access) ? r.data.access : [];
+        if(found.length){
+          var store = readAccessStore();
+          found.forEach(function(item){
+            if(!item || !item.sku || !item.order_id) return;
+            store[item.sku] = { status:"PAID", order_id:item.order_id, grantedAt:item.grantedAt || new Date().toISOString(), restoredAt:new Date().toISOString() };
+          });
+          writeAccessStore(store);
+          // Clear the verify cache so the next check re-confirms these fresh entries.
+          _verifyCache = {};
+        }
+        return { ok:true, count:found.length };
+      })
+      .catch(function(){
+        return { ok:false, count:0, error:"Could not reach Lume Live right now. Please retry or message us on WhatsApp." };
+      });
+  };
+
+  // Convenience UI wrapper: prompts for a phone number, restores access,
+  // notifies, and tells any listening page (via a custom event) to
+  // re-check its gates. Wire a "Paid on another device?" link/button to
+  // this rather than re-implementing the prompt+refresh dance per page.
+  window.lumeCashfreeRestoreAccessPrompt = function(){
+    var phone = window.prompt("Enter the 10-digit phone number you paid with, to restore your access on this device:");
+    if(!phone) return;
+    notify("Checking your payment records…");
+    window.lumeCashfreeRestoreAccess({ phone: phone }).then(function(result){
+      if(!result.ok){
+        notify(result.error || "Could not look up your access. Please message us on WhatsApp.");
+        return;
+      }
+      if(result.count > 0){
+        notify("Access restored — you're all set on this device.");
+        window.dispatchEvent(new CustomEvent("lume:access-restored"));
+      } else {
+        notify("No completed payment found for that number. If you just paid, wait a minute and try again, or message us on WhatsApp.");
+      }
+    });
   };
 
   /* ============================================================
