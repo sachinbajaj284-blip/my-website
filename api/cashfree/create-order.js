@@ -22,7 +22,10 @@ const SKU_PRICES = {
   "parents-handbook": { amount: 199, label: "Parents Career Handbook", alias: "parents199" },
   "career-intelligence-roadmap": { amount: 1499, label: "Career Intelligence Detailed Roadmap", alias: "roadmap1499" },
   "stream-clarity-session": { amount: 999, label: "Stream Clarity Counselling Session", alias: "stream999" },
-  "career-direction-session": { amount: 1499, label: "Career Direction Counselling Session", alias: "careerdir1499" }
+  "career-direction-session": { amount: 1499, label: "Career Direction Counselling Session", alias: "careerdir1499" },
+  "internship-1-month": { amount: 3499, label: "1-Month Practical Internship", alias: "intern1m3499" },
+  "internship-2-month": { amount: 5999, label: "2-Month Advanced Fellowship", alias: "intern2m5999" },
+  "internship-lume-lens": { amount: 500, label: "Lume Lens Report (Intern Add-On)", alias: "internlens500" }
 };
 
 function json(res, status, body){
