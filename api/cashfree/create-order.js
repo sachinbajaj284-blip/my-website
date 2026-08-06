@@ -23,8 +23,11 @@ const SKU_PRICES = {
   "career-intelligence-roadmap": { amount: 1499, label: "Career Intelligence Detailed Roadmap", alias: "roadmap1499" },
   "stream-clarity-session": { amount: 999, label: "Stream Clarity Counselling Session", alias: "stream999" },
   "career-direction-session": { amount: 1499, label: "Career Direction Counselling Session", alias: "careerdir1499" },
-  "internship-1-month": { amount: 3499, label: "1-Month Practical Internship", alias: "intern1m3499" },
-  "internship-2-month": { amount: 5999, label: "2-Month Advanced Fellowship", alias: "intern2m5999" },
+  // Internship tracks are sold in supervised hours. The SKU keys are kept as-is
+  // so orders placed before the hours-based relaunch still resolve.
+  "internship-1-month": { amount: 3499, label: "Practitioner Foundations (60 supervised hours)", alias: "intern60h3499" },
+  "internship-2-month": { amount: 5999, label: "Advanced Fellowship (120 supervised hours)", alias: "intern120h5999" },
+  "internship-240-hour": { amount: 11999, label: "University Credit Track (240 supervised hours)", alias: "intern240h11999" },
   "internship-lume-lens": { amount: 500, label: "Lume Lens Report (Intern Add-On)", alias: "internlens500" }
 };
 
