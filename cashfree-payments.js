@@ -30,18 +30,37 @@
     upiId: "sachinbajaj284@okaxis",
     upiQrImage: "lume-upi-qr.png",
     supportEmail: "hello@lumelive.co.in",
-    firestoreCollection: "paymentAttempts"
+    firestoreCollection: "paymentAttempts",
+    // Google Calendar appointment schedule. Clients pick a real slot from
+    // Lume Live's live availability and get an instant invite + Meet link, so
+    // no date/time has to be negotiated over WhatsApp after payment.
+    // Single source of truth for the whole site — change it here only.
+    bookingCalendarUrl: "https://calendar.app.google/s59WHyuHJenjfPbQ6"
   };
 
   // Per-SKU success "next steps" + continue link, kept in sync with payment-return.html
+  // book:true  => the purchase is a live 1:1 slot, so the primary call to action
+  //               after payment is the Google Calendar picker, not WhatsApp.
   var SKU_FLOW = {
     "student-full-report":        { cta:"Start Assessment Now",       href:"assessment.html#self-assessments",                       steps:["Your ₹999 Full Clarity Report is unlocked.","Start the 4-part assessment now — it takes about 20 minutes.","Your 15-page PDF report is delivered on WhatsApp after review."] },
-    "stream-clarity-session":     { cta:"Start Assessment Now",       href:"assessment.html#self-assessments",                       steps:["Your ₹999 Stream Clarity session is booked — we'll confirm your slot on WhatsApp.","Your assessment is also unlocked. Start the 4-part assessment now (about 20 minutes).","Your combined report is delivered on WhatsApp after review."] },
+    "stream-clarity-session":     { cta:"Pick Your Slot",             href:"assessment.html#self-assessments", book:true,            steps:["Your ₹999 Stream Clarity session is paid for.","Pick your slot below — you'll get an instant Google Calendar invite with the video-call link.","Your assessment is also unlocked: start the 4-part assessment (about 20 minutes) before the call."] },
     "lume-lens-working-profile":  { cta:"Start Lume Lens Now",         href:"for-working-professionals.html#self-assessments",         steps:["Your Lume Lens report is unlocked.","Complete the short assessment to generate your clarity report.","We share your personalised PDF on WhatsApp."] },
     "career-intelligence-roadmap":{ cta:"Open Career Intelligence",    href:"career-intelligence.html?access=assessment#career-intelligence", steps:["Your Career Intelligence roadmap is unlocked.","Open the dashboard to begin.","Save your WhatsApp confirmation for your records."] },
     "parents-handbook":           { cta:"Confirm Delivery on WhatsApp",href:"https://wa.me/917015671280", steps:["Payment received for the Parents' Career Handbook.","Send us your email on WhatsApp so we can deliver the PDF.","You'll receive it within a few hours."] },
-    "intro-session":              { cta:"Confirm Booking on WhatsApp", href:"https://wa.me/917015671280", steps:["Payment received for your ₹49 introductory session.","Tap below to confirm your preferred date & time on WhatsApp.","Sachin will send your Google Meet / call details before the session."] }
+    "intro-session":              { cta:"Pick Your Slot",             href:"", book:true,                   steps:["Payment received for your ₹49 introductory session.","Pick a day and time from Lume Live's calendar below — takes 20 seconds.","Google sends you the confirmation and video-call link straight away."] },
+    "career-direction-session":   { cta:"Pick Your Slot",             href:"", book:true,                   steps:["Payment received for your Career Direction session.","Pick a day and time from Lume Live's calendar below — takes 20 seconds.","Google sends you the confirmation and video-call link straight away."] }
   };
+
+  function bookingUrl(){ return getConfig().bookingCalendarUrl || ""; }
+
+  // A SKU books a live slot when SKU_FLOW says so, or when the page passes
+  // bookingUrl/isBooking explicitly (for one-off session offers not in SKU_FLOW).
+  function isBooking(options){
+    if(!options){ return false; }
+    if(options.isBooking === true){ return true; }
+    var flow = SKU_FLOW[options.sku];
+    return Boolean(flow && flow.book);
+  }
 
   function getConfig(){
     var pageConfig = window.LUME_CASHFREE || {};
@@ -79,13 +98,19 @@
   }
 
   function waConfirmMessage(options, orderId){
+    // For live-session SKUs the client picks their own slot on the Google
+    // Calendar page, so the message says which slot they took rather than
+    // opening a "what date and time suit you?" thread.
+    var booking = isBooking(options);
     return [
       "Hello Lume Live!",
       "I have completed my Cashfree payment for " + (options.label || "a Lume Live service") + ".",
       "Amount: " + inr(options.amount),
       orderId ? "Order ID: " + orderId : "",
       options.customerName ? "Name: " + options.customerName : "",
-      "Please confirm my access / booking."
+      booking
+        ? "I have booked my slot on your Google Calendar link. (If I haven't yet, I'll book it here: " + bookingUrl() + ")"
+        : "Please confirm my access / booking."
     ].filter(Boolean).join("\n");
   }
 
@@ -358,18 +383,46 @@
 ".lcf-ico.ok{background:#E6F7EF;color:#12925A}",
 ".lcf-ico.err{background:#FDECEC;color:#C0392B}",
 ".lcf-ico.wait{background:#FFF6E6;color:#9A6414}",
+/* Success tick — the ring settles, then the check draws itself in. */
+".lcf-mark{display:block;width:78px;height:78px;margin:2px auto 14px;overflow:visible}",
+".lcf-mark .lcf-mark-ring{fill:#E6F7EF;stroke:#12925A;stroke-width:2;transform-origin:50% 50%;animation:lcf-pop-in .42s cubic-bezier(.2,.9,.3,1.4) both}",
+".lcf-mark .lcf-mark-halo{fill:none;stroke:#12925A;stroke-width:2;transform-origin:50% 50%;animation:lcf-halo 1.15s .3s ease-out both}",
+".lcf-mark .lcf-mark-check{fill:none;stroke:#12925A;stroke-width:3.6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:30;stroke-dashoffset:30;animation:lcf-draw .42s .3s cubic-bezier(.65,0,.35,1) forwards}",
+"@keyframes lcf-pop-in{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}",
+"@keyframes lcf-draw{to{stroke-dashoffset:0}}",
+"@keyframes lcf-halo{from{opacity:.55;transform:scale(1)}to{opacity:0;transform:scale(1.7)}}",
 ".lcf-t{margin:0 0 6px;font-size:1.16rem;font-weight:800;color:#0D1B40}",
 ".lcf-p{margin:0 0 16px;font-size:.92rem;line-height:1.55;color:#56657d}",
+/* Affirmation — a short human note between the receipt and the next step. */
+".lcf-affirm{position:relative;text-align:left;margin:2px 0 18px;padding:15px 17px 15px 21px;border-radius:16px;background:linear-gradient(135deg,#FFFAF0 0%,#F4FBF9 100%);border:1px solid #F1E4C9;overflow:hidden;animation:lcf-rise .5s .34s both}",
+".lcf-affirm::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#E8B95A,#0A6E6E)}",
+".lcf-affirm::after{content:'\\201C';position:absolute;right:13px;top:8px;font-family:Georgia,serif;font-size:3rem;line-height:1;color:#E8B95A;opacity:.26;pointer-events:none}",
+".lcf-affirm-eyebrow{display:block;font-size:.62rem;font-weight:900;letter-spacing:1.1px;text-transform:uppercase;color:#0A6E6E;margin-bottom:7px}",
+".lcf-affirm-q{margin:0;font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:.95rem;line-height:1.6;color:#16264d;position:relative;z-index:1;padding-right:14px}",
+".lcf-affirm-sign{display:block;margin-top:9px;font-family:'Segoe UI',system-ui,Arial,sans-serif;font-style:normal;font-size:.71rem;font-weight:800;letter-spacing:.2px;color:#8493ab}",
+"@keyframes lcf-rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}",
 ".lcf-steps{list-style:none;margin:0 0 18px;padding:0;text-align:left}",
-".lcf-steps li{position:relative;padding:9px 10px 9px 38px;margin-bottom:8px;background:#F6F8FC;border-radius:12px;font-size:.86rem;line-height:1.45;color:#33425c}",
-".lcf-steps li::before{counter-increment:lcf;content:counter(lcf);position:absolute;left:9px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;background:#0D1B40;color:#fff;font-size:.74rem;font-weight:800;display:flex;align-items:center;justify-content:center}",
+".lcf-steps li{position:relative;padding:11px 12px 11px 44px;margin-bottom:8px;background:#F7F9FC;border:1px solid #EBF0F7;border-radius:14px;font-size:.86rem;line-height:1.45;color:#33425c}",
+".lcf-steps li::before{counter-increment:lcf;content:counter(lcf);position:absolute;left:12px;top:11px;width:23px;height:23px;border-radius:50%;background:linear-gradient(135deg,#0D1B40,#22417f);color:#fff;font-size:.74rem;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(13,27,64,.24)}",
+/* The one step the client has to act on right now. */
+".lcf-steps li.lcf-now{background:linear-gradient(135deg,#FFF8EA,#FFFDF8);border-color:#EFDDB8;color:#26364f;font-weight:600}",
+".lcf-steps li.lcf-now::before{background:linear-gradient(135deg,#C9933A,#E8B95A);color:#0D1B40;box-shadow:0 2px 8px rgba(201,147,58,.45)}",
 ".lcf-steps{counter-reset:lcf}",
-".lcf-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;border:0;border-radius:999px;font-size:.94rem;font-weight:800;cursor:pointer;text-decoration:none;margin-bottom:10px;transition:transform .12s,box-shadow .12s}",
+".lcf-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;border:0;border-radius:999px;font-size:.94rem;font-weight:800;cursor:pointer;text-decoration:none;margin-bottom:10px;transition:transform .12s,box-shadow .18s,filter .18s}",
 ".lcf-btn:active{transform:scale(.98)}",
-".lcf-btn.gold{background:linear-gradient(135deg,#C9933A,#E8B95A);color:#0D1B40}",
+".lcf-btn.gold{background:linear-gradient(135deg,#C9933A,#E8B95A);color:#0D1B40;box-shadow:0 10px 26px rgba(201,147,58,.32)}",
+".lcf-btn.gold:hover{filter:brightness(1.04);box-shadow:0 14px 32px rgba(201,147,58,.42)}",
+/* The booking button is the whole point of this screen — let it breathe. */
+".lcf-btn.book{min-height:54px;font-size:1rem;letter-spacing:.2px;animation:lcf-breathe 2.8s ease-in-out 1s infinite}",
+"@keyframes lcf-breathe{0%,100%{box-shadow:0 10px 26px rgba(201,147,58,.30)}50%{box-shadow:0 13px 36px rgba(201,147,58,.58)}}",
 ".lcf-btn.wa{background:#25D366;color:#fff}",
+/* On a booking screen WhatsApp is only the fallback — it must not compete
+   with the gold "Pick Your Slot" button for attention. */
+".lcf-btn.wa.quiet{background:#fff;color:#0E8A6B;border:1.5px solid #CFE9DF;font-weight:700;min-height:44px;font-size:.88rem}",
+".lcf-btn.wa.quiet:hover{background:#F2FBF7;border-color:#9FD8C3}",
 ".lcf-btn.navy{background:#0D1B40;color:#fff}",
 ".lcf-btn.ghost{background:#EEF2F8;color:#33425c}",
+".lcf-note{margin:-3px 0 14px;font-size:.78rem;line-height:1.55;color:#7587a0;text-align:center;padding:0 6px}",
 ".lcf-trust{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;font-size:.74rem;color:#8493ab}",
 ".lcf-upi{border:1px solid #E3E9F2;border-radius:16px;padding:16px;text-align:center;margin-top:6px;background:#FBFCFE}",
 ".lcf-upi h4{margin:0 0 4px;font-size:.96rem;color:#0D1B40;font-weight:800}",
@@ -382,7 +435,8 @@
 ".lcf-divider{display:flex;align-items:center;gap:10px;color:#9aa8bf;font-size:.74rem;margin:16px 0}",
 ".lcf-divider::before,.lcf-divider::after{content:'';flex:1;height:1px;background:#E3E9F2}",
 ".lcf-back{display:block;text-align:center;margin-top:8px;font-size:.82rem;color:#7587a0;background:none;border:0;cursor:pointer;width:100%}",
-".lcf-back:hover{color:#0D1B40}"
+".lcf-back:hover{color:#0D1B40}",
+"@media (prefers-reduced-motion:reduce){.lcf-card,.lcf-affirm,.lcf-mark *,.lcf-btn.book{animation:none!important}.lcf-mark .lcf-mark-check{stroke-dashoffset:0}.lcf-mark .lcf-mark-halo{opacity:0}}"
     ].join("\n");
     var s = document.createElement("style");
     s.id = "lcf-styles";
@@ -471,21 +525,113 @@
     }
   }
 
+  function calSvg(){
+    return '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>';
+  }
+
+  function okMarkSvg(){
+    return '<svg class="lcf-mark" viewBox="0 0 52 52" aria-hidden="true">' +
+      '<circle class="lcf-mark-halo" cx="26" cy="26" r="23"/>' +
+      '<circle class="lcf-mark-ring" cx="26" cy="26" r="23"/>' +
+      '<path class="lcf-mark-check" d="M15.5 26.8l7 7 14-14.5"/>' +
+      '</svg>';
+  }
+
+  /* ------------------------------------------------------------
+     A short affirmation shown after payment. Paying for counselling
+     is a vulnerable moment, so the screen says something human
+     before it asks for the next click.
+
+     Picked from a stable hash of the order ID, not at random, so the
+     in-page modal and payment-return.html show the client the same
+     line — and a refresh doesn't swap it for a different one.
+     ------------------------------------------------------------ */
+  var AFFIRMATIONS = {
+    // Before a live 1:1 session.
+    session: {
+      eyebrow: "a note before we meet",
+      lines: [
+        "Most people sit with these questions for months. You've just turned yours into an appointment — that's the hardest part done.",
+        "Clarity isn't something you're born with. It's built, one honest conversation at a time. This is conversation one.",
+        "Asking for direction isn't a sign you're lost. It's a sign you're serious about where you're going.",
+        "You don't need every answer today. You need the next real step — and you've just taken it.",
+        "Whatever you've been weighing up on your own, you don't have to weigh it up alone any more.",
+        "The pressure you're feeling is real, and it isn't a verdict on what you're capable of. We'll look at it together."
+      ]
+    },
+    // Before an assessment or report.
+    report: {
+      eyebrow: "a note before you start",
+      lines: [
+        "Understanding how you're actually wired is worth more than any single exam score. That's what the next few minutes are for.",
+        "There are no wrong answers ahead — only honest ones. Answer as you are, not as you think you should be.",
+        "You've chosen to look at this properly instead of guessing. That already puts you ahead of the crowd.",
+        "Nothing you find here is a label or a limit. It's a starting point you get to work with."
+      ]
+    }
+  };
+
+  function affirmationFor(kind, seed){
+    var pool = (AFFIRMATIONS[kind] || AFFIRMATIONS.session).lines;
+    var key = String(seed || ""), h = 0;
+    for(var i = 0; i < key.length; i++){ h = (h * 31 + key.charCodeAt(i)) >>> 0; }
+    return pool[(key ? h : Math.floor(Math.random() * pool.length)) % pool.length];
+  }
+
+  function affirmHtml(kind, seed, name){
+    var set = AFFIRMATIONS[kind] || AFFIRMATIONS.session;
+    var eyebrow = name ? esc(name) + ", " + set.eyebrow : set.eyebrow.charAt(0).toUpperCase() + set.eyebrow.slice(1);
+    return '<div class="lcf-affirm">' +
+      '<span class="lcf-affirm-eyebrow">' + eyebrow + '</span>' +
+      '<p class="lcf-affirm-q">' + esc(affirmationFor(kind, seed)) + '</p>' +
+      '<span class="lcf-affirm-sign">— The Lume Live Counselling Team</span>' +
+      '</div>';
+  }
+  window.lumeAffirmationHtml = affirmHtml;
+
   function renderSuccess(options, orderId){
     if(window.gtag) gtag('event','payment_success',{event_category:'payment_funnel',event_label:options.sku||options.label||'',value:Number(options.amount||0),transaction_id:orderId||''});
     var flow = SKU_FLOW[options.sku] || { cta:"Continue", href:options.continueUrl || "index.html",
       steps:["Your payment is confirmed.","We've recorded your order.","Tap below to confirm on WhatsApp."] };
-    var steps = (options.successSteps || flow.steps).map(function(s){ return "<li>" + s + "</li>"; }).join("");
+    var booking = isBooking(options);
+    var calUrl = options.bookingUrl || bookingUrl();
+    // On a booking flow the second step is the one the client must act on
+    // now — highlight it so the eye lands on it and then on the gold button.
+    var steps = (options.successSteps || flow.steps).map(function(s, i){
+      return "<li" + (booking && i === 1 ? ' class="lcf-now"' : "") + ">" + s + "</li>";
+    }).join("");
+
+    // Live-session purchases lead with the calendar picker; anything the SKU
+    // also unlocks (e.g. the Stream Clarity assessment) drops to a second,
+    // quieter button. Non-session SKUs keep their original single CTA.
+    var primary = booking && calUrl
+      ? '<a class="lcf-btn gold book" target="_blank" rel="noopener noreferrer" data-act="book" href="' + esc(calUrl) + '">' + calSvg() + ' ' + esc(flow.cta || "Pick Your Slot") + '</a>' +
+        '<p class="lcf-note">Choose from Lume Live\'s live availability — Google emails your confirmation and video-call link instantly. Nothing more to arrange on WhatsApp.</p>'
+      : '<a class="lcf-btn gold" href="' + esc(options.continueUrl || flow.href) + '">' + esc(flow.cta) + '</a>';
+
+    var secondary = "";
+    if(booking && calUrl && (options.continueUrl || flow.href)){
+      secondary = '<a class="lcf-btn ghost" href="' + esc(options.continueUrl || flow.href) + '">Or start my assessment first</a>';
+    }
+
     EL.body.innerHTML =
       '<div class="lcf-center">' +
-        '<div class="lcf-ico ok">✓</div>' +
-        '<h4 class="lcf-t">Payment Successful</h4>' +
-        '<p class="lcf-p">Thank you' + (options.customerName ? ", " + esc(options.customerName) : "") + '! Your payment of <strong>' + esc(inr(options.amount)) + '</strong> is confirmed.' + (orderId ? '<br><span style="font-size:.78rem;color:#8493ab">Order ID: ' + esc(orderId) + '</span>' : '') + '</p>' +
+        okMarkSvg() +
+        '<h4 class="lcf-t">You\'re in' + (options.customerName ? ", " + esc(options.customerName) : "") + '.</h4>' +
+        '<p class="lcf-p">Your payment of <strong>' + esc(inr(options.amount)) + '</strong> is confirmed.' + (orderId ? '<br><span style="font-size:.78rem;color:#8493ab">Order ID: ' + esc(orderId) + '</span>' : '') + '</p>' +
       '</div>' +
+      affirmHtml(booking ? "session" : "report", orderId || options.sku, options.customerName) +
       '<ol class="lcf-steps">' + steps + '</ol>' +
-      '<a class="lcf-btn gold" href="' + (options.continueUrl || flow.href) + '">' + (flow.cta) + '</a>' +
-      '<a class="lcf-btn wa" target="_blank" rel="noopener noreferrer" href="' + waUrl(waConfirmMessage(options, orderId)) + '">' + waSvg() + ' Confirm booking on WhatsApp</a>' +
+      primary +
+      secondary +
+      '<a class="lcf-btn wa' + (booking ? ' quiet' : '') + '" target="_blank" rel="noopener noreferrer" href="' + esc(waUrl(waConfirmMessage(options, orderId))) + '">' + waSvg() + (booking ? ' Need help? Message us' : ' Confirm booking on WhatsApp') + '</a>' +
       '<button class="lcf-back" type="button">Close</button>';
+    var bookBtn = EL.body.querySelector('[data-act="book"]');
+    if(bookBtn && window.gtag){
+      bookBtn.addEventListener("click", function(){
+        gtag('event','calendar_book_click',{event_category:'booking',event_label:options.sku||options.label||''});
+      });
+    }
     EL.body.querySelector(".lcf-back").addEventListener("click", closeModal);
   }
 

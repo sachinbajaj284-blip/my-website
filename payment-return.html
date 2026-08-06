@@ -13,6 +13,9 @@
 <link rel="icon" href="favicon.ico" sizes="any">
 <meta name="description" content="Payment confirmation for your Lume Live purchase — we're verifying your Cashfree payment status.">
 <link rel="canonical" href="https://lumelive.co.in/payment-return.html">
+<!-- The slot picker is the next tap on this page — warm the connection now. -->
+<link rel="preconnect" href="https://calendar.app.google">
+<link rel="dns-prefetch" href="https://calendar.app.google">
 <style>
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at 18% 12%,rgba(232,185,90,.24),transparent 28%),radial-gradient(circle at 86% 20%,rgba(255,255,255,.18),transparent 30%),linear-gradient(135deg,#0D1B40,#0A6E6E);font-family:Arial,sans-serif;color:#102033;padding:18px}
@@ -23,10 +26,26 @@ p{color:#55706D;line-height:1.6;margin:0 0 18px}
 .status{margin:0 0 18px;padding:12px 14px;border-radius:14px;background:#EEF7F5;color:#0A6E6E;font-weight:800;font-size:.92rem}
 .status.wait{background:#FFF7E8;color:#9A6414}
 .status.fail{background:#FFF1F1;color:#A63737}
+.status.ok{background:#E9F7F0;color:#0F7A4C}
 .actions{display:grid;gap:10px}
-a{display:flex;align-items:center;justify-content:center;min-height:46px;border-radius:999px;text-decoration:none;font-weight:900}
-.primary{background:linear-gradient(135deg,#C9933A,#E8B95A);color:#0D1B40}
+a{display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;border-radius:999px;text-decoration:none;font-weight:900;transition:box-shadow .18s,filter .18s,transform .12s}
+a:active{transform:scale(.985)}
+.primary{background:linear-gradient(135deg,#C9933A,#E8B95A);color:#0D1B40;box-shadow:0 10px 26px rgba(201,147,58,.3)}
+.primary:hover{filter:brightness(1.04);box-shadow:0 14px 32px rgba(201,147,58,.42)}
 .ghost{background:#EEF7F5;color:#0A6E6E;border:1px solid #D6EAE7}
+.ghost:hover{background:#E2F2EF}
+/* The booking button is the whole point of this screen — let it breathe. */
+.primary.book{min-height:54px;font-size:1.02rem;animation:breathe 2.8s ease-in-out 1s infinite}
+@keyframes breathe{0%,100%{box-shadow:0 10px 26px rgba(201,147,58,.3)}50%{box-shadow:0 13px 36px rgba(201,147,58,.58)}}
+/* Affirmation — a human note between the receipt and the next step. */
+.lcf-affirm{position:relative;text-align:left;margin:0 0 18px;padding:15px 17px 15px 21px;border-radius:16px;background:linear-gradient(135deg,#FFFAF0 0%,#F4FBF9 100%);border:1px solid #F1E4C9;overflow:hidden;animation:rise .5s .1s both}
+.lcf-affirm::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#E8B95A,#0A6E6E)}
+.lcf-affirm::after{content:'\201C';position:absolute;right:13px;top:8px;font-family:Georgia,serif;font-size:3rem;line-height:1;color:#E8B95A;opacity:.26;pointer-events:none}
+.lcf-affirm-eyebrow{display:block;font-size:.62rem;font-weight:900;letter-spacing:1.1px;text-transform:uppercase;color:#0A6E6E;margin-bottom:7px}
+.lcf-affirm-q{margin:0;font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:.95rem;line-height:1.6;color:#16264d;position:relative;z-index:1;padding-right:14px}
+.lcf-affirm-sign{display:block;margin-top:9px;font-family:Arial,sans-serif;font-style:normal;font-size:.71rem;font-weight:800;color:#8493ab}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.lcf-affirm,.primary.book{animation:none!important}}
 </style>
 <link rel="stylesheet" href="site-anim.css">
 </head>
@@ -36,6 +55,7 @@ a{display:flex;align-items:center;justify-content:center;min-height:46px;border-
     <h1 id="returnTitle">Payment Step Complete</h1>
     <p id="returnCopy">Thank you. We are checking the payment status now. Once Cashfree confirms it, you can continue without sending a screenshot.</p>
     <div class="status wait" id="statusBox">Checking Cashfree payment status...</div>
+    <div id="affirmSlot"></div>
     <div class="actions">
       <a class="primary" id="continueLink" href="assessment.html#self-assessments">Start Assessment Now</a>
       <a class="ghost" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20have%20completed%20my%20Cashfree%20payment.%20Please%20confirm%20my%20access." target="_blank" rel="noopener">Confirm On WhatsApp</a>
@@ -100,20 +120,31 @@ a{display:flex;align-items:center;justify-content:center;min-height:46px;border-
   var continueLink = document.getElementById("continueLink");
   var returnTitle = document.getElementById("returnTitle");
   var returnCopy = document.getElementById("returnCopy");
+  // Google Calendar appointment page. Kept in sync with the single source of
+  // truth in cashfree-payments.js (DEFAULTS.bookingCalendarUrl) — this page
+  // also reads it from there below, and only falls back to this literal if
+  // the script hasn't loaded.
+  var BOOKING_URL = "https://calendar.app.google/s59WHyuHJenjfPbQ6";
+  // book:true => a live 1:1 slot was paid for, so the client picks their own
+  // day and time on the calendar instead of arranging it over WhatsApp.
   var skuTargets = {
     "student-full-report": { href:"assessment.html#self-assessments", label:"Start Assessment Now", title:"Payment Verified" },
     "lume-lens-working-profile": { href:"for-working-professionals.html#self-assessments", label:"Start Lume Lens Now", title:"Payment Verified" },
     "career-intelligence-roadmap": { href:"career-intelligence.html?access=assessment#career-intelligence", label:"Open Career Intelligence", title:"Payment Verified" },
     "parents-handbook": { href:"for-parents.html#parents-handbook", label:"Return To Parent Guide", title:"Payment Received" },
-    "intro-session": { href:"index.html#contact", label:"Return To Booking", title:"Payment Received" },
-    "stream-clarity-session": { href:"assessment.html#self-assessments", label:"Start Assessment Now", title:"Payment Verified" },
-    "career-direction-session": { href:"index.html#contact", label:"Return To Booking", title:"Payment Received" }
+    "intro-session": { book:true, label:"📅 Pick Your Slot", title:"Payment Received — Now Pick Your Slot" },
+    "stream-clarity-session": { book:true, href:"assessment.html#self-assessments", alt:"Or start my assessment first", label:"📅 Pick Your Slot", title:"Payment Verified — Now Pick Your Slot" },
+    "career-direction-session": { book:true, label:"📅 Pick Your Slot", title:"Payment Received — Now Pick Your Slot" }
   };
+  var isBooking = Boolean(skuTargets[sku] && skuTargets[sku].book);
+
   if(skuTargets[sku]){
-    continueLink.href = skuTargets[sku].href;
+    if(skuTargets[sku].href){
+      continueLink.href = skuTargets[sku].href;
+    }
     continueLink.textContent = skuTargets[sku].label;
   }
-  if(target){
+  if(target && !isBooking){
     var decoded = "";
     try{ decoded = decodeURIComponent(target); }catch(e){ decoded = ""; }
     // Only allow same-origin relative paths: must start with / then a non-slash/non-backslash char
@@ -122,6 +153,45 @@ a{display:flex;align-items:center;justify-content:center;min-height:46px;border-
       continueLink.href = decoded;
     }
   }
+
+  // Turn the primary button into the calendar picker, and demote whatever it
+  // pointed at (e.g. the Stream Clarity assessment) to a secondary link.
+  function applyBookingLinks(){
+    if(!isBooking){ return; }
+    var cfg = typeof window.lumeCashfreeGetConfig === "function" ? window.lumeCashfreeGetConfig() : {};
+    var url = cfg.bookingCalendarUrl || BOOKING_URL;
+    var t = skuTargets[sku];
+    if(t.href && t.alt){
+      var alt = document.createElement("a");
+      alt.className = "ghost";
+      alt.href = t.href;
+      alt.textContent = t.alt;
+      continueLink.parentNode.insertBefore(alt, continueLink.nextSibling);
+    }
+    continueLink.href = url;
+    continueLink.target = "_blank";
+    continueLink.rel = "noopener noreferrer";
+    continueLink.addEventListener("click", function(){
+      if(window.gtag) gtag('event','calendar_book_click',{event_category:'booking',event_label:sku});
+    });
+
+    // Re-point the WhatsApp fallback so it doesn't reopen the very
+    // "what date and time suit you?" thread the calendar is here to replace.
+    // data-wa-upgraded stops the message-polish script below from rewriting it.
+    var waLink = document.querySelector('.actions a[href*="wa.me"]');
+    if(waLink){
+      var lines = [
+        "Hello Lume Live!",
+        "I have completed my Cashfree payment.",
+        orderId ? "Order ID: " + orderId : "",
+        "I have booked my slot on your Google Calendar link. (If I haven't yet, I'll book it here: " + url + ")"
+      ].filter(Boolean).join("\n");
+      waLink.href = "https://wa.me/917015671280?text=" + encodeURIComponent(lines);
+      waLink.setAttribute("data-wa-upgraded","1");
+      waLink.textContent = "Need help? Message us";
+    }
+  }
+  applyBookingLinks();
 
   function grantAccess(details){
     if(!sku)return;
@@ -137,9 +207,27 @@ a{display:flex;align-items:center;justify-content:center;min-height:46px;border-
     statusBox.textContent = message;
   }
 
-  function autoContinue(){
+  // Same affirmation helper the in-page payment modal uses, seeded on the
+  // order ID so a client who sees both screens reads the same line twice.
+  function showAffirmation(customerName){
+    var slot = document.getElementById("affirmSlot");
+    if(!slot || slot.innerHTML || typeof window.lumeAffirmationHtml !== "function"){ return; }
+    slot.innerHTML = window.lumeAffirmationHtml(isBooking ? "session" : "report", orderId, customerName || "");
+  }
+
+  function autoContinue(customerName){
     var href = continueLink.getAttribute("href") || "";
     if(!href)return;
+    // Never auto-redirect a booking off-site — the client should see their
+    // order ID and choose to open the calendar themselves.
+    if(isBooking){
+      returnTitle.textContent = customerName ? "You're in, " + customerName + "." : "You're in.";
+      returnCopy.textContent = "Your payment is confirmed. One last step: pick the day and time that suit you from Lume Live's calendar below. Google sends your confirmation and video-call link straight away — nothing to arrange over WhatsApp.";
+      showStatus("ok","✓ Payment verified — now pick your slot");
+      showAffirmation(customerName);
+      continueLink.classList.add("book");
+      return;
+    }
     returnCopy.textContent = "Cashfree has confirmed your payment. Opening your assessment now...";
     showStatus("","Payment verified. Redirecting you to the start area now.");
     setTimeout(function(){ window.location.href = href; }, 900);
@@ -170,7 +258,8 @@ a{display:flex;align-items:center;justify-content:center;min-height:46px;border-
           returnTitle.textContent = skuTargets[sku].title;
           continueLink.textContent = skuTargets[sku].label;
         }
-        autoContinue();
+        // Cashfree returns only the first name here, which is what we want.
+        autoContinue((data.customer && data.customer.name) || "");
       }else{
         showStatus("wait","Cashfree status is "+(status || "pending")+". If money was debited, wait a minute and refresh this page.");
       }
