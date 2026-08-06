@@ -30,18 +30,37 @@
     upiId: "sachinbajaj284@okaxis",
     upiQrImage: "lume-upi-qr.png",
     supportEmail: "hello@lumelive.co.in",
-    firestoreCollection: "paymentAttempts"
+    firestoreCollection: "paymentAttempts",
+    // Google Calendar appointment schedule. Clients pick a real slot from
+    // Sachin's live availability and get an instant invite + Meet link, so
+    // no date/time has to be negotiated over WhatsApp after payment.
+    // Single source of truth for the whole site — change it here only.
+    bookingCalendarUrl: "https://calendar.app.google/s59WHyuHJenjfPbQ6"
   };
 
   // Per-SKU success "next steps" + continue link, kept in sync with payment-return.html
+  // book:true  => the purchase is a live 1:1 slot, so the primary call to action
+  //               after payment is the Google Calendar picker, not WhatsApp.
   var SKU_FLOW = {
     "student-full-report":        { cta:"Start Assessment Now",       href:"assessment.html#self-assessments",                       steps:["Your ₹999 Full Clarity Report is unlocked.","Start the 4-part assessment now — it takes about 20 minutes.","Your 15-page PDF report is delivered on WhatsApp after review."] },
-    "stream-clarity-session":     { cta:"Start Assessment Now",       href:"assessment.html#self-assessments",                       steps:["Your ₹999 Stream Clarity session is booked — we'll confirm your slot on WhatsApp.","Your assessment is also unlocked. Start the 4-part assessment now (about 20 minutes).","Your combined report is delivered on WhatsApp after review."] },
+    "stream-clarity-session":     { cta:"Pick Your Slot",             href:"assessment.html#self-assessments", book:true,            steps:["Your ₹999 Stream Clarity session is paid for.","Pick your slot below — you'll get an instant Google Calendar invite with the video-call link.","Your assessment is also unlocked: start the 4-part assessment (about 20 minutes) before the call."] },
     "lume-lens-working-profile":  { cta:"Start Lume Lens Now",         href:"for-working-professionals.html#self-assessments",         steps:["Your Lume Lens report is unlocked.","Complete the short assessment to generate your clarity report.","We share your personalised PDF on WhatsApp."] },
     "career-intelligence-roadmap":{ cta:"Open Career Intelligence",    href:"career-intelligence.html?access=assessment#career-intelligence", steps:["Your Career Intelligence roadmap is unlocked.","Open the dashboard to begin.","Save your WhatsApp confirmation for your records."] },
     "parents-handbook":           { cta:"Confirm Delivery on WhatsApp",href:"https://wa.me/917015671280", steps:["Payment received for the Parents' Career Handbook.","Send us your email on WhatsApp so we can deliver the PDF.","You'll receive it within a few hours."] },
-    "intro-session":              { cta:"Confirm Booking on WhatsApp", href:"https://wa.me/917015671280", steps:["Payment received for your ₹49 introductory session.","Tap below to confirm your preferred date & time on WhatsApp.","Sachin will send your Google Meet / call details before the session."] }
+    "intro-session":              { cta:"Pick Your Slot",             href:"", book:true,                   steps:["Payment received for your ₹49 introductory session.","Pick a day and time from Sachin's live calendar below — takes 20 seconds.","Google sends you the confirmation and video-call link straight away."] },
+    "career-direction-session":   { cta:"Pick Your Slot",             href:"", book:true,                   steps:["Payment received for your Career Direction session.","Pick a day and time from Sachin's live calendar below — takes 20 seconds.","Google sends you the confirmation and video-call link straight away."] }
   };
+
+  function bookingUrl(){ return getConfig().bookingCalendarUrl || ""; }
+
+  // A SKU books a live slot when SKU_FLOW says so, or when the page passes
+  // bookingUrl/isBooking explicitly (for one-off session offers not in SKU_FLOW).
+  function isBooking(options){
+    if(!options){ return false; }
+    if(options.isBooking === true){ return true; }
+    var flow = SKU_FLOW[options.sku];
+    return Boolean(flow && flow.book);
+  }
 
   function getConfig(){
     var pageConfig = window.LUME_CASHFREE || {};
@@ -79,13 +98,19 @@
   }
 
   function waConfirmMessage(options, orderId){
+    // For live-session SKUs the client picks their own slot on the Google
+    // Calendar page, so the message says which slot they took rather than
+    // opening a "what date and time suit you?" thread.
+    var booking = isBooking(options);
     return [
       "Hello Lume Live!",
       "I have completed my Cashfree payment for " + (options.label || "a Lume Live service") + ".",
       "Amount: " + inr(options.amount),
       orderId ? "Order ID: " + orderId : "",
       options.customerName ? "Name: " + options.customerName : "",
-      "Please confirm my access / booking."
+      booking
+        ? "I have booked my slot on your Google Calendar link. (If I haven't yet, I'll book it here: " + bookingUrl() + ")"
+        : "Please confirm my access / booking."
     ].filter(Boolean).join("\n");
   }
 
@@ -370,6 +395,7 @@
 ".lcf-btn.wa{background:#25D366;color:#fff}",
 ".lcf-btn.navy{background:#0D1B40;color:#fff}",
 ".lcf-btn.ghost{background:#EEF2F8;color:#33425c}",
+".lcf-note{margin:-4px 0 12px;font-size:.78rem;line-height:1.5;color:#7587a0;text-align:center}",
 ".lcf-trust{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;font-size:.74rem;color:#8493ab}",
 ".lcf-upi{border:1px solid #E3E9F2;border-radius:16px;padding:16px;text-align:center;margin-top:6px;background:#FBFCFE}",
 ".lcf-upi h4{margin:0 0 4px;font-size:.96rem;color:#0D1B40;font-weight:800}",
@@ -471,11 +497,31 @@
     }
   }
 
+  function calSvg(){
+    return '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>';
+  }
+
   function renderSuccess(options, orderId){
     if(window.gtag) gtag('event','payment_success',{event_category:'payment_funnel',event_label:options.sku||options.label||'',value:Number(options.amount||0),transaction_id:orderId||''});
     var flow = SKU_FLOW[options.sku] || { cta:"Continue", href:options.continueUrl || "index.html",
       steps:["Your payment is confirmed.","We've recorded your order.","Tap below to confirm on WhatsApp."] };
     var steps = (options.successSteps || flow.steps).map(function(s){ return "<li>" + s + "</li>"; }).join("");
+    var booking = isBooking(options);
+    var calUrl = options.bookingUrl || bookingUrl();
+
+    // Live-session purchases lead with the calendar picker; anything the SKU
+    // also unlocks (e.g. the Stream Clarity assessment) drops to a second,
+    // quieter button. Non-session SKUs keep their original single CTA.
+    var primary = booking && calUrl
+      ? '<a class="lcf-btn gold" target="_blank" rel="noopener noreferrer" data-act="book" href="' + esc(calUrl) + '">' + calSvg() + ' ' + esc(flow.cta || "Pick Your Slot") + '</a>' +
+        '<p class="lcf-note">Choose from Sachin\'s live availability — Google emails your confirmation and video-call link instantly. Nothing more to arrange on WhatsApp.</p>'
+      : '<a class="lcf-btn gold" href="' + esc(options.continueUrl || flow.href) + '">' + esc(flow.cta) + '</a>';
+
+    var secondary = "";
+    if(booking && calUrl && (options.continueUrl || flow.href)){
+      secondary = '<a class="lcf-btn ghost" href="' + esc(options.continueUrl || flow.href) + '">Or start my assessment first</a>';
+    }
+
     EL.body.innerHTML =
       '<div class="lcf-center">' +
         '<div class="lcf-ico ok">✓</div>' +
@@ -483,9 +529,16 @@
         '<p class="lcf-p">Thank you' + (options.customerName ? ", " + esc(options.customerName) : "") + '! Your payment of <strong>' + esc(inr(options.amount)) + '</strong> is confirmed.' + (orderId ? '<br><span style="font-size:.78rem;color:#8493ab">Order ID: ' + esc(orderId) + '</span>' : '') + '</p>' +
       '</div>' +
       '<ol class="lcf-steps">' + steps + '</ol>' +
-      '<a class="lcf-btn gold" href="' + (options.continueUrl || flow.href) + '">' + (flow.cta) + '</a>' +
-      '<a class="lcf-btn wa" target="_blank" rel="noopener noreferrer" href="' + waUrl(waConfirmMessage(options, orderId)) + '">' + waSvg() + ' Confirm booking on WhatsApp</a>' +
+      primary +
+      secondary +
+      '<a class="lcf-btn wa" target="_blank" rel="noopener noreferrer" href="' + esc(waUrl(waConfirmMessage(options, orderId))) + '">' + waSvg() + (booking ? ' Need help? Message us' : ' Confirm booking on WhatsApp') + '</a>' +
       '<button class="lcf-back" type="button">Close</button>';
+    var bookBtn = EL.body.querySelector('[data-act="book"]');
+    if(bookBtn && window.gtag){
+      bookBtn.addEventListener("click", function(){
+        gtag('event','calendar_book_click',{event_category:'booking',event_label:options.sku||options.label||''});
+      });
+    }
     EL.body.querySelector(".lcf-back").addEventListener("click", closeModal);
   }
 
