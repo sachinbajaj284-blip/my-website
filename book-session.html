@@ -5,7 +5,9 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' www.googletagmanager.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com; img-src 'self' data: www.google-analytics.com www.googletagmanager.com; connect-src 'self' www.googletagmanager.com *.google-analytics.com *.analytics.google.com; object-src 'none'; base-uri 'self';">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Book Your ₹49 Career Counselling Session — Pick a Slot | Lume Live</title>
-<meta name="description" content="Book your ₹49 introductory 1:1 career &amp; mental-health counselling session with a qualified Lume Live counsellor (M.Sc Clinical Psychology). Pick a day and time — we confirm on WhatsApp in minutes.">
+<link rel="preconnect" href="https://calendar.app.google">
+<link rel="dns-prefetch" href="https://calendar.app.google">
+<meta name="description" content="Book your ₹49 introductory 1:1 career &amp; mental-health counselling session with a qualified Lume Live counsellor (M.Sc Clinical Psychology). Pick a slot from our live calendar and get the invite instantly.">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://lumelive.co.in/book-session.html">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
@@ -13,7 +15,7 @@
 <link rel="icon" href="favicon.ico" sizes="any">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Book Your ₹49 Career Counselling Session">
-<meta property="og:description" content="Pick a day and time for your ₹49 introductory 1:1 session with a qualified counsellor — confirmed on WhatsApp in minutes.">
+<meta property="og:description" content="Pick a slot from our live calendar for your ₹49 introductory 1:1 session with a qualified counsellor — confirmed instantly.">
 <meta property="og:url" content="https://lumelive.co.in/book-session.html">
 <meta property="og:image" content="https://lumelive.co.in/og/book-session.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -59,16 +61,12 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
 .chip:hover{border-color:var(--teal)}
 .chip.sel{border-color:var(--teal);background:#ECF7F6;color:var(--navy)}
 .chip.sel small{color:var(--teal)}
-.date-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:9px}
-.time-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:9px}
 .preview{background:var(--paper);border:1px dashed var(--line);border-radius:12px;padding:14px 16px;font-size:.9rem;color:var(--muted);white-space:pre-line;margin-top:4px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;border-radius:999px;padding:14px 26px;font-weight:800;font-size:.98rem;border:0;cursor:pointer;font-family:inherit;width:100%;text-decoration:none}
 .btn.wa{background:#1EAE5C;color:#fff}
 .btn.wa:hover{background:#178f4a}
 .btn.wa[aria-disabled=true]{background:#b7c3bd;cursor:not-allowed;pointer-events:none}
 .btn.call{background:#fff;color:var(--navy);border:1.5px solid var(--line);margin-top:10px}
-.btn.gcal{background:#fff;color:var(--navy);border:1.5px solid var(--line);margin-top:10px}
-.btn.gcal[aria-disabled=true]{opacity:.5;cursor:not-allowed;pointer-events:none}
 .reassure{font-size:.8rem;color:var(--muted);text-align:center;margin-top:12px}
 .foot{background:var(--navy);color:rgba(255,255,255,.72);padding:26px 18px;text-align:center;font-size:.82rem;margin-top:24px}
 .foot a{color:var(--gold2)}
@@ -107,7 +105,7 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
 <section class="hero"><div class="in">
   <span class="eyebrow">Book a 1:1 session</span>
   <h1>Book your session — pick a slot</h1>
-  <p>A live video call with a qualified Lume Live counsellor (M.Sc Clinical Psychology). Choose your session below, then a day and time; we confirm on WhatsApp, usually within the hour.</p>
+  <p>A live video call with a qualified Lume Live counsellor (M.Sc Clinical Psychology). Choose your session below, then pick a slot from our live calendar — the invite reaches you straight away.</p>
   <div class="stats">
     <div class="stat"><b>From ₹49</b><span>First session</span></div>
     <div class="stat"><b>Live</b><span>1:1 video call</span></div>
@@ -127,7 +125,7 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
   <div class="gbook">
     <span class="gbook-tag">✅ Fastest · Confirmed instantly</span>
     <h2>Book from live available times</h2>
-    <p>Pick a slot from Lume Live's calendar — you'll get an instant Google Calendar invite with the video-call link and reminders. No back-and-forth.</p>
+    <p>Pick a slot from Lume Live's calendar — you'll get an instant Google Calendar invite with the video-call link and reminders. You choose your time once, and that's the booking done.</p>
     <div class="gbook-sess" id="gbookSess">You're booking: <b>Introductory Session</b> · 45 min · ₹49</div>
     <a class="btn gbtn" id="gBookBtn" href="https://calendar.app.google/s59WHyuHJenjfPbQ6" target="_blank" rel="noopener">See available times &amp; book &rarr;</a>
     <p class="gbook-note" id="gbookNote" hidden><span id="gbookNoteMsg">Tap <b>Book</b> above and we'll copy your session name — just paste it into the <b>Notes</b> box on the Google form so your counsellor knows which one.</span>
@@ -135,7 +133,7 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
     </p>
   </div>
 
-  <div class="or-divider">or request a slot on WhatsApp</div>
+  <div class="or-divider">or ask us to send the link on WhatsApp</div>
 
   <div class="card">
     <div class="step">
@@ -153,25 +151,14 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
       </div>
     </div>
 
-    <div class="step">
-      <div class="step-h"><span class="step-n">4</span><h2>Pick a day</h2></div>
-      <div class="date-row" id="dateRow"></div>
-    </div>
-
-    <div class="step">
-      <div class="step-h"><span class="step-n">5</span><h2>Pick a time</h2><span class="opt">IST</span></div>
-      <div class="time-row" id="timeRow"></div>
-    </div>
-
     <div class="step" style="margin-bottom:16px">
-      <div class="step-h"><span class="step-n">6</span><h2>Confirm on WhatsApp</h2></div>
-      <div class="preview" id="preview">Fill in your name, day and time — your request will appear here.</div>
+      <div class="step-h"><span class="step-n">4</span><h2>Send your request</h2></div>
+      <div class="preview" id="preview">Enter your name — your request will appear here.</div>
     </div>
 
     <a class="btn wa" id="waBtn" href="#" aria-disabled="true" target="_blank" rel="noopener">💬 Send my booking request on WhatsApp</a>
-    <a class="btn gcal" id="gcalBtn" href="#" aria-disabled="true" target="_blank" rel="noopener">📅 Add this slot to my Google Calendar</a>
     <a class="btn call" href="tel:+917015671280">📞 Prefer to call? +91 70156 71280</a>
-    <div class="reassure">No payment now — we confirm your slot on WhatsApp first. The ₹49 introductory price is for your first session (regular ₹499). Both parents welcome to join.</div>
+    <div class="reassure">No day-and-time to fill in here — we reply with the same live calendar link above, and you pick your slot once. The ₹49 introductory price is for your first session (regular ₹499). Both parents welcome to join.</div>
   </div>
 
   <!-- Refer a friend — viral loop (lumeRefer) -->
@@ -246,9 +233,7 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
     {key:'parent',   name:'Parent / Joint Session',            mins:45, priceLabel:'as per plan',desc:'Parent guidance or a joint parent-child conversation.', aud:'a parent enquiry'},
     {key:'debrief',  name:'₹999 Report Debrief',               mins:30, priceLabel:'incl. in ₹999',desc:'Expert walkthrough of your Full Clarity Report.', aud:''}
   ];
-  var state={session:SESSIONS[0],name:'',forWhom:'',date:'',time:'',iso:''}, started=false;
-  var DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var state={session:SESSIONS[0],name:'',forWhom:''}, started=false;
 
   function markStarted(){ if(!started){started=true; if(window.gtag) gtag('event','booking_started',{event_category:'booking'}); } }
 
@@ -268,29 +253,10 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
     sessGrid.appendChild(b);
   });
 
-  // build next 12 available days (Mon–Sat), skipping Sundays
-  var dateRow=document.getElementById('dateRow'), added=0, d=new Date();
-  while(added<12){
-    if(d.getDay()!==0){
-      var label=DOW[d.getDay()], dm=d.getDate()+' '+MON[d.getMonth()];
-      var full=DOW[d.getDay()]+', '+d.getDate()+' '+MON[d.getMonth()];
-      var iso=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-      var b=document.createElement('button');
-      b.type='button'; b.className='chip'; b.setAttribute('data-date',full); b.setAttribute('data-iso',iso);
-      b.innerHTML=label+'<small>'+dm+'</small>';
-      b.addEventListener('click',function(){ selectIn(dateRow,this); state.date=this.getAttribute('data-date'); state.iso=this.getAttribute('data-iso'); markStarted(); update(); });
-      dateRow.appendChild(b); added++;
-    }
-    d.setDate(d.getDate()+1);
-  }
-
-  // time slots within 9:00–20:00 IST
-  ['10:00 AM','11:00 AM','12:00 PM','1:00 PM','3:00 PM','4:00 PM','5:00 PM','6:00 PM','7:00 PM'].forEach(function(t){
-    var b=document.createElement('button');
-    b.type='button'; b.className='chip'; b.textContent=t; b.setAttribute('data-time',t);
-    b.addEventListener('click',function(){ selectIn(document.getElementById('timeRow'),this); state.time=t; markStarted(); if(window.gtag)gtag('event','booking_slot_selected',{event_category:'booking'}); update(); });
-    document.getElementById('timeRow').appendChild(b);
-  });
+  // No day/time pickers here any more. The client picks a slot exactly once,
+  // on the Google Calendar page above, which books it against real
+  // availability — a preference typed here would only have to be repeated
+  // there, and could clash with an hour that was never free.
 
   // "for whom" chips
   Array.prototype.forEach.call(document.querySelectorAll('#forChips .chip'),function(c){
@@ -339,24 +305,10 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
     lines.push('• Session: '+s.name+' ('+s.mins+' min · '+s.priceLabel+')');
     lines.push('• Name: '+(state.name||'—'));
     if(state.forWhom) lines.push('• For: '+state.forWhom);
-    lines.push('• Preferred: '+(state.date||'—')+(state.time?' at '+state.time:''));
-    lines.push('Please confirm this slot or suggest the nearest available time.');
+    lines.push('Please send me the booking link so I can pick a slot from your calendar.');
     return lines.join('\n');
   }
 
-  function to24(t){ var m=t.match(/(\d+):(\d+)\s*(AM|PM)/i); if(!m) return null; var h=(+m[1])%12; if(/PM/i.test(m[3]))h+=12; return {h:h,mm:+m[2]}; }
-  function pad(n){ return String(n).padStart(2,'0'); }
-  function gcalUrl(){
-    if(!(state.iso&&state.time)) return '#';
-    var t=to24(state.time); if(!t) return '#';
-    var s=state.session, ymd=state.iso.replace(/-/g,'');
-    var start=ymd+'T'+pad(t.h)+pad(t.mm)+'00';
-    var em=t.mm+s.mins, eh=t.h+Math.floor(em/60); em=em%60;
-    var end=ymd+'T'+pad(eh)+pad(em)+'00';
-    var text=encodeURIComponent('Lume Live — '+s.name);
-    var det=encodeURIComponent(s.name+' with Lume Live (M.Sc Clinical Psychology).\nTentative — please confirm your slot on WhatsApp: https://wa.me/'+WA);
-    return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='+text+'&dates='+start+'/'+end+'&ctz=Asia/Kolkata&details='+det+'&location='+encodeURIComponent('Online video call');
-  }
   function update(){
     var s=state.session;
     document.getElementById('gbookSess').innerHTML='You’re booking: <b>'+s.name+'</b> · '+s.mins+' min · '+s.priceLabel;
@@ -366,8 +318,8 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
     var note=document.getElementById('gbookNote');
     if(s.key==='intro'){ note.setAttribute('hidden',''); }
     else { note.removeAttribute('hidden'); resetCopy(); }
-    var ready=state.name && state.date && state.time;
-    document.getElementById('preview').textContent = (state.name||state.date||state.time) ? buildMsg() : 'Fill in your name, day and time — your request will appear here.';
+    var ready=Boolean(state.name);
+    document.getElementById('preview').textContent = ready ? buildMsg() : 'Enter your name — your request will appear here.';
     var btn=document.getElementById('waBtn');
     if(ready){
       btn.setAttribute('href','https://wa.me/'+WA+'?text='+encodeURIComponent(buildMsg()));
@@ -375,18 +327,11 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
     } else {
       btn.setAttribute('href','#'); btn.setAttribute('aria-disabled','true');
     }
-    var g=document.getElementById('gcalBtn'), slot=state.date&&state.time;
-    if(slot){ g.setAttribute('href',gcalUrl()); g.setAttribute('aria-disabled','false'); }
-    else { g.setAttribute('href','#'); g.setAttribute('aria-disabled','true'); }
   }
 
   document.getElementById('waBtn').addEventListener('click',function(e){
     if(this.getAttribute('aria-disabled')==='true'){ e.preventDefault(); return; }
     if(window.gtag) gtag('event','booking_whatsapp_click',{event_category:'booking',event_label:state.forWhom||'unspecified'});
-  });
-  document.getElementById('gcalBtn').addEventListener('click',function(e){
-    if(this.getAttribute('aria-disabled')==='true'){ e.preventDefault(); return; }
-    if(window.gtag) gtag('event','booking_addtocal',{event_category:'booking'});
   });
   function noteLine(){ var s=state.session; return 'Session: '+s.name+' ('+s.mins+' min, '+s.priceLabel+')'; }
   function resetCopy(){ var b=document.getElementById('gbookCopy'); if(b){ b.textContent='Copy'; b.classList.remove('done'); } }
