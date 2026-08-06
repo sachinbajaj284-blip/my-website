@@ -32,7 +32,7 @@
     supportEmail: "hello@lumelive.co.in",
     firestoreCollection: "paymentAttempts",
     // Google Calendar appointment schedule. Clients pick a real slot from
-    // Sachin's live availability and get an instant invite + Meet link, so
+    // Lume Live's live availability and get an instant invite + Meet link, so
     // no date/time has to be negotiated over WhatsApp after payment.
     // Single source of truth for the whole site — change it here only.
     bookingCalendarUrl: "https://calendar.app.google/s59WHyuHJenjfPbQ6"
@@ -47,8 +47,8 @@
     "lume-lens-working-profile":  { cta:"Start Lume Lens Now",         href:"for-working-professionals.html#self-assessments",         steps:["Your Lume Lens report is unlocked.","Complete the short assessment to generate your clarity report.","We share your personalised PDF on WhatsApp."] },
     "career-intelligence-roadmap":{ cta:"Open Career Intelligence",    href:"career-intelligence.html?access=assessment#career-intelligence", steps:["Your Career Intelligence roadmap is unlocked.","Open the dashboard to begin.","Save your WhatsApp confirmation for your records."] },
     "parents-handbook":           { cta:"Confirm Delivery on WhatsApp",href:"https://wa.me/917015671280", steps:["Payment received for the Parents' Career Handbook.","Send us your email on WhatsApp so we can deliver the PDF.","You'll receive it within a few hours."] },
-    "intro-session":              { cta:"Pick Your Slot",             href:"", book:true,                   steps:["Payment received for your ₹49 introductory session.","Pick a day and time from Sachin's live calendar below — takes 20 seconds.","Google sends you the confirmation and video-call link straight away."] },
-    "career-direction-session":   { cta:"Pick Your Slot",             href:"", book:true,                   steps:["Payment received for your Career Direction session.","Pick a day and time from Sachin's live calendar below — takes 20 seconds.","Google sends you the confirmation and video-call link straight away."] }
+    "intro-session":              { cta:"Pick Your Slot",             href:"", book:true,                   steps:["Payment received for your ₹49 introductory session.","Pick a day and time from Lume Live's calendar below — takes 20 seconds.","Google sends you the confirmation and video-call link straight away."] },
+    "career-direction-session":   { cta:"Pick Your Slot",             href:"", book:true,                   steps:["Payment received for your Career Direction session.","Pick a day and time from Lume Live's calendar below — takes 20 seconds.","Google sends you the confirmation and video-call link straight away."] }
   };
 
   function bookingUrl(){ return getConfig().bookingCalendarUrl || ""; }
@@ -584,7 +584,7 @@
     return '<div class="lcf-affirm">' +
       '<span class="lcf-affirm-eyebrow">' + eyebrow + '</span>' +
       '<p class="lcf-affirm-q">' + esc(affirmationFor(kind, seed)) + '</p>' +
-      '<span class="lcf-affirm-sign">— Sachin Bajaj, M.Sc Clinical Psychology</span>' +
+      '<span class="lcf-affirm-sign">— The Lume Live Counselling Team</span>' +
       '</div>';
   }
   window.lumeAffirmationHtml = affirmHtml;
@@ -606,7 +606,7 @@
     // quieter button. Non-session SKUs keep their original single CTA.
     var primary = booking && calUrl
       ? '<a class="lcf-btn gold book" target="_blank" rel="noopener noreferrer" data-act="book" href="' + esc(calUrl) + '">' + calSvg() + ' ' + esc(flow.cta || "Pick Your Slot") + '</a>' +
-        '<p class="lcf-note">Choose from Sachin\'s live availability — Google emails your confirmation and video-call link instantly. Nothing more to arrange on WhatsApp.</p>'
+        '<p class="lcf-note">Choose from Lume Live\'s live availability — Google emails your confirmation and video-call link instantly. Nothing more to arrange on WhatsApp.</p>'
       : '<a class="lcf-btn gold" href="' + esc(options.continueUrl || flow.href) + '">' + esc(flow.cta) + '</a>';
 
     var secondary = "";
