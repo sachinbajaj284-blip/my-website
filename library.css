@@ -48,6 +48,20 @@ article strong{color:var(--navy)}
 table.cmp{width:100%;border-collapse:collapse;margin:18px 0;font-size:.9rem}
 table.cmp th,table.cmp td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
 table.cmp th{background:var(--paper);color:var(--navy);font-weight:800}
+/* These tables carry four columns of prose, which cannot fit a phone. body
+   sets overflow-x:hidden, so without this the right-hand columns are silently
+   clipped rather than reachable — let the table scroll inside itself instead,
+   and hint that it does with a fade on the right edge. */
+@media(max-width:760px){
+  table.cmp{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    background:linear-gradient(90deg,#fff 30%,hsla(0,0%,100%,0)),
+      linear-gradient(90deg,hsla(0,0%,100%,0),#fff 70%) 100% 0,
+      radial-gradient(farthest-side at 0 50%,rgba(13,27,64,.14),transparent),
+      radial-gradient(farthest-side at 100% 50%,rgba(13,27,64,.14),transparent) 100% 0;
+    background-repeat:no-repeat;background-size:36px 100%,36px 100%,14px 100%,14px 100%;
+    background-attachment:local,local,scroll,scroll}
+  table.cmp th,table.cmp td{min-width:148px}
+}
 .cta-box{background:var(--paper);border:1px solid var(--line);color:var(--ink);border-radius:18px;padding:40px 28px;text-align:center;margin:48px 0}
 .cta-box h3{font-family:Georgia,serif;color:var(--navy);font-size:1.4rem;margin-bottom:10px}
 .cta-box p{color:var(--muted);max-width:540px;margin:0 auto 22px;font-size:.96rem}
