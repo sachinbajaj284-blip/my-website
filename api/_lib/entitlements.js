@@ -86,4 +86,35 @@ async function findPaidEntitlements({ phone, email }){
     .map(d => ({ sku: d.sku, order_id: d.orderId, amount: d.amount, grantedAt: d.grantedAt }));
 }
 
-module.exports = { recordPaidEntitlement, findPaidEntitlements, normalizePhone, normalizeEmail };
+/*
+  Claims the right to send the owner exactly one "new paid booking"
+  notification for this order.
+
+  order-status is polled — the return page checks once per load, the
+  payment modal checks on demand, and a client who refreshes checks again
+  — so without a claim every refresh would post another row. The
+  transaction makes the first caller the only winner.
+
+  Fails open: if Firestore is unavailable we return true and let the
+  notification through. A duplicate row the owner can ignore is a much
+  cheaper mistake than a paid booking nobody hears about, and the Apps
+  Script de-duplicates on orderId anyway.
+*/
+async function claimPaidNotification(orderId){
+  const id = String(orderId || "");
+  if(!id) return false;
+  try{
+    const ref = db().collection(COLLECTION).doc(id);
+    return await db().runTransaction(async tx => {
+      const snap = await tx.get(ref);
+      if(snap.exists && snap.data().ownerNotifiedAt) return false;
+      tx.set(ref, { ownerNotifiedAt: new Date().toISOString() }, { merge: true });
+      return true;
+    });
+  }catch(err){
+    console.error("[lume entitlements] notification claim failed, sending anyway:", String(err && err.message || err));
+    return true;
+  }
+}
+
+module.exports = { recordPaidEntitlement, findPaidEntitlements, claimPaidNotification, normalizePhone, normalizeEmail };
