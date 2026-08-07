@@ -42,7 +42,9 @@ a{color:var(--teal);text-decoration:none}
 .field{display:flex;flex-direction:column;gap:6px}
 .field label{font-size:.76rem;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.6px}
 .field .hint{font-size:.76rem;color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0}
-.field input,.field select{font-family:inherit;font-size:1rem;font-weight:600;color:var(--ink);background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;min-height:48px}
+/* min-width:0 stops a select refusing to shrink below its longest option,
+   which pushed the form past the viewport on narrow phones. */
+.field input,.field select{font-family:inherit;font-size:1rem;font-weight:600;color:var(--ink);background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;min-height:48px;width:100%;min-width:0}
 .field input:focus,.field select:focus{outline:2px solid var(--teal);outline-offset:1px;border-color:var(--teal)}
 .field.dim{opacity:.5}
 .types{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
