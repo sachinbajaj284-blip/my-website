@@ -17,7 +17,12 @@
   FIREBASE_PRIVATE_KEY=...
 */
 
-const { recordPaidEntitlement } = require("../_lib/entitlements");
+const { recordPaidEntitlement, claimPaidNotification } = require("../_lib/entitlements");
+const { notifyOwner } = require("../_lib/notify");
+
+// SKUs where the client books their own slot on the Google Calendar page,
+// so the owner knows not to chase them for a date and time.
+const BOOKING_SKUS = new Set(["intro-session", "career-direction-session", "stream-clarity-session"]);
 
 function json(res, status, body){
   res.statusCode = status;
@@ -141,6 +146,36 @@ module.exports = async function handler(req, res){
       });
     }catch(err){
       console.error("[lume order-status] entitlement write failed:", String(err && err.message || err));
+    }
+
+    // Tell the owner a booking has been paid for, once per order. This is
+    // the trustworthy copy of the client's details — Cashfree has verified
+    // the payment, and these fields come from Cashfree rather than from
+    // anything the browser could have edited.
+    try{
+      if(await claimPaidNotification(data.order_id)){
+        const notes = data.order_note || (data.order_tags && data.order_tags.label) || "";
+        await notifyOwner({
+          type: "payment",
+          sku: sku,
+          orderId: data.order_id,
+          amount: data.order_amount,
+          name: data.customer_details && data.customer_details.customer_name,
+          phone: data.customer_details && data.customer_details.customer_phone,
+          email: data.customer_details && data.customer_details.customer_email,
+          summary: "Payment confirmed for " + (sku || "a Lume Live service") +
+            " (₹" + (data.order_amount != null ? data.order_amount : "?") + ")." +
+            (BOOKING_SKUS.has(sku) ? " They now pick their own slot on the Google Calendar link." : ""),
+          details: {
+            cf_order_id: data.cf_order_id,
+            currency: data.order_currency,
+            picks_own_slot: BOOKING_SKUS.has(sku) ? "yes" : "no",
+            note: notes
+          }
+        });
+      }
+    }catch(err){
+      console.error("[lume order-status] owner notification failed:", String(err && err.message || err));
     }
   }
 
