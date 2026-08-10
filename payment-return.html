@@ -46,6 +46,16 @@ a:active{transform:scale(.985)}
 .lcf-affirm-sign{display:block;margin-top:9px;font-family:Arial,sans-serif;font-style:normal;font-size:.71rem;font-weight:800;color:#8493ab}
 @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.lcf-affirm,.primary.book{animation:none!important}}
+/* The line the client pastes into Google's booking notes — it is the only
+   way their chosen mode reaches the calendar event the counsellor reads. */
+.paste{text-align:left;margin:0 0 16px;padding:13px 15px;border-radius:16px;background:#F4FBF9;border:1px solid #CFE9DF}
+.paste-h{display:block;font-size:.62rem;font-weight:900;letter-spacing:1.1px;text-transform:uppercase;color:#0A6E6E;margin-bottom:6px}
+.paste p{margin:0 0 9px;font-size:.8rem;line-height:1.5;color:#4a6060}
+.paste-row{display:flex;align-items:stretch;gap:8px}
+.paste code{flex:1;min-width:0;background:#fff;border:1px solid #DCEDE7;border-radius:9px;padding:9px 10px;font-size:.78rem;line-height:1.4;color:#16264d;word-break:break-word}
+.paste button{flex:0 0 auto;border:0;border-radius:9px;padding:0 15px;background:#0A6E6E;color:#fff;font-size:.78rem;font-weight:800;cursor:pointer;font-family:inherit}
+.paste button:hover{background:#085757}
+.paste button.done{background:#0E8A6B}
 </style>
 <link rel="stylesheet" href="site-anim.css">
 </head>
@@ -56,6 +66,7 @@ a:active{transform:scale(.985)}
     <p id="returnCopy">Thank you. We are checking the payment status now. Once Cashfree confirms it, you can continue without sending a screenshot.</p>
     <div class="status wait" id="statusBox">Checking Cashfree payment status...</div>
     <div id="affirmSlot"></div>
+    <div id="pasteSlot"></div>
     <div class="actions">
       <a class="primary" id="continueLink" href="assessment.html#self-assessments">Start Assessment Now</a>
       <a class="ghost" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20have%20completed%20my%20Cashfree%20payment.%20Please%20confirm%20my%20access." target="_blank" rel="noopener">Confirm On WhatsApp</a>
@@ -142,6 +153,14 @@ a:active{transform:scale(.985)}
   };
   var isBooking = Boolean(skuTargets[sku] && skuTargets[sku].book);
 
+  // Google builds the calendar event from its own booking form, and that form
+  // has no "how do you want to meet?" field. The mode the client picked before
+  // paying comes back from order-status, and the only way to get it onto the
+  // event is the form's Notes box — so we hand them one line to paste.
+  // Set once the payment is verified; the calendar button reads it at click
+  // time, which is after the status check has come back.
+  var noteLine = "";
+
   if(skuTargets[sku]){
     if(skuTargets[sku].href){
       continueLink.href = skuTargets[sku].href;
@@ -176,6 +195,9 @@ a:active{transform:scale(.985)}
     continueLink.target = "_blank";
     continueLink.rel = "noopener noreferrer";
     continueLink.addEventListener("click", function(){
+      // Copy on the way out, so the only manual step on Google's form is a
+      // single paste — nothing to remember and nothing to retype.
+      if(noteLine){ copyNote(); }
       if(window.gtag) gtag('event','calendar_book_click',{event_category:'booking',event_label:sku});
     });
 
@@ -196,6 +218,49 @@ a:active{transform:scale(.985)}
     }
   }
   applyBookingLinks();
+
+  function copyNote(){
+    var btn = document.querySelector('#pasteSlot button');
+    function done(ok){ if(btn && ok){ btn.textContent = "✓ Copied"; btn.classList.add("done"); } }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(noteLine).then(function(){ done(true); }, function(){});
+      return;
+    }
+    // Older mobile browsers (and any non-secure context) never get the
+    // Clipboard API — fall back rather than silently doing nothing.
+    try{
+      var t = document.createElement("textarea");
+      t.value = noteLine; t.style.position = "fixed"; t.style.opacity = "0";
+      document.body.appendChild(t); t.select();
+      done(document.execCommand("copy"));
+      document.body.removeChild(t);
+    }catch(err){}
+  }
+
+  function showPasteNote(mode){
+    if(!isBooking || !mode){ return; }
+    var slot = document.getElementById("pasteSlot");
+    if(!slot || slot.innerHTML){ return; }
+    noteLine = "Preferred mode: " + mode;
+    var wrap = document.createElement("div");
+    wrap.className = "paste";
+    var head = document.createElement("span");
+    head.className = "paste-h";
+    head.textContent = "Carry this onto your booking";
+    var copy = document.createElement("p");
+    copy.textContent = "Google asks for notes when you pick your slot. Paste this in so your counsellor knows how you want to meet — we copy it for you when you tap Pick Your Slot.";
+    var row = document.createElement("div");
+    row.className = "paste-row";
+    var code = document.createElement("code");
+    code.textContent = noteLine;
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = "Copy";
+    btn.addEventListener("click", copyNote);
+    row.appendChild(code); row.appendChild(btn);
+    wrap.appendChild(head); wrap.appendChild(copy); wrap.appendChild(row);
+    slot.appendChild(wrap);
+  }
 
   function grantAccess(details){
     if(!sku)return;
@@ -262,6 +327,7 @@ a:active{transform:scale(.985)}
           returnTitle.textContent = skuTargets[sku].title;
           continueLink.textContent = skuTargets[sku].label;
         }
+        showPasteNote(data.session_mode || "");
         // Cashfree returns only the first name here, which is what we want.
         autoContinue((data.customer && data.customer.name) || "");
       }else{

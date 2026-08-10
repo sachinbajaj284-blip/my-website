@@ -112,6 +112,11 @@ checkout (has the session and meeting-mode they chose), and `payment` once
 Cashfree confirms the money. The `payment` row is the one to trust — it is
 written by the server from Cashfree's own response, not by the browser.
 
+The `payment` row also carries how the client asked to meet — in the `summary`
+line and as `session_mode` in `details`. Getting that same answer onto the
+Google Calendar event needs one setting change: see
+[session-mode-on-calendar.md](session-mode-on-calendar.md).
+
 ## Checking it works
 
 ```bash

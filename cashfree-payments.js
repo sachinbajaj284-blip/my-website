@@ -57,6 +57,53 @@
 
   function bookingUrl(){ return getConfig().bookingCalendarUrl || ""; }
 
+  /* ---------- how the client wants to meet ----------
+     The mode is chosen on the payment form (video / voice / chat) and is
+     already sent to create-order.js, which tags it onto the Cashfree order.
+     This mirror of the same normaliser exists so the success screen shows
+     the client the exact wording the counsellor will read. */
+  var SESSION_MODES = [
+    { match:/video|meet|zoom/i,             label:"Video call" },
+    { match:/chat|whatsapp|text|message/i,  label:"Chat (WhatsApp)" },
+    { match:/voice|phone|call/i,            label:"Voice call" }
+  ];
+  function sessionModeOf(notes){
+    var raw = notes && typeof notes === "object" ? String(notes.sessionMode || "") : "";
+    if(!raw){ return ""; }
+    for(var i = 0; i < SESSION_MODES.length; i++){
+      if(SESSION_MODES[i].match.test(raw)){ return SESSION_MODES[i].label; }
+    }
+    return "";
+  }
+
+  /* Google builds the calendar event from its own booking form, so the only
+     text we can get into that event is what the client types in its Notes
+     box. This is that text, prepared as one line to paste — otherwise the
+     mode they picked never reaches the calendar the counsellor works from. */
+  function bookingNoteLine(options){
+    var mode = sessionModeOf(options && options.notes);
+    var parts = [];
+    if(options && options.label){ parts.push("Session: " + options.label); }
+    if(mode){ parts.push("Preferred mode: " + mode); }
+    return parts.join(" · ");
+  }
+
+  function copyText(text){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      return navigator.clipboard.writeText(text).then(function(){ return true; }, function(){ return false; });
+    }
+    // Older mobile browsers (and any non-secure context) never get the
+    // Clipboard API — fall back rather than silently doing nothing.
+    try{
+      var t = document.createElement("textarea");
+      t.value = text; t.style.position = "fixed"; t.style.opacity = "0";
+      document.body.appendChild(t); t.select();
+      var ok = document.execCommand("copy");
+      document.body.removeChild(t);
+      return Promise.resolve(Boolean(ok));
+    }catch(err){ return Promise.resolve(false); }
+  }
+
   // A SKU books a live slot when SKU_FLOW says so, or when the page passes
   // bookingUrl/isBooking explicitly (for one-off session offers not in SKU_FLOW).
   function isBooking(options){
@@ -427,6 +474,16 @@
 ".lcf-btn.navy{background:#0D1B40;color:#fff}",
 ".lcf-btn.ghost{background:#EEF2F8;color:#33425c}",
 ".lcf-note{margin:-3px 0 14px;font-size:.78rem;line-height:1.55;color:#7587a0;text-align:center;padding:0 6px}",
+/* The line the client pastes into Google's booking notes — it is the only
+   way their chosen mode reaches the calendar event the counsellor reads. */
+".lcf-paste{text-align:left;margin:0 0 14px;padding:13px 15px;border-radius:14px;background:#F4FBF9;border:1px solid #CFE9DF}",
+".lcf-paste-h{display:block;font-size:.62rem;font-weight:900;letter-spacing:1.1px;text-transform:uppercase;color:#0A6E6E;margin-bottom:6px}",
+".lcf-paste p{margin:0 0 9px;font-size:.78rem;line-height:1.5;color:#4a6060}",
+".lcf-paste-row{display:flex;align-items:stretch;gap:8px}",
+".lcf-paste code{flex:1;min-width:0;background:#fff;border:1px solid #DCEDE7;border-radius:9px;padding:8px 10px;font-size:.76rem;line-height:1.4;color:#16264d;word-break:break-word}",
+".lcf-paste button{flex:0 0 auto;border:0;border-radius:9px;padding:0 14px;background:#0A6E6E;color:#fff;font-size:.76rem;font-weight:800;cursor:pointer}",
+".lcf-paste button:hover{background:#085757}",
+".lcf-paste button.done{background:#0E8A6B}",
 ".lcf-trust{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;font-size:.74rem;color:#8493ab}",
 ".lcf-upi{border:1px solid #E3E9F2;border-radius:16px;padding:16px;text-align:center;margin-top:6px;background:#FBFCFE}",
 ".lcf-upi h4{margin:0 0 4px;font-size:.96rem;color:#0D1B40;font-weight:800}",
@@ -618,6 +675,22 @@
       secondary = '<a class="lcf-btn ghost" href="' + esc(options.continueUrl || flow.href) + '">Or start my assessment first</a>';
     }
 
+    // The client told us how they want to meet before paying. Google's booking
+    // form has no field for it, so hand them the line to paste into its Notes
+    // box — that is what carries the preference onto the calendar event.
+    var noteLine = booking && calUrl ? bookingNoteLine(options) : "";
+    var pasteWhy = sessionModeOf(options.notes)
+      ? "so your counsellor knows how you want to meet"
+      : "so your counsellor knows which session you booked";
+    var pasteBlock = noteLine
+      ? '<div class="lcf-paste">' +
+          '<span class="lcf-paste-h">Carry this onto your booking</span>' +
+          '<p>Google asks for notes when you pick your slot. Paste this in ' + pasteWhy + ' — we copy it for you when you tap below.</p>' +
+          '<div class="lcf-paste-row"><code data-paste>' + esc(noteLine) + '</code>' +
+          '<button type="button" data-act="copy-note">Copy</button></div>' +
+        '</div>'
+      : "";
+
     EL.body.innerHTML =
       '<div class="lcf-center">' +
         okMarkSvg() +
@@ -626,14 +699,27 @@
       '</div>' +
       affirmHtml(booking ? "session" : "report", orderId || options.sku, options.customerName) +
       '<ol class="lcf-steps">' + steps + '</ol>' +
+      pasteBlock +
       primary +
       secondary +
       '<a class="lcf-btn wa' + (booking ? ' quiet' : '') + '" target="_blank" rel="noopener noreferrer" href="' + esc(waUrl(waConfirmMessage(options, orderId))) + '">' + waSvg() + (booking ? ' Need help? Message us' : ' Confirm booking on WhatsApp') + '</a>' +
       '<button class="lcf-back" type="button">Close</button>';
+    var copyBtn = EL.body.querySelector('[data-act="copy-note"]');
+    function copyNote(){
+      return copyText(noteLine).then(function(ok){
+        if(copyBtn && ok){ copyBtn.textContent = "✓ Copied"; copyBtn.classList.add("done"); }
+        return ok;
+      });
+    }
+    if(copyBtn){ copyBtn.addEventListener("click", copyNote); }
+
     var bookBtn = EL.body.querySelector('[data-act="book"]');
-    if(bookBtn && window.gtag){
+    if(bookBtn){
       bookBtn.addEventListener("click", function(){
-        gtag('event','calendar_book_click',{event_category:'booking',event_label:options.sku||options.label||''});
+        // Copy on the way out, so the only manual step on Google's form is a
+        // single paste — nothing to remember and nothing to retype.
+        if(noteLine){ copyNote(); }
+        if(window.gtag) gtag('event','calendar_book_click',{event_category:'booking',event_label:options.sku||options.label||''});
       });
     }
     EL.body.querySelector(".lcf-back").addEventListener("click", closeModal);
