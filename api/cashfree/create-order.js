@@ -14,22 +14,9 @@
 
 const crypto = require("crypto");
 const { checkRateLimit, clientKey } = require("../_lib/rateLimit");
-
-const SKU_PRICES = {
-  "student-full-report": { amount: 999, label: "Lume Live Full Clarity Report", alias: "student999" },
-  "lume-lens-working-profile": { amount: 1999, label: "Lume Lens Working Profile", alias: "lens1999" },
-  "intro-session": { amount: 49, label: "Introductory Guidance Session", alias: "intro49" },
-  "parents-handbook": { amount: 199, label: "Parents Career Handbook", alias: "parents199" },
-  "career-intelligence-roadmap": { amount: 1499, label: "Career Intelligence Detailed Roadmap", alias: "roadmap1499" },
-  "stream-clarity-session": { amount: 999, label: "Stream Clarity Counselling Session", alias: "stream999" },
-  "career-direction-session": { amount: 1499, label: "Career Direction Counselling Session", alias: "careerdir1499" },
-  // Internship tracks are sold in supervised hours. The SKU keys are kept as-is
-  // so orders placed before the hours-based relaunch still resolve.
-  "internship-1-month": { amount: 3499, label: "Practitioner Foundations (60 supervised hours)", alias: "intern60h3499" },
-  "internship-2-month": { amount: 5999, label: "Advanced Fellowship (120 supervised hours)", alias: "intern120h5999" },
-  "internship-240-hour": { amount: 11999, label: "University Credit Track (240 supervised hours)", alias: "intern240h11999" },
-  "internship-lume-lens": { amount: 500, label: "Lume Lens Report (Intern Add-On)", alias: "internlens500" }
-};
+const { json, setCors, readBody } = require("../_lib/http");
+const { getProduct } = require("../_lib/catalog");
+const { quote } = require("../_lib/coupons");
 
 /*
   Before paying, the client chooses how they want the session to happen —
@@ -56,69 +43,8 @@ function sessionModeOf(notes){
   return hit ? hit.label : "";
 }
 
-function json(res, status, body){
-  res.statusCode = status;
-  res.setHeader("Content-Type", "application/json");
-  res.end(JSON.stringify(body));
-}
-
-const DEFAULT_ALLOWED_ORIGINS = [
-  "https://lumelive.co.in",
-  "https://www.lumelive.co.in",
-  "http://127.0.0.1:8765",
-  "http://localhost:8765"
-];
-
-function allowedOrigins(){
-  return new Set(DEFAULT_ALLOWED_ORIGINS.concat(
-    String(process.env.LUME_ALLOWED_ORIGINS || "")
-      .split(",")
-      .map(function(origin){ return origin.trim(); })
-      .filter(Boolean)
-  ));
-}
-
-function setCors(req, res){
-  const origin = req.headers.origin || "";
-  if(origin && allowedOrigins().has(origin)){
-    res.setHeader("Access-Control-Allow-Origin", origin);
-    res.setHeader("Vary", "Origin");
-  }
-  res.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-}
-
-const MAX_BODY_BYTES = 16 * 1024; // 16 KB is far more than a checkout payload needs
-
-function readBody(req){
-  return new Promise((resolve, reject) => {
-    let raw = "";
-    let size = 0;
-    let aborted = false;
-    req.on("data", chunk => {
-      if(aborted) return;
-      size += chunk.length;
-      if(size > MAX_BODY_BYTES){
-        aborted = true;
-        const err = new Error("Request body too large.");
-        err.statusCode = 413;
-        reject(err);
-        req.destroy();
-        return;
-      }
-      raw += chunk;
-    });
-    req.on("end", () => {
-      if(aborted) return;
-      try{ resolve(raw ? JSON.parse(raw) : {}); }
-      catch(err){ reject(err); }
-    });
-    req.on("error", reject);
-  });
-}
-
 module.exports = async function handler(req, res){
-  setCors(req, res);
+  setCors(req, res, "POST,OPTIONS");
 
   if(req.method === "OPTIONS"){
     res.statusCode = 204;
@@ -154,10 +80,44 @@ module.exports = async function handler(req, res){
   }
 
   const sku = String(body.sku || "");
-  const product = SKU_PRICES[sku];
+  const product = getProduct(sku);
   if(!product){
     return json(res, 400, { error: "Unknown payment item." });
   }
+
+  /*
+    The price is decided here and nowhere else.
+
+    body.amount exists in the payload the browser sends and is
+    deliberately ignored: the charge is product.amount from the
+    server-side catalogue, minus a discount this endpoint recalculates
+    from the coupon code. /api/coupons/validate ran the same quote()
+    a moment ago to draw the checkout screen, but its answer is not
+    carried over — the client only gets to send a code, never a number.
+
+    A code that has expired, been fully claimed or been switched off in
+    the seconds between validating and paying simply loses its discount
+    here, and the client is charged full price. That is the safe way for
+    the race to end; the alternative is honouring a dead offer.
+  */
+  const requestedCoupon = String(body.coupon_code || body.coupon || "").trim();
+  const priced = await quote({ code: requestedCoupon, packId: sku });
+  const couponApplied = priced.ok && priced.reason === "applied" && priced.coupon;
+
+  // A code was asked for and refused. Stop here rather than creating a
+  // full-price order at Cashfree the client never agreed to — they chose
+  // this price with a discount on it. The page shows the reason and lets
+  // them decide whether to pay full price or try another code.
+  if(requestedCoupon && !couponApplied){
+    return json(res, 409, {
+      error: priced.message,
+      coupon_rejected: { code: requestedCoupon, reason: priced.reason, message: priced.message },
+      list_amount: product.amount
+    });
+  }
+
+  const chargeAmount = couponApplied ? priced.final_amount : product.amount;
+  const couponCode = couponApplied ? priced.coupon.code : "";
 
   const customer = body.customer || {};
   const phone = String(customer.phone || "").replace(/\D/g, "").slice(-10);
@@ -178,9 +138,9 @@ module.exports = async function handler(req, res){
 
   const cashfreePayload = {
     order_id: orderId,
-    order_amount: product.amount,
+    order_amount: chargeAmount,
     order_currency: "INR",
-    order_note: product.label,
+    order_note: couponCode ? product.label + " (" + couponCode + ")" : product.label,
     customer_details: {
       customer_id: phone || ("guest_" + Date.now()),
       customer_name: name,
@@ -192,9 +152,19 @@ module.exports = async function handler(req, res){
       notify_url: process.env.CASHFREE_NOTIFY_URL || undefined,
       payment_methods: "cc,dc,upi,nb,app,paylater"
     },
+    // Cashfree returns order_tags verbatim on the status call, which is how
+    // the coupon survives the redirect to the gateway and back. The tag is
+    // written from the server's own verdict, so what order-status.js counts
+    // as redeemed is what was actually discounted here. Values must be
+    // strings.
     order_tags: Object.assign(
       { sku, source: "lume-live-website" },
-      sessionMode ? { session_mode: sessionMode } : {}
+      sessionMode ? { session_mode: sessionMode } : {},
+      couponCode ? {
+        coupon_code: couponCode,
+        coupon_discount: String(priced.discount_amount),
+        list_amount: String(product.amount)
+      } : {}
     )
   };
 
@@ -231,6 +201,14 @@ module.exports = async function handler(req, res){
   return json(res, 200, {
     order_id: data.order_id,
     cf_order_id: data.cf_order_id,
-    payment_session_id: data.payment_session_id || data.payment_sessions_id
+    payment_session_id: data.payment_session_id || data.payment_sessions_id,
+    // What was actually charged, so the modal can correct itself if its
+    // own arithmetic ever disagrees. order_amount comes back from Cashfree
+    // rather than from our own variable — it is the number the client is
+    // about to be asked for.
+    order_amount: data.order_amount,
+    list_amount: product.amount,
+    discount_amount: couponApplied ? priced.discount_amount : 0,
+    coupon_code: couponCode
   });
 };
