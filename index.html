@@ -2173,8 +2173,26 @@ function setupSessionCoupon(){
     // landing pages all quote ₹249, so the modal applies FIRST50 on open
     // instead of asking the client to type the code they were promised.
     getSuggestedCode:function(){var p=currentSessionPlan||SESSION_PLANS.intro;return p.suggestCoupon||""},
+    // FIRST50 is one-per-customer and first-session-only, which the server
+    // can only judge once it knows who is booking.
+    getCustomer:function(){
+      var phone=(document.getElementById("sessionPhone")||{}).value||"";
+      return{phone:phone.replace(/\D/g,"").slice(-10),email:""}
+    },
     onChange:renderSessionPrice
   });
+  // Re-check once a full number has been entered, so a returning client is
+  // told here rather than at the payment step. Debounced because this fires
+  // on every keystroke.
+  var phoneEl=document.getElementById("sessionPhone");
+  if(phoneEl){
+    var recheckTimer=null;
+    phoneEl.addEventListener("input",function(){
+      clearTimeout(recheckTimer);
+      if(phoneEl.value.replace(/\D/g,"").length<10)return;
+      recheckTimer=setTimeout(function(){sessionCoupon&&sessionCoupon.recheckCustomer()},450);
+    });
+  }
   sessionCoupon=mounted;
   return!0;
 }

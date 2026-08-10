@@ -26,8 +26,18 @@
       description      string?  shown in the hero banner
       headline         string?  shown in the hero banner
       promote          boolean  surface this code in the hero banner
-      first_time_only  boolean  copy-only flag; shown to the client
+
+      -- per-person rules; both need a phone or email to evaluate --
+      per_customer_limit number?  how many times ONE person may use it
+      first_time_only    boolean  refuse if they have bought before
+      first_time_skus    string[] what "bought before" means; defaults to
+                                  applicable_packs
     }
+
+  usage_limit is a global cap; per_customer_limit is per person. A code
+  meant as "your first session" needs the second — without it the same
+  client claims it every month, which is exactly what FIRST50 did before
+  these two fields existed.
 
   DEFAULT_COUPONS below is the same data in code form. It is the fallback
   when Firestore is unreachable or not yet seeded, so the offer keeps
@@ -44,9 +54,13 @@
 */
 
 const { getProduct } = require("./catalog");
+const { normalizePhone, normalizeEmail } = require("./identity");
 
 const COLLECTION = "coupons";
 const REDEMPTIONS = "couponRedemptions";
+// One document per (code, person), holding how many times that person has
+// redeemed that code. See identityKeys() for what "person" means.
+const CUSTOMER_USES = "couponCustomers";
 
 // Cashfree will not create an order for ₹0, and a free session should be
 // a deliberate act (a free-slot link), not something a 100%-off code can
@@ -66,19 +80,24 @@ const DEFAULT_COUPONS = [
     expiration_date: null,
     usage_limit: null,
     times_used: 0,
+    // One per person, and only if they have never bought a session before.
+    // first_time_skus names the retired ₹49 SKU too, so someone who took
+    // the old introductory session does not get a "first" session twice.
+    per_customer_limit: 1,
+    first_time_only: true,
+    first_time_skus: ["wellness-session", "intro-session"],
     headline: "50% off your first counselling session",
     // No prices in here — the badge renders base/final from the catalogue
     // right beside the headline, so repeating them reads as a stutter.
     description: "A 45-minute 1:1 with a qualified counsellor (M.Sc Clinical Psychology). Tap the code, use it at checkout.",
-    promote: true,
-    first_time_only: true
+    promote: true
   },
   {
     code: "MIND50",
     discount_type: "percentage",
     discount_value: 50,
     applicable_packs: ["wellness-session"],
-    is_active: true,
+    is_active: false,   // switched off — FIRST50 is the only live offer
     expiration_date: null,
     usage_limit: 200,
     times_used: 0,
@@ -92,7 +111,7 @@ const DEFAULT_COUPONS = [
     discount_type: "percentage",
     discount_value: 30,
     applicable_packs: ["student-full-report", "career-intelligence-roadmap"],
-    is_active: true,
+    is_active: false,   // switched off — FIRST50 is the only live offer
     expiration_date: null,
     usage_limit: null,
     times_used: 0,
@@ -106,7 +125,7 @@ const DEFAULT_COUPONS = [
     discount_type: "flat",
     discount_value: 200,
     applicable_packs: ["student-full-report", "stream-clarity-session"],
-    is_active: true,
+    is_active: false,   // switched off — FIRST50 is the only live offer
     expiration_date: null,
     usage_limit: null,
     times_used: 0,
@@ -120,7 +139,7 @@ const DEFAULT_COUPONS = [
     discount_type: "flat",
     discount_value: 200,
     applicable_packs: ["student-full-report"],
-    is_active: true,
+    is_active: false,   // switched off — FIRST50 is the only live offer
     expiration_date: null,
     usage_limit: null,
     times_used: 0,
@@ -134,7 +153,7 @@ const DEFAULT_COUPONS = [
     discount_type: "flat",
     discount_value: 500,
     applicable_packs: ["internship-1-month", "internship-2-month", "internship-240-hour"],
-    is_active: true,
+    is_active: false,   // switched off — FIRST50 is the only live offer
     expiration_date: null,
     usage_limit: 50,
     times_used: 0,
@@ -207,7 +226,14 @@ function normalizeCoupon(raw, fallbackCode){
     headline: raw.headline ? String(raw.headline).slice(0, 120) : "",
     description: raw.description ? String(raw.description).slice(0, 240) : "",
     promote: raw.promote === true,
-    first_time_only: raw.first_time_only === true
+    per_customer_limit: toNumberOrNull(raw.per_customer_limit),
+    first_time_only: raw.first_time_only === true,
+    // "Bought before" defaults to the packs the code itself applies to —
+    // the useful reading of "first", and the one that doesn't accidentally
+    // disqualify someone for having bought an unrelated PDF.
+    first_time_skus: Array.isArray(raw.first_time_skus) && raw.first_time_skus.length
+      ? raw.first_time_skus.map(function(s){ return String(s || "").trim(); }).filter(Boolean)
+      : packs
   };
 }
 
@@ -253,7 +279,20 @@ async function loadCoupon(code){
 
     const snap = await firestore.collection(COLLECTION).doc(key).get();
     if(snap.exists){
-      const found = normalizeCoupon(snap.data(), key);
+      /*
+        Firestore fields are layered OVER the built-in definition rather
+        than replacing it.
+
+        This matters because not every `coupons/{CODE}` document is a
+        full definition. recordRedemption writes { code, times_used } with
+        merge:true, so on a deployment that was never seeded the first
+        redemption creates a document containing only a counter. Treating
+        that as the whole coupon would leave it with no discount_value, no
+        applicable_packs (which reads as "every pack") and none of its
+        per-customer limits — the code would silently become 0% off
+        everything, unrestricted, the moment somebody used it.
+      */
+      const found = normalizeCoupon(Object.assign({}, DEFAULTS_BY_CODE[key], snap.data()), key);
       if(found) return found;
     }
     // A code that exists in Firestore is authoritative; a code that
@@ -278,7 +317,9 @@ async function listPromotedCoupons(){
     if(firestore){
       const snap = await firestore.collection(COLLECTION).get();
       snap.forEach(function(doc){
-        const c = normalizeCoupon(doc.data(), doc.id);
+        // Layered over the built-in definition, same as loadCoupon — see
+        // the note there about counter-only documents.
+        const c = normalizeCoupon(Object.assign({}, DEFAULTS_BY_CODE[normalizeCode(doc.id)], doc.data()), doc.id);
         if(c) byCode[c.code] = c;
       });
     }
@@ -295,6 +336,130 @@ async function listPromotedCoupons(){
       if(c.usage_limit != null && c.times_used >= c.usage_limit) return false;
       return true;
     });
+}
+
+/* ============================================================
+   Who is asking — per-person rules
+   ============================================================ */
+
+/*
+  A person is their phone number and their email, and we count against
+  BOTH. Checking only one would make the limit trivial to sidestep: same
+  phone, different email, discount again.
+
+  Returns the document ids used as counters in `couponCustomers`. A
+  deterministic id means the check is a direct get() rather than a query,
+  so there is no composite index to create and no chance of the limit
+  silently failing open because an index was missing in production.
+*/
+function identityKeys(customer){
+  const c = customer || {};
+  const phone = normalizePhone(c.phone);
+  const email = normalizeEmail(c.email);
+  const keys = [];
+  if(phone) keys.push("p_" + phone);
+  // "/" is the one character a Firestore document id cannot contain.
+  if(email) keys.push("e_" + email.replace(/\//g, "_"));
+  return keys;
+}
+
+function customerDocId(code, key){
+  return code + "__" + key;
+}
+
+/*
+  How many times this person has already redeemed this code.
+
+  Fails OPEN (returns 0) exactly like rateLimit and the entitlement
+  writes: a Firestore hiccup must not tell a genuine first-time client
+  that their advertised discount is unavailable. The cost of the other
+  choice — a repeat client occasionally slipping through during an
+  outage — is much smaller than a broken checkout.
+*/
+async function customerRedemptionCount(code, customer){
+  const keys = identityKeys(customer);
+  if(!keys.length) return 0;
+
+  try{
+    const firestore = firestoreOrNull();
+    if(!firestore) return 0;
+    const snaps = await Promise.all(keys.map(function(key){
+      return firestore.collection(CUSTOMER_USES).doc(customerDocId(code, key)).get();
+    }));
+    return snaps.reduce(function(max, snap){
+      const n = snap.exists ? Number(snap.data().count) || 0 : 0;
+      return n > max ? n : max;
+    }, 0);
+  }catch(err){
+    console.error("[lume coupons] per-customer count failed, allowing:", String(err && err.message || err));
+    return 0;
+  }
+}
+
+/*
+  Has this person already bought one of these packs?
+
+  Reads the entitlement records — the server-side "who paid for what"
+  written only after Cashfree confirms a payment — so it sees purchases
+  made with or without a coupon. That distinction matters: someone who
+  paid ₹499 for a session with no code has still had their first session,
+  and per_customer_limit alone would happily give them FIRST50 next time.
+
+  Fails OPEN for the same reason as above.
+*/
+async function hasPriorPurchase(skus, customer){
+  const wanted = (skus || []).filter(Boolean);
+  const c = customer || {};
+  if(!wanted.length) return false;
+  if(!normalizePhone(c.phone) && !normalizeEmail(c.email)) return false;
+
+  try{
+    const { findPaidEntitlements } = require("./entitlements");
+    const prior = await findPaidEntitlements({ phone: c.phone, email: c.email });
+    return prior.some(function(p){ return wanted.indexOf(p.sku) !== -1; });
+  }catch(err){
+    console.error("[lume coupons] first-time check failed, allowing:", String(err && err.message || err));
+    return false;
+  }
+}
+
+/*
+  The per-person half of validation, split out because it needs Firestore
+  and checkCoupon is deliberately synchronous and pure.
+
+  Returns null when the coupon is still fine. When the caller has no
+  phone or email yet — the checkout shows a price before it asks for
+  contact details — these rules cannot be evaluated and are skipped;
+  create-order re-runs them with the real customer before charging, and
+  that is the gate that actually counts.
+*/
+async function checkCustomerRules(coupon, customer){
+  const c = customer || {};
+  const known = Boolean(normalizePhone(c.phone) || normalizeEmail(c.email));
+  if(!known) return null;
+
+  if(coupon.per_customer_limit != null){
+    const used = await customerRedemptionCount(coupon.code, c);
+    if(used >= coupon.per_customer_limit){
+      return {
+        ok: false,
+        reason: "per_customer_limit",
+        message: coupon.per_customer_limit === 1
+          ? "You've already used this code."
+          : "You've used this code the maximum number of times."
+      };
+    }
+  }
+
+  if(coupon.first_time_only && await hasPriorPurchase(coupon.first_time_skus, c)){
+    return {
+      ok: false,
+      reason: "not_first_time",
+      message: "This code is only for your first session."
+    };
+  }
+
+  return null;
 }
 
 /* ============================================================
@@ -382,7 +547,7 @@ function discountFor(coupon, baseAmount){
     { ok, sku, label, base_amount, discount_amount, final_amount,
       coupon: {...} | null, reason, message }
 */
-async function quote({ code, packId, now }){
+async function quote({ code, packId, now, customer }){
   const product = getProduct(packId);
   if(!product){
     return {
@@ -415,6 +580,13 @@ async function quote({ code, packId, now }){
   const verdict = checkCoupon(coupon, product, packId, now);
   if(!verdict.ok){
     return Object.assign({ ok: false, reason: verdict.reason, message: verdict.message }, base);
+  }
+
+  // Per-person rules run second: they cost a Firestore read, so there is
+  // no point paying for them on a code that is expired or wrong anyway.
+  const personal = await checkCustomerRules(coupon, customer);
+  if(personal){
+    return Object.assign({ ok: false, reason: personal.reason, message: personal.message }, base);
   }
 
   const discount = discountFor(coupon, product.amount);
@@ -454,10 +626,13 @@ async function quote({ code, packId, now }){
   here would break the page that tells a paying client their booking went
   through.
 */
-async function recordRedemption({ code, orderId, sku, amount, discount }){
+async function recordRedemption({ code, orderId, sku, amount, discount, customer }){
   const key = normalizeCode(code);
   const order = String(orderId || "");
   if(!key || !order) return false;
+  // Whose redemption this was. Written in the same transaction as the
+  // global counter so per_customer_limit has something to count next time.
+  const keys = identityKeys(customer);
 
   try{
     // No Firestore means no durable counter. The discount was still
@@ -469,12 +644,19 @@ async function recordRedemption({ code, orderId, sku, amount, discount }){
     const couponRef = firestore.collection(COLLECTION).doc(key);
     const claimRef = firestore.collection(REDEMPTIONS).doc(order);
 
+    const customerRefs = keys.map(function(k){
+      return firestore.collection(CUSTOMER_USES).doc(customerDocId(key, k));
+    });
+
     return await firestore.runTransaction(async function(tx){
+      // Firestore requires every read before any write in a transaction.
       const claim = await tx.get(claimRef);
       if(claim.exists) return false;
 
       const couponSnap = await tx.get(couponRef);
+      const customerSnaps = await Promise.all(customerRefs.map(function(ref){ return tx.get(ref); }));
       const current = couponSnap.exists ? Math.max(0, Number(couponSnap.data().times_used) || 0) : 0;
+      const at = new Date().toISOString();
 
       tx.set(claimRef, {
         code: key,
@@ -482,12 +664,20 @@ async function recordRedemption({ code, orderId, sku, amount, discount }){
         sku: String(sku || ""),
         amount: amount != null ? Number(amount) : null,
         discount: discount != null ? Number(discount) : null,
-        redeemedAt: new Date().toISOString()
+        phone: normalizePhone(customer && customer.phone) || null,
+        email: normalizeEmail(customer && customer.email) || null,
+        redeemedAt: at
       });
 
       // merge:true so a code that only exists in DEFAULT_COUPONS still
       // gets a counter document rather than the write being dropped.
-      tx.set(couponRef, { code: key, times_used: current + 1, updatedAt: new Date().toISOString() }, { merge: true });
+      tx.set(couponRef, { code: key, times_used: current + 1, updatedAt: at }, { merge: true });
+
+      customerRefs.forEach(function(ref, i){
+        const prev = customerSnaps[i].exists ? Math.max(0, Number(customerSnaps[i].data().count) || 0) : 0;
+        tx.set(ref, { code: key, count: prev + 1, lastOrderId: order, updatedAt: at }, { merge: true });
+      });
+
       return true;
     });
   }catch(err){
@@ -499,6 +689,7 @@ async function recordRedemption({ code, orderId, sku, amount, discount }){
 module.exports = {
   COLLECTION,
   REDEMPTIONS,
+  CUSTOMER_USES,
   MIN_CHARGE,
   DEFAULT_COUPONS,
   normalizeCode,
@@ -507,6 +698,8 @@ module.exports = {
   listPromotedCoupons,
   appliesToPack,
   checkCoupon,
+  checkCustomerRules,
+  identityKeys,
   discountFor,
   quote,
   recordRedemption

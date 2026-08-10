@@ -22,16 +22,26 @@ const { DEFAULT_COUPONS, COLLECTION } = require("../api/_lib/coupons.js");
 
 const dryRun = process.argv.includes("--dry-run");
 
+// Whether a code is LIVE is the thing you actually want to see here, so it
+// leads every row — a catalogue listing that made an switched-off code look
+// identical to a running one would be worse than no listing at all.
 function line(c){
+  const state = c.is_active === false ? "  off " : "> LIVE";
   const value = c.discount_type === "percentage" ? c.discount_value + "%" : "₹" + c.discount_value;
-  const packs = c.applicable_packs.length ? c.applicable_packs.join(", ") : "(all packs)";
-  const limit = c.usage_limit == null ? "unlimited" : c.usage_limit + " uses";
-  return "  " + c.code.padEnd(12) + value.padEnd(7) + limit.padEnd(14) + packs;
+  const packs = c.applicable_packs.length ? c.applicable_packs.join(", ") : "(ALL PACKS)";
+  const limits = [
+    c.usage_limit == null ? "unlimited" : c.usage_limit + " total",
+    c.per_customer_limit != null ? c.per_customer_limit + "/customer" : null,
+    c.first_time_only ? "first-time only" : null
+  ].filter(Boolean).join(", ");
+  return " " + state + "  " + c.code.padEnd(11) + value.padEnd(6) +
+    (limits.length > 38 ? limits + "  " : limits.padEnd(40)) + packs;
 }
 
-console.log("\nCoupon catalogue (" + DEFAULT_COUPONS.length + " codes)\n");
+const live = DEFAULT_COUPONS.filter(function(c){ return c.is_active !== false; });
+console.log("\nCoupon catalogue — " + live.length + " live of " + DEFAULT_COUPONS.length + "\n");
 DEFAULT_COUPONS.forEach(function(c){ console.log(line(c)); });
-console.log("");
+console.log("\nEverything not marked LIVE is refused at checkout; those SKUs sell at list price.\n");
 
 if(dryRun){
   console.log("--dry-run: nothing written.\n");

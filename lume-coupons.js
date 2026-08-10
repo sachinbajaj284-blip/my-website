@@ -226,11 +226,11 @@
   // Resolves to the endpoint's JSON verdict. A network failure resolves
   // (not rejects) with a rejection shaped like the server's, so callers
   // have exactly one shape to render.
-  function validateOnServer(code, packId){
+  function validateOnServer(code, packId, customer){
     return fetch(VALIDATE_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code: code, pack_id: packId })
+      body: JSON.stringify({ code: code, pack_id: packId, customer: customer || null })
     })
       .then(function(res){
         if(res.status === 429){
@@ -392,6 +392,18 @@
     var getSuggestedCode = typeof options.getSuggestedCode === "function"
       ? options.getSuggestedCode
       : function(){ return normalizeCode(options.suggestedCode || ""); };
+    /*
+      Who is buying, if the form knows yet.
+
+      Per-person rules ("one per customer", "first session only") can't be
+      evaluated until there is a phone number, and the price is drawn
+      before the client types one. Sending it when it exists means a
+      returning client sees ₹499 on this screen rather than getting as far
+      as the payment step and being refused there.
+    */
+    var getCustomer = typeof options.getCustomer === "function"
+      ? options.getCustomer
+      : function(){ return null; };
 
     container.classList.add("lcp-wrap");
     container.innerHTML =
@@ -518,7 +530,7 @@
       setMessage("Checking your code…", "hint");
       track("coupon_apply_attempt", code);
 
-      validateOnServer(code, pack.sku).then(function(result){
+      validateOnServer(code, pack.sku, getCustomer()).then(function(result){
         if(token !== requestToken) return; // superseded
         setBusy(false);
 
@@ -616,6 +628,33 @@
         prefill();
         publish();
         autoApply();
+      },
+      /*
+        Re-check the applied code now that the customer is known.
+
+        Call this when the phone or email field changes. If the client
+        turns out to be a returning one, the discount is dropped here with
+        an explanation instead of surviving until the payment step. Only
+        re-checks a code that is currently applied, and never nags: a code
+        that is still valid produces no visible change at all.
+      */
+      recheckCustomer: function(){
+        if(!applied || busy) return;
+        var code = applied.code;
+        var pack = getPack() || {};
+        var token = ++requestToken;
+        validateOnServer(code, pack.sku, getCustomer()).then(function(result){
+          if(token !== requestToken) return;
+          if(result.valid) return;
+          // A network blip must not silently strip a valid discount.
+          if(result.reason === "network" || result.reason === "rate_limited") return;
+          applied = null;
+          input.value = code;
+          publish();
+          setOpen(true);
+          setMessage(result.message || "That code isn't available for this booking.", "err");
+          track("coupon_dropped_on_recheck", code + ":" + (result.reason || "unknown"));
+        });
       },
       // For the "the code died between validating and paying" case: the
       // server refused it at order time, so drop it and say why.

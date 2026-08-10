@@ -85,6 +85,16 @@ module.exports = async function handler(req, res){
     return json(res, 400, { error: "Unknown payment item." });
   }
 
+  const customer = body.customer || {};
+  const phone = String(customer.phone || "").replace(/\D/g, "").slice(-10);
+  const email = String(customer.email || "hello@lumelive.co.in").slice(0, 120);
+  const name = String(customer.name || "Lume Live Customer").slice(0, 80);
+  // Only the handbook is bought without a phone number — everything else
+  // is a session or a report we have to be able to deliver.
+  if(!phone && sku !== "parents-handbook"){
+    return json(res, 400, { error: "Customer phone is required." });
+  }
+
   /*
     The price is decided here and nowhere else.
 
@@ -95,13 +105,23 @@ module.exports = async function handler(req, res){
     a moment ago to draw the checkout screen, but its answer is not
     carried over — the client only gets to send a code, never a number.
 
-    A code that has expired, been fully claimed or been switched off in
-    the seconds between validating and paying simply loses its discount
-    here, and the client is charged full price. That is the safe way for
-    the race to end; the alternative is honouring a dead offer.
+    The customer goes in too, because per-person rules are the whole
+    point of a "first session" offer and the validate call often could
+    not evaluate them — it runs before the phone number has been typed.
+    This is where "one per customer" is actually enforced, against the
+    contact details we are about to charge.
+
+    A code that has expired, been fully claimed, been switched off, or
+    already been used by this person in the seconds between validating
+    and paying loses its discount here. That is the safe way for the
+    race to end; the alternative is honouring a dead offer.
   */
   const requestedCoupon = String(body.coupon_code || body.coupon || "").trim();
-  const priced = await quote({ code: requestedCoupon, packId: sku });
+  const priced = await quote({
+    code: requestedCoupon,
+    packId: sku,
+    customer: { phone: phone, email: body.customer && body.customer.email ? email : "" }
+  });
   const couponApplied = priced.ok && priced.reason === "applied" && priced.coupon;
 
   // A code was asked for and refused. Stop here rather than creating a
@@ -118,16 +138,6 @@ module.exports = async function handler(req, res){
 
   const chargeAmount = couponApplied ? priced.final_amount : product.amount;
   const couponCode = couponApplied ? priced.coupon.code : "";
-
-  const customer = body.customer || {};
-  const phone = String(customer.phone || "").replace(/\D/g, "").slice(-10);
-  const email = String(customer.email || "hello@lumelive.co.in").slice(0, 120);
-  const name = String(customer.name || "Lume Live Customer").slice(0, 80);
-  // Only the handbook is bought without a phone number — everything else
-  // is a session or a report we have to be able to deliver.
-  if(!phone && sku !== "parents-handbook"){
-    return json(res, 400, { error: "Customer phone is required." });
-  }
 
   const env = (process.env.CASHFREE_ENV || "production").toLowerCase();
   const base = env === "sandbox" ? "https://sandbox.cashfree.com/pg" : "https://api.cashfree.com/pg";

@@ -9,12 +9,18 @@
 
 import { createRequire } from "node:module";
 import assert from "node:assert/strict";
+import { install } from "./firestore-stub.mjs";
+
+// Must happen before coupons.js is loaded: it caches "Firestore is
+// unavailable" the first time the module fails to load.
+const store = install();
 
 const require = createRequire(import.meta.url);
 const coupons = require("../api/_lib/coupons.js");
 const { getProduct, SKU_PRICES } = require("../api/_lib/catalog.js");
 
-const { normalizeCode, normalizeCoupon, checkCoupon, discountFor, quote, appliesToPack } = coupons;
+const { normalizeCode, normalizeCoupon, checkCoupon, discountFor, quote,
+        appliesToPack, identityKeys, recordRedemption, DEFAULT_COUPONS } = coupons;
 
 let passed = 0;
 let failed = 0;
@@ -184,16 +190,24 @@ await test("FIRST50 on the ₹999 report is refused, price unchanged", async () 
   assert.equal(q.discount_amount, 0);
 });
 
-await test("CAREER30 on the ₹999 report: ₹300 off", async () => {
-  const q = await quote({ code: "CAREER30", packId: "student-full-report" });
-  assert.equal(q.discount_amount, 300);
-  assert.equal(q.final_amount, 699);
+await test("FIRST50 is the only live offer — every other code is switched off", () => {
+  const live = DEFAULT_COUPONS.filter(c => c.is_active !== false).map(c => c.code);
+  assert.deepEqual(live, ["FIRST50"]);
 });
 
-await test("PARENT200 is a flat ₹200 off the report", async () => {
-  const q = await quote({ code: "PARENT200", packId: "student-full-report" });
-  assert.equal(q.discount_amount, 200);
-  assert.equal(q.final_amount, 799);
+await test("a switched-off code leaves every other SKU at full price", async () => {
+  for(const [code, sku, price] of [
+    ["CAREER30", "student-full-report", 999],
+    ["PARENT200", "student-full-report", 999],
+    ["REFER200", "student-full-report", 999],
+    ["INTERN500", "internship-1-month", 3499],
+    ["MIND50", "wellness-session", 499]
+  ]){
+    const q = await quote({ code, packId: sku });
+    assert.equal(q.ok, false, code + " should be refused");
+    assert.equal(q.reason, "inactive", code + " reason");
+    assert.equal(q.final_amount, price, code + " must not discount " + sku);
+  }
 });
 
 await test("a made-up code leaves the price alone", async () => {
@@ -228,6 +242,137 @@ await test("the retired ₹49 intro session can no longer be ordered", async () 
   assert.equal(q.reason, "unknown_pack");
   assert.equal(q.final_amount, null);
 });
+
+console.log("\nper-customer rules (against the in-memory Firestore)");
+
+const ALICE = { phone: "9876543210", email: "Alice@Example.com" };
+const BOB = { phone: "9000000001", email: "bob@example.com" };
+
+await test("identity is phone AND email, normalised", () => {
+  assert.deepEqual(identityKeys(ALICE), ["p_9876543210", "e_alice@example.com"]);
+  assert.deepEqual(identityKeys({ phone: "+91 90000 00001" }), ["p_9000000001"]);
+  assert.deepEqual(identityKeys({}), []);
+});
+
+await test("the guest placeholder phone is not a person", () => {
+  // create-order sends 9999999999 for phone-less guests. Counting it as an
+  // identity would make every guest the same customer and burn the limit.
+  assert.deepEqual(identityKeys({ phone: "9999999999" }), []);
+});
+
+await test("a first-time customer gets FIRST50", async () => {
+  store.clear();
+  const q = await quote({ code: "FIRST50", packId: "wellness-session", customer: ALICE });
+  assert.equal(q.ok, true);
+  assert.equal(q.final_amount, 249);
+});
+
+await test("the price is shown before contact details are known", async () => {
+  // The checkout draws a price before it asks for a phone number, so the
+  // per-person rules cannot run yet. create-order is the real gate.
+  store.clear();
+  const q = await quote({ code: "FIRST50", packId: "wellness-session", customer: {} });
+  assert.equal(q.ok, true);
+  assert.equal(q.final_amount, 249);
+});
+
+await test("the same person cannot use FIRST50 twice", async () => {
+  store.clear();
+  await recordRedemption({ code: "FIRST50", orderId: "lume_a1", sku: "wellness-session",
+                           amount: 249, discount: 250, customer: ALICE });
+  const q = await quote({ code: "FIRST50", packId: "wellness-session", customer: ALICE });
+  assert.equal(q.ok, false);
+  assert.equal(q.reason, "per_customer_limit");
+  assert.equal(q.message, "You've already used this code.");
+  assert.equal(q.final_amount, 499);
+});
+
+await test("a different person is unaffected by someone else's redemption", async () => {
+  const q = await quote({ code: "FIRST50", packId: "wellness-session", customer: BOB });
+  assert.equal(q.ok, true);
+  assert.equal(q.final_amount, 249);
+});
+
+await test("swapping the email but keeping the phone does not reset the limit", async () => {
+  const q = await quote({ code: "FIRST50", packId: "wellness-session",
+                          customer: { phone: ALICE.phone, email: "alice2@example.com" } });
+  assert.equal(q.reason, "per_customer_limit");
+});
+
+await test("swapping the phone but keeping the email does not reset the limit", async () => {
+  const q = await quote({ code: "FIRST50", packId: "wellness-session",
+                          customer: { phone: "9111111111", email: ALICE.email } });
+  assert.equal(q.reason, "per_customer_limit");
+});
+
+await test("redemption is counted once per order, however often it is polled", async () => {
+  store.clear();
+  await recordRedemption({ code: "FIRST50", orderId: "lume_dup", sku: "wellness-session", customer: ALICE });
+  await recordRedemption({ code: "FIRST50", orderId: "lume_dup", sku: "wellness-session", customer: ALICE });
+  await recordRedemption({ code: "FIRST50", orderId: "lume_dup", sku: "wellness-session", customer: ALICE });
+  assert.equal(store.read("couponCustomers", "FIRST50__p_9876543210").count, 1);
+  assert.equal(store.read("coupons", "FIRST50").times_used, 1);
+});
+
+await test("someone who already paid full price for a session is not a first-timer", async () => {
+  store.clear();
+  // No coupon was ever used — only an entitlement exists. per_customer_limit
+  // alone would happily hand them a "first session" discount.
+  store.seed("entitlements", "lume_old", {
+    orderId: "lume_old", sku: "wellness-session", status: "PAID",
+    phone: ALICE.phone, email: null, updatedAt: "2026-01-01T00:00:00Z"
+  });
+  const q = await quote({ code: "FIRST50", packId: "wellness-session", customer: ALICE });
+  assert.equal(q.ok, false);
+  assert.equal(q.reason, "not_first_time");
+  assert.equal(q.message, "This code is only for your first session.");
+  assert.equal(q.final_amount, 499);
+});
+
+await test("someone who took the retired ₹49 intro session is not a first-timer", async () => {
+  store.clear();
+  // Matched on email alone, and stored lowercased the way
+  // recordPaidEntitlement writes it.
+  store.seed("entitlements", "lume_legacy", {
+    orderId: "lume_legacy", sku: "intro-session", status: "PAID",
+    phone: null, email: ALICE.email.toLowerCase(), updatedAt: "2025-01-01T00:00:00Z"
+  });
+  const q = await quote({ code: "FIRST50", packId: "wellness-session", customer: ALICE });
+  assert.equal(q.reason, "not_first_time");
+});
+
+await test("an unrelated past purchase does not disqualify anyone", async () => {
+  store.clear();
+  store.seed("entitlements", "lume_pdf", {
+    orderId: "lume_pdf", sku: "parents-handbook", status: "PAID",
+    phone: ALICE.phone, email: null, updatedAt: "2026-01-01T00:00:00Z"
+  });
+  const q = await quote({ code: "FIRST50", packId: "wellness-session", customer: ALICE });
+  assert.equal(q.ok, true);
+  assert.equal(q.final_amount, 249);
+});
+
+await test("an unpaid past order does not disqualify anyone", async () => {
+  store.clear();
+  store.seed("entitlements", "lume_pending", {
+    orderId: "lume_pending", sku: "wellness-session", status: "PENDING",
+    phone: ALICE.phone, email: null, updatedAt: "2026-01-01T00:00:00Z"
+  });
+  const q = await quote({ code: "FIRST50", packId: "wellness-session", customer: ALICE });
+  assert.equal(q.ok, true);
+});
+
+await test("FIRST50 is configured as one-per-customer, first-session-only", () => {
+  const first50 = DEFAULT_COUPONS.find(c => c.code === "FIRST50");
+  assert.equal(first50.per_customer_limit, 1);
+  assert.equal(first50.first_time_only, true);
+  assert.ok(first50.first_time_skus.includes("intro-session"),
+    "the retired ₹49 SKU must count as a prior session");
+});
+
+console.log("\ncatalogue guards");
+
+store.clear();
 
 await test("no pack in the catalogue is priced below ₹199", () => {
   // Guards against the ₹49 tier creeping back in as a second cheap SKU:

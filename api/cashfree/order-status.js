@@ -146,7 +146,13 @@ module.exports = async function handler(req, res){
         orderId: data.order_id,
         sku: sku,
         amount: data.order_amount,
-        discount: couponDiscount
+        discount: couponDiscount,
+        // Recorded against the customer Cashfree confirmed, not anything
+        // the browser claimed, so per_customer_limit counts real people.
+        customer: {
+          phone: data.customer_details && data.customer_details.customer_phone,
+          email: data.customer_details && data.customer_details.customer_email
+        }
       });
     }
 

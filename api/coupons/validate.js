@@ -94,7 +94,24 @@ module.exports = async function handler(req, res){
     });
   }
 
-  const result = await quote({ code: code, packId: packId });
+  /*
+    Optional, and only ever used to make the answer stricter.
+
+    The checkout has to show a price before it has asked for a phone
+    number, so per-person rules often cannot be evaluated here — they are
+    skipped when there is nothing to identify. Passing the details once
+    the client has typed them means a returning client sees the correct
+    price on this screen instead of being refused at the payment step.
+
+    Nothing is trusted: create-order re-runs the same rules against the
+    customer it is about to charge, and that is the decision that counts.
+  */
+  const customer = body.customer && typeof body.customer === "object" ? {
+    phone: String(body.customer.phone || "").slice(0, 20),
+    email: String(body.customer.email || "").slice(0, 120)
+  } : null;
+
+  const result = await quote({ code: code, packId: packId, customer: customer });
 
   return json(res, 200, {
     valid: result.ok && result.reason === "applied",

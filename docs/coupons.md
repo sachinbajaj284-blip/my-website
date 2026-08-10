@@ -18,14 +18,21 @@ and why the price is safe.
 
 ## Live offers
 
-| Code | Discount | Applies to | Limit | Promoted in hero |
+**One offer runs: `FIRST50`.** Every other SKU sells at list price.
+
+| Code | Discount | Applies to | Limits | Live |
 |---|---|---|---|---|
-| `FIRST50` | 50% | 1:1 Counselling Session (₹499 → ₹249) | unlimited | **yes** |
+| `FIRST50` | 50% | 1:1 Counselling Session (₹499 → ₹249) | **1 per customer, first session only** | **yes** |
 | `MIND50` | 50% | 1:1 Counselling Session | 200 uses | no |
-| `CAREER30` | 30% | Full Clarity Report, Career Roadmap | unlimited | no |
-| `PARENT200` | ₹200 flat | Full Clarity Report, Stream Clarity Session | unlimited | no |
-| `REFER200` | ₹200 flat | Full Clarity Report | unlimited | no |
+| `CAREER30` | 30% | Full Clarity Report, Career Roadmap | — | no |
+| `PARENT200` | ₹200 flat | Full Clarity Report, Stream Clarity Session | — | no |
+| `REFER200` | ₹200 flat | Full Clarity Report | — | no |
 | `INTERN500` | ₹500 flat | All three internship tracks | 50 uses | no |
+
+The switched-off codes are kept in the catalogue rather than deleted: they
+document the shape of each kind of offer, and re-enabling one is a single
+`is_active` flag. Being in the file does **not** make them live — a switched-off
+code is refused at checkout and the price stays at list.
 
 `npm run coupons:list` prints the current catalogue.
 
@@ -40,10 +47,18 @@ Two places, in this order of authority:
 2. **`api/_lib/coupons.js` → `DEFAULT_COUPONS`**, the same data in code. Used
    when Firestore is unreachable or hasn't been seeded.
 
-A Firestore document fully replaces its built-in twin. Nothing breaks if
-Firestore is never configured — the built-ins keep every offer working, you
-just can't change them without a deploy, and `times_used` has nowhere durable
-to live.
+Firestore fields are layered **over** the built-in definition, field by field —
+not swapped in wholesale. That matters because not every `coupons/{CODE}`
+document is a complete offer: on a deployment that was never seeded, the first
+redemption creates one holding just `{ code, times_used }`. Replacing the
+definition with that would leave the code with no `discount_value`, no
+`applicable_packs` (which reads as *every* pack) and none of its per-customer
+limits — silently turning it into 0% off everything, unrestricted, the moment
+somebody used it.
+
+Nothing breaks if Firestore is never configured — the built-ins keep every
+offer working, you just can't change them without a deploy, and `times_used`
+has nowhere durable to live.
 
 ### Fields
 
@@ -55,12 +70,15 @@ to live.
 | `applicable_packs` | string[] | SKU ids. **An empty array means every pack** — name your packs. |
 | `is_active` | boolean | Defaults to true. Set false to pause without deleting. |
 | `expiration_date` | ISO string / Timestamp / null | Optional. Null = never expires. |
-| `usage_limit` | number / null | Optional. Null = unlimited. |
+| `usage_limit` | number / null | Optional **global** cap. Null = unlimited. |
+| `per_customer_limit` | number / null | Optional cap **per person**. `1` = one use each. |
+| `first_time_only` | boolean | Refuse if this person has bought before. |
+| `first_time_skus` | string[] | What "bought before" means. Defaults to `applicable_packs`. |
 | `times_used` | number | Server-maintained. Do not edit by hand. |
 | `min_amount` | number / null | Optional minimum order value. |
 | `headline`, `description` | string | Hero banner copy. |
 | `promote` | boolean | Show this code in the hero banner. |
-| `first_time_only` | boolean | Copy flag only — it changes the eyebrow text, nothing else. |
+
 
 Pack ids come from `api/_lib/catalog.js`.
 
@@ -122,6 +140,48 @@ and is idempotent per `order_id` (a `couponRedemptions/{order_id}` document is
 the claim). Counting at validate-time would let anyone burn a limited offer by
 typing the code; counting at order-creation would burn it on every abandoned
 checkout.
+
+---
+
+## "One per customer", and what a first session means
+
+`FIRST50` is `per_customer_limit: 1` **and** `first_time_only: true`. Both are
+needed, and they catch different people:
+
+- **`per_customer_limit`** counts redemptions of *this code* by this person,
+  from `couponCustomers/{CODE}__{identity}`.
+- **`first_time_only`** asks whether they have ever *bought* one of
+  `first_time_skus` — read from the `entitlements` records. Someone who paid
+  the full ₹499 last month has had their first session even though they never
+  touched a coupon, and the limit alone would happily discount their second.
+
+`first_time_skus` for FIRST50 includes the retired `intro-session`, so a client
+who took the old ₹49 session doesn't get a "first" session twice.
+
+**A person is their phone *and* their email**, and both are counted
+(`identityKeys`). Checking one would be trivial to sidestep — same phone,
+different email, discount again. The guest placeholder number `9999999999` is
+explicitly not an identity, or every phone-less guest would look like one
+person.
+
+**Where it is enforced:** `create-order.js`, against the contact details it is
+about to charge. `/api/coupons/validate` also applies the rules *when the
+browser sends a customer*, which is what lets the checkout correct itself —
+the coupon widget re-checks on the phone field (`recheckCustomer()`), so a
+returning client sees ₹499 on the booking screen rather than being refused at
+the payment step. The validate call is a courtesy; create-order is the gate.
+
+**Both rules fail open.** If Firestore is unreachable the checks return
+"allowed" and log, exactly like `rateLimit` and the entitlement writes. A
+returning client occasionally slipping through during an outage is a far
+smaller cost than telling genuine first-timers their advertised discount is
+unavailable. It also means the limits do nothing on a deploy with no
+`FIREBASE_*` configured — the built-in catalogue can price a coupon, but only
+Firestore can remember who used it.
+
+**Testing:** `tools/firestore-stub.mjs` is an in-memory Firestore, so these
+rules are tested for real — seed a redemption or an entitlement, assert the
+coupon is refused. `npm run coupons:test`.
 
 ---
 
@@ -189,10 +249,12 @@ gone, the badge removes itself.
 var coupon = LumeCoupons.mountCheckout(document.getElementById("sessCoupon"), {
   getPack: function(){ return { sku: plan.sku, amount: plan.amount, label: plan.label }; },
   getSuggestedCode: function(){ return plan.suggestCoupon || ""; },
+  getCustomer: function(){ return { phone: phoneInput.value, email: "" }; },
   onChange: renderPriceRow      // null, or { code, base, discount, total, label }
 });
 
 coupon.getCode()                 // "FIRST50" — pass this to the pay call
+coupon.recheckCustomer()         // phone/email changed — re-verify per-person rules
 coupon.reset()                   // client switched to a different pack
 coupon.rejectServerSide(message) // create-order refused the code
 ```
