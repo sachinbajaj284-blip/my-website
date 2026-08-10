@@ -117,6 +117,13 @@ module.exports = async function handler(req, res){
   }
 
   const sku = data.order_tags && data.order_tags.sku ? data.order_tags.sku : "";
+  // How the client asked to meet — video, voice or chat. Tagged onto the order
+  // by create-order.js because it is chosen before payment and would otherwise
+  // be lost on the redirect. Google's booking page never sees it, so this is
+  // the copy that reaches the owner.
+  const sessionMode = data.order_tags && data.order_tags.session_mode
+    ? String(data.order_tags.session_mode).slice(0, 40)
+    : "";
   const isPaid = String(data.order_status || "").toUpperCase() === "PAID";
 
   if(isPaid && !sku){
@@ -165,10 +172,12 @@ module.exports = async function handler(req, res){
           email: data.customer_details && data.customer_details.customer_email,
           summary: "Payment confirmed for " + (sku || "a Lume Live service") +
             " (₹" + (data.order_amount != null ? data.order_amount : "?") + ")." +
+            (sessionMode ? " Preferred mode: " + sessionMode + "." : "") +
             (BOOKING_SKUS.has(sku) ? " They now pick their own slot on the Google Calendar link." : ""),
           details: {
             cf_order_id: data.cf_order_id,
             currency: data.order_currency,
+            session_mode: sessionMode,
             picks_own_slot: BOOKING_SKUS.has(sku) ? "yes" : "no",
             note: notes
           }
@@ -186,6 +195,9 @@ module.exports = async function handler(req, res){
     order_amount: data.order_amount,
     order_currency: data.order_currency,
     sku: sku,
+    // Returned so the post-payment screen can show the client the line to
+    // paste into Google's booking form — a preference, not a contact detail.
+    session_mode: sessionMode,
     // Only the first name is returned for a friendly greeting. Phone/email are
     // deliberately withheld so this public, order-id-only endpoint never leaks
     // personal contact details to anyone who guesses or shares an order id.

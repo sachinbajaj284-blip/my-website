@@ -31,6 +31,31 @@ const SKU_PRICES = {
   "internship-lume-lens": { amount: 500, label: "Lume Lens Report (Intern Add-On)", alias: "internlens500" }
 };
 
+/*
+  Before paying, the client chooses how they want the session to happen —
+  video call, voice call, or chat. That choice is made on our page and then
+  the browser leaves for Cashfree and comes back on a fresh page load, so
+  the order itself is the only place it can survive the round trip. Tag it
+  on here and order-status.js reads it back when the payment is confirmed.
+
+  Normalised to a fixed set rather than stored verbatim: the value arrives
+  from the browser, and nothing free-typed should land in the owner's Sheet.
+  Video is tested first because "Video Call (Google Meet / Zoom)" would also
+  match the voice pattern on the word "call".
+*/
+const SESSION_MODES = [
+  { match: /video|meet|zoom/i, label: "Video call" },
+  { match: /chat|whatsapp|text|message/i, label: "Chat (WhatsApp)" },
+  { match: /voice|phone|call/i, label: "Voice call" }
+];
+
+function sessionModeOf(notes){
+  const raw = notes && typeof notes === "object" ? String(notes.sessionMode || "") : "";
+  if(!raw) return "";
+  const hit = SESSION_MODES.find(function(m){ return m.match.test(raw); });
+  return hit ? hit.label : "";
+}
+
 function json(res, status, body){
   res.statusCode = status;
   res.setHeader("Content-Type", "application/json");
@@ -149,6 +174,7 @@ module.exports = async function handler(req, res){
   const orderId = ("lume_" + product.alias + "_" + suffix).slice(0, 45);
   const requestId = crypto.randomUUID();
   const returnUrl = body.returnUrl || (publicBase + "/payment-return.html?order_id={order_id}");
+  const sessionMode = sessionModeOf(body.notes);
 
   const cashfreePayload = {
     order_id: orderId,
@@ -166,10 +192,10 @@ module.exports = async function handler(req, res){
       notify_url: process.env.CASHFREE_NOTIFY_URL || undefined,
       payment_methods: "cc,dc,upi,nb,app,paylater"
     },
-    order_tags: {
-      sku,
-      source: "lume-live-website"
-    }
+    order_tags: Object.assign(
+      { sku, source: "lume-live-website" },
+      sessionMode ? { session_mode: sessionMode } : {}
+    )
   };
 
   let response, data;
