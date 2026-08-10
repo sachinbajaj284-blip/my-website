@@ -77,5 +77,48 @@ for(const coupon of DEFAULT_COUPONS){
     " (times_used: " + payload.times_used + ")");
 }
 
-console.log("\nDone — " + written + " coupon documents in " + COLLECTION + "/.\n");
+/*
+  Read everything back and check it round-tripped.
+
+  Seeding is a one-shot admin action run against a project this script
+  cannot see into afterwards, so "the writes did not throw" is a weaker
+  claim than it looks — a rule silently missing from Firestore is exactly
+  the kind of thing nobody notices until a coupon behaves wrongly for a
+  paying client. These are the fields that decide money.
+*/
+console.log("\nVerifying...");
+const problems = [];
+
+for(const coupon of DEFAULT_COUPONS){
+  const snap = await firestore.collection(COLLECTION).doc(coupon.code).get();
+  if(!snap.exists){ problems.push(coupon.code + ": document missing after write"); continue; }
+  const got = snap.data();
+
+  const mustMatch = ["discount_type", "discount_value", "is_active", "usage_limit",
+                     "per_customer_limit", "first_time_only"];
+  for(const field of mustMatch){
+    const want = coupon[field] === undefined ? null : coupon[field];
+    const have = got[field] === undefined ? null : got[field];
+    if(JSON.stringify(want) !== JSON.stringify(have)){
+      problems.push(coupon.code + "." + field + ": expected " + JSON.stringify(want) + ", found " + JSON.stringify(have));
+    }
+  }
+  const wantPacks = JSON.stringify(coupon.applicable_packs || []);
+  const havePacks = JSON.stringify(got.applicable_packs || []);
+  if(wantPacks !== havePacks){
+    problems.push(coupon.code + ".applicable_packs: expected " + wantPacks + ", found " + havePacks);
+  }
+}
+
+if(problems.length){
+  console.error("\n✗ " + problems.length + " problem(s):");
+  problems.forEach(function(p){ console.error("    " + p); });
+  console.error("\nThe catalogue in Firestore does not match the code. Fix before relying on it.\n");
+  process.exit(1);
+}
+
+const liveNow = DEFAULT_COUPONS.filter(function(c){ return c.is_active !== false; }).map(function(c){ return c.code; });
+console.log("✓ all " + written + " documents verified in " + COLLECTION + "/");
+console.log("✓ live at checkout: " + (liveNow.join(", ") || "(none)"));
+console.log("✓ per-customer limits are now enforceable — Firestore can remember who used what\n");
 process.exit(0);
