@@ -47,7 +47,10 @@
     "lume-lens-working-profile":  { cta:"Start Lume Lens Now",         href:"for-working-professionals.html#self-assessments",         steps:["Your Lume Lens report is unlocked.","Complete the short assessment to generate your clarity report.","We share your personalised PDF on WhatsApp."] },
     "career-intelligence-roadmap":{ cta:"Open Career Intelligence",    href:"career-intelligence.html?access=assessment#career-intelligence", steps:["Your Career Intelligence roadmap is unlocked.","Open the dashboard to begin.","Save your WhatsApp confirmation for your records."] },
     "parents-handbook":           { cta:"Confirm Delivery on WhatsApp",href:"https://wa.me/917015671280", steps:["Payment received for the Parents' Career Handbook.","Send us your email on WhatsApp so we can deliver the PDF.","You'll receive it within a few hours."] },
-    "intro-session":              { cta:"Pick Your Slot",             href:"", book:true,                   steps:["Payment received for your ₹49 introductory session.","Pick a day and time from Lume Live's calendar below — takes 20 seconds.","Google sends you the confirmation and video-call link straight away."] },
+    // Retired SKU, kept so a client returning to an older order still gets
+    // the right next step rather than the generic fallback.
+    "intro-session":              { cta:"Pick Your Slot",             href:"", book:true,                   steps:["Payment received for your first session.","Pick a day and time from Lume Live's calendar below — takes 20 seconds.","Google sends you the confirmation and video-call link straight away."] },
+    "wellness-session":           { cta:"Pick Your Slot",             href:"", book:true,                   steps:["Payment received for your 1:1 counselling session.","Pick a day and time from Lume Live's calendar below — takes 20 seconds.","Google sends you the confirmation and video-call link straight away."] },
     "career-direction-session":   { cta:"Pick Your Slot",             href:"", book:true,                   steps:["Payment received for your Career Direction session.","Pick a day and time from Lume Live's calendar below — takes 20 seconds.","Google sends you the confirmation and video-call link straight away."] },
     "internship-1-month":         { cta:"Confirm on WhatsApp",        href:"https://wa.me/917015671280", steps:["Your seat in Practitioner Foundations (60 supervised hours) is reserved.","We call you within 24 hours for your 15-minute screening conversation.","If we don't select you, your fee is refunded in full — the seat is held, not sold."] },
     "internship-2-month":         { cta:"Confirm on WhatsApp",        href:"https://wa.me/917015671280", steps:["Your seat in the Advanced Fellowship (120 supervised hours) is reserved.","We call you within 24 hours for your 15-minute screening conversation.","If we don't select you, your fee is refunded in full — the seat is held, not sold."] },
@@ -424,6 +427,9 @@
 ".lcf-hd img{width:46px;height:46px;object-fit:contain;margin-bottom:6px}",
 ".lcf-hd h3{margin:0;font-size:1.12rem;font-weight:800}",
 ".lcf-hd .lcf-amt{margin-top:4px;font-size:.86rem;color:#E8B95A;font-weight:700;letter-spacing:.3px}",
+/* Discounted orders: the price it was, the price it is, and the code. */
+".lcf-hd .lcf-was{color:rgba(255,255,255,.55);text-decoration:line-through;margin-right:7px;font-weight:600}",
+".lcf-hd .lcf-off{display:block;margin-top:3px;font-size:.68rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#4ADE80}",
 ".lcf-x{position:absolute;top:12px;right:14px;background:rgba(255,255,255,.16);border:0;color:#fff;width:30px;height:30px;border-radius:50%;font-size:1rem;cursor:pointer;line-height:1}",
 ".lcf-x:hover{background:rgba(255,255,255,.3)}",
 ".lcf-body{padding:22px}",
@@ -535,10 +541,25 @@
     });
   }
 
+  // The amount line in the modal header. With a coupon on the order it
+  // carries the receipt in one line — what it was, what came off, and the
+  // code responsible — so the client can see the discount survived the
+  // jump from our page to the gateway.
+  function amountHtml(options){
+    if(!options.amount) return "";
+    var discount = Number(options.discountAmount || 0);
+    var list = Number(options.listAmount || 0);
+    if(discount <= 0 || list <= options.amount) return esc(inr(options.amount));
+    return '<span class="lcf-was">' + esc(inr(list)) + '</span>' +
+      esc(inr(options.amount)) +
+      '<span class="lcf-off">' + esc(inr(discount)) + ' off' +
+      (options.couponCode ? " · " + esc(options.couponCode) : "") + '</span>';
+  }
+
   function openModal(options){
     ensureModal();
     EL.title.textContent = options.label || "Secure Payment";
-    EL.amt.textContent = options.amount ? inr(options.amount) : "";
+    EL.amt.innerHTML = amountHtml(options);
     EL.overlay.classList.add("lcf-open");
     document.body.style.overflow = "hidden";
   }
@@ -808,6 +829,10 @@
       sku: options.sku || "",
       amount: Number(options.amount || 0),
       label: options.label || "",
+      // The code only. create-order.js looks it up and works out the
+      // discount itself — sending an amount alongside it would be
+      // pointless, since the server ignores every number we send here.
+      coupon_code: options.couponCode || "",
       customer: { name:options.customerName || "", phone:options.customerPhone || "", email:options.customerEmail || "" },
       notes: options.notes || {},
       pageUrl: window.location.href,
@@ -817,12 +842,47 @@
     return fetch(cfg.createOrderEndpoint, {
       method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify(payload)
     })
-    .then(function(res){ if(!res.ok){ throw new Error("order creation failed: " + res.status); } return res.json(); })
+    .then(function(res){
+      // 409 is the server refusing the coupon (expired or switched off in
+      // the seconds since it was validated). It creates no order, so this
+      // is a message to deliver rather than a failure to retry — the body
+      // carries the reason and has to be read before anything is thrown.
+      if(res.status === 409){
+        return res.json().catch(function(){ return {}; }).then(function(data){
+          var info = data.coupon_rejected || { message: data.error };
+          options.couponCode = "";
+          if(typeof options.onCouponRejected === "function"){
+            try{ options.onCouponRejected(info); }catch(e){}
+          }
+          var err = new Error("coupon rejected");
+          err.handled = true;
+          err.couponRejected = info;
+          throw err;
+        });
+      }
+      if(!res.ok){ throw new Error("order creation failed: " + res.status); }
+      return res.json();
+    })
     .then(function(data){
       var sessionId = data.payment_session_id || data.paymentSessionId || data.payment_sessions_id;
       var orderId = data.order_id || data.orderId || "";
       if(!sessionId){ throw new Error("missing payment_session_id"); }
       options._cfOrderId = orderId;
+
+      /*
+        The server priced this order and its answer wins over anything
+        this page worked out. If the amount differs from what the modal
+        header says, re-label it — the number on our screen and the
+        number on Cashfree's screen must agree before the client is sent
+        across.
+      */
+      if(data.order_amount != null && Number(data.order_amount) !== Number(options.amount)){
+        options.amount = Number(data.order_amount);
+        options.listAmount = data.list_amount != null ? Number(data.list_amount) : null;
+        options.discountAmount = data.discount_amount != null ? Number(data.discount_amount) : 0;
+        options.couponCode = data.coupon_code || options.couponCode || "";
+        if(EL.amt){ EL.amt.innerHTML = amountHtml(options); }
+      }
       logAttempt(options, { status:"ORDER_CREATED", orderId:orderId });
       if(typeof options.onStarted === "function"){ try{ options.onStarted(data, { stage:"checkout-opened" }); }catch(e){} }
 
@@ -842,6 +902,16 @@
     })
     .catch(function(err){
       console.warn("[Lume Cashfree]", err);
+      // A refused coupon isn't a checkout failure — no order exists and
+      // nothing has been charged. Close the payment modal and let the
+      // coupon field on the page carry the explanation, so the client is
+      // returned to the one control that can fix it.
+      if(err && err.handled && err.couponRejected){
+        logAttempt(options, { status:"COUPON_REJECTED", error:String(err.couponRejected.reason || "") });
+        closeModal();
+        notify(err.couponRejected.message || "That coupon could not be applied. Nothing has been charged.");
+        return { ok:false, reason:"coupon-rejected", couponRejected:err.couponRejected };
+      }
       logAttempt(options, { status:"ERROR", error:String(err && err.message || err) });
       renderFailure(options, "We couldn't start Cashfree checkout. Please try again, or pay by UPI below.");
       return { ok:false, error:err };

@@ -19,42 +19,14 @@
 
 const { recordPaidEntitlement, claimPaidNotification } = require("../_lib/entitlements");
 const { notifyOwner } = require("../_lib/notify");
+const { json, setCors } = require("../_lib/http");
+const { recordRedemption } = require("../_lib/coupons");
 
 // SKUs where the client books their own slot on the Google Calendar page,
 // so the owner knows not to chase them for a date and time.
-const BOOKING_SKUS = new Set(["intro-session", "career-direction-session", "stream-clarity-session"]);
-
-function json(res, status, body){
-  res.statusCode = status;
-  res.setHeader("Content-Type", "application/json");
-  res.end(JSON.stringify(body));
-}
-
-const DEFAULT_ALLOWED_ORIGINS = [
-  "https://lumelive.co.in",
-  "https://www.lumelive.co.in",
-  "http://127.0.0.1:8765",
-  "http://localhost:8765"
-];
-
-function allowedOrigins(){
-  return new Set(DEFAULT_ALLOWED_ORIGINS.concat(
-    String(process.env.LUME_ALLOWED_ORIGINS || "")
-      .split(",")
-      .map(function(origin){ return origin.trim(); })
-      .filter(Boolean)
-  ));
-}
-
-function setCors(req, res){
-  const origin = req.headers.origin || "";
-  if(origin && allowedOrigins().has(origin)){
-    res.setHeader("Access-Control-Allow-Origin", origin);
-    res.setHeader("Vary", "Origin");
-  }
-  res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-}
+// intro-session is retired and can no longer be bought, but orders placed
+// while it was on sale are still polled here and must still resolve.
+const BOOKING_SKUS = new Set(["intro-session", "wellness-session", "career-direction-session", "stream-clarity-session"]);
 
 function getOrderId(req){
   try{
@@ -66,7 +38,7 @@ function getOrderId(req){
 }
 
 module.exports = async function handler(req, res){
-  setCors(req, res);
+  setCors(req, res, "GET,OPTIONS");
 
   if(req.method === "OPTIONS"){
     res.statusCode = 204;
@@ -124,6 +96,14 @@ module.exports = async function handler(req, res){
   const sessionMode = data.order_tags && data.order_tags.session_mode
     ? String(data.order_tags.session_mode).slice(0, 40)
     : "";
+  // Written by create-order.js from its own recalculation, never from the
+  // browser, so this is a trustworthy record of what was discounted.
+  const couponCode = data.order_tags && data.order_tags.coupon_code
+    ? String(data.order_tags.coupon_code).slice(0, 32)
+    : "";
+  const couponDiscount = data.order_tags && data.order_tags.coupon_discount != null
+    ? Number(data.order_tags.coupon_discount) || 0
+    : 0;
   const isPaid = String(data.order_status || "").toUpperCase() === "PAID";
 
   if(isPaid && !sku){
@@ -155,6 +135,27 @@ module.exports = async function handler(req, res){
       console.error("[lume order-status] entitlement write failed:", String(err && err.message || err));
     }
 
+    // Count the coupon now, and only now — the money has arrived. Counting
+    // at validate-time would let anyone burn a limited offer by typing the
+    // code, and counting at order-creation would burn it on every abandoned
+    // checkout. recordRedemption is idempotent per order_id, which matters
+    // because this endpoint is polled.
+    if(couponCode){
+      await recordRedemption({
+        code: couponCode,
+        orderId: data.order_id,
+        sku: sku,
+        amount: data.order_amount,
+        discount: couponDiscount,
+        // Recorded against the customer Cashfree confirmed, not anything
+        // the browser claimed, so per_customer_limit counts real people.
+        customer: {
+          phone: data.customer_details && data.customer_details.customer_phone,
+          email: data.customer_details && data.customer_details.customer_email
+        }
+      });
+    }
+
     // Tell the owner a booking has been paid for, once per order. This is
     // the trustworthy copy of the client's details — Cashfree has verified
     // the payment, and these fields come from Cashfree rather than from
@@ -172,12 +173,15 @@ module.exports = async function handler(req, res){
           email: data.customer_details && data.customer_details.customer_email,
           summary: "Payment confirmed for " + (sku || "a Lume Live service") +
             " (₹" + (data.order_amount != null ? data.order_amount : "?") + ")." +
+            (couponCode ? " Coupon " + couponCode + " applied (₹" + couponDiscount + " off)." : "") +
             (sessionMode ? " Preferred mode: " + sessionMode + "." : "") +
             (BOOKING_SKUS.has(sku) ? " They now pick their own slot on the Google Calendar link." : ""),
           details: {
             cf_order_id: data.cf_order_id,
             currency: data.order_currency,
             session_mode: sessionMode,
+            coupon_code: couponCode,
+            coupon_discount: couponCode ? couponDiscount : "",
             picks_own_slot: BOOKING_SKUS.has(sku) ? "yes" : "no",
             note: notes
           }
@@ -195,6 +199,10 @@ module.exports = async function handler(req, res){
     order_amount: data.order_amount,
     order_currency: data.order_currency,
     sku: sku,
+    // So the receipt screen can show "₹499 − ₹250 (FIRST50)" rather than a
+    // bare amount the client doesn't recognise.
+    coupon_code: couponCode,
+    coupon_discount: couponCode ? couponDiscount : 0,
     // Returned so the post-payment screen can show the client the line to
     // paste into Google's booking form — a preference, not a contact detail.
     session_mode: sessionMode,

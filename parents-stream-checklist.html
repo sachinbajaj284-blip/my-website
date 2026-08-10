@@ -99,8 +99,8 @@
 
   <div class="cta-box">
     <h3>Want the full picture, not just the checklist?</h3>
-    <p>The checklist is a taster. The complete <strong>Parents' Career Handbook</strong> (₹199) goes far deeper, and a <strong>₹49 session</strong> with a qualified counsellor turns it into a plan for <em>your</em> child specifically.</p>
-    <a class="btn gold" href="index.html#emotional-wellbeing" onclick="try{if(window.gtag)gtag('event','handbook_upsell_click',{event_category:'lead_tools'})}catch(e){}">Explore the full Parents' Handbook &amp; ₹49 session</a>
+    <p>The checklist is a taster. The complete <strong>Parents' Career Handbook</strong> (₹199) goes far deeper, and a <strong>₹249 first session with code FIRST50</strong> with a qualified counsellor turns it into a plan for <em>your</em> child specifically.</p>
+    <a class="btn gold" href="index.html#emotional-wellbeing" onclick="try{if(window.gtag)gtag('event','handbook_upsell_click',{event_category:'lead_tools'})}catch(e){}">Explore the full Parents' Handbook &amp; ₹249 first session with code FIRST50</a>
   </div>
 
   <div class="related">
@@ -130,7 +130,7 @@
     err.style.display='none';
     if(window.gtag) gtag('event','handbook_lead',{event_category:'lead_tools',event_label:'stream-checklist',value:1});
     try{fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,source:'stream-checklist'}),keepalive:true});}catch(e3){}
-    var msg='Hello Lume Live! I downloaded the free Parent’s Stream-Selection Checklist. My email: '+email+'. Please also send it on WhatsApp and share how the ₹49 session works.';
+    var msg='Hello Lume Live! I downloaded the free Parent’s Stream-Selection Checklist. My email: '+email+'. Please also send it on WhatsApp and share how the ₹249 first session with code FIRST50 works.';
     wa.href='https://wa.me/'+WA+'?text='+encodeURIComponent(msg);
     form.style.display='none';
     done.classList.add('on');
