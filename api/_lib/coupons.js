@@ -66,10 +66,10 @@ const DEFAULT_COUPONS = [
     expiration_date: null,
     usage_limit: null,
     times_used: 0,
-    headline: "50% off your first wellness session",
+    headline: "50% off your first counselling session",
     // No prices in here — the badge renders base/final from the catalogue
     // right beside the headline, so repeating them reads as a stutter.
-    description: "A 1:1 hour with a qualified counsellor (M.Sc Clinical Psychology). Tap the code, use it at checkout.",
+    description: "A 45-minute 1:1 with a qualified counsellor (M.Sc Clinical Psychology). Tap the code, use it at checkout.",
     promote: true,
     first_time_only: true
   },
@@ -77,7 +77,7 @@ const DEFAULT_COUPONS = [
     code: "MIND50",
     discount_type: "percentage",
     discount_value: 50,
-    applicable_packs: ["wellness-session", "intro-session"],
+    applicable_packs: ["wellness-session"],
     is_active: true,
     expiration_date: null,
     usage_limit: 200,

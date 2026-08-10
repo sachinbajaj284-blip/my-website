@@ -378,6 +378,20 @@
       ? options.getPack
       : function(){ return { sku: options.sku || "", amount: Number(options.amount) || 0, label: options.label || "" }; };
     var onChange = typeof options.onChange === "function" ? options.onChange : function(){};
+    /*
+      The code this pack is advertised at, if any.
+
+      The site promises "first session ₹249" in the hero, the countdown
+      bar and 50-odd landing pages. Making the client find and type
+      FIRST50 to reach the price they were shown is a bait-and-switch,
+      so a suggested code is applied for them on open. It still goes
+      through the same server validation as a typed one — if the offer
+      has been paused, the price simply stays ₹499 and no promise is
+      made that checkout won't honour.
+    */
+    var getSuggestedCode = typeof options.getSuggestedCode === "function"
+      ? options.getSuggestedCode
+      : function(){ return normalizeCode(options.suggestedCode || ""); };
 
     container.classList.add("lcp-wrap");
     container.innerHTML =
@@ -482,10 +496,14 @@
       catch(err){ console.warn("[lume coupons] onChange threw", err); }
     }
 
-    function apply(){
+    // `silent` suppresses the toast and the shake for an application the
+    // client didn't ask for — an auto-applied offer should feel like the
+    // advertised price, not like something they did.
+    function apply(silent){
       if(busy) return;
       var code = normalizeCode(input.value);
       if(!code){
+        if(silent) return;
         setMessage("Please enter a coupon code.", "err");
         input.classList.remove("lcp-shake");
         void input.offsetWidth;
@@ -507,11 +525,15 @@
         if(!result.valid){
           applied = null;
           publish();
+          track("coupon_apply_rejected", code + ":" + (result.reason || "unknown"));
+          // A suggested code that no longer works is our problem, not the
+          // client's — leave the field untouched at the full price rather
+          // than opening with an error they didn't cause.
+          if(silent){ setMessage("", "hint"); return; }
           setMessage(result.message || "That code isn't valid.", "err");
           input.classList.remove("lcp-shake");
           void input.offsetWidth;
           input.classList.add("lcp-shake");
-          track("coupon_apply_rejected", code + ":" + (result.reason || "unknown"));
           return;
         }
 
@@ -525,8 +547,8 @@
         stashCode(applied.code);
         setMessage("", "ok");
         publish();
-        toast(applied.code + " applied — you save " + inr(applied.discount) + "!");
-        track("coupon_applied", applied.code);
+        if(!silent) toast(applied.code + " applied — you save " + inr(applied.discount) + "!");
+        track(silent ? "coupon_auto_applied" : "coupon_applied", applied.code);
       });
     }
 
@@ -543,7 +565,7 @@
     }
 
     toggleBtn.addEventListener("click", function(){ setOpen(panel.hidden); });
-    applyBtn.addEventListener("click", apply);
+    applyBtn.addEventListener("click", function(){ apply(false); });
     removeBtn.addEventListener("click", remove);
 
     input.addEventListener("input", function(){
@@ -558,8 +580,21 @@
     });
 
     input.addEventListener("keydown", function(e){
-      if(e.key === "Enter"){ e.preventDefault(); apply(); }
+      if(e.key === "Enter"){ e.preventDefault(); apply(false); }
     });
+
+    // Tracks which code was auto-applied for which pack, so re-opening the
+    // same checkout doesn't fire a fresh validation every time.
+    var autoTried = "";
+    function autoApply(){
+      var pack = getPack() || {};
+      var code = normalizeCode(getSuggestedCode());
+      var key = code + "|" + (pack.sku || "");
+      if(!code || applied || autoTried === key) return;
+      autoTried = key;
+      input.value = code;
+      apply(true);
+    }
 
     var api = {
       // The only thing checkout should read. Deliberately just a string:
@@ -575,8 +610,12 @@
         setBusy(false);
         setMessage("", "hint");
         setOpen(false);
+        // The new pack gets its own auto-apply — clearing this is what
+        // lets the offer re-evaluate against the pack that just changed.
+        autoTried = "";
         prefill();
         publish();
+        autoApply();
       },
       // For the "the code died between validating and paying" case: the
       // server refused it at order time, so drop it and say why.
@@ -602,6 +641,7 @@
 
     prefill();
     publish();
+    autoApply();
     return api;
   }
 

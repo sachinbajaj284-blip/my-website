@@ -57,12 +57,13 @@ module.exports = async function handler(req, res){
   }
 
   // Tighter than checkout's budget: this is the endpoint someone would
-  // point a script at to discover which codes exist. 20 tries per 10
-  // minutes is generous for a client fixing a typo and useless for
+  // point a script at to discover which codes exist. 30 tries per 10
+  // minutes covers a client fixing a typo plus the offer the checkout
+  // auto-applies each time the modal opens, and is useless for
   // enumerating a code space.
   const allowed = await checkRateLimit({
     key: "coupon-validate:" + clientKey(req),
-    limit: 20,
+    limit: 30,
     windowMs: 10 * 60 * 1000
   });
   if(!allowed){

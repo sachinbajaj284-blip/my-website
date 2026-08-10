@@ -20,8 +20,8 @@ and why the price is safe.
 
 | Code | Discount | Applies to | Limit | Promoted in hero |
 |---|---|---|---|---|
-| `FIRST50` | 50% | Emotional Wellness Session (₹499 → ₹249) | unlimited | **yes** |
-| `MIND50` | 50% | Wellness + Introductory sessions | 200 uses | no |
+| `FIRST50` | 50% | 1:1 Counselling Session (₹499 → ₹249) | unlimited | **yes** |
+| `MIND50` | 50% | 1:1 Counselling Session | 200 uses | no |
 | `CAREER30` | 30% | Full Clarity Report, Career Roadmap | unlimited | no |
 | `PARENT200` | ₹200 flat | Full Clarity Report, Stream Clarity Session | unlimited | no |
 | `REFER200` | ₹200 flat | Full Clarity Report | unlimited | no |
@@ -63,6 +63,17 @@ to live.
 | `first_time_only` | boolean | Copy flag only — it changes the eyebrow text, nothing else. |
 
 Pack ids come from `api/_lib/catalog.js`.
+
+### The retired ₹49 session
+
+`intro-session` (₹49) was the site's acquisition offer before FIRST50. It is
+gone from `catalog.js`, so no new order can be created at that price, and the
+two session plans in `index.html` both point at `wellness-session` (₹499) now.
+
+It is deliberately **still recognised** by `order-status.js`, `payment-return.html`
+and the `SKU_FLOW` map in `cashfree-payments.js`: clients who bought one still
+hold that entitlement, and those paths have to keep resolving it. Don't "tidy
+up" those three references.
 
 ---
 
@@ -126,7 +137,7 @@ checkout.
 {
   "valid": true, "reason": "applied",
   "message": "50% off applied — you save ₹250.",
-  "sku": "wellness-session", "label": "Emotional Wellness Session",
+  "sku": "wellness-session", "label": "1:1 Counselling Session",
   "base_amount": 499, "discount_amount": 250, "final_amount": 249,
   "currency": "INR",
   "coupon": { "code": "FIRST50", "discount_type": "percentage", "discount_value": 50 }
@@ -138,8 +149,8 @@ A rejected code returns **200** with `valid: false` and a `reason` of
 `below_minimum` · `unknown_pack` · `rate_limited` · `network`. Each carries a
 `message` written for the client to read as-is.
 
-Rate limited to 20 attempts per IP per 10 minutes — enough to fix a typo,
-useless for guessing codes.
+Rate limited to 30 attempts per IP per 10 minutes — enough for a typo plus the
+offer the checkout auto-applies on open, useless for guessing codes.
 
 ### `GET /api/coupons/active`
 
@@ -160,7 +171,7 @@ so the checkout field pre-fills.
 ```html
 <div data-lume-coupon-badge="FIRST50"
      data-lume-coupon-eyebrow="First session offer"
-     data-lume-coupon-headline="50% off your first wellness session"
+     data-lume-coupon-headline="50% off your first counselling session"
      data-lume-coupon-description="…"
      data-lume-coupon-base="499"
      data-lume-coupon-final="249"></div>
@@ -177,6 +188,7 @@ gone, the badge removes itself.
 ```js
 var coupon = LumeCoupons.mountCheckout(document.getElementById("sessCoupon"), {
   getPack: function(){ return { sku: plan.sku, amount: plan.amount, label: plan.label }; },
+  getSuggestedCode: function(){ return plan.suggestCoupon || ""; },
   onChange: renderPriceRow      // null, or { code, base, discount, total, label }
 });
 
@@ -187,6 +199,24 @@ coupon.rejectServerSide(message) // create-order refused the code
 
 `?coupon=FIRST50` in the URL pre-fills the field, which is how a campaign link
 hands a code to the page.
+
+### Auto-applied offers
+
+`getSuggestedCode` is the code the pack is **advertised** at. The site quotes
+"first session ₹249" in the hero, the countdown bar and 50-odd landing pages,
+so the checkout applies FIRST50 on open rather than making the client find and
+type the code they were already promised — otherwise clicking "Book ₹249 Now"
+would land on a ₹499 screen.
+
+It goes through exactly the same server validation as a typed code, silently:
+no toast, no error state. If the offer has been paused, the price simply stays
+₹499 and no promise is made that checkout won't honour. "Remove" is always
+available, and re-opening the same pack keeps whatever the client had rather
+than re-validating.
+
+**If you retire FIRST50, clear `suggestCoupon` on the session plans in
+`index.html` and fix the ₹249 copy** — otherwise the pages keep advertising a
+price the checkout no longer reaches.
 
 ---
 

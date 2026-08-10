@@ -24,6 +24,8 @@ const { recordRedemption } = require("../_lib/coupons");
 
 // SKUs where the client books their own slot on the Google Calendar page,
 // so the owner knows not to chase them for a date and time.
+// intro-session is retired and can no longer be bought, but orders placed
+// while it was on sale are still polled here and must still resolve.
 const BOOKING_SKUS = new Set(["intro-session", "wellness-session", "career-direction-session", "stream-clarity-session"]);
 
 function getOrderId(req){

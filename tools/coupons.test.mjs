@@ -12,7 +12,7 @@ import assert from "node:assert/strict";
 
 const require = createRequire(import.meta.url);
 const coupons = require("../api/_lib/coupons.js");
-const { getProduct } = require("../api/_lib/catalog.js");
+const { getProduct, SKU_PRICES } = require("../api/_lib/catalog.js");
 
 const { normalizeCode, normalizeCoupon, checkCoupon, discountFor, quote, appliesToPack } = coupons;
 
@@ -218,8 +218,23 @@ await test("an unknown pack never produces a price", async () => {
   assert.equal(q.final_amount, null);
 });
 
-await test("the wellness session lists at ₹499", () => {
+await test("the counselling session lists at ₹499", () => {
   assert.equal(getProduct("wellness-session").amount, 499);
+});
+
+await test("the retired ₹49 intro session can no longer be ordered", async () => {
+  assert.equal(getProduct("intro-session"), null);
+  const q = await quote({ code: "", packId: "intro-session" });
+  assert.equal(q.reason, "unknown_pack");
+  assert.equal(q.final_amount, null);
+});
+
+await test("no pack in the catalogue is priced below ₹199", () => {
+  // Guards against the ₹49 tier creeping back in as a second cheap SKU:
+  // the first-session offer is FIRST50 now, not a separate product.
+  Object.entries(SKU_PRICES).forEach(function([sku, product]){
+    assert.ok(product.amount >= 199, sku + " is priced at ₹" + product.amount);
+  });
 });
 
 console.log("\n" + passed + " passed, " + failed + " failed\n");
