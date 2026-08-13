@@ -22,6 +22,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CACHE = path.join(ROOT, 'tools', '.cache', 'josaa');
@@ -180,21 +181,68 @@ function findSelect(selects, predicate) {
   return null;
 }
 
+/**
+ * Fallback for when there is no vocabulary to match on.
+ *
+ * Vocabulary matching above is the right default and stays first, because it survives
+ * JoSAA renaming a control. But it only works if the control has options in the served
+ * HTML, and since 2026 the archive page ships its dropdowns empty and fills them by
+ * postback — so every lookup returned null and the probe reported the whole form
+ * missing while plainly listing six <select> controls it could see.
+ *
+ * These patterns are the observed control names from that probe output, not guesses.
+ * They match on the id suffix so the ASP.NET container prefix is free to change.
+ */
+const CONTROL_NAME_HINTS = {
+  year: /ddl_?year$/i,
+  round: /ddl_?round(no|num)?$/i,
+  /* The live control is "ddlInstype" — "ins" + "type", with a single t. Spelling out the
+     longer forms too so a tidy-up on JoSAA's side does not break this again. It must not
+     match "ddlInstitute", which is a different control on the same form; requiring the
+     name to end in "type" keeps them apart. */
+  instType: /ddl_?ins(t|titute)?type$/i,
+  seatType: /ddl_?seattype$/i,
+  gender: /ddl_?gender$/i,
+};
+
+function findSelectByName(selects, pattern) {
+  for (const [name, options] of Object.entries(selects)) {
+    /* Compare on the trailing id only: "ctl00$ContentPlaceHolder1$ddlYear" -> "ddlYear". */
+    const leaf = name.split(/[$:]/).pop();
+    if (pattern.test(leaf)) return { name, options };
+  }
+  return null;
+}
+
 function discoverFields(html) {
   const selects = extractSelects(html);
   const has = (opts, ...needles) => {
     const joined = opts.map(o => o.text.toLowerCase()).join('|');
     return needles.some(n => joined.includes(n));
   };
+
+  /* Records which route found each control so the probe can say so out loud. A control
+     found by name with no options is a working ingest only if we can post a literal
+     value for it, which is why `set()` below takes one. */
+  const pick = (key, predicate) => {
+    const byOptions = predicate ? findSelect(selects, predicate) : null;
+    if (byOptions) return { ...byOptions, via: 'options' };
+    const byName = findSelectByName(selects, CONTROL_NAME_HINTS[key]);
+    if (byName) return { ...byName, via: 'name' };
+    return null;
+  };
+
   return {
     selects,
-    year: findSelect(selects, o => o.every(x => /^20\d\d$/.test(x.text.trim()))),
+    year: pick('year', o => o.every(x => /^20\d\d$/.test(x.text.trim()))),
     /* 1-2 digits only: a 4-digit option is a year, and matching that here would silently
        send the year value into the round field. */
-    round: findSelect(selects, o => o.length <= 8 && o.every(x => /^\d{1,2}$/.test(x.text.trim()))),
-    instType: findSelect(selects, o => has(o, 'iit', 'nit', 'gfti')),
-    seatType: findSelect(selects, o => has(o, 'obc-ncl', 'ews')),
-    gender: findSelect(selects, o => has(o, 'gender-neutral', 'female')),
+    round: pick('round', o => o.length <= 8 && o.every(x => /^\d{1,2}$/.test(x.text.trim()))),
+    instType: pick('instType', o => has(o, 'iit', 'nit', 'gfti')),
+    seatType: pick('seatType', o => has(o, 'obc-ncl', 'ews')),
+    /* Not posted by the ingest — row gender comes from the results table. JoSAA dropped
+       this control from the archive form, so its absence is reported, never fatal. */
+    gender: pick('gender', o => has(o, 'gender-neutral', 'female')),
   };
 }
 
@@ -291,24 +339,53 @@ async function fetchArchiveForm() {
   return { html, fields: discoverFields(html), hidden: extractHiddenFields(html) };
 }
 
+/* The ingest only ever posts these three. gender is reported for visibility but JoSAA
+   removed it from the archive form, and row gender comes from the results table, so a
+   missing gender control must not fail the probe. */
+const REQUIRED_CONTROLS = ['year', 'round', 'instType'];
+
 async function probe() {
   console.log(`Probing ${ARCHIVE} ...\n`);
   const { fields } = await fetchArchiveForm();
   const report = ['year', 'round', 'instType', 'seatType', 'gender'];
-  let ok = true;
+  const missing = [];
+  let emptyOptions = 0;
+
   for (const key of report) {
+    const required = REQUIRED_CONTROLS.includes(key);
     const f = fields[key];
-    if (!f) { ok = false; console.log(`  ${key.padEnd(10)} NOT FOUND`); continue; }
-    console.log(`  ${key.padEnd(10)} ${f.name}`);
-    console.log(`  ${''.padEnd(10)}   ${f.options.slice(0, 6).map(o => o.text).join(', ')}${f.options.length > 6 ? ` … (${f.options.length})` : ''}`);
+    if (!f) {
+      if (required) missing.push(key);
+      console.log(`  ${key.padEnd(10)} NOT FOUND${required ? '' : '  (optional — not posted by the ingest)'}`);
+      continue;
+    }
+    console.log(`  ${key.padEnd(10)} ${f.name}  [matched by ${f.via}]`);
+    if (f.options.length) {
+      console.log(`  ${''.padEnd(10)}   ${f.options.slice(0, 6).map(o => o.text).join(', ')}${f.options.length > 6 ? ` … (${f.options.length})` : ''}`);
+    } else {
+      emptyOptions++;
+      console.log(`  ${''.padEnd(10)}   (no options in the served HTML — filled by postback)`);
+    }
   }
+
   console.log(`\nAll <select> controls seen: ${Object.keys(fields.selects).join(', ') || '(none)'}`);
-  if (!ok) {
-    console.log(`\nSome controls were not recognised. JoSAA has probably changed the page.`);
-    console.log(`Fix discoverFields() in this file, then re-probe. Do not guess field names.`);
+
+  if (emptyOptions) {
+    console.log(
+      `\n${emptyOptions} control(s) arrived empty. That is expected on this page now: JoSAA\n` +
+      `populates them by postback. The ingest posts literal values (the year, the institute\n` +
+      `type) for those, so this is not on its own a problem — but it does mean the values\n` +
+      `are unverified until a real pull returns rows. Run the smoke test next.`
+    );
+  }
+
+  if (missing.length) {
+    console.log(`\nRequired control(s) not recognised: ${missing.join(', ')}.`);
+    console.log(`JoSAA has probably renamed them. Update CONTROL_NAME_HINTS from the list above,`);
+    console.log(`then re-probe. Do not guess field names — read them off the page.`);
     process.exitCode = 1;
   } else {
-    console.log(`\nField discovery looks healthy — safe to run a real ingest.`);
+    console.log(`\nField discovery looks healthy — safe to run a smoke test.`);
   }
 }
 
@@ -323,6 +400,16 @@ async function ingest(args) {
   const records = [];
   const problems = [];
 
+  /* Guard for the literal-value path above. If JoSAA ignores a posted value, every
+     combination comes back as the same page — same row count in every year, which the
+     validator's "incomplete pull" check reads as healthy. Fingerprinting the parsed rows
+     catches it: two filter combinations must not produce byte-identical results. */
+  const seenPages = new Map();
+  const fingerprint = rows =>
+    createHash('sha256')
+      .update(rows.map(r => `${r.institute}|${r.branch}|${r.seatType}|${r.openRank}|${r.closeRank}`).join('\n'))
+      .digest('hex');
+
   for (const year of args.years) {
     for (const instType of INSTITUTE_TYPES) {
       const round = args.round ?? 'final';
@@ -331,14 +418,24 @@ async function ingest(args) {
       const html = await cached(key, async () => {
         if (!form) throw new Error('no cache and --from-cache set');
         const payload = new URLSearchParams({ ...form.hidden });
-        const set = (field, matcher) => {
+        /* `literal` is what to post when the control came back with no options to choose
+           from. Previously this fell through to `undefined` and set nothing, so the
+           postback quietly used whatever the form defaulted to and every year/type
+           combination returned the same page. Posting the literal is what the dropdown
+           would have carried anyway — JoSAA's option values for these are the year and
+           the institute-type string themselves. */
+        const set = (field, matcher, literal) => {
           if (!field) return;
           const opt = field.options.find(matcher) ?? field.options[field.options.length - 1];
-          if (opt) payload.set(field.name, opt.value);
+          if (opt) { payload.set(field.name, opt.value); return; }
+          if (literal != null) {
+            payload.set(field.name, String(literal));
+            if (args.verbose) console.log(`     ${field.name} has no options; posting literal ${literal}`);
+          }
         };
-        set(form.fields.year, o => o.text.trim() === String(year));
-        set(form.fields.instType, o => o.text.toLowerCase().includes(instType.split('-')[0].toLowerCase()));
-        if (args.round != null) set(form.fields.round, o => o.text.trim() === String(args.round));
+        set(form.fields.year, o => o.text.trim() === String(year), year);
+        set(form.fields.instType, o => o.text.toLowerCase().includes(instType.split('-')[0].toLowerCase()), instType);
+        if (args.round != null) set(form.fields.round, o => o.text.trim() === String(args.round), args.round);
         payload.set('__EVENTTARGET', '');
         payload.set('__EVENTARGUMENT', '');
         if (args.verbose) console.log(`  -> POST ${year} ${instType} round=${round}`);
@@ -349,6 +446,17 @@ async function ingest(args) {
 
       const rows = parseResultTable(html);
       if (!rows.length) { problems.push(`${year}/${instType}: no result rows parsed`); continue; }
+
+      const fp = fingerprint(rows);
+      const clash = seenPages.get(fp);
+      if (clash) {
+        problems.push(
+          `${year}/${instType} returned exactly the same rows as ${clash} — the posted filter ` +
+          `was ignored, so this data is not what it claims to be. Re-probe before trusting any of it.`
+        );
+        continue;
+      }
+      seenPages.set(fp, `${year}/${instType}`);
 
       for (const r of rows) {
         const close = parseRank(r.closeRank);
