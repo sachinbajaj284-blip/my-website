@@ -370,6 +370,43 @@ await test("FIRST50 is configured as one-per-customer, first-session-only", () =
     "the retired ₹49 SKU must count as a prior session");
 });
 
+console.log("\nseeding");
+
+await test("seeding writes every rule that decides money", async () => {
+  store.clear();
+  const r = await coupons.seedCoupons({});
+  assert.equal(r.ok, true, r.message);
+  assert.equal(r.problems.length, 0);
+  const doc = store.read("coupons", "FIRST50");
+  assert.equal(doc.discount_value, 50);
+  assert.equal(doc.per_customer_limit, 1);
+  assert.equal(doc.first_time_only, true);
+  assert.deepEqual(doc.applicable_packs, ["wellness-session"]);
+  assert.equal(store.read("coupons", "MIND50").is_active, false);
+});
+
+await test("re-seeding never resets a counter a real redemption incremented", async () => {
+  store.clear();
+  store.seed("coupons", "FIRST50", { code: "FIRST50", times_used: 12 });
+  await coupons.seedCoupons({});
+  assert.equal(store.read("coupons", "FIRST50").times_used, 12);
+});
+
+await test("a dry run reports what would change and writes nothing", async () => {
+  store.clear();
+  const r = await coupons.seedCoupons({ dryRun: true });
+  assert.equal(r.ok, true);
+  assert.equal(r.dryRun, true);
+  assert.equal(r.written.length, DEFAULT_COUPONS.length);
+  assert.equal(store.read("coupons", "FIRST50"), undefined, "nothing should be written");
+});
+
+await test("seeding reports which codes are live at checkout", async () => {
+  store.clear();
+  const r = await coupons.seedCoupons({});
+  assert.deepEqual(r.live, ["FIRST50"]);
+});
+
 console.log("\ncatalogue guards");
 
 store.clear();

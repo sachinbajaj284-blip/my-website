@@ -26,8 +26,8 @@
 */
 
 const { json, setCors } = require("../_lib/http");
-const { listPromotedCoupons, discountFor } = require("../_lib/coupons");
-const { getProduct } = require("../_lib/catalog");
+const { listPromotedCoupons, listUsableCoupons, discountFor } = require("../_lib/coupons");
+const { getProduct, SKU_PRICES } = require("../_lib/catalog");
 
 module.exports = async function handler(req, res){
   setCors(req, res, "GET,OPTIONS");
@@ -41,13 +41,34 @@ module.exports = async function handler(req, res){
     return json(res, 405, { error: "Method not allowed" });
   }
 
-  let coupons;
+  let coupons, usable;
   try{
-    coupons = await listPromotedCoupons();
+    usable = await listUsableCoupons();
+    coupons = usable.filter(function(c){ return c.promote; });
   }catch(err){
     console.error("[lume coupons] active listing failed:", String(err && err.message || err));
-    return json(res, 200, { offers: [] });
+    return json(res, 200, { offers: [], offer_skus: [] });
   }
+
+  /*
+    Which SKUs have any live coupon — names deliberately omitted.
+
+    The checkout widget uses this to decide whether to show a "Have a
+    coupon code?" field at all. A coupon box on a product with no possible
+    code is an invitation to leave and hunt for one, so it stays hidden
+    where nothing could apply. Only the SKU list is exposed: an
+    unadvertised code's name is not something a visitor should be able to
+    read off an endpoint.
+  */
+  const offerSkus = [];
+  usable.forEach(function(c){
+    // An empty applicable_packs means "every pack" — expand it, so the
+    // widget's simple `indexOf(sku)` check stays correct.
+    const packs = c.applicable_packs.length ? c.applicable_packs : Object.keys(SKU_PRICES);
+    packs.forEach(function(sku){
+      if(offerSkus.indexOf(sku) === -1) offerSkus.push(sku);
+    });
+  });
 
   const offers = coupons.map(function(c){
     // The headline price is the one on the first pack the code names.
@@ -76,5 +97,5 @@ module.exports = async function handler(req, res){
   // A promo banner that lags a paused offer is worse than a slightly
   // stale one — 5 minutes of CDN caching, revalidated in the background.
   res.setHeader("Cache-Control", "public, max-age=60, s-maxage=300, stale-while-revalidate=600");
-  return json(res, 200, { offers: offers });
+  return json(res, 200, { offers: offers, offer_skus: offerSkus });
 };

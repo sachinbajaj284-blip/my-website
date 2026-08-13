@@ -378,7 +378,8 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
           <div><b>Parents' Stream Selection Guide</b><span>Delivered manually after payment confirmation</span></div>
         </div>
         <div class="pg-price"><s>₹499</s><strong>₹199</strong></div>
-        <div class="pg-fields">
+        <div data-lume-coupon-checkout data-sku="parents-handbook" data-amount="199" data-label="Parents Career Handbook" data-price-el=".pg-price strong" data-phone="#pgPhone"></div>
+<div class="pg-fields">
           <input class="pg-input" id="pgName" type="text" maxlength="60" placeholder="Your full name">
           <input class="pg-input" id="pgEmail" type="email" maxlength="80" placeholder="Email address">
           <input class="pg-input" id="pgPhone" type="tel" maxlength="15" inputmode="numeric" autocomplete="tel" placeholder="WhatsApp number">
@@ -511,6 +512,7 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
   });
 })();
 </script>
+<script src="lume-coupons.js" defer></script>
 <script src="cashfree-payments.js" defer></script>
 <script>
 /* Lume WhatsApp message polish — minimal, bulleted handoff (lumeWaUpgrade) */

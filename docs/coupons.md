@@ -57,8 +57,15 @@ limits — silently turning it into 0% off everything, unrestricted, the moment
 somebody used it.
 
 Nothing breaks if Firestore is never configured — the built-ins keep every
-offer working, you just can't change them without a deploy, and `times_used`
-has nowhere durable to live.
+offer working, you just can't change them without a deploy.
+
+**Seeding is optional, and the per-customer limits do not depend on it.** On
+production Firestore *is* configured (it is what entitlements and the rate
+limiter run on), so `loadCoupon` falls back to the built-in definition when a
+document is absent while the counters in `couponCustomers` are still written
+at payment time. An unseeded deploy enforces one-per-customer correctly.
+Seeding buys one thing: editing offers in the Firebase console without a
+deploy.
 
 ### Fields
 
@@ -107,6 +114,48 @@ up" those three references.
 **Pausing an offer:** set `is_active: false` in the Firebase console. The hero
 banner removes itself on the next page load and the code stops working at
 checkout immediately — no deploy needed.
+
+### Seeding without a local checkout
+
+`POST /api/coupons/seed` does the same job as `npm run coupons:seed`, for when
+there is no local repo to run it from. Both call the same `seedCoupons()`, so
+they cannot disagree about what a coupon document should contain.
+
+It is **closed by default**. Arm it by setting one variable in Vercel:
+
+```
+COUPON_ADMIN_TOKEN   a long random secret, 24+ characters
+```
+
+With that unset — the state of every deploy until you set it — the route
+answers **404**, identical to any unrouted path, so its existence can't be
+found by probing. A token shorter than 24 characters is treated as unset and
+logged, because a short token isn't a secret on the one route that can rewrite
+prices.
+
+```bash
+# see what would change, write nothing
+curl -X POST https://lumelive.co.in/api/coupons/seed \
+  -H "Authorization: Bearer $COUPON_ADMIN_TOKEN" \
+  -H "Content-Type: application/json" -d '{"dry_run":true}'
+
+# do it
+curl -X POST https://lumelive.co.in/api/coupons/seed \
+  -H "Authorization: Bearer $COUPON_ADMIN_TOKEN"
+```
+
+The token goes in a header, never a query string — query strings end up in
+access logs, browser history and referer headers. POST only: a GET route that
+rewrites the price list is one prefetch or shared link away from firing by
+accident. Wrong or missing token is a flat `401` that says nothing about which
+part was wrong, compared in constant time, and rate limited to 5 attempts per
+IP per hour.
+
+A verification mismatch answers **500** with the offending fields listed, so a
+script wrapping this notices without parsing prose.
+
+**Rotate or unset `COUPON_ADMIN_TOKEN` when you're done seeding** — the
+endpoint only needs to be armed while you're using it.
 
 ---
 
@@ -243,7 +292,51 @@ The attributes are the fallback shown before `/api/coupons/active` answers, so
 the banner is never blank or wrong on first paint. If the API says the offer is
 gone, the badge removes itself.
 
-**Checkout widget**
+**Checkout widget — the declarative path**
+
+Most checkouts need no JavaScript at all. Drop a div in the checkout UI and
+load the script:
+
+```html
+<div data-lume-coupon-checkout
+     data-sku="student-full-report"
+     data-amount="999"
+     data-label="Lume Live Full Clarity Report"
+     data-price-el=".sa-pay-price strong"   <!-- optional: page's own price -->
+     data-phone="#saPhone"                  <!-- optional: for per-customer rules -->
+     data-suggest="FIRST50"></div>          <!-- optional: auto-apply this code -->
+```
+
+It finds the price row, phone field and `[data-lume-coupon-pay-amount]` inside
+its own `.modal` by convention; `data-price-el` / `data-detail-el` / `data-phone`
+override that where the markup differs.
+
+**The pay call needs no change.** `cashfree-payments.js` asks
+`LumeCoupons.stateForSku(sku)` before creating the order, so a page gets a
+working coupon field from markup alone. Threading the code through by hand is
+exactly why the offer originally reached one checkout out of six.
+
+**A widget stays hidden unless a code could actually apply to its SKU** — from
+`offer_skus` on `/api/coupons/active`. A coupon box on a product with no live
+offer is an invitation to abandon checkout and go hunting for one that doesn't
+exist. It reveals itself anyway if the visitor arrived holding a code.
+
+Current coverage:
+
+| Checkout | SKU | Wired |
+|---|---|---|
+| Session modal (index) | wellness-session | ✅ programmatic (plan switches) |
+| Report gate (index, assessment) | student-full-report | ✅ |
+| Lume Lens gate (professionals) | lume-lens-working-profile | ✅ |
+| Enrol modal (internships) | 3 tracks | ✅ programmatic (track switches) |
+| PDF modal (index, assessment, professionals) | parents-handbook | ✅ |
+| Handbook form (for-parents) | parents-handbook | ✅ |
+| Roadmap CTA (career-intelligence) | career-intelligence-roadmap | ❌ no checkout step — the button goes straight to the gateway, so there is nowhere to put a field. Needs a checkout screen first. |
+
+**Checkout widget — the programmatic path**
+
+For a checkout whose SKU changes as the client chooses (the session modal, the
+internship enrol modal), pass callbacks instead:
 
 ```js
 var coupon = LumeCoupons.mountCheckout(document.getElementById("sessCoupon"), {
