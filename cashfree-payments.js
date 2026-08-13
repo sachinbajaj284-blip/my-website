@@ -845,8 +845,34 @@
     });
   }
 
+  /*
+    Pull the coupon straight off the page's coupon widget.
+
+    Callers may pass options.couponCode explicitly (index.html does, so it
+    can drive a modal whose SKU changes as the client switches plans). Any
+    checkout that doesn't is filled in here from whatever LumeCoupons has
+    applied for this SKU — which is what lets a page get a working coupon
+    field by adding one <div> and the script, with no change to its pay
+    call. Threading the code through by hand is exactly why the offer
+    originally reached one checkout out of six.
+
+    Still display only: create-order.js re-derives the discount from the
+    code before charging.
+  */
+  function applyPageCoupon(options){
+    if(options.couponCode || !window.LumeCoupons || !window.LumeCoupons.stateForSku){ return options; }
+    var state = window.LumeCoupons.stateForSku(options.sku);
+    if(!state){ return options; }
+    options.couponCode = state.code;
+    options.listAmount = state.base;
+    options.discountAmount = state.discount;
+    options.amount = state.total;
+    return options;
+  }
+
   function startCheckout(options){
     var cfg = getConfig();
+    applyPageCoupon(options);
     openModal(options);
     renderLoading("Creating your secure order…");
     logAttempt(options, { status:"INITIATED" });

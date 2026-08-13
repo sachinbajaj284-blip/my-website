@@ -243,7 +243,51 @@ The attributes are the fallback shown before `/api/coupons/active` answers, so
 the banner is never blank or wrong on first paint. If the API says the offer is
 gone, the badge removes itself.
 
-**Checkout widget**
+**Checkout widget — the declarative path**
+
+Most checkouts need no JavaScript at all. Drop a div in the checkout UI and
+load the script:
+
+```html
+<div data-lume-coupon-checkout
+     data-sku="student-full-report"
+     data-amount="999"
+     data-label="Lume Live Full Clarity Report"
+     data-price-el=".sa-pay-price strong"   <!-- optional: page's own price -->
+     data-phone="#saPhone"                  <!-- optional: for per-customer rules -->
+     data-suggest="FIRST50"></div>          <!-- optional: auto-apply this code -->
+```
+
+It finds the price row, phone field and `[data-lume-coupon-pay-amount]` inside
+its own `.modal` by convention; `data-price-el` / `data-detail-el` / `data-phone`
+override that where the markup differs.
+
+**The pay call needs no change.** `cashfree-payments.js` asks
+`LumeCoupons.stateForSku(sku)` before creating the order, so a page gets a
+working coupon field from markup alone. Threading the code through by hand is
+exactly why the offer originally reached one checkout out of six.
+
+**A widget stays hidden unless a code could actually apply to its SKU** — from
+`offer_skus` on `/api/coupons/active`. A coupon box on a product with no live
+offer is an invitation to abandon checkout and go hunting for one that doesn't
+exist. It reveals itself anyway if the visitor arrived holding a code.
+
+Current coverage:
+
+| Checkout | SKU | Wired |
+|---|---|---|
+| Session modal (index) | wellness-session | ✅ programmatic (plan switches) |
+| Report gate (index, assessment) | student-full-report | ✅ |
+| Lume Lens gate (professionals) | lume-lens-working-profile | ✅ |
+| Enrol modal (internships) | 3 tracks | ✅ programmatic (track switches) |
+| PDF modal (index, assessment, professionals) | parents-handbook | ✅ |
+| Handbook form (for-parents) | parents-handbook | ✅ |
+| Roadmap CTA (career-intelligence) | career-intelligence-roadmap | ❌ no checkout step — the button goes straight to the gateway, so there is nowhere to put a field. Needs a checkout screen first. |
+
+**Checkout widget — the programmatic path**
+
+For a checkout whose SKU changes as the client chooses (the session modal, the
+internship enrol modal), pass callbacks instead:
 
 ```js
 var coupon = LumeCoupons.mountCheckout(document.getElementById("sessCoupon"), {

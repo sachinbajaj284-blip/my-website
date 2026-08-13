@@ -3252,6 +3252,7 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
           <aside class="sa-pay">
             <span class="sa-pay-label">Lume Lens &middot; For Working Professionals</span>
             <div class="sa-pay-price"><strong>&#8377;1999</strong><s>&#8377;2999</s><span>one-time fee</span></div>
+<div data-lume-coupon-checkout data-sku="lume-lens-working-profile" data-amount="1999" data-label="Lume Lens Working Profile" data-price-el=".sa-pay-price strong" data-phone="#saPhone"></div>
             <p style="font-size:.78rem;color:var(--mid);line-height:1.55;">Payable once before you begin &mdash; covers all five parts and your premium working profile report.</p>
             <div class="sa-pay-trust" aria-label="Why professionals trust Lume Live">
               <div><b>500+</b><span>Guided</span></div>
@@ -5408,9 +5409,17 @@ if(new URLSearchParams(window.location.search).has("sample-report")){window.saSh
         <div class="sr-points"><span>🔒 100% confidential</span><span>👨‍👩‍👧 Parent-friendly</span><span>🧭 Clear next steps</span></div>
       </div>
       <div class="price-row">
-        <div class="amt" style="color:var(--green);">₹249</div>
-        <div class="detail">1:1 counselling session<br><span style="color:var(--grayM);text-decoration:line-through;">₹499</span> regular price</div>
+        <div class="amt">₹499</div>
+        <div class="detail">1:1 counselling session · 45 minutes</div>
       </div>
+      <!-- "Have a coupon code?" — mounted by lume-coupons.js. It rewrites the
+           price row above and reveals itself only when an offer applies. -->
+      <div data-lume-coupon-checkout
+           data-sku="wellness-session"
+           data-amount="499"
+           data-label="1:1 Counselling Session"
+           data-suggest="FIRST50"></div>
+
       <!-- Date & Time Picker -->
       <div class="date-section">
         <h4>📅 Choose Your Preferred Date & Time</h4>
@@ -5474,6 +5483,7 @@ if(new URLSearchParams(window.location.search).has("sample-report")){window.saSh
       <p>5 Mistakes to Avoid After 10th Grade — ₹199</p>
     </div>
     <div class="modal-body">
+            <div data-lume-coupon-checkout data-sku="parents-handbook" data-amount="199" data-label="Parents Career Handbook"></div>
       <div style="background:var(--gray);border-radius:10px;padding:13px;margin-bottom:16px;display:flex;align-items:center;gap:13px;">
         <div style="font-size:2rem;">📋</div>
         <div>
@@ -6678,6 +6688,7 @@ function setMode(el, mode){
   else setTimeout(showBanner, 900);
 })();
 </script>
+<script src="lume-coupons.js" defer></script>
 <script src="cashfree-payments.js" defer></script>
 <script src="site-anim.js" defer></script>
   <script src="lume-capture.js" defer></script>

@@ -916,6 +916,7 @@
           <aside class="sa-pay">
             <span class="sa-pay-label">Full Clarity Report</span>
             <div class="sa-pay-price"><strong>&#8377;999</strong><s>&#8377;1999</s><span>one-time fee</span></div>
+<div data-lume-coupon-checkout data-sku="student-full-report" data-amount="999" data-label="Lume Live Full Clarity Report" data-price-el=".sa-pay-price strong" data-phone="#saPhone"></div>
             <p style="font-size:.78rem;color:var(--mid);line-height:1.55;">Payable once before you begin &mdash; covers all four assessments and your combined report.</p>
             <div class="sa-pay-trust" aria-label="Why families trust Lume Live">
               <div><b>500+</b><span>Guided</span></div>
@@ -1704,15 +1705,23 @@
         <div class="sr-points"><span>🔒 100% confidential</span><span>👨‍👩‍👧 Parent-friendly</span><span>🧭 Clear next steps</span></div>
       </div>
       <div class="price-row">
-        <div class="amt" style="color:var(--green);">₹249</div>
-        <div class="detail">1:1 counselling session<br><span style="color:var(--grayM);text-decoration:line-through;">₹499</span> regular price</div>
+        <div class="amt">₹499</div>
+        <div class="detail">1:1 counselling session · 45 minutes</div>
       </div>
+      <!-- "Have a coupon code?" — mounted by lume-coupons.js. It rewrites the
+           price row above and reveals itself only when an offer applies. -->
+      <div data-lume-coupon-checkout
+           data-sku="wellness-session"
+           data-amount="499"
+           data-label="1:1 Counselling Session"
+           data-suggest="FIRST50"></div>
+
       <!-- Slot is picked once, on Lume Live's calendar, immediately after payment -->
       <div class="date-section pick-once">
         <h4>📅 When is your session?</h4>
         <p class="pick-note">You pick your day and time <b>once</b> — on Lume Live's live calendar, the moment this payment goes through. Google sends your confirmation and video-call link straight away, so there is nothing to arrange over WhatsApp.</p>
         <ol class="pick-flow">
-          <li><span>1</span>Pay ₹249</li>
+          <li><span>1</span>Pay <span data-lume-coupon-pay-amount>₹499</span></li>
           <li><span>2</span>Pick your slot</li>
           <li><span>3</span>Invite lands in your inbox</li>
         </ol>
@@ -1755,6 +1764,7 @@
       <p>5 Mistakes to Avoid After 10th Grade — ₹199</p>
     </div>
     <div class="modal-body">
+            <div data-lume-coupon-checkout data-sku="parents-handbook" data-amount="199" data-label="Parents Career Handbook"></div>
       <div style="background:var(--gray);border-radius:10px;padding:13px;margin-bottom:16px;display:flex;align-items:center;gap:13px;">
         <div style="font-size:2rem;">📋</div>
         <div>
@@ -2076,6 +2086,7 @@
 
 <!-- ══════════ SEASONAL URGENCY BANNER (auto March-July) ══════════ -->
 <script>!function(){const e=new URLSearchParams(location.search).get("season"),a=Number(window.lumeSeasonMonth||(new Date).getMonth()+1);let n=null,t="";if("results"===e||a>=3&&a<=5?(n={tag:"Board results season",msg:"Results and stream forms create fast pressure. Let your child take the free career snapshot before the family decides.",cta:"Start free snapshot"},t="results-season"):("admissions"===e||a>=6&&a<=7)&&(n={tag:"Stream-selection season",msg:"Admissions and stream choices are moving quickly in Delhi-NCR. Get clarity before the deadline becomes the decision.",cta:"Get free snapshot"},t="stream-selection-season"),!n)return;try{if("1"===sessionStorage.getItem("lumeSeasonalDismissed"))return}catch(e){}function s(){if(document.getElementById("seasonalBanner"))return;const e=document.createElement("div");e.id="seasonalBanner",e.className="seasonal-banner",e.innerHTML='<div class="seasonal-copy"><span>'+n.tag+"</span><b>"+n.msg+'</b></div><a class="seasonal-cta" href="#free-test">'+n.cta+' →</a><button class="seasonal-close" type="button" aria-label="Dismiss seasonal reminder">&times;</button>',document.body.appendChild(e),e.querySelector(".seasonal-cta").addEventListener("click",function(e){"function"==typeof ftGoFree&&ftGoFree(e),window.gtag&&gtag("event","seasonal_banner_click",{event_category:"urgency",event_label:t})}),e.querySelector(".seasonal-close").addEventListener("click",function(){e.classList.remove("show");try{sessionStorage.setItem("lumeSeasonalDismissed","1")}catch(e){}setTimeout(function(){e.remove()},360)}),requestAnimationFrame(function(){e.classList.add("show")}),window.gtag&&gtag("event","seasonal_banner_shown",{event_category:"urgency",event_label:t})}const o=document.createElement("style");o.textContent=".seasonal-banner{position:fixed;left:50%;bottom:max(16px,calc(env(safe-area-inset-bottom) + 12px));transform:translateX(-50%) translateY(140%);z-index:1500;width:min(940px,calc(100vw - 28px));display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px 14px 18px;background:linear-gradient(135deg,#0D1B40 0%,#1A2E5E 64%,#0A6E6E 100%);color:#fff;border:1px solid rgba(232,185,90,.34);border-radius:16px;box-shadow:0 20px 56px rgba(13,27,64,.34),0 8px 20px rgba(0,0,0,.18);transition:transform .42s cubic-bezier(.22,.61,.36,1);font-family:Montserrat,sans-serif;}.seasonal-banner.show{transform:translateX(-50%) translateY(0);}.seasonal-copy{display:flex;align-items:center;gap:12px;min-width:0;}.seasonal-copy span{flex:none;background:rgba(232,185,90,.18);color:#E8B95A;border:1px solid rgba(232,185,90,.35);border-radius:999px;padding:5px 10px;font-size:.62rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;white-space:nowrap;}.seasonal-copy b{font-size:.82rem;line-height:1.45;color:rgba(255,255,255,.92);}.seasonal-cta{flex:none;background:linear-gradient(135deg,#C9933A,#E8B95A);color:#0D1B40;border-radius:999px;padding:10px 15px;font-size:.78rem;font-weight:900;text-decoration:none;white-space:nowrap;}.seasonal-close{flex:none;border:0;background:transparent;color:rgba(255,255,255,.62);font-size:1.35rem;line-height:1;cursor:pointer;padding:5px 4px;}@media(max-width:680px){.seasonal-banner{align-items:stretch;flex-direction:column;padding:14px;}.seasonal-copy{align-items:flex-start;flex-direction:column;gap:8px;}.seasonal-cta{width:100%;text-align:center;}.seasonal-close{position:absolute;right:9px;top:7px;}.seasonal-copy b{padding-right:26px;}}",document.head.appendChild(o),"loading"===document.readyState?document.addEventListener("DOMContentLoaded",function(){setTimeout(s,900)}):setTimeout(s,900)}();</script>
+<script src="lume-coupons.js" defer></script>
 <script src="cashfree-payments.js" defer></script>
 <script src="site-anim.js" defer></script>
   <script src="lume-capture.js" defer></script>

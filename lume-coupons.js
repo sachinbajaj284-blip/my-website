@@ -678,9 +678,158 @@
       setMessage("Tap Apply to use this code.", "hint");
     }
 
+    register(api, getPack);
     prefill();
     publish();
     autoApply();
+    return api;
+  }
+
+  /* ============================================================
+     3. Declarative checkout — the shared path
+     ============================================================
+
+     Every mounted widget registers here, so the payment layer can ask
+     "is there a coupon on this SKU?" without each page having to thread
+     the code through its own pay call by hand. That hand-threading is
+     why the offer originally existed on one checkout out of six.
+  */
+  var registry = [];
+
+  function register(api, getPack){
+    registry.push({ api: api, getPack: getPack });
+  }
+
+  function entryForSku(sku){
+    var want = String(sku || "");
+    if(!want) return null;
+    for(var i = 0; i < registry.length; i++){
+      var pack = registry[i].getPack() || {};
+      if(String(pack.sku || "") === want && registry[i].api.getState()) return registry[i];
+    }
+    return null;
+  }
+
+  // What the payment layer calls. Returns null when no coupon is applied
+  // to this SKU — including when the page has no coupon widget at all.
+  function stateForSku(sku){
+    var entry = entryForSku(sku);
+    return entry ? entry.api.getState() : null;
+  }
+
+  function widgetForSku(sku){
+    var want = String(sku || "");
+    for(var i = 0; i < registry.length; i++){
+      var pack = registry[i].getPack() || {};
+      if(String(pack.sku || "") === want) return registry[i].api;
+    }
+    return null;
+  }
+
+  /*
+    The SKUs that currently have any live offer, from /api/coupons/active.
+    A declarative widget stays hidden unless its SKU is in this set — a
+    "Have a coupon code?" box on a product with no possible code is an
+    invitation to abandon checkout and go hunting for one that does not
+    exist. It reveals itself anyway if the visitor arrived holding a code
+    (?coupon= or one tapped in the hero), because then they have one to
+    try and hiding the field would be the worse failure.
+  */
+  var offerSkusPromise = null;
+  function offerSkus(){
+    if(!offerSkusPromise){
+      offerSkusPromise = fetch(ACTIVE_ENDPOINT)
+        .then(function(res){ return res.ok ? res.json() : null; })
+        .then(function(data){ return (data && data.offer_skus) || []; })
+        .catch(function(){ return []; });
+    }
+    return offerSkusPromise;
+  }
+
+  // The page's own price line — rewritten so it can never disagree with
+  // the widget's summary sitting directly beneath it.
+  function priceRenderer(scope, opts){
+    // Convention: every session checkout on this site is the same modal
+    // markup. `data-price-el` / `data-detail-el` are the escape hatch for
+    // the ones that aren't (the internship enrol modal, for instance).
+    var amtEl = (opts && opts.priceSel && scope.querySelector(opts.priceSel)) ||
+                scope.querySelector(".price-row .amt");
+    var detailEl = (opts && opts.detailSel && scope.querySelector(opts.detailSel)) ||
+                   scope.querySelector(".price-row .detail");
+    var payEls = scope.querySelectorAll("[data-lume-coupon-pay-amount]");
+    var originalDetail = detailEl ? detailEl.innerHTML : "";
+    var originalAmt = amtEl ? amtEl.innerHTML : "";
+
+    return function(state, pack){
+      if(amtEl) amtEl.innerHTML = state ? esc(inr(state.total)) : originalAmt;
+      if(detailEl){
+        detailEl.innerHTML = state
+          ? esc(pack.label || "Session") +
+            '<br><span style="text-decoration:line-through;opacity:.65">' + esc(inr(state.base)) +
+            '</span> <span style="color:#0B8F62;font-weight:800">' + esc(state.code) + " applied</span>"
+          : originalDetail;
+      }
+      Array.prototype.forEach.call(payEls, function(el){
+        el.textContent = inr(state ? state.total : pack.amount);
+      });
+    };
+  }
+
+  /*
+    Upgrades <div data-lume-coupon-checkout data-sku=… data-amount=…>.
+
+    Convention over configuration: the widget finds the price row, the
+    phone field and the "Pay ₹X" step inside its own modal, because every
+    checkout on this site is built from the same modal markup. A page
+    adds the div and the script tag; nothing else.
+  */
+  function mountDeclarative(host){
+    if(host.getAttribute("data-lcp-mounted") === "1") return;
+    host.setAttribute("data-lcp-mounted", "1");
+
+    var scope = host.closest("[data-lume-coupon-scope]") || host.closest(".modal") || document;
+    var pack = {
+      sku: host.getAttribute("data-sku") || "",
+      amount: Number(host.getAttribute("data-amount")) || 0,
+      label: host.getAttribute("data-label") || ""
+    };
+    var suggested = normalizeCode(host.getAttribute("data-suggest") || "");
+    var phoneEl = scope.querySelector(host.getAttribute("data-phone") || "#sessionPhone") ||
+                  scope.querySelector('input[type="tel"]');
+    var renderPrice = priceRenderer(scope, {
+      priceSel: host.getAttribute("data-price-el"),
+      detailSel: host.getAttribute("data-detail-el")
+    });
+
+    // Hidden until we know an offer could apply here.
+    var held = !(urlCode() || readStashedCode());
+    if(held) host.style.display = "none";
+
+    var api = mountCheckout(host, {
+      getPack: function(){ return pack; },
+      getSuggestedCode: function(){ return suggested; },
+      getCustomer: function(){
+        return phoneEl ? { phone: String(phoneEl.value || "").replace(/\D/g, "").slice(-10), email: "" } : null;
+      },
+      onChange: function(state){ renderPrice(state, pack); }
+    });
+
+    if(held){
+      offerSkus().then(function(skus){
+        if(skus.indexOf(pack.sku) === -1) return;   // nothing to offer here
+        host.style.display = "";
+      });
+    }
+
+    if(phoneEl){
+      var timer = null;
+      phoneEl.addEventListener("input", function(){
+        clearTimeout(timer);
+        if(String(phoneEl.value || "").replace(/\D/g, "").length < 10) return;
+        timer = setTimeout(function(){ api.recheckCustomer(); }, 450);
+      });
+    }
+
     return api;
   }
 
@@ -692,18 +841,29 @@
     (root || document).querySelectorAll("[data-lume-coupon-badge]").forEach(mountBadge);
   }
 
+  function upgradeCheckouts(root){
+    (root || document).querySelectorAll("[data-lume-coupon-checkout]").forEach(mountDeclarative);
+  }
+
   window.LumeCoupons = {
     mountBadge: mountBadge,
     mountCheckout: mountCheckout,
     upgradeBadges: upgradeBadges,
+    upgradeCheckouts: upgradeCheckouts,
+    // Read by cashfree-payments.js at pay time.
+    stateForSku: stateForSku,
+    codeForSku: function(sku){ var s = stateForSku(sku); return s ? s.code : ""; },
+    widgetForSku: widgetForSku,
     normalizeCode: normalizeCode,
     inr: inr
   };
 
+  function boot(){ upgradeBadges(); upgradeCheckouts(); }
+
   if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", function(){ upgradeBadges(); });
+    document.addEventListener("DOMContentLoaded", boot);
   }else{
-    upgradeBadges();
+    boot();
   }
 
   // Mirrors lume:cashfree-ready — lets a page that may open its checkout

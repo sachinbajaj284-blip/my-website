@@ -304,9 +304,9 @@ async function loadCoupon(code){
   return DEFAULTS_BY_CODE[key] || null;
 }
 
-// Every coupon flagged `promote`, for the hero banner. Firestore documents
-// win over the built-ins of the same code.
-async function listPromotedCoupons(){
+// Every coupon that is currently usable — active, unexpired, not fully
+// claimed — whether or not it is advertised.
+async function listUsableCoupons(){
   const byCode = {};
   Object.keys(DEFAULTS_BY_CODE).forEach(function(code){
     byCode[code] = DEFAULTS_BY_CODE[code];
@@ -317,8 +317,6 @@ async function listPromotedCoupons(){
     if(firestore){
       const snap = await firestore.collection(COLLECTION).get();
       snap.forEach(function(doc){
-        // Layered over the built-in definition, same as loadCoupon — see
-        // the note there about counter-only documents.
         const c = normalizeCoupon(Object.assign({}, DEFAULTS_BY_CODE[normalizeCode(doc.id)], doc.data()), doc.id);
         if(c) byCode[c.code] = c;
       });
@@ -328,14 +326,19 @@ async function listPromotedCoupons(){
   }
 
   const now = new Date();
-  return Object.keys(byCode)
-    .map(function(code){ return byCode[code]; })
-    .filter(function(c){
-      if(!c.promote || !c.is_active) return false;
-      if(c.expiration_date && c.expiration_date.getTime() <= now.getTime()) return false;
-      if(c.usage_limit != null && c.times_used >= c.usage_limit) return false;
-      return true;
-    });
+  return Object.keys(byCode).map(function(code){ return byCode[code]; }).filter(function(c){
+    if(!c.is_active) return false;
+    if(c.expiration_date && c.expiration_date.getTime() <= now.getTime()) return false;
+    if(c.usage_limit != null && c.times_used >= c.usage_limit) return false;
+    return true;
+  });
+}
+
+// Every coupon flagged `promote`, for the hero banner. Firestore documents
+// win over the built-ins of the same code.
+async function listPromotedCoupons(){
+  const usable = await listUsableCoupons();
+  return usable.filter(function(c){ return c.promote; });
 }
 
 /* ============================================================
@@ -697,6 +700,7 @@ module.exports = {
   loadCoupon,
   listPromotedCoupons,
   appliesToPack,
+  listUsableCoupons,
   checkCoupon,
   checkCustomerRules,
   identityKeys,

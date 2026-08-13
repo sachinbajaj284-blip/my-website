@@ -846,6 +846,7 @@ tbody tr:nth-child(even){background:#FAFCFC}
     </div>
     <p class="sub" style="font-size:.86rem">We need these details to schedule your screening call and issue your certificate in the right name.</p>
     <div class="modal-summary"><span id="enrolPlanName">Practitioner Foundations</span><b id="enrolPlanPrice">₹3,499</b></div>
+    <div id="enrolCoupon"></div>
     <div class="modal-guarantee" id="enrolGuarantee"><strong>This reserves a seat, it doesn't buy admission.</strong> We'll call you within 24 hours for a 15-minute screening conversation. If we don't select you, you're refunded in full.</div>
 
     <form id="enrolForm" onsubmit="submitEnrol(event)" novalidate>
@@ -895,6 +896,7 @@ tbody tr:nth-child(even){background:#FAFCFC}
     </form>
   </div>
 </div>
+<script src="lume-coupons.js" defer></script>
 <script src="cashfree-payments.js" defer></script>
 <script>
 /* ------------------------------------------------------------------
@@ -926,6 +928,38 @@ var lastFocused = null;
   if(fin) fin.textContent = "Next cohort begins " + NEXT_COHORT + " · 12 seats";
 })();
 
+var enrolCoupon = null;
+function syncEnrolCoupon(){
+  if(!window.LumeCoupons) return;
+  var host = document.getElementById("enrolCoupon");
+  if(!host) return;
+  if(!enrolCoupon){
+    enrolCoupon = window.LumeCoupons.mountCheckout(host, {
+      getPack: function(){
+        var p = PLANS[currentPlan] || {};
+        return { sku: currentPlan, amount: p.amount, label: p.label };
+      },
+      getCustomer: function(){
+        var el = document.getElementById("enrolPhone");
+        return { phone: el ? String(el.value || "").replace(/\D/g, "").slice(-10) : "", email: "" };
+      },
+      onChange: function(state){
+        var el = document.getElementById("enrolPlanPrice");
+        if(!el) return;
+        var p = PLANS[currentPlan] || {};
+        el.textContent = state ? window.LumeCoupons.inr(state.total) : (p.price || "");
+      }
+    });
+  } else {
+    // Different track selected — the old verdict priced the old one.
+    enrolCoupon.reset();
+  }
+  // Hidden unless some offer actually applies to this track.
+  host.style.display = "none";
+  fetch("/api/coupons/active").then(function(r){ return r.ok ? r.json() : null; }).then(function(d){
+    if(d && d.offer_skus && d.offer_skus.indexOf(currentPlan) !== -1) host.style.display = "";
+  }).catch(function(){});
+}
 function openEnrol(sku){
   if(!PLANS[sku]) return;
   currentPlan = sku;
@@ -933,6 +967,7 @@ function openEnrol(sku){
   var isAddon = sku === "internship-lume-lens";
   document.getElementById("enrolPlanName").textContent = PLANS[sku].label;
   document.getElementById("enrolPlanPrice").textContent = PLANS[sku].price;
+  syncEnrolCoupon();
   document.getElementById("enrolTitle").textContent = isAddon ? "Add Lume Lens" : "Reserve your seat";
   // The add-on is a straight purchase — there is no seat and no screening call.
   document.getElementById("enrolGuarantee").hidden = isAddon;
