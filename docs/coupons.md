@@ -57,8 +57,15 @@ limits — silently turning it into 0% off everything, unrestricted, the moment
 somebody used it.
 
 Nothing breaks if Firestore is never configured — the built-ins keep every
-offer working, you just can't change them without a deploy, and `times_used`
-has nowhere durable to live.
+offer working, you just can't change them without a deploy.
+
+**Seeding is optional, and the per-customer limits do not depend on it.** On
+production Firestore *is* configured (it is what entitlements and the rate
+limiter run on), so `loadCoupon` falls back to the built-in definition when a
+document is absent while the counters in `couponCustomers` are still written
+at payment time. An unseeded deploy enforces one-per-customer correctly.
+Seeding buys one thing: editing offers in the Firebase console without a
+deploy.
 
 ### Fields
 
@@ -107,6 +114,48 @@ up" those three references.
 **Pausing an offer:** set `is_active: false` in the Firebase console. The hero
 banner removes itself on the next page load and the code stops working at
 checkout immediately — no deploy needed.
+
+### Seeding without a local checkout
+
+`POST /api/coupons/seed` does the same job as `npm run coupons:seed`, for when
+there is no local repo to run it from. Both call the same `seedCoupons()`, so
+they cannot disagree about what a coupon document should contain.
+
+It is **closed by default**. Arm it by setting one variable in Vercel:
+
+```
+COUPON_ADMIN_TOKEN   a long random secret, 24+ characters
+```
+
+With that unset — the state of every deploy until you set it — the route
+answers **404**, identical to any unrouted path, so its existence can't be
+found by probing. A token shorter than 24 characters is treated as unset and
+logged, because a short token isn't a secret on the one route that can rewrite
+prices.
+
+```bash
+# see what would change, write nothing
+curl -X POST https://lumelive.co.in/api/coupons/seed \
+  -H "Authorization: Bearer $COUPON_ADMIN_TOKEN" \
+  -H "Content-Type: application/json" -d '{"dry_run":true}'
+
+# do it
+curl -X POST https://lumelive.co.in/api/coupons/seed \
+  -H "Authorization: Bearer $COUPON_ADMIN_TOKEN"
+```
+
+The token goes in a header, never a query string — query strings end up in
+access logs, browser history and referer headers. POST only: a GET route that
+rewrites the price list is one prefetch or shared link away from firing by
+accident. Wrong or missing token is a flat `401` that says nothing about which
+part was wrong, compared in constant time, and rate limited to 5 attempts per
+IP per hour.
+
+A verification mismatch answers **500** with the offending fields listed, so a
+script wrapping this notices without parsing prose.
+
+**Rotate or unset `COUPON_ADMIN_TOKEN` when you're done seeding** — the
+endpoint only needs to be armed while you're using it.
 
 ---
 

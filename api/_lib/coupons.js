@@ -689,6 +689,105 @@ async function recordRedemption({ code, orderId, sku, amount, discount, customer
   }
 }
 
+/* ============================================================
+   Seeding
+   ============================================================ */
+
+/*
+  Writes DEFAULT_COUPONS into Firestore and reads it back to check.
+
+  Lives here rather than in the CLI because two things now seed — the
+  script and the admin endpoint — and a second copy of "what a coupon
+  document should contain" is precisely the drift that would let the two
+  disagree about a price.
+
+  Re-running is safe: times_used is read first and carried forward, so a
+  re-seed can never hand a used-up code back out, and never resets the
+  counter a live redemption has already incremented.
+
+  Returns a structured result; never throws for an expected condition
+  (no Firestore, a mismatch) so both callers can report it their own way.
+*/
+async function seedCoupons({ dryRun = false } = {}){
+  const live = DEFAULT_COUPONS.filter(function(c){ return c.is_active !== false; })
+    .map(function(c){ return c.code; });
+
+  const firestore = firestoreOrNull();
+  if(!firestore){
+    return { ok: false, configured: false, dryRun: Boolean(dryRun), written: [], problems: [],
+             live: live, message: "Firebase Admin is not configured (FIREBASE_PROJECT_ID / FIREBASE_CLIENT_EMAIL / FIREBASE_PRIVATE_KEY)." };
+  }
+
+  const written = [];
+  try{
+    for(const coupon of DEFAULT_COUPONS){
+      const ref = firestore.collection(COLLECTION).doc(coupon.code);
+      const existing = await ref.get();
+      const timesUsed = existing.exists ? Math.max(0, Number(existing.data().times_used) || 0) : 0;
+
+      written.push({ code: coupon.code, action: existing.exists ? "updated" : "created", times_used: timesUsed });
+      if(dryRun) continue;
+
+      await ref.set(Object.assign({}, coupon, {
+        times_used: timesUsed,
+        updatedAt: new Date().toISOString()
+      }), { merge: true });
+    }
+  }catch(err){
+    return { ok: false, configured: true, dryRun: Boolean(dryRun), written: written, problems: [],
+             live: live, message: "Write failed: " + String(err && err.message || err) };
+  }
+
+  if(dryRun){
+    return { ok: true, configured: true, dryRun: true, written: written, problems: [], live: live,
+             message: "Dry run — nothing written." };
+  }
+
+  /*
+    Read back and compare the fields that decide money. "The writes did
+    not throw" is a weaker claim than it looks: a rule silently missing
+    from Firestore is the kind of thing nobody notices until a coupon
+    behaves wrongly for a paying client.
+  */
+  const problems = [];
+  const MUST_MATCH = ["discount_type", "discount_value", "is_active", "usage_limit",
+                      "per_customer_limit", "first_time_only"];
+  try{
+    for(const coupon of DEFAULT_COUPONS){
+      const snap = await firestore.collection(COLLECTION).doc(coupon.code).get();
+      if(!snap.exists){ problems.push(coupon.code + ": document missing after write"); continue; }
+      const got = snap.data();
+      for(const field of MUST_MATCH){
+        const want = coupon[field] === undefined ? null : coupon[field];
+        const have = got[field] === undefined ? null : got[field];
+        if(JSON.stringify(want) !== JSON.stringify(have)){
+          problems.push(coupon.code + "." + field + ": expected " + JSON.stringify(want) + ", found " + JSON.stringify(have));
+        }
+      }
+      const wantPacks = JSON.stringify(coupon.applicable_packs || []);
+      const havePacks = JSON.stringify(got.applicable_packs || []);
+      if(wantPacks !== havePacks){
+        problems.push(coupon.code + ".applicable_packs: expected " + wantPacks + ", found " + havePacks);
+      }
+    }
+  }catch(err){
+    return { ok: false, configured: true, dryRun: false, written: written, problems: problems,
+             live: live, message: "Verification read failed: " + String(err && err.message || err) };
+  }
+
+  return {
+    ok: problems.length === 0,
+    configured: true,
+    dryRun: false,
+    written: written,
+    problems: problems,
+    live: live,
+    message: problems.length
+      ? "The catalogue in Firestore does not match the code."
+      : "Seeded and verified " + written.length + " coupon documents."
+  };
+}
+
 module.exports = {
   COLLECTION,
   REDEMPTIONS,
@@ -706,5 +805,6 @@ module.exports = {
   identityKeys,
   discountFor,
   quote,
-  recordRedemption
+  recordRedemption,
+  seedCoupons
 };
