@@ -2160,8 +2160,13 @@ body.js-ready .jr-step{opacity:0;transform:translateY(22px);}
   body.js-ready .jr-steps::before{transform:scaleY(0);}
   .jr-steps.visible::before,body.js-ready .jr-steps.visible::before{transform:scaleY(1);}
   .jr-step{display:grid;grid-template-columns:48px 1fr;gap:16px;text-align:left;align-items:start;}
-  .jr-dot{margin:0;}
-  .jr-step p{margin:0;max-width:none;}
+  /* Three children into a two-column grid: the dot and the heading fill row 1, and
+     the paragraph then auto-flows onto row 2 column 1 — the 48px lane meant for the
+     dot — so every step's body text rendered one word per line down a 48px strip.
+     Placing all three explicitly is what keeps the text in the wide column. */
+  .jr-dot{margin:0;grid-column:1;grid-row:1 / span 2;}
+  .jr-step h3{grid-column:2;grid-row:1;}
+  .jr-step p{margin:0;max-width:none;grid-column:2;grid-row:2;}
 }
 /* Countdown digit tick */
 .cd-num{display:inline-block;}
