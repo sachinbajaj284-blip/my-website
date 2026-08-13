@@ -2233,8 +2233,33 @@ input[type="number"], input[type="date"], select, textarea {
   /* The stat captions under "500+" and the rating were at 8.8px — the numbers
      were doing all the work and the labels explaining them were illegible. */
   .lbl { font-size: 11px; }
-  .cd-label, .cd-label span { font-size: 11px; }
   .hero-cost-link { font-size: 12.5px; }
+
+  /* --- the offer bar ----------------------------------------------------
+     This sits in a fixed-height strip with overflow:hidden and
+     justify-content:center, and its contents do not fit a phone: the label
+     is nowrap and flex-shrink:0 at 307px, the timer another 187px, against
+     a 390px viewport. Centred overflow clips BOTH ends, which is why the
+     message lost "50% of" off the left while the timer lost its last unit
+     off the right.
+
+     An earlier pass here set .cd-label to 11px for legibility. It only half
+     landed — ".countdown-bar .cd-label" outweighs a bare ".cd-label", so the
+     container stayed at 9.9px while the inner span grew, widening the label
+     and clipping more of it. Sizing now happens in one place, below.
+
+     The fix is to stop pretending it fits: pin the row to the edges, let the
+     message shrink and end in an ellipsis, and keep the timer whole, since
+     the countdown is the part doing the persuading. */
+  .countdown-bar { justify-content: space-between; gap: 8px; }
+  .countdown-bar .cd-label { flex-shrink: 1; min-width: 0; font-size: 10.5px; letter-spacing: .2px; }
+  .countdown-bar .cd-label > span:last-child {
+    min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .countdown-bar .cd-label .pulse-dot { flex-shrink: 0; }
+  .countdown-timer { flex-shrink: 0; }
+  /* 7.7px was unreadable; 11px widened every unit. 9.5px clears both. */
+  .cd-unit .cd-lbl { font-size: 9.5px !important; }
 
   /* --- tap targets ------------------------------------------------------
      Apple asks for 44x44, Material for 48x48. These were the elements that

@@ -449,7 +449,12 @@ section { padding: 56px 16px; }
 .nav-logo-sub { font-size: 11px; }
 .hero-assessment-btn { font-size: 13px; }
 .hero-badge > span, .hero-assurance > span, .hero-assessment-copy > small { font-size: 12px; }
-.cd-label, .cd-label span { font-size: 11px; }
+.countdown-bar { justify-content: space-between; gap: 8px; }
+.countdown-bar .cd-label { flex-shrink: 1; min-width: 0px; font-size: 10.5px; letter-spacing: 0.2px; }
+.countdown-bar .cd-label > span:last-child { min-width: 0px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.countdown-bar .cd-label .pulse-dot { flex-shrink: 0; }
+.countdown-timer { flex-shrink: 0; }
+.cd-unit .cd-lbl { font-size: 9.5px !important; }
 .hamburger { min-width: 44px; min-height: 44px; }
 .hero-assessment-links a, .hero-links a { display: inline-flex; align-items: center; min-height: 44px; padding-block: 6px; font-size: 12.5px; }
 }
