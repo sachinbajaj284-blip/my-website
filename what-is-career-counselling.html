@@ -35,11 +35,21 @@
       "description": "What career counselling is, how it works in India, who needs it, what it costs, and how to choose a counsellor — by an M.Sc Clinical Psychologist.",
       "datePublished": "2026-07-02",
       "dateModified": "2026-07-02",
-      "author": { "@id": "https://lumelive.co.in/#sachin-bajaj" },
-      "publisher": {"@type": "Organization","name": "Lume Live","logo": {"@type": "ImageObject","url": "https://lumelive.co.in/logo.png"}},
+      "author": {
+        "@id": "https://lumelive.co.in/#organization"
+      },
+      "publisher": {
+        "@id": "https://lumelive.co.in/#organization"
+      },
       "image": "https://lumelive.co.in/sachin.jpeg",
-      "mainEntityOfPage": "https://lumelive.co.in/what-is-career-counselling.html",
-      "inLanguage": "en-IN"
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://lumelive.co.in/what-is-career-counselling.html"
+      },
+      "inLanguage": "en-IN",
+      "isPartOf": {
+        "@id": "https://lumelive.co.in/#website"
+      }
     },
     {
       "@type": "Person",
@@ -49,27 +59,106 @@
       "description": "Sachin Bajaj holds an M.Sc in Clinical Psychology (Gurugram University) and a PGDGC from Jamia Millia Islamia, New Delhi. Founder of Lume Live, AILET 2026 Laureate, 500+ students guided across India.",
       "url": "https://lumelive.co.in/",
       "image": "https://lumelive.co.in/sachin.jpeg",
-      "knowsLanguage": ["en-IN","hi-IN"]
+      "knowsLanguage": [
+        "en-IN",
+        "hi-IN"
+      ]
     },
     {
       "@type": "BreadcrumbList",
       "@id": "https://lumelive.co.in/what-is-career-counselling.html#breadcrumb",
       "itemListElement": [
-        {"@type":"ListItem","position":1,"name":"Home","item":"https://lumelive.co.in/"},
-        {"@type":"ListItem","position":2,"name":"Career Library","item":"https://lumelive.co.in/career-library.html"},
-        {"@type":"ListItem","position":3,"name":"What is Career Counselling?","item":"https://lumelive.co.in/what-is-career-counselling.html"}
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://lumelive.co.in/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Career Library",
+          "item": "https://lumelive.co.in/career-library.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "What is Career Counselling?",
+          "item": "https://lumelive.co.in/what-is-career-counselling.html"
+        }
       ]
     },
     {
       "@type": "FAQPage",
       "@id": "https://lumelive.co.in/what-is-career-counselling.html#faq",
       "mainEntity": [
-        {"@type":"Question","name":"What is career counselling in simple words?","acceptedAnswer":{"@type":"Answer","text":"Career counselling is a structured conversation with a trained professional that helps you understand your interests, strengths and values, and then connects that self-understanding to realistic education and career options. It does not assign you a career — it gives you evidence and clarity so the final decision is genuinely yours."}},
-        {"@type":"Question","name":"What is the difference between career counselling and career guidance?","acceptedAnswer":{"@type":"Answer","text":"Career guidance is usually informational — someone tells you what options and routes exist. Career counselling is personal — a trained counsellor helps you understand yourself first, often using validated assessments, and then works through the options with you. Guidance answers 'what exists'; counselling answers 'what fits me'."}},
-        {"@type":"Question","name":"At what age should a student take career counselling?","acceptedAnswer":{"@type":"Answer","text":"The two highest-value windows in India are Class 9-10, before stream selection locks in subject choices, and Class 11-12, before college and entrance-exam decisions. But career counselling also serves college students reconsidering direction and working professionals exploring change — the process adapts to the stage."}},
-        {"@type":"Question","name":"How much does career counselling cost in India?","acceptedAnswer":{"@type":"Answer","text":"Advertised prices in India range from a few hundred rupees for a single online session to many thousands for multi-session packages at large platforms. Price does not reliably indicate quality — what matters is the counsellor's qualification and whether validated assessments are used. At Lume Live, the first session is ₹249 with code FIRST50 and the full psychometric report is ₹999, with all prices published openly."}},
-        {"@type":"Question","name":"Is career counselling worth it?","acceptedAnswer":{"@type":"Answer","text":"For a student genuinely torn between paths, facing family disagreement, or unaware of options beyond the usual four, one structured session typically saves months of circular debate — and can prevent the far larger cost of years in a wrong-fit course. For a student who already has a clear, calm, self-chosen direction, it is often unnecessary. The honest answer depends on the situation, not the service."}}
+        {
+          "@type": "Question",
+          "name": "What is career counselling in simple words?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Career counselling is a structured conversation with a trained professional that helps you understand your interests, strengths and values, and then connects that self-understanding to realistic education and career options. It does not assign you a career — it gives you evidence and clarity so the final decision is genuinely yours."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between career counselling and career guidance?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Career guidance is usually informational — someone tells you what options and routes exist. Career counselling is personal — a trained counsellor helps you understand yourself first, often using validated assessments, and then works through the options with you. Guidance answers 'what exists'; counselling answers 'what fits me'."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "At what age should a student take career counselling?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The two highest-value windows in India are Class 9-10, before stream selection locks in subject choices, and Class 11-12, before college and entrance-exam decisions. But career counselling also serves college students reconsidering direction and working professionals exploring change — the process adapts to the stage."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much does career counselling cost in India?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Advertised prices in India range from a few hundred rupees for a single online session to many thousands for multi-session packages at large platforms. Price does not reliably indicate quality — what matters is the counsellor's qualification and whether validated assessments are used. At Lume Live, the first session is ₹249 with code FIRST50 and the full psychometric report is ₹999, with all prices published openly."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is career counselling worth it?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "For a student genuinely torn between paths, facing family disagreement, or unaware of options beyond the usual four, one structured session typically saves months of circular debate — and can prevent the far larger cost of years in a wrong-fit course. For a student who already has a clear, calm, self-chosen direction, it is often unnecessary. The honest answer depends on the situation, not the service."
+          }
+        }
       ]
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://lumelive.co.in/#organization",
+      "name": "Lume Live",
+      "url": "https://lumelive.co.in/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://lumelive.co.in/logo.png"
+      },
+      "email": "hello@lumelive.co.in",
+      "telephone": "+91-7015671280",
+      "sameAs": [
+        "https://www.facebook.com/profile.php?id=61589670451910",
+        "https://www.instagram.com/lumelive.co.in/?hl=en"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://lumelive.co.in/#website",
+      "name": "Lume Live",
+      "url": "https://lumelive.co.in/",
+      "inLanguage": "en-IN",
+      "publisher": {
+        "@id": "https://lumelive.co.in/#organization"
+      }
     }
   ]
 }
@@ -86,10 +175,12 @@
 .disclaimer{font-size:.8rem;color:var(--muted);font-style:italic;border-top:1px solid var(--line);padding-top:16px;margin-top:24px}
 </style>
 <link rel="stylesheet" href="site-anim.css">
+<meta property="og:site_name" content="Lume Live">
+<meta property="og:locale" content="en_IN">
 </head>
 <body>
 <header class="top"><nav class="nav">
-  <a class="brand" href="index.html"><img src="logo.png" alt="Lume Live logo"><span>LUME LIVE</span></a>
+  <a class="brand" href="index.html"><img src="logo.png" alt="Lume Live logo" decoding="async"><span>LUME LIVE</span></a>
   <div class="nlinks"><a href="index.html">Home</a><a href="career-library.html">Library</a><a href="for-parents.html">For Parents</a><a class="cta" href="assessment.html#free-test">Free Career Test</a></div>
 </nav></header>
 
@@ -192,7 +283,7 @@
     </div>
 
     <div class="author-bio">
-      <img src="sachin.jpeg" alt="Sachin Bajaj, founder of Lume Live">
+      <img src="sachin.jpeg" alt="Sachin Bajaj, founder of Lume Live" decoding="async" loading="lazy">
       <div>
         <h3>About the Author — Sachin Bajaj</h3>
         <p>Sachin Bajaj holds an <strong>M.Sc in Clinical Psychology from Gurugram University</strong> and a <strong>PGDGC from Jamia Millia Islamia, New Delhi</strong>, along with a <strong>B.Ed</strong>. An <strong>AILET 2026 Laureate</strong>, he is the founder of Lume Live in Rohtak, Haryana, and has personally guided <strong>500+ students</strong> across India.</p>

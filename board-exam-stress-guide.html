@@ -35,11 +35,21 @@
       "description": "Signs to watch, what to say (and not say), and when to get professional help — a practical guide for Indian parents by an M.Sc Clinical Psychologist.",
       "datePublished": "2026-07-02",
       "dateModified": "2026-07-02",
-      "author": { "@id": "https://lumelive.co.in/#sachin-bajaj" },
-      "publisher": {"@type": "Organization","name": "Lume Live","logo": {"@type": "ImageObject","url": "https://lumelive.co.in/logo.png"}},
+      "author": {
+        "@id": "https://lumelive.co.in/#organization"
+      },
+      "publisher": {
+        "@id": "https://lumelive.co.in/#organization"
+      },
       "image": "https://lumelive.co.in/sachin.jpeg",
-      "mainEntityOfPage": "https://lumelive.co.in/board-exam-stress-guide.html",
-      "inLanguage": "en-IN"
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://lumelive.co.in/board-exam-stress-guide.html"
+      },
+      "inLanguage": "en-IN",
+      "isPartOf": {
+        "@id": "https://lumelive.co.in/#website"
+      }
     },
     {
       "@type": "Person",
@@ -49,27 +59,106 @@
       "description": "Sachin Bajaj holds an M.Sc in Clinical Psychology (Gurugram University) and a PGDGC from Jamia Millia Islamia, New Delhi. Founder of Lume Live, AILET 2026 Laureate, 500+ students guided across India.",
       "url": "https://lumelive.co.in/",
       "image": "https://lumelive.co.in/sachin.jpeg",
-      "knowsLanguage": ["en-IN","hi-IN"]
+      "knowsLanguage": [
+        "en-IN",
+        "hi-IN"
+      ]
     },
     {
       "@type": "BreadcrumbList",
       "@id": "https://lumelive.co.in/board-exam-stress-guide.html#breadcrumb",
       "itemListElement": [
-        {"@type":"ListItem","position":1,"name":"Home","item":"https://lumelive.co.in/"},
-        {"@type":"ListItem","position":2,"name":"Career Library","item":"https://lumelive.co.in/career-library.html"},
-        {"@type":"ListItem","position":3,"name":"Board Exam Stress: A Parent's Guide","item":"https://lumelive.co.in/board-exam-stress-guide.html"}
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://lumelive.co.in/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Career Library",
+          "item": "https://lumelive.co.in/career-library.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Board Exam Stress: A Parent's Guide",
+          "item": "https://lumelive.co.in/board-exam-stress-guide.html"
+        }
       ]
     },
     {
       "@type": "FAQPage",
       "@id": "https://lumelive.co.in/board-exam-stress-guide.html#faq",
       "mainEntity": [
-        {"@type":"Question","name":"How do I know if my child's exam stress is normal or serious?","acceptedAnswer":{"@type":"Answer","text":"Some nervousness before boards is normal and even useful. Watch for the line-crossing signs: sleep changing noticeably (too little or escaping into too much), meals skipped regularly, withdrawal from family conversation, tears or anger out of proportion to small triggers, physical complaints like headaches and stomach aches with no medical cause, or statements like 'sab khatam ho jayega agar marks nahi aaye.' Two or more of these persisting for more than a couple of weeks is a signal to talk to a professional."}},
-        {"@type":"Question","name":"What should I say to my child during board exams?","acceptedAnswer":{"@type":"Answer","text":"Say things that separate the exam from their worth: 'Whatever the result, our home is not changing.' Ask about their state, not their syllabus: 'How are you feeling today?' works better than 'How much is left?' And offer practical care without conditions — food, a walk together, permission to rest — rather than motivation speeches."}},
-        {"@type":"Question","name":"Should I take away my child's phone during board exams?","acceptedAnswer":{"@type":"Answer","text":"Forced confiscation usually adds conflict on top of stress. A better approach is negotiating boundaries together — phone outside the room during fixed study blocks, free use during breaks. When the student owns the rule, it holds; when it is imposed, the exam season becomes a battle on two fronts."}},
-        {"@type":"Question","name":"Can counselling actually help with board exam stress?","acceptedAnswer":{"@type":"Answer","text":"Yes. Exam anxiety responds well to structured counselling — practical techniques for racing thoughts and blanking out, plus untangling the deeper worry underneath, which is often about disappointing parents or an unclear future rather than the exam itself. A single session can noticeably shift how a student walks into the exam hall."}},
-        {"@type":"Question","name":"What if my child says they do not want to study at all anymore?","acceptedAnswer":{"@type":"Answer","text":"Treat it as information, not defiance. A capable student who suddenly refuses to study is usually communicating overwhelm, fear of failure, or a course/stream mismatch — not laziness. Instead of pushing harder, get curious: 'What feels heaviest right now?' If the shutdown lasts more than a week or two, a neutral third person — a counsellor — can often reopen a conversation that has jammed at home."}}
+        {
+          "@type": "Question",
+          "name": "How do I know if my child's exam stress is normal or serious?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Some nervousness before boards is normal and even useful. Watch for the line-crossing signs: sleep changing noticeably (too little or escaping into too much), meals skipped regularly, withdrawal from family conversation, tears or anger out of proportion to small triggers, physical complaints like headaches and stomach aches with no medical cause, or statements like 'sab khatam ho jayega agar marks nahi aaye.' Two or more of these persisting for more than a couple of weeks is a signal to talk to a professional."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What should I say to my child during board exams?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Say things that separate the exam from their worth: 'Whatever the result, our home is not changing.' Ask about their state, not their syllabus: 'How are you feeling today?' works better than 'How much is left?' And offer practical care without conditions — food, a walk together, permission to rest — rather than motivation speeches."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Should I take away my child's phone during board exams?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Forced confiscation usually adds conflict on top of stress. A better approach is negotiating boundaries together — phone outside the room during fixed study blocks, free use during breaks. When the student owns the rule, it holds; when it is imposed, the exam season becomes a battle on two fronts."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can counselling actually help with board exam stress?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Exam anxiety responds well to structured counselling — practical techniques for racing thoughts and blanking out, plus untangling the deeper worry underneath, which is often about disappointing parents or an unclear future rather than the exam itself. A single session can noticeably shift how a student walks into the exam hall."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What if my child says they do not want to study at all anymore?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Treat it as information, not defiance. A capable student who suddenly refuses to study is usually communicating overwhelm, fear of failure, or a course/stream mismatch — not laziness. Instead of pushing harder, get curious: 'What feels heaviest right now?' If the shutdown lasts more than a week or two, a neutral third person — a counsellor — can often reopen a conversation that has jammed at home."
+          }
+        }
       ]
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://lumelive.co.in/#organization",
+      "name": "Lume Live",
+      "url": "https://lumelive.co.in/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://lumelive.co.in/logo.png"
+      },
+      "email": "hello@lumelive.co.in",
+      "telephone": "+91-7015671280",
+      "sameAs": [
+        "https://www.facebook.com/profile.php?id=61589670451910",
+        "https://www.instagram.com/lumelive.co.in/?hl=en"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://lumelive.co.in/#website",
+      "name": "Lume Live",
+      "url": "https://lumelive.co.in/",
+      "inLanguage": "en-IN",
+      "publisher": {
+        "@id": "https://lumelive.co.in/#organization"
+      }
     }
   ]
 }
@@ -92,10 +181,12 @@
 @media(max-width:640px){.say-grid{grid-template-columns:1fr}}
 </style>
 <link rel="stylesheet" href="site-anim.css">
+<meta property="og:site_name" content="Lume Live">
+<meta property="og:locale" content="en_IN">
 </head>
 <body>
 <header class="top"><nav class="nav">
-  <a class="brand" href="index.html"><img src="logo.png" alt="Lume Live logo"><span>LUME LIVE</span></a>
+  <a class="brand" href="index.html"><img src="logo.png" alt="Lume Live logo" decoding="async"><span>LUME LIVE</span></a>
   <div class="nlinks"><a href="index.html">Home</a><a href="career-library.html">Library</a><a href="for-parents.html">For Parents</a><a class="cta" href="assessment.html#free-test">Free Career Test</a></div>
 </nav></header>
 
@@ -196,7 +287,7 @@
     </div>
 
     <div class="author-bio">
-      <img src="sachin.jpeg" alt="Sachin Bajaj, founder of Lume Live">
+      <img src="sachin.jpeg" alt="Sachin Bajaj, founder of Lume Live" decoding="async" loading="lazy">
       <div>
         <h3>About the Author — Sachin Bajaj</h3>
         <p>Sachin Bajaj holds an <strong>M.Sc in Clinical Psychology from Gurugram University</strong> and a <strong>PGDGC from Jamia Millia Islamia, New Delhi</strong>, along with a <strong>B.Ed</strong>. An <strong>AILET 2026 Laureate</strong>, he is the founder of Lume Live in Rohtak, Haryana, and has personally guided <strong>500+ students</strong> and families across India.</p>

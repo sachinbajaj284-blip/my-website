@@ -35,11 +35,21 @@
       "description": "Why student pressure runs so high in India, the signs that matter, what actually helps, and where to get support — by an M.Sc Clinical Psychologist.",
       "datePublished": "2026-07-02",
       "dateModified": "2026-07-02",
-      "author": { "@id": "https://lumelive.co.in/#sachin-bajaj" },
-      "publisher": {"@type": "Organization","name": "Lume Live","logo": {"@type": "ImageObject","url": "https://lumelive.co.in/logo.png"}},
+      "author": {
+        "@id": "https://lumelive.co.in/#organization"
+      },
+      "publisher": {
+        "@id": "https://lumelive.co.in/#organization"
+      },
       "image": "https://lumelive.co.in/sachin.jpeg",
-      "mainEntityOfPage": "https://lumelive.co.in/student-mental-health-india.html",
-      "inLanguage": "en-IN"
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://lumelive.co.in/student-mental-health-india.html"
+      },
+      "inLanguage": "en-IN",
+      "isPartOf": {
+        "@id": "https://lumelive.co.in/#website"
+      }
     },
     {
       "@type": "Person",
@@ -49,27 +59,106 @@
       "description": "Sachin Bajaj holds an M.Sc in Clinical Psychology (Gurugram University) and a PGDGC from Jamia Millia Islamia, New Delhi. Founder of Lume Live, AILET 2026 Laureate, 500+ students guided across India.",
       "url": "https://lumelive.co.in/",
       "image": "https://lumelive.co.in/sachin.jpeg",
-      "knowsLanguage": ["en-IN","hi-IN"]
+      "knowsLanguage": [
+        "en-IN",
+        "hi-IN"
+      ]
     },
     {
       "@type": "BreadcrumbList",
       "@id": "https://lumelive.co.in/student-mental-health-india.html#breadcrumb",
       "itemListElement": [
-        {"@type":"ListItem","position":1,"name":"Home","item":"https://lumelive.co.in/"},
-        {"@type":"ListItem","position":2,"name":"Career Library","item":"https://lumelive.co.in/career-library.html"},
-        {"@type":"ListItem","position":3,"name":"Student Mental Health in India","item":"https://lumelive.co.in/student-mental-health-india.html"}
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://lumelive.co.in/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Career Library",
+          "item": "https://lumelive.co.in/career-library.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Student Mental Health in India",
+          "item": "https://lumelive.co.in/student-mental-health-india.html"
+        }
       ]
     },
     {
       "@type": "FAQPage",
       "@id": "https://lumelive.co.in/student-mental-health-india.html#faq",
       "mainEntity": [
-        {"@type":"Question","name":"Why is student mental health such a concern in India?","acceptedAnswer":{"@type":"Answer","text":"Indian students sit at the intersection of unusually strong pressures: high-stakes exams that feel identity-defining, intense competition for limited seats, family expectations carrying real economic weight, constant comparison amplified by social media, and a culture where asking for emotional help is still often read as weakness. Each pressure alone is manageable; stacked together with no outlet, they wear students down."}},
-        {"@type":"Question","name":"What are the warning signs a student is struggling?","acceptedAnswer":{"@type":"Answer","text":"Watch for sustained changes rather than bad days: sleep shifting noticeably in either direction, appetite changes, withdrawal from friends and family, dropping grades in a previously steady student, loss of interest in things they enjoyed, irritability out of proportion to triggers, physical complaints without medical cause, and hopeless language about the future. Clusters lasting more than two weeks deserve attention."}},
-        {"@type":"Question","name":"Is it normal for students to feel stressed, or is stress always bad?","acceptedAnswer":{"@type":"Answer","text":"Stress itself is normal and even useful — moderate pressure sharpens focus and effort. The line is crossed when stress stops being fuel and becomes weight: when it disrupts sleep, eating, friendships or the ability to start studying at all. The question is never whether a student feels pressure, but whether they have the tools and support to metabolise it."}},
-        {"@type":"Question","name":"Where can Indian students get free mental health support?","acceptedAnswer":{"@type":"Answer","text":"Tele-MANAS (14416 or 1-800-891-4416) is the Government of India's free, confidential, 24x7 mental health helpline available in multiple languages. Many schools now have counsellors — the National Education Policy 2020 explicitly pushes for counselling support in schools. For structured 1:1 support, affordable private counselling is increasingly available online, including Lume Live's ₹249 first sessions."}},
-        {"@type":"Question","name":"Does career confusion affect mental health?","acceptedAnswer":{"@type":"Answer","text":"Deeply — and this connection is underrated. A student who does not know where they are heading experiences every exam as higher-stakes, every comparison as sharper, and every family conversation as pressure. In counselling practice, a meaningful share of what presents as anxiety or low motivation turns out to have unresolved career direction underneath it. Clarity about direction is itself a mental health intervention."}}
+        {
+          "@type": "Question",
+          "name": "Why is student mental health such a concern in India?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Indian students sit at the intersection of unusually strong pressures: high-stakes exams that feel identity-defining, intense competition for limited seats, family expectations carrying real economic weight, constant comparison amplified by social media, and a culture where asking for emotional help is still often read as weakness. Each pressure alone is manageable; stacked together with no outlet, they wear students down."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What are the warning signs a student is struggling?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Watch for sustained changes rather than bad days: sleep shifting noticeably in either direction, appetite changes, withdrawal from friends and family, dropping grades in a previously steady student, loss of interest in things they enjoyed, irritability out of proportion to triggers, physical complaints without medical cause, and hopeless language about the future. Clusters lasting more than two weeks deserve attention."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is it normal for students to feel stressed, or is stress always bad?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Stress itself is normal and even useful — moderate pressure sharpens focus and effort. The line is crossed when stress stops being fuel and becomes weight: when it disrupts sleep, eating, friendships or the ability to start studying at all. The question is never whether a student feels pressure, but whether they have the tools and support to metabolise it."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where can Indian students get free mental health support?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Tele-MANAS (14416 or 1-800-891-4416) is the Government of India's free, confidential, 24x7 mental health helpline available in multiple languages. Many schools now have counsellors — the National Education Policy 2020 explicitly pushes for counselling support in schools. For structured 1:1 support, affordable private counselling is increasingly available online, including Lume Live's ₹249 first sessions."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does career confusion affect mental health?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Deeply — and this connection is underrated. A student who does not know where they are heading experiences every exam as higher-stakes, every comparison as sharper, and every family conversation as pressure. In counselling practice, a meaningful share of what presents as anxiety or low motivation turns out to have unresolved career direction underneath it. Clarity about direction is itself a mental health intervention."
+          }
+        }
       ]
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://lumelive.co.in/#organization",
+      "name": "Lume Live",
+      "url": "https://lumelive.co.in/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://lumelive.co.in/logo.png"
+      },
+      "email": "hello@lumelive.co.in",
+      "telephone": "+91-7015671280",
+      "sameAs": [
+        "https://www.facebook.com/profile.php?id=61589670451910",
+        "https://www.instagram.com/lumelive.co.in/?hl=en"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://lumelive.co.in/#website",
+      "name": "Lume Live",
+      "url": "https://lumelive.co.in/",
+      "inLanguage": "en-IN",
+      "publisher": {
+        "@id": "https://lumelive.co.in/#organization"
+      }
     }
   ]
 }
@@ -86,10 +175,12 @@
 .crisis b{color:#8E2A1B}
 </style>
 <link rel="stylesheet" href="site-anim.css">
+<meta property="og:site_name" content="Lume Live">
+<meta property="og:locale" content="en_IN">
 </head>
 <body>
 <header class="top"><nav class="nav">
-  <a class="brand" href="index.html"><img src="logo.png" alt="Lume Live logo"><span>LUME LIVE</span></a>
+  <a class="brand" href="index.html"><img src="logo.png" alt="Lume Live logo" decoding="async"><span>LUME LIVE</span></a>
   <div class="nlinks"><a href="index.html">Home</a><a href="career-library.html">Library</a><a href="for-parents.html">For Parents</a><a class="cta" href="assessment.html#free-test">Free Career Test</a></div>
 </nav></header>
 
@@ -183,7 +274,7 @@
     </div>
 
     <div class="author-bio">
-      <img src="sachin.jpeg" alt="Sachin Bajaj, founder of Lume Live">
+      <img src="sachin.jpeg" alt="Sachin Bajaj, founder of Lume Live" decoding="async" loading="lazy">
       <div>
         <h3>About the Author — Sachin Bajaj</h3>
         <p>Sachin Bajaj holds an <strong>M.Sc in Clinical Psychology from Gurugram University</strong> and a <strong>PGDGC from Jamia Millia Islamia, New Delhi</strong>, along with a <strong>B.Ed</strong>. An <strong>AILET 2026 Laureate</strong>, he is the founder of Lume Live in Rohtak, Haryana, and has personally guided <strong>500+ students</strong> across India.</p>

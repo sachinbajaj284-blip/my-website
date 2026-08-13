@@ -42,15 +42,21 @@ Target audience: Class 12 students and parents across India, immediately after b
       "description": "Confused after 12th? A counsellor's honest guide to career counselling after 12th in India — real options, mistakes to avoid, and a 3-step framework.",
       "datePublished": "2026-07-02",
       "dateModified": "2026-07-02",
-      "author": { "@id": "https://lumelive.co.in/#sachin-bajaj" },
+      "author": {
+        "@id": "https://lumelive.co.in/#organization"
+      },
       "publisher": {
-        "@type": "Organization",
-        "name": "Lume Live",
-        "logo": { "@type": "ImageObject", "url": "https://lumelive.co.in/logo.png" }
+        "@id": "https://lumelive.co.in/#organization"
       },
       "image": "https://lumelive.co.in/sachin.jpeg",
-      "mainEntityOfPage": "https://lumelive.co.in/career-counselling-after-12th.html",
-      "inLanguage": "en-IN"
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://lumelive.co.in/career-counselling-after-12th.html"
+      },
+      "inLanguage": "en-IN",
+      "isPartOf": {
+        "@id": "https://lumelive.co.in/#website"
+      }
     },
     {
       "@type": "Person",
@@ -61,30 +67,115 @@ Target audience: Class 12 students and parents across India, immediately after b
       "url": "https://lumelive.co.in/",
       "image": "https://lumelive.co.in/sachin.jpeg",
       "alumniOf": [
-        {"@type":"CollegeOrUniversity","name":"Gurugram University"},
-        {"@type":"CollegeOrUniversity","name":"Jamia Millia Islamia, New Delhi"}
+        {
+          "@type": "CollegeOrUniversity",
+          "name": "Gurugram University"
+        },
+        {
+          "@type": "CollegeOrUniversity",
+          "name": "Jamia Millia Islamia, New Delhi"
+        }
       ],
-      "knowsLanguage": ["en-IN","hi-IN"]
+      "knowsLanguage": [
+        "en-IN",
+        "hi-IN"
+      ]
     },
     {
       "@type": "BreadcrumbList",
       "@id": "https://lumelive.co.in/career-counselling-after-12th.html#breadcrumb",
       "itemListElement": [
-        {"@type":"ListItem","position":1,"name":"Home","item":"https://lumelive.co.in/"},
-        {"@type":"ListItem","position":2,"name":"Career Library","item":"https://lumelive.co.in/career-library.html"},
-        {"@type":"ListItem","position":3,"name":"Career Counselling After 12th","item":"https://lumelive.co.in/career-counselling-after-12th.html"}
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://lumelive.co.in/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Career Library",
+          "item": "https://lumelive.co.in/career-library.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Career Counselling After 12th",
+          "item": "https://lumelive.co.in/career-counselling-after-12th.html"
+        }
       ]
     },
     {
       "@type": "FAQPage",
       "@id": "https://lumelive.co.in/career-counselling-after-12th.html#faq",
       "mainEntity": [
-        {"@type":"Question","name":"Is career counselling really necessary after 12th, or can I decide on my own?","acceptedAnswer":{"@type":"Answer","text":"You can decide on your own, and many students do it well. Career counselling helps most when you feel torn between two or more paths, when family opinion and your own interest are pulling in different directions, or when you genuinely don't know what your options even are beyond the three or four everyone talks about. It replaces guesswork with a structured conversation — it doesn't replace your judgement."}},
-        {"@type":"Question","name":"What career options after 12th exist beyond engineering, medicine, commerce and arts?","acceptedAnswer":{"@type":"Answer","text":"Design (NID, NIFT), law (CLAT), hotel management, mass communication and journalism, psychology, data science and analytics, animation and UX/UI, entrepreneurship-linked BBA programmes, defence and civil services preparatory tracks, and skill-based vocational diplomas in fields like aviation, culinary arts or digital marketing are all realistic, respected paths in India today — not fallback options."}},
-        {"@type":"Question","name":"I am confused after 12th board results — where do I even start?","acceptedAnswer":{"@type":"Answer","text":"Start by separating three things on paper: what you enjoy doing, what you're actually good at, and what everyone around you is pressuring you toward. Most of the confusion after board results comes from these three being mixed together. A short psychometric snapshot or a single counselling conversation is often enough to untangle them."}},
-        {"@type":"Question","name":"Should I take a drop year or gap year if I'm still unsure after 12th?","acceptedAnswer":{"@type":"Answer","text":"A planned gap year — with a clear goal like a specific entrance exam, a certification, or structured exploration — can be genuinely useful. An unplanned gap year taken only to avoid a decision usually just delays the same confusion by twelve months. If you're considering one, define exactly what you'll do with the time before you commit to it."}},
-        {"@type":"Question","name":"How much does career counselling after 12th cost in India, and how long does it take?","acceptedAnswer":{"@type":"Answer","text":"At Lume Live, the free 60-second Career Snapshot gives an instant starting point, the ₹999 Full Clarity Report adds a detailed psychometric profile, and the 1:1 counselling session with your Lume Live counsellor starts at ₹249 for your first session with code FIRST50. Most families get meaningful clarity within one to three sessions, not months of back-and-forth."}}
+        {
+          "@type": "Question",
+          "name": "Is career counselling really necessary after 12th, or can I decide on my own?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You can decide on your own, and many students do it well. Career counselling helps most when you feel torn between two or more paths, when family opinion and your own interest are pulling in different directions, or when you genuinely don't know what your options even are beyond the three or four everyone talks about. It replaces guesswork with a structured conversation — it doesn't replace your judgement."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What career options after 12th exist beyond engineering, medicine, commerce and arts?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Design (NID, NIFT), law (CLAT), hotel management, mass communication and journalism, psychology, data science and analytics, animation and UX/UI, entrepreneurship-linked BBA programmes, defence and civil services preparatory tracks, and skill-based vocational diplomas in fields like aviation, culinary arts or digital marketing are all realistic, respected paths in India today — not fallback options."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "I am confused after 12th board results — where do I even start?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Start by separating three things on paper: what you enjoy doing, what you're actually good at, and what everyone around you is pressuring you toward. Most of the confusion after board results comes from these three being mixed together. A short psychometric snapshot or a single counselling conversation is often enough to untangle them."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Should I take a drop year or gap year if I'm still unsure after 12th?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A planned gap year — with a clear goal like a specific entrance exam, a certification, or structured exploration — can be genuinely useful. An unplanned gap year taken only to avoid a decision usually just delays the same confusion by twelve months. If you're considering one, define exactly what you'll do with the time before you commit to it."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much does career counselling after 12th cost in India, and how long does it take?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "At Lume Live, the free 60-second Career Snapshot gives an instant starting point, the ₹999 Full Clarity Report adds a detailed psychometric profile, and the 1:1 counselling session with your Lume Live counsellor starts at ₹249 for your first session with code FIRST50. Most families get meaningful clarity within one to three sessions, not months of back-and-forth."
+          }
+        }
       ]
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://lumelive.co.in/#organization",
+      "name": "Lume Live",
+      "url": "https://lumelive.co.in/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://lumelive.co.in/logo.png"
+      },
+      "email": "hello@lumelive.co.in",
+      "telephone": "+91-7015671280",
+      "sameAs": [
+        "https://www.facebook.com/profile.php?id=61589670451910",
+        "https://www.instagram.com/lumelive.co.in/?hl=en"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://lumelive.co.in/#website",
+      "name": "Lume Live",
+      "url": "https://lumelive.co.in/",
+      "inLanguage": "en-IN",
+      "publisher": {
+        "@id": "https://lumelive.co.in/#organization"
+      }
     }
   ]
 }
@@ -100,10 +191,12 @@ Target audience: Class 12 students and parents across India, immediately after b
 .disclaimer{font-size:.8rem;color:var(--muted);font-style:italic;border-top:1px solid var(--line);padding-top:16px;margin-top:24px}
 </style>
 <link rel="stylesheet" href="site-anim.css">
+<meta property="og:site_name" content="Lume Live">
+<meta property="og:locale" content="en_IN">
 </head>
 <body>
 <header class="top"><nav class="nav">
-  <a class="brand" href="index.html"><img src="logo.png" alt="Lume Live logo"><span>LUME LIVE</span></a>
+  <a class="brand" href="index.html"><img src="logo.png" alt="Lume Live logo" decoding="async"><span>LUME LIVE</span></a>
   <div class="nlinks"><a href="index.html">Home</a><a href="career-library.html">Library</a><a href="for-parents.html">For Parents</a><a class="cta" href="assessment.html#free-test">Free Career Test</a></div>
 </nav></header>
 
@@ -220,7 +313,7 @@ Target audience: Class 12 students and parents across India, immediately after b
     </div>
 
     <div class="author-bio">
-      <img src="sachin.jpeg" alt="Sachin Bajaj, founder of Lume Live">
+      <img src="sachin.jpeg" alt="Sachin Bajaj, founder of Lume Live" decoding="async" loading="lazy">
       <div>
         <h3>About the Author — Sachin Bajaj</h3>
         <p>Sachin Bajaj holds an <strong>M.Sc in Clinical Psychology from Gurugram University</strong> and a <strong>Post Graduate Diploma in Guidance &amp; Counselling (PGDGC) from Jamia Millia Islamia, New Delhi</strong>. He also holds a <strong>B.Ed</strong> and was felicitated as an <strong>AILET 2026 Laureate</strong> for his contribution to career education. Based in Rohtak, Haryana, Sachin is the founder of Lume Live and has personally guided <strong>500+ students</strong> across India through 1:1 career and mental health counselling.</p>

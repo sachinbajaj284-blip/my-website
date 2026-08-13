@@ -35,11 +35,21 @@
       "description": "Practical, evidence-based techniques for exam anxiety — racing thoughts, blanking out, sleep and when to get help — by an M.Sc Clinical Psychologist.",
       "datePublished": "2026-07-02",
       "dateModified": "2026-07-02",
-      "author": { "@id": "https://lumelive.co.in/#sachin-bajaj" },
-      "publisher": {"@type": "Organization","name": "Lume Live","logo": {"@type": "ImageObject","url": "https://lumelive.co.in/logo.png"}},
+      "author": {
+        "@id": "https://lumelive.co.in/#organization"
+      },
+      "publisher": {
+        "@id": "https://lumelive.co.in/#organization"
+      },
       "image": "https://lumelive.co.in/sachin.jpeg",
-      "mainEntityOfPage": "https://lumelive.co.in/how-to-deal-with-exam-anxiety.html",
-      "inLanguage": "en-IN"
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://lumelive.co.in/how-to-deal-with-exam-anxiety.html"
+      },
+      "inLanguage": "en-IN",
+      "isPartOf": {
+        "@id": "https://lumelive.co.in/#website"
+      }
     },
     {
       "@type": "Person",
@@ -49,26 +59,98 @@
       "description": "Sachin Bajaj holds an M.Sc in Clinical Psychology (Gurugram University) and a PGDGC from Jamia Millia Islamia, New Delhi. Founder of Lume Live, AILET 2026 Laureate, 500+ students guided across India.",
       "url": "https://lumelive.co.in/",
       "image": "https://lumelive.co.in/sachin.jpeg",
-      "knowsLanguage": ["en-IN","hi-IN"]
+      "knowsLanguage": [
+        "en-IN",
+        "hi-IN"
+      ]
     },
     {
       "@type": "BreadcrumbList",
       "@id": "https://lumelive.co.in/how-to-deal-with-exam-anxiety.html#breadcrumb",
       "itemListElement": [
-        {"@type":"ListItem","position":1,"name":"Home","item":"https://lumelive.co.in/"},
-        {"@type":"ListItem","position":2,"name":"Career Library","item":"https://lumelive.co.in/career-library.html"},
-        {"@type":"ListItem","position":3,"name":"How to Deal With Exam Anxiety","item":"https://lumelive.co.in/how-to-deal-with-exam-anxiety.html"}
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://lumelive.co.in/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Career Library",
+          "item": "https://lumelive.co.in/career-library.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "How to Deal With Exam Anxiety",
+          "item": "https://lumelive.co.in/how-to-deal-with-exam-anxiety.html"
+        }
       ]
     },
     {
       "@type": "FAQPage",
       "@id": "https://lumelive.co.in/how-to-deal-with-exam-anxiety.html#faq",
       "mainEntity": [
-        {"@type":"Question","name":"How do I deal with exam anxiety quickly?","acceptedAnswer":{"@type":"Answer","text":"In the moment, slow your breathing: inhale for 4 counts, hold for 4, exhale for 6-8, repeat five times. A longer exhale activates the body's calming response. Then ground yourself — name five things you can see and feel your feet on the floor. This won't remove the anxiety, but it brings it down to a level where your memory works again."}},
-        {"@type":"Question","name":"Why do I blank out in exams even after studying well?","acceptedAnswer":{"@type":"Answer","text":"Blanking out is anxiety physically blocking recall — under high stress, the brain prioritises threat response over memory retrieval. The memory is intact; access is temporarily jammed. The fix is two-part: slow breathing in the moment to reduce the stress response, and practising under exam-like conditions beforehand (timed past papers) so the exam setting itself feels less threatening."}},
-        {"@type":"Question","name":"Is exam anxiety normal?","acceptedAnswer":{"@type":"Answer","text":"Yes — some pre-exam nervousness is universal and actually improves focus. It becomes a problem when it disrupts sleep and appetite for weeks, causes blanking out despite good preparation, or triggers physical symptoms like nausea and racing heartbeat before every study session. At that level it is common, treatable, and worth addressing rather than pushing through."}},
-        {"@type":"Question","name":"When should I get help for exam anxiety?","acceptedAnswer":{"@type":"Answer","text":"Get support when self-help techniques have not moved the needle after two or three weeks, when the anxiety is affecting sleep, eating or mood daily, or when you find yourself avoiding study altogether because starting feels unbearable. A counsellor can teach personalised techniques and address what the anxiety is really about — often fear of disappointing family rather than the exam itself."}}
+        {
+          "@type": "Question",
+          "name": "How do I deal with exam anxiety quickly?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "In the moment, slow your breathing: inhale for 4 counts, hold for 4, exhale for 6-8, repeat five times. A longer exhale activates the body's calming response. Then ground yourself — name five things you can see and feel your feet on the floor. This won't remove the anxiety, but it brings it down to a level where your memory works again."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why do I blank out in exams even after studying well?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Blanking out is anxiety physically blocking recall — under high stress, the brain prioritises threat response over memory retrieval. The memory is intact; access is temporarily jammed. The fix is two-part: slow breathing in the moment to reduce the stress response, and practising under exam-like conditions beforehand (timed past papers) so the exam setting itself feels less threatening."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is exam anxiety normal?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes — some pre-exam nervousness is universal and actually improves focus. It becomes a problem when it disrupts sleep and appetite for weeks, causes blanking out despite good preparation, or triggers physical symptoms like nausea and racing heartbeat before every study session. At that level it is common, treatable, and worth addressing rather than pushing through."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "When should I get help for exam anxiety?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Get support when self-help techniques have not moved the needle after two or three weeks, when the anxiety is affecting sleep, eating or mood daily, or when you find yourself avoiding study altogether because starting feels unbearable. A counsellor can teach personalised techniques and address what the anxiety is really about — often fear of disappointing family rather than the exam itself."
+          }
+        }
       ]
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://lumelive.co.in/#organization",
+      "name": "Lume Live",
+      "url": "https://lumelive.co.in/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://lumelive.co.in/logo.png"
+      },
+      "email": "hello@lumelive.co.in",
+      "telephone": "+91-7015671280",
+      "sameAs": [
+        "https://www.facebook.com/profile.php?id=61589670451910",
+        "https://www.instagram.com/lumelive.co.in/?hl=en"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://lumelive.co.in/#website",
+      "name": "Lume Live",
+      "url": "https://lumelive.co.in/",
+      "inLanguage": "en-IN",
+      "publisher": {
+        "@id": "https://lumelive.co.in/#organization"
+      }
     }
   ]
 }
@@ -85,10 +167,12 @@
 .disclaimer{font-size:.8rem;color:var(--muted);font-style:italic;border-top:1px solid var(--line);padding-top:16px;margin-top:24px}
 </style>
 <link rel="stylesheet" href="site-anim.css">
+<meta property="og:site_name" content="Lume Live">
+<meta property="og:locale" content="en_IN">
 </head>
 <body>
 <header class="top"><nav class="nav">
-  <a class="brand" href="index.html"><img src="logo.png" alt="Lume Live logo"><span>LUME LIVE</span></a>
+  <a class="brand" href="index.html"><img src="logo.png" alt="Lume Live logo" decoding="async"><span>LUME LIVE</span></a>
   <div class="nlinks"><a href="index.html">Home</a><a href="career-library.html">Library</a><a href="for-parents.html">For Parents</a><a class="cta" href="assessment.html#free-test">Free Career Test</a></div>
 </nav></header>
 
@@ -165,7 +249,7 @@
     </div>
 
     <div class="author-bio">
-      <img src="sachin.jpeg" alt="Sachin Bajaj, founder of Lume Live">
+      <img src="sachin.jpeg" alt="Sachin Bajaj, founder of Lume Live" decoding="async" loading="lazy">
       <div>
         <h3>About the Author — Sachin Bajaj</h3>
         <p>Sachin Bajaj holds an <strong>M.Sc in Clinical Psychology from Gurugram University</strong> and a <strong>PGDGC from Jamia Millia Islamia, New Delhi</strong>, along with a <strong>B.Ed</strong>. An <strong>AILET 2026 Laureate</strong>, he is the founder of Lume Live in Rohtak, Haryana, and has personally guided <strong>500+ students</strong> across India.</p>

@@ -9,6 +9,7 @@ APIKey.csv
 # Local/runtime output
 work/
 tools/.cache/
+node_modules
 node_modules/
 .vercel/
 public/

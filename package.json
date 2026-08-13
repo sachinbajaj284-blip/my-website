@@ -10,6 +10,9 @@
     "josaa:pages": "node tools/josaa-pages.mjs",
     "josaa:refresh": "npm run josaa:ingest && npm run josaa:validate && npm run josaa:pages",
     "josaa:test": "node tools/josaa-parser.test.mjs",
+    "sitemap": "node tools/sitemap.mjs",
+    "sitemap:check": "node tools/sitemap.mjs --check",
+    "og:images": "node tools/og-images.mjs",
     "coupons:test": "node tools/coupons.test.mjs",
     "coupons:list": "node tools/seed-coupons.mjs --dry-run",
     "coupons:seed": "node tools/seed-coupons.mjs"

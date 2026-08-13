@@ -35,11 +35,21 @@
       "description": "Typical career counselling fee ranges in India, what should be included at each price level, red flags to avoid, and the questions to ask before paying.",
       "datePublished": "2026-07-02",
       "dateModified": "2026-07-02",
-      "author": { "@id": "https://lumelive.co.in/#sachin-bajaj" },
-      "publisher": {"@type": "Organization","name": "Lume Live","logo": {"@type": "ImageObject","url": "https://lumelive.co.in/logo.png"}},
+      "author": {
+        "@id": "https://lumelive.co.in/#organization"
+      },
+      "publisher": {
+        "@id": "https://lumelive.co.in/#organization"
+      },
       "image": "https://lumelive.co.in/sachin.jpeg",
-      "mainEntityOfPage": "https://lumelive.co.in/career-counselling-fees-india.html",
-      "inLanguage": "en-IN"
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://lumelive.co.in/career-counselling-fees-india.html"
+      },
+      "inLanguage": "en-IN",
+      "isPartOf": {
+        "@id": "https://lumelive.co.in/#website"
+      }
     },
     {
       "@type": "Person",
@@ -49,27 +59,106 @@
       "description": "Sachin Bajaj holds an M.Sc in Clinical Psychology (Gurugram University) and a PGDGC from Jamia Millia Islamia, New Delhi. Founder of Lume Live, AILET 2026 Laureate, 500+ students guided across India.",
       "url": "https://lumelive.co.in/",
       "image": "https://lumelive.co.in/sachin.jpeg",
-      "knowsLanguage": ["en-IN","hi-IN"]
+      "knowsLanguage": [
+        "en-IN",
+        "hi-IN"
+      ]
     },
     {
       "@type": "BreadcrumbList",
       "@id": "https://lumelive.co.in/career-counselling-fees-india.html#breadcrumb",
       "itemListElement": [
-        {"@type":"ListItem","position":1,"name":"Home","item":"https://lumelive.co.in/"},
-        {"@type":"ListItem","position":2,"name":"Career Library","item":"https://lumelive.co.in/career-library.html"},
-        {"@type":"ListItem","position":3,"name":"Career Counselling Fees in India","item":"https://lumelive.co.in/career-counselling-fees-india.html"}
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://lumelive.co.in/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Career Library",
+          "item": "https://lumelive.co.in/career-library.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Career Counselling Fees in India",
+          "item": "https://lumelive.co.in/career-counselling-fees-india.html"
+        }
       ]
     },
     {
       "@type": "FAQPage",
       "@id": "https://lumelive.co.in/career-counselling-fees-india.html#faq",
       "mainEntity": [
-        {"@type":"Question","name":"How much does career counselling cost in India?","acceptedAnswer":{"@type":"Answer","text":"Advertised prices span a wide range: single online sessions from a few hundred rupees to ₹2,000-₹3,000 with independent counsellors, and multi-session packages at large national platforms commonly advertised anywhere from several thousand to ₹25,000 or more. Price correlates poorly with quality because the industry is unregulated — the counsellor's qualification and assessment methodology matter far more than the fee."}},
-        {"@type":"Question","name":"Why is there such a huge price difference between services?","acceptedAnswer":{"@type":"Answer","text":"Three reasons: brand and marketing costs (national platforms spend heavily on advertising, which fees must recover), packaging (bundles of sessions, reports and 'lifetime access' inflate totals), and information asymmetry — families cannot easily judge quality, so some services price high specifically to signal credibility they may not have. A high fee funds marketing as often as it funds expertise."}},
-        {"@type":"Question","name":"What should be included in a career counselling fee?","acceptedAnswer":{"@type":"Answer","text":"At minimum: a validated psychometric assessment (named framework you can look up, such as Holland RIASEC — not DMIT), a genuine 1:1 session with a named and qualified counsellor, a written report or roadmap you keep, and clarity upfront about what follow-ups cost. If any of these four is missing or vague, ask why before paying."}},
-        {"@type":"Question","name":"Is expensive career counselling better?","acceptedAnswer":{"@type":"Answer","text":"Not reliably. In an unregulated market, price signals marketing budget as much as expertise. A ₹15,000 package delivered by an unnamed 'expert' with a proprietary test is worse value than a modestly priced session with a named M.Sc psychologist using validated tools. Judge the qualification, the assessment and the transparency — then consider the price."}},
-        {"@type":"Question","name":"Why is Lume Live's first session only ₹249?","acceptedAnswer":{"@type":"Answer","text":"It is a deliberately low entry price so cost never stops a family from trying structured counselling — and because a first conversation is the honest way to decide whether counselling helps your situation, better than any sales call. The full pricing is published openly: free snapshot, ₹999 Full Clarity Report, ₹249 first session with code FIRST50 (regular ₹499), with no compulsory packages."}}
+        {
+          "@type": "Question",
+          "name": "How much does career counselling cost in India?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Advertised prices span a wide range: single online sessions from a few hundred rupees to ₹2,000-₹3,000 with independent counsellors, and multi-session packages at large national platforms commonly advertised anywhere from several thousand to ₹25,000 or more. Price correlates poorly with quality because the industry is unregulated — the counsellor's qualification and assessment methodology matter far more than the fee."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why is there such a huge price difference between services?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Three reasons: brand and marketing costs (national platforms spend heavily on advertising, which fees must recover), packaging (bundles of sessions, reports and 'lifetime access' inflate totals), and information asymmetry — families cannot easily judge quality, so some services price high specifically to signal credibility they may not have. A high fee funds marketing as often as it funds expertise."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What should be included in a career counselling fee?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "At minimum: a validated psychometric assessment (named framework you can look up, such as Holland RIASEC — not DMIT), a genuine 1:1 session with a named and qualified counsellor, a written report or roadmap you keep, and clarity upfront about what follow-ups cost. If any of these four is missing or vague, ask why before paying."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is expensive career counselling better?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Not reliably. In an unregulated market, price signals marketing budget as much as expertise. A ₹15,000 package delivered by an unnamed 'expert' with a proprietary test is worse value than a modestly priced session with a named M.Sc psychologist using validated tools. Judge the qualification, the assessment and the transparency — then consider the price."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why is Lume Live's first session only ₹249?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It is a deliberately low entry price so cost never stops a family from trying structured counselling — and because a first conversation is the honest way to decide whether counselling helps your situation, better than any sales call. The full pricing is published openly: free snapshot, ₹999 Full Clarity Report, ₹249 first session with code FIRST50 (regular ₹499), with no compulsory packages."
+          }
+        }
       ]
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://lumelive.co.in/#organization",
+      "name": "Lume Live",
+      "url": "https://lumelive.co.in/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://lumelive.co.in/logo.png"
+      },
+      "email": "hello@lumelive.co.in",
+      "telephone": "+91-7015671280",
+      "sameAs": [
+        "https://www.facebook.com/profile.php?id=61589670451910",
+        "https://www.instagram.com/lumelive.co.in/?hl=en"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://lumelive.co.in/#website",
+      "name": "Lume Live",
+      "url": "https://lumelive.co.in/",
+      "inLanguage": "en-IN",
+      "publisher": {
+        "@id": "https://lumelive.co.in/#organization"
+      }
     }
   ]
 }
@@ -86,10 +175,12 @@
 .disclaimer{font-size:.8rem;color:var(--muted);font-style:italic;border-top:1px solid var(--line);padding-top:16px;margin-top:24px}
 </style>
 <link rel="stylesheet" href="site-anim.css">
+<meta property="og:site_name" content="Lume Live">
+<meta property="og:locale" content="en_IN">
 </head>
 <body>
 <header class="top"><nav class="nav">
-  <a class="brand" href="index.html"><img src="logo.png" alt="Lume Live logo"><span>LUME LIVE</span></a>
+  <a class="brand" href="index.html"><img src="logo.png" alt="Lume Live logo" decoding="async"><span>LUME LIVE</span></a>
   <div class="nlinks"><a href="index.html">Home</a><a href="career-library.html">Library</a><a href="for-parents.html">For Parents</a><a class="cta" href="assessment.html#free-test">Free Career Test</a></div>
 </nav></header>
 
@@ -176,7 +267,7 @@
     </div>
 
     <div class="author-bio">
-      <img src="sachin.jpeg" alt="Sachin Bajaj, founder of Lume Live">
+      <img src="sachin.jpeg" alt="Sachin Bajaj, founder of Lume Live" decoding="async" loading="lazy">
       <div>
         <h3>About the Author — Sachin Bajaj</h3>
         <p>Sachin Bajaj holds an <strong>M.Sc in Clinical Psychology from Gurugram University</strong> and a <strong>PGDGC from Jamia Millia Islamia, New Delhi</strong>, along with a <strong>B.Ed</strong>. An <strong>AILET 2026 Laureate</strong>, he is the founder of Lume Live in Rohtak, Haryana, and has personally guided <strong>500+ students</strong> across India.</p>

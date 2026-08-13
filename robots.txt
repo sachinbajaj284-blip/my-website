@@ -1,5 +1,43 @@
 # robots.txt - Lume Live (lumelive.co.in)
+
+# NOTE ON GROUPS: a crawler obeys exactly one group — the most specific one
+# that names it — and ignores every other group, including "*". So each named
+# group below repeats the shared Disallow list. Adding a bot here without those
+# lines would silently open /api/ to it.
+
 User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /*?*utm_
+Disallow: /*?*fbclid
+
+# --- AI answer engines -----------------------------------------------------
+# These are the retrieval/citation crawlers: they fetch a page when someone
+# asks a question, and cite it in the answer. Allowed on purpose — being
+# quotable in AI answers is the same visibility goal as ranking in search.
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: ClaudeBot
+User-agent: Claude-User
+User-agent: Claude-SearchBot
+User-agent: Google-Extended
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /*?*utm_
+Disallow: /*?*fbclid
+
+# --- Model-training crawlers ----------------------------------------------
+# Separate group from the answer engines above so training access can be
+# withdrawn later without also losing AI-search citations. Currently allowed.
+User-agent: GPTBot
+User-agent: Applebot-Extended
+User-agent: CCBot
+User-agent: meta-externalagent
 Allow: /
 Disallow: /admin/
 Disallow: /api/

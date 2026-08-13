@@ -35,15 +35,21 @@
       "description": "What the DMIT fingerprint test actually measures, why mainstream psychology doesn't recognise it, and what parents should use instead.",
       "datePublished": "2026-07-02",
       "dateModified": "2026-07-02",
-      "author": { "@id": "https://lumelive.co.in/#sachin-bajaj" },
+      "author": {
+        "@id": "https://lumelive.co.in/#organization"
+      },
       "publisher": {
-        "@type": "Organization",
-        "name": "Lume Live",
-        "logo": { "@type": "ImageObject", "url": "https://lumelive.co.in/logo.png" }
+        "@id": "https://lumelive.co.in/#organization"
       },
       "image": "https://lumelive.co.in/sachin.jpeg",
-      "mainEntityOfPage": "https://lumelive.co.in/is-dmit-test-scientific.html",
-      "inLanguage": "en-IN"
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://lumelive.co.in/is-dmit-test-scientific.html"
+      },
+      "inLanguage": "en-IN",
+      "isPartOf": {
+        "@id": "https://lumelive.co.in/#website"
+      }
     },
     {
       "@type": "Person",
@@ -54,30 +60,115 @@
       "url": "https://lumelive.co.in/",
       "image": "https://lumelive.co.in/sachin.jpeg",
       "alumniOf": [
-        {"@type":"CollegeOrUniversity","name":"Gurugram University"},
-        {"@type":"CollegeOrUniversity","name":"Jamia Millia Islamia, New Delhi"}
+        {
+          "@type": "CollegeOrUniversity",
+          "name": "Gurugram University"
+        },
+        {
+          "@type": "CollegeOrUniversity",
+          "name": "Jamia Millia Islamia, New Delhi"
+        }
       ],
-      "knowsLanguage": ["en-IN","hi-IN"]
+      "knowsLanguage": [
+        "en-IN",
+        "hi-IN"
+      ]
     },
     {
       "@type": "BreadcrumbList",
       "@id": "https://lumelive.co.in/is-dmit-test-scientific.html#breadcrumb",
       "itemListElement": [
-        {"@type":"ListItem","position":1,"name":"Home","item":"https://lumelive.co.in/"},
-        {"@type":"ListItem","position":2,"name":"Career Library","item":"https://lumelive.co.in/career-library.html"},
-        {"@type":"ListItem","position":3,"name":"Is DMIT Test Scientific?","item":"https://lumelive.co.in/is-dmit-test-scientific.html"}
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://lumelive.co.in/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Career Library",
+          "item": "https://lumelive.co.in/career-library.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Is DMIT Test Scientific?",
+          "item": "https://lumelive.co.in/is-dmit-test-scientific.html"
+        }
       ]
     },
     {
       "@type": "FAQPage",
       "@id": "https://lumelive.co.in/is-dmit-test-scientific.html#faq",
       "mainEntity": [
-        {"@type":"Question","name":"Is the DMIT test scientific?","acceptedAnswer":{"@type":"Answer","text":"No. DMIT (Dermatoglyphics Multiple Intelligence Test) is not recognised by mainstream psychology as a valid measure of intelligence, personality, aptitude or career fit. It reads fingerprint ridge patterns, which form before birth and have no established scientific link to how a person thinks, learns or should choose a career."}},
-        {"@type":"Question","name":"What does DMIT claim to measure?","acceptedAnswer":{"@type":"Answer","text":"DMIT providers claim fingerprint patterns reveal a child's innate intelligence distribution, learning style, brain dominance and ideal career. These claims borrow scientific-sounding language from Howard Gardner's multiple intelligences theory, but Gardner's theory itself says nothing about fingerprints, and no peer-reviewed evidence supports a fingerprint-to-intelligence link."}},
-        {"@type":"Question","name":"Why do so many schools in India offer DMIT camps?","acceptedAnswer":{"@type":"Answer","text":"DMIT is cheap to administer at scale, produces impressive-looking colourful reports, and is marketed aggressively to schools as a value-added service. A fingerprint scan takes minutes and needs no qualified psychologist, which makes it commercially attractive — the same reasons it is scientifically weak."}},
-        {"@type":"Question","name":"What should parents use instead of DMIT?","acceptedAnswer":{"@type":"Answer","text":"Use validated psychometric frameworks administered or interpreted by a qualified counsellor: Holland RIASEC for career interests, VARK for learning preferences, and a work-values inventory — followed by an actual counselling conversation. The conversation matters as much as the test; no instrument should assign a career by itself."}},
-        {"@type":"Question","name":"My child already took a DMIT test — is the report useless?","acceptedAnswer":{"@type":"Answer","text":"Treat it as a conversation starter at best, not as data. If the report matched things you already knew about your child, that is likely the Barnum effect — generic statements that feel personal. Before making any stream or career decision based on it, verify with a validated assessment and a session with a qualified counsellor."}}
+        {
+          "@type": "Question",
+          "name": "Is the DMIT test scientific?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. DMIT (Dermatoglyphics Multiple Intelligence Test) is not recognised by mainstream psychology as a valid measure of intelligence, personality, aptitude or career fit. It reads fingerprint ridge patterns, which form before birth and have no established scientific link to how a person thinks, learns or should choose a career."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What does DMIT claim to measure?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "DMIT providers claim fingerprint patterns reveal a child's innate intelligence distribution, learning style, brain dominance and ideal career. These claims borrow scientific-sounding language from Howard Gardner's multiple intelligences theory, but Gardner's theory itself says nothing about fingerprints, and no peer-reviewed evidence supports a fingerprint-to-intelligence link."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why do so many schools in India offer DMIT camps?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "DMIT is cheap to administer at scale, produces impressive-looking colourful reports, and is marketed aggressively to schools as a value-added service. A fingerprint scan takes minutes and needs no qualified psychologist, which makes it commercially attractive — the same reasons it is scientifically weak."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What should parents use instead of DMIT?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Use validated psychometric frameworks administered or interpreted by a qualified counsellor: Holland RIASEC for career interests, VARK for learning preferences, and a work-values inventory — followed by an actual counselling conversation. The conversation matters as much as the test; no instrument should assign a career by itself."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "My child already took a DMIT test — is the report useless?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Treat it as a conversation starter at best, not as data. If the report matched things you already knew about your child, that is likely the Barnum effect — generic statements that feel personal. Before making any stream or career decision based on it, verify with a validated assessment and a session with a qualified counsellor."
+          }
+        }
       ]
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://lumelive.co.in/#organization",
+      "name": "Lume Live",
+      "url": "https://lumelive.co.in/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://lumelive.co.in/logo.png"
+      },
+      "email": "hello@lumelive.co.in",
+      "telephone": "+91-7015671280",
+      "sameAs": [
+        "https://www.facebook.com/profile.php?id=61589670451910",
+        "https://www.instagram.com/lumelive.co.in/?hl=en"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://lumelive.co.in/#website",
+      "name": "Lume Live",
+      "url": "https://lumelive.co.in/",
+      "inLanguage": "en-IN",
+      "publisher": {
+        "@id": "https://lumelive.co.in/#organization"
+      }
     }
   ]
 }
@@ -92,10 +183,12 @@
 .disclaimer{font-size:.8rem;color:var(--muted);font-style:italic;border-top:1px solid var(--line);padding-top:16px;margin-top:24px}
 </style>
 <link rel="stylesheet" href="site-anim.css">
+<meta property="og:site_name" content="Lume Live">
+<meta property="og:locale" content="en_IN">
 </head>
 <body>
 <header class="top"><nav class="nav">
-  <a class="brand" href="index.html"><img src="logo.png" alt="Lume Live logo"><span>LUME LIVE</span></a>
+  <a class="brand" href="index.html"><img src="logo.png" alt="Lume Live logo" decoding="async"><span>LUME LIVE</span></a>
   <div class="nlinks"><a href="index.html">Home</a><a href="career-library.html">Library</a><a href="for-parents.html">For Parents</a><a class="cta" href="assessment.html#free-test">Free Career Test</a></div>
 </nav></header>
 
@@ -185,7 +278,7 @@
     </div>
 
     <div class="author-bio">
-      <img src="sachin.jpeg" alt="Sachin Bajaj, founder of Lume Live">
+      <img src="sachin.jpeg" alt="Sachin Bajaj, founder of Lume Live" decoding="async" loading="lazy">
       <div>
         <h3>About the Author — Sachin Bajaj</h3>
         <p>Sachin Bajaj holds an <strong>M.Sc in Clinical Psychology from Gurugram University</strong> and a <strong>PGDGC from Jamia Millia Islamia, New Delhi</strong>, along with a <strong>B.Ed</strong>. An <strong>AILET 2026 Laureate</strong>, he is the founder of Lume Live in Rohtak, Haryana, and has personally guided <strong>500+ students</strong> across India using validated psychometric tools and 1:1 counselling with our own psychologists.</p>
