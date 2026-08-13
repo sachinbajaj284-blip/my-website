@@ -42,7 +42,7 @@ const INSTITUTE_TYPES = ['IIT', 'NIT', 'IIIT', 'Other-GFTI'];
 function parseArgs(argv) {
   const a = {
     years: [], round: null, limit: Infinity,
-    fromCache: false, probe: false, verbose: false,
+    fromCache: false, probe: false, verbose: false, dump: null,
   };
   for (let i = 2; i < argv.length; i++) {
     const k = argv[i];
@@ -51,6 +51,7 @@ function parseArgs(argv) {
     else if (k === '--limit') a.limit = parseInt(argv[++i], 10);
     else if (k === '--from-cache') a.fromCache = true;
     else if (k === '--probe') a.probe = true;
+    else if (k === '--dump') a.dump = (argv[i + 1] && !argv[i + 1].startsWith('--')) ? argv[++i] : path.join(ROOT, 'work', 'dump');
     else if (k === '--verbose' || k === '-v') a.verbose = true;
     else if (k === '--help' || k === '-h') { printHelp(); process.exit(0); }
     else { console.error(`Unknown flag: ${k}`); printHelp(); process.exit(2); }
@@ -68,11 +69,91 @@ josaa-ingest — build data/josaa/* from the official JoSAA archive.
   --limit N                Stop after N result rows — smoke testing
   --from-cache             Re-parse cached HTML, make no network calls
   --probe                  Fetch the form, print discovered fields, exit
+  --dump [dir]             Write every request and response to dir (default work/dump)
+                           for inspection. Use when the ingest returns no rows and you
+                           need to see what JoSAA actually sent back.
   --verbose                Log every request
 
 Run --probe first. JoSAA renames its ASP.NET controls between years; probe tells you
 whether the field discovery below still matches reality before you pull thousands of rows.
 `);
+}
+
+/* --------------------------------------------------------------- dumping -- */
+
+/* When a pull comes back with no rows, the only thing worth having is the page JoSAA
+   actually returned. This writes each exchange to disk — the payload we posted, the
+   response we got, and a summary of what the response contains — so one run answers
+   "what is the postback contract" instead of several runs of guessing.
+   Nothing here is ever committed; the workflow uploads it as an artifact. */
+const dumper = {
+  dir: null,
+  seq: 0,
+  async init(dir) {
+    if (!dir) return;
+    this.dir = dir;
+    await fs.rm(dir, { recursive: true, force: true });
+    await fs.mkdir(dir, { recursive: true });
+    console.log(`Dumping every exchange to ${path.relative(ROOT, dir)}/`);
+  },
+  async write(label, { url, method, payload, html }) {
+    if (!this.dir) return;
+    const n = String(++this.seq).padStart(2, '0');
+    const stem = `${n}-${label.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}`;
+    if (payload != null) {
+      /* __VIEWSTATE is enormous and not interesting; keep its length, drop the body. */
+      const readable = [...new URLSearchParams(payload).entries()]
+        .map(([k, v]) => `${k} = ${v.length > 120 ? `<${v.length} chars>` : v}`)
+        .join('\n');
+      await fs.writeFile(path.join(this.dir, `${stem}.request.txt`), `${method} ${url}\n\n${readable}\n`, 'utf8');
+    }
+    if (html != null) {
+      await fs.writeFile(path.join(this.dir, `${stem}.response.html`), html, 'utf8');
+      await fs.writeFile(path.join(this.dir, `${stem}.summary.txt`), summarise(html), 'utf8');
+    }
+  },
+};
+
+/** What a returned page contains, in the terms we care about. */
+function summarise(html) {
+  const selects = extractSelects(html);
+  const lines = [`bytes: ${html.length}`, ''];
+
+  lines.push('selects:');
+  for (const [name, options] of Object.entries(selects)) {
+    lines.push(`  ${name}  (${options.length} options)`);
+    if (options.length) lines.push(`    ${options.slice(0, 8).map(o => `${o.text}=${o.value}`).join(', ')}`);
+  }
+  if (!Object.keys(selects).length) lines.push('  (none)');
+
+  /* Submit controls are the thing we are most likely missing — an ASP.NET grid usually
+     needs a named button posted, or an __EVENTTARGET naming the control that changed. */
+  lines.push('', 'submit controls:');
+  const buttons = [...html.matchAll(/<input[^>]*type=["'](submit|button|image)["'][^>]*>/gi)].map(m => m[0]);
+  for (const b of buttons) {
+    lines.push(`  name=${b.match(/name=["']([^"']+)["']/i)?.[1] ?? '?'}  value=${b.match(/value=["']([^"']*)["']/i)?.[1] ?? ''}`);
+  }
+  if (!buttons.length) lines.push('  (none)');
+
+  /* __doPostBack targets tell us which controls fire a partial postback on change. */
+  const targets = new Set([...html.matchAll(/__doPostBack\((?:&#39;|['"])([^'"&]+)/g)].map(m => m[1]));
+  lines.push('', `__doPostBack targets: ${targets.size ? [...targets].join(', ') : '(none)'}`);
+
+  lines.push('', 'tables:');
+  const tables = [...html.matchAll(/<table[\s\S]*?<\/table>/gi)].map(m => m[0]);
+  tables.forEach((t, i) => {
+    const rows = [...t.matchAll(/<tr[\s\S]*?<\/tr>/gi)].length;
+    const head = [...t.matchAll(/<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/gi)].slice(0, 8).map(c => stripTags(c[1]));
+    lines.push(`  [${i}] ${rows} rows | first cells: ${head.join(' | ').slice(0, 200)}`);
+  });
+  if (!tables.length) lines.push('  (none)');
+
+  /* ASP.NET renders validation and error text into well-known spans. */
+  const msgs = [...html.matchAll(/<span[^>]*id=["'][^"']*(?:lbl|msg|error|Message)[^"']*["'][^>]*>([\s\S]*?)<\/span>/gi)]
+    .map(m => stripTags(m[1])).filter(Boolean);
+  lines.push('', `page messages: ${msgs.length ? msgs.join(' / ') : '(none)'}`);
+
+  return lines.join('\n') + '\n';
 }
 
 /* ------------------------------------------------------------- http layer -- */
@@ -300,12 +381,18 @@ function parseRank(raw) {
 
 const cacheKey = parts => parts.join('__').replace(/[^a-z0-9_-]+/gi, '-').toLowerCase() + '.html';
 
-async function cached(key, produce, { fromCache }) {
+async function cached(key, produce, { fromCache, dump }) {
   const file = path.join(CACHE, key);
-  try {
-    return await fs.readFile(file, 'utf8');
-  } catch {
-    if (fromCache) return null;
+  /* A dump run exists to see what the server sends right now. Serving it from cache
+     would write a dump of a page nobody fetched. */
+  if (!dump) {
+    try {
+      return await fs.readFile(file, 'utf8');
+    } catch {
+      if (fromCache) return null;
+    }
+  } else if (fromCache) {
+    return null;
   }
   const html = await produce();
   await fs.mkdir(CACHE, { recursive: true });
@@ -336,6 +423,7 @@ const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, 
 
 async function fetchArchiveForm() {
   const html = await request(ARCHIVE);
+  await dumper.write('initial-get', { url: ARCHIVE, method: 'GET', html });
   return { html, fields: discoverFields(html), hidden: extractHiddenFields(html) };
 }
 
@@ -410,8 +498,19 @@ async function ingest(args) {
       .update(rows.map(r => `${r.institute}|${r.branch}|${r.seatType}|${r.openRank}|${r.closeRank}`).join('\n'))
       .digest('hex');
 
+  /* A dump is for reading, not for coverage. Three exchanges show whether the response
+     varies with the posted filter, which is the whole question; twelve just makes a
+     bigger artifact to scroll through. */
+  const DUMP_MAX_POSTS = 3;
+  let dumpPosts = 0;
+
   for (const year of args.years) {
     for (const instType of INSTITUTE_TYPES) {
+      if (args.dump && dumpPosts >= DUMP_MAX_POSTS) {
+        console.log(`\nDump limit reached (${DUMP_MAX_POSTS} posts) — stopping early.`);
+        return;
+      }
+      if (args.dump) dumpPosts++;
       const round = args.round ?? 'final';
       const key = cacheKey(['orcr', year, instType, round]);
 
@@ -439,7 +538,10 @@ async function ingest(args) {
         payload.set('__EVENTTARGET', '');
         payload.set('__EVENTARGUMENT', '');
         if (args.verbose) console.log(`  -> POST ${year} ${instType} round=${round}`);
-        return request(ARCHIVE, { method: 'POST', body: payload.toString() });
+        const body = payload.toString();
+        const responseHtml = await request(ARCHIVE, { method: 'POST', body });
+        await dumper.write(`post-${year}-${instType}`, { url: ARCHIVE, method: 'POST', payload: body, html: responseHtml });
+        return responseHtml;
       }, args);
 
       if (!html) { problems.push(`${year}/${instType}: no cached page and network disabled`); continue; }
@@ -576,6 +678,7 @@ async function emit(records, args, problems) {
 
 const args = parseArgs(process.argv);
 try {
+  await dumper.init(args.dump);
   if (args.probe) await probe();
   else await ingest(args);
 } catch (err) {

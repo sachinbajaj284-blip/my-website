@@ -21,6 +21,10 @@ on:
         description: 'Pull only a few hundred rows to check the scraper works. Never commits.'
         type: boolean
         default: true
+      dump:
+        description: 'Save the raw request/response of a few exchanges as an artifact. Use when a pull returns no rows. Never commits.'
+        type: boolean
+        default: false
       commit:
         description: 'Commit the dataset and generated pages back to this branch'
         type: boolean
@@ -74,7 +78,23 @@ jobs:
       - name: Probe the JoSAA form
         run: node tools/josaa-ingest.mjs --probe
 
+      # A dump run is a diagnostic, not a pull: it saves what JoSAA actually returned and
+      # is expected to produce no dataset, so it must not fail the job on empty output.
+      - name: Dump raw exchanges
+        if: ${{ inputs.dump == true }}
+        run: node tools/josaa-ingest.mjs --years "${{ inputs.years || '2024,2025,2026' }}" --dump --verbose || true
+
+      - name: Upload raw exchange dump
+        if: ${{ inputs.dump == true }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: josaa-raw-dump
+          path: work/dump/
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Ingest cutoffs
+        if: ${{ inputs.dump != true }}
         run: |
           if [ "${{ inputs.smoke_test }}" = "true" ]; then
             node tools/josaa-ingest.mjs --years "${{ inputs.years || '2024,2025,2026' }}" --limit 300 --verbose
@@ -83,9 +103,11 @@ jobs:
           fi
 
       - name: Validate dataset
+        if: ${{ inputs.dump != true }}
         run: node tools/josaa-validate.mjs
 
       - name: Generate browse pages
+        if: ${{ inputs.dump != true }}
         run: node tools/josaa-pages.mjs
 
       # Always publish the result as an artifact, so a smoke test — or a run you choose not
@@ -131,7 +153,7 @@ jobs:
       # A smoke test pulls a deliberately partial dataset. Committing it would publish a
       # dataset with most colleges missing, which is worse than having none.
       - name: Commit dataset
-        if: ${{ inputs.smoke_test != true && inputs.commit != false }}
+        if: ${{ inputs.smoke_test != true && inputs.commit != false && inputs.dump != true }}
         run: |
           set -e
           git config user.name  "github-actions[bot]"
