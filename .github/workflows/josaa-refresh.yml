@@ -84,6 +84,21 @@ jobs:
         if: ${{ inputs.dump == true }}
         run: node tools/josaa-ingest.mjs --years "${{ inputs.years || '2024,2025,2026' }}" --dump --verbose || true
 
+      # The .html files are only useful downloaded, but the summaries and request lines
+      # are what actually answer the question — so print them into the log, where they
+      # can be read without pulling the artifact down.
+      - name: Print dump summaries
+        if: ${{ inputs.dump == true }}
+        run: |
+          for f in work/dump/*.request.txt work/dump/*.summary.txt; do
+            [ -f "$f" ] || continue
+            echo "══════════════════════════════════════════════════════════"
+            echo "── $f"
+            echo "══════════════════════════════════════════════════════════"
+            cat "$f"
+            echo
+          done
+
       - name: Upload raw exchange dump
         if: ${{ inputs.dump == true }}
         uses: actions/upload-artifact@v4
