@@ -20,11 +20,18 @@
 
   function getJSON(url) {
     return fetch(url, { credentials: 'omit' }).then(function (r) {
-      if (!r.ok) throw new Error(url + ' -> HTTP ' + r.status);
+      if (!r.ok) {
+        var err = new Error(url + ' -> HTTP ' + r.status);
+        err.status = r.status;
+        throw err;
+      }
       return r.json();
     });
   }
 
+  /* Callers need to tell "we never published the dataset" apart from "the network
+     dropped", because a student should only ever see a message about the first one —
+     the second is worth retrying. NO_DATASET is the missing-manifest case. */
   function loadManifest() {
     if (cache.manifest) return Promise.resolve(cache.manifest);
     return Promise.all([
@@ -34,6 +41,9 @@
       cache.manifest = both[0];
       cache.stateMap = both[1];
       return cache.manifest;
+    }).catch(function (e) {
+      if (e && e.status === 404) e.code = 'NO_DATASET';
+      throw e;
     });
   }
 

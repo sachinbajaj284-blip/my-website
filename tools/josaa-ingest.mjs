@@ -22,6 +22,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CACHE = path.join(ROOT, 'tools', '.cache', 'josaa');
@@ -41,7 +42,7 @@ const INSTITUTE_TYPES = ['IIT', 'NIT', 'IIIT', 'Other-GFTI'];
 function parseArgs(argv) {
   const a = {
     years: [], round: null, limit: Infinity,
-    fromCache: false, probe: false, verbose: false,
+    fromCache: false, probe: false, verbose: false, dump: null,
   };
   for (let i = 2; i < argv.length; i++) {
     const k = argv[i];
@@ -50,6 +51,7 @@ function parseArgs(argv) {
     else if (k === '--limit') a.limit = parseInt(argv[++i], 10);
     else if (k === '--from-cache') a.fromCache = true;
     else if (k === '--probe') a.probe = true;
+    else if (k === '--dump') a.dump = (argv[i + 1] && !argv[i + 1].startsWith('--')) ? argv[++i] : path.join(ROOT, 'work', 'dump');
     else if (k === '--verbose' || k === '-v') a.verbose = true;
     else if (k === '--help' || k === '-h') { printHelp(); process.exit(0); }
     else { console.error(`Unknown flag: ${k}`); printHelp(); process.exit(2); }
@@ -67,11 +69,91 @@ josaa-ingest — build data/josaa/* from the official JoSAA archive.
   --limit N                Stop after N result rows — smoke testing
   --from-cache             Re-parse cached HTML, make no network calls
   --probe                  Fetch the form, print discovered fields, exit
+  --dump [dir]             Write every request and response to dir (default work/dump)
+                           for inspection. Use when the ingest returns no rows and you
+                           need to see what JoSAA actually sent back.
   --verbose                Log every request
 
 Run --probe first. JoSAA renames its ASP.NET controls between years; probe tells you
 whether the field discovery below still matches reality before you pull thousands of rows.
 `);
+}
+
+/* --------------------------------------------------------------- dumping -- */
+
+/* When a pull comes back with no rows, the only thing worth having is the page JoSAA
+   actually returned. This writes each exchange to disk — the payload we posted, the
+   response we got, and a summary of what the response contains — so one run answers
+   "what is the postback contract" instead of several runs of guessing.
+   Nothing here is ever committed; the workflow uploads it as an artifact. */
+const dumper = {
+  dir: null,
+  seq: 0,
+  async init(dir) {
+    if (!dir) return;
+    this.dir = dir;
+    await fs.rm(dir, { recursive: true, force: true });
+    await fs.mkdir(dir, { recursive: true });
+    console.log(`Dumping every exchange to ${path.relative(ROOT, dir)}/`);
+  },
+  async write(label, { url, method, payload, html }) {
+    if (!this.dir) return;
+    const n = String(++this.seq).padStart(2, '0');
+    const stem = `${n}-${label.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}`;
+    if (payload != null) {
+      /* __VIEWSTATE is enormous and not interesting; keep its length, drop the body. */
+      const readable = [...new URLSearchParams(payload).entries()]
+        .map(([k, v]) => `${k} = ${v.length > 120 ? `<${v.length} chars>` : v}`)
+        .join('\n');
+      await fs.writeFile(path.join(this.dir, `${stem}.request.txt`), `${method} ${url}\n\n${readable}\n`, 'utf8');
+    }
+    if (html != null) {
+      await fs.writeFile(path.join(this.dir, `${stem}.response.html`), html, 'utf8');
+      await fs.writeFile(path.join(this.dir, `${stem}.summary.txt`), summarise(html), 'utf8');
+    }
+  },
+};
+
+/** What a returned page contains, in the terms we care about. */
+function summarise(html) {
+  const selects = extractSelects(html);
+  const lines = [`bytes: ${html.length}`, ''];
+
+  lines.push('selects:');
+  for (const [name, options] of Object.entries(selects)) {
+    lines.push(`  ${name}  (${options.length} options)`);
+    if (options.length) lines.push(`    ${options.slice(0, 8).map(o => `${o.text}=${o.value}`).join(', ')}`);
+  }
+  if (!Object.keys(selects).length) lines.push('  (none)');
+
+  /* Submit controls are the thing we are most likely missing — an ASP.NET grid usually
+     needs a named button posted, or an __EVENTTARGET naming the control that changed. */
+  lines.push('', 'submit controls:');
+  const buttons = [...html.matchAll(/<input[^>]*type=["'](submit|button|image)["'][^>]*>/gi)].map(m => m[0]);
+  for (const b of buttons) {
+    lines.push(`  name=${b.match(/name=["']([^"']+)["']/i)?.[1] ?? '?'}  value=${b.match(/value=["']([^"']*)["']/i)?.[1] ?? ''}`);
+  }
+  if (!buttons.length) lines.push('  (none)');
+
+  /* __doPostBack targets tell us which controls fire a partial postback on change. */
+  const targets = new Set([...html.matchAll(/__doPostBack\((?:&#39;|['"])([^'"&]+)/g)].map(m => m[1]));
+  lines.push('', `__doPostBack targets: ${targets.size ? [...targets].join(', ') : '(none)'}`);
+
+  lines.push('', 'tables:');
+  const tables = [...html.matchAll(/<table[\s\S]*?<\/table>/gi)].map(m => m[0]);
+  tables.forEach((t, i) => {
+    const rows = [...t.matchAll(/<tr[\s\S]*?<\/tr>/gi)].length;
+    const head = [...t.matchAll(/<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/gi)].slice(0, 8).map(c => stripTags(c[1]));
+    lines.push(`  [${i}] ${rows} rows | first cells: ${head.join(' | ').slice(0, 200)}`);
+  });
+  if (!tables.length) lines.push('  (none)');
+
+  /* ASP.NET renders validation and error text into well-known spans. */
+  const msgs = [...html.matchAll(/<span[^>]*id=["'][^"']*(?:lbl|msg|error|Message)[^"']*["'][^>]*>([\s\S]*?)<\/span>/gi)]
+    .map(m => stripTags(m[1])).filter(Boolean);
+  lines.push('', `page messages: ${msgs.length ? msgs.join(' / ') : '(none)'}`);
+
+  return lines.join('\n') + '\n';
 }
 
 /* ------------------------------------------------------------- http layer -- */
@@ -180,21 +262,68 @@ function findSelect(selects, predicate) {
   return null;
 }
 
+/**
+ * Fallback for when there is no vocabulary to match on.
+ *
+ * Vocabulary matching above is the right default and stays first, because it survives
+ * JoSAA renaming a control. But it only works if the control has options in the served
+ * HTML, and since 2026 the archive page ships its dropdowns empty and fills them by
+ * postback — so every lookup returned null and the probe reported the whole form
+ * missing while plainly listing six <select> controls it could see.
+ *
+ * These patterns are the observed control names from that probe output, not guesses.
+ * They match on the id suffix so the ASP.NET container prefix is free to change.
+ */
+const CONTROL_NAME_HINTS = {
+  year: /ddl_?year$/i,
+  round: /ddl_?round(no|num)?$/i,
+  /* The live control is "ddlInstype" — "ins" + "type", with a single t. Spelling out the
+     longer forms too so a tidy-up on JoSAA's side does not break this again. It must not
+     match "ddlInstitute", which is a different control on the same form; requiring the
+     name to end in "type" keeps them apart. */
+  instType: /ddl_?ins(t|titute)?type$/i,
+  seatType: /ddl_?seattype$/i,
+  gender: /ddl_?gender$/i,
+};
+
+function findSelectByName(selects, pattern) {
+  for (const [name, options] of Object.entries(selects)) {
+    /* Compare on the trailing id only: "ctl00$ContentPlaceHolder1$ddlYear" -> "ddlYear". */
+    const leaf = name.split(/[$:]/).pop();
+    if (pattern.test(leaf)) return { name, options };
+  }
+  return null;
+}
+
 function discoverFields(html) {
   const selects = extractSelects(html);
   const has = (opts, ...needles) => {
     const joined = opts.map(o => o.text.toLowerCase()).join('|');
     return needles.some(n => joined.includes(n));
   };
+
+  /* Records which route found each control so the probe can say so out loud. A control
+     found by name with no options is a working ingest only if we can post a literal
+     value for it, which is why `set()` below takes one. */
+  const pick = (key, predicate) => {
+    const byOptions = predicate ? findSelect(selects, predicate) : null;
+    if (byOptions) return { ...byOptions, via: 'options' };
+    const byName = findSelectByName(selects, CONTROL_NAME_HINTS[key]);
+    if (byName) return { ...byName, via: 'name' };
+    return null;
+  };
+
   return {
     selects,
-    year: findSelect(selects, o => o.every(x => /^20\d\d$/.test(x.text.trim()))),
+    year: pick('year', o => o.every(x => /^20\d\d$/.test(x.text.trim()))),
     /* 1-2 digits only: a 4-digit option is a year, and matching that here would silently
        send the year value into the round field. */
-    round: findSelect(selects, o => o.length <= 8 && o.every(x => /^\d{1,2}$/.test(x.text.trim()))),
-    instType: findSelect(selects, o => has(o, 'iit', 'nit', 'gfti')),
-    seatType: findSelect(selects, o => has(o, 'obc-ncl', 'ews')),
-    gender: findSelect(selects, o => has(o, 'gender-neutral', 'female')),
+    round: pick('round', o => o.length <= 8 && o.every(x => /^\d{1,2}$/.test(x.text.trim()))),
+    instType: pick('instType', o => has(o, 'iit', 'nit', 'gfti')),
+    seatType: pick('seatType', o => has(o, 'obc-ncl', 'ews')),
+    /* Not posted by the ingest — row gender comes from the results table. JoSAA dropped
+       this control from the archive form, so its absence is reported, never fatal. */
+    gender: pick('gender', o => has(o, 'gender-neutral', 'female')),
   };
 }
 
@@ -252,12 +381,18 @@ function parseRank(raw) {
 
 const cacheKey = parts => parts.join('__').replace(/[^a-z0-9_-]+/gi, '-').toLowerCase() + '.html';
 
-async function cached(key, produce, { fromCache }) {
+async function cached(key, produce, { fromCache, dump }) {
   const file = path.join(CACHE, key);
-  try {
-    return await fs.readFile(file, 'utf8');
-  } catch {
-    if (fromCache) return null;
+  /* A dump run exists to see what the server sends right now. Serving it from cache
+     would write a dump of a page nobody fetched. */
+  if (!dump) {
+    try {
+      return await fs.readFile(file, 'utf8');
+    } catch {
+      if (fromCache) return null;
+    }
+  } else if (fromCache) {
+    return null;
   }
   const html = await produce();
   await fs.mkdir(CACHE, { recursive: true });
@@ -288,27 +423,57 @@ const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, 
 
 async function fetchArchiveForm() {
   const html = await request(ARCHIVE);
+  await dumper.write('initial-get', { url: ARCHIVE, method: 'GET', html });
   return { html, fields: discoverFields(html), hidden: extractHiddenFields(html) };
 }
+
+/* The ingest only ever posts these three. gender is reported for visibility but JoSAA
+   removed it from the archive form, and row gender comes from the results table, so a
+   missing gender control must not fail the probe. */
+const REQUIRED_CONTROLS = ['year', 'round', 'instType'];
 
 async function probe() {
   console.log(`Probing ${ARCHIVE} ...\n`);
   const { fields } = await fetchArchiveForm();
   const report = ['year', 'round', 'instType', 'seatType', 'gender'];
-  let ok = true;
+  const missing = [];
+  let emptyOptions = 0;
+
   for (const key of report) {
+    const required = REQUIRED_CONTROLS.includes(key);
     const f = fields[key];
-    if (!f) { ok = false; console.log(`  ${key.padEnd(10)} NOT FOUND`); continue; }
-    console.log(`  ${key.padEnd(10)} ${f.name}`);
-    console.log(`  ${''.padEnd(10)}   ${f.options.slice(0, 6).map(o => o.text).join(', ')}${f.options.length > 6 ? ` … (${f.options.length})` : ''}`);
+    if (!f) {
+      if (required) missing.push(key);
+      console.log(`  ${key.padEnd(10)} NOT FOUND${required ? '' : '  (optional — not posted by the ingest)'}`);
+      continue;
+    }
+    console.log(`  ${key.padEnd(10)} ${f.name}  [matched by ${f.via}]`);
+    if (f.options.length) {
+      console.log(`  ${''.padEnd(10)}   ${f.options.slice(0, 6).map(o => o.text).join(', ')}${f.options.length > 6 ? ` … (${f.options.length})` : ''}`);
+    } else {
+      emptyOptions++;
+      console.log(`  ${''.padEnd(10)}   (no options in the served HTML — filled by postback)`);
+    }
   }
+
   console.log(`\nAll <select> controls seen: ${Object.keys(fields.selects).join(', ') || '(none)'}`);
-  if (!ok) {
-    console.log(`\nSome controls were not recognised. JoSAA has probably changed the page.`);
-    console.log(`Fix discoverFields() in this file, then re-probe. Do not guess field names.`);
+
+  if (emptyOptions) {
+    console.log(
+      `\n${emptyOptions} control(s) arrived empty. That is expected on this page now: JoSAA\n` +
+      `populates them by postback. The ingest posts literal values (the year, the institute\n` +
+      `type) for those, so this is not on its own a problem — but it does mean the values\n` +
+      `are unverified until a real pull returns rows. Run the smoke test next.`
+    );
+  }
+
+  if (missing.length) {
+    console.log(`\nRequired control(s) not recognised: ${missing.join(', ')}.`);
+    console.log(`JoSAA has probably renamed them. Update CONTROL_NAME_HINTS from the list above,`);
+    console.log(`then re-probe. Do not guess field names — read them off the page.`);
     process.exitCode = 1;
   } else {
-    console.log(`\nField discovery looks healthy — safe to run a real ingest.`);
+    console.log(`\nField discovery looks healthy — safe to run a smoke test.`);
   }
 }
 
@@ -323,32 +488,77 @@ async function ingest(args) {
   const records = [];
   const problems = [];
 
+  /* Guard for the literal-value path above. If JoSAA ignores a posted value, every
+     combination comes back as the same page — same row count in every year, which the
+     validator's "incomplete pull" check reads as healthy. Fingerprinting the parsed rows
+     catches it: two filter combinations must not produce byte-identical results. */
+  const seenPages = new Map();
+  const fingerprint = rows =>
+    createHash('sha256')
+      .update(rows.map(r => `${r.institute}|${r.branch}|${r.seatType}|${r.openRank}|${r.closeRank}`).join('\n'))
+      .digest('hex');
+
+  /* A dump is for reading, not for coverage. Three exchanges show whether the response
+     varies with the posted filter, which is the whole question; twelve just makes a
+     bigger artifact to scroll through. */
+  const DUMP_MAX_POSTS = 3;
+  let dumpPosts = 0;
+
   for (const year of args.years) {
     for (const instType of INSTITUTE_TYPES) {
+      if (args.dump && dumpPosts >= DUMP_MAX_POSTS) {
+        console.log(`\nDump limit reached (${DUMP_MAX_POSTS} posts) — stopping early.`);
+        return;
+      }
+      if (args.dump) dumpPosts++;
       const round = args.round ?? 'final';
       const key = cacheKey(['orcr', year, instType, round]);
 
       const html = await cached(key, async () => {
         if (!form) throw new Error('no cache and --from-cache set');
         const payload = new URLSearchParams({ ...form.hidden });
-        const set = (field, matcher) => {
+        /* `literal` is what to post when the control came back with no options to choose
+           from. Previously this fell through to `undefined` and set nothing, so the
+           postback quietly used whatever the form defaulted to and every year/type
+           combination returned the same page. Posting the literal is what the dropdown
+           would have carried anyway — JoSAA's option values for these are the year and
+           the institute-type string themselves. */
+        const set = (field, matcher, literal) => {
           if (!field) return;
           const opt = field.options.find(matcher) ?? field.options[field.options.length - 1];
-          if (opt) payload.set(field.name, opt.value);
+          if (opt) { payload.set(field.name, opt.value); return; }
+          if (literal != null) {
+            payload.set(field.name, String(literal));
+            if (args.verbose) console.log(`     ${field.name} has no options; posting literal ${literal}`);
+          }
         };
-        set(form.fields.year, o => o.text.trim() === String(year));
-        set(form.fields.instType, o => o.text.toLowerCase().includes(instType.split('-')[0].toLowerCase()));
-        if (args.round != null) set(form.fields.round, o => o.text.trim() === String(args.round));
+        set(form.fields.year, o => o.text.trim() === String(year), year);
+        set(form.fields.instType, o => o.text.toLowerCase().includes(instType.split('-')[0].toLowerCase()), instType);
+        if (args.round != null) set(form.fields.round, o => o.text.trim() === String(args.round), args.round);
         payload.set('__EVENTTARGET', '');
         payload.set('__EVENTARGUMENT', '');
         if (args.verbose) console.log(`  -> POST ${year} ${instType} round=${round}`);
-        return request(ARCHIVE, { method: 'POST', body: payload.toString() });
+        const body = payload.toString();
+        const responseHtml = await request(ARCHIVE, { method: 'POST', body });
+        await dumper.write(`post-${year}-${instType}`, { url: ARCHIVE, method: 'POST', payload: body, html: responseHtml });
+        return responseHtml;
       }, args);
 
       if (!html) { problems.push(`${year}/${instType}: no cached page and network disabled`); continue; }
 
       const rows = parseResultTable(html);
       if (!rows.length) { problems.push(`${year}/${instType}: no result rows parsed`); continue; }
+
+      const fp = fingerprint(rows);
+      const clash = seenPages.get(fp);
+      if (clash) {
+        problems.push(
+          `${year}/${instType} returned exactly the same rows as ${clash} — the posted filter ` +
+          `was ignored, so this data is not what it claims to be. Re-probe before trusting any of it.`
+        );
+        continue;
+      }
+      seenPages.set(fp, `${year}/${instType}`);
 
       for (const r of rows) {
         const close = parseRank(r.closeRank);
@@ -468,6 +678,7 @@ async function emit(records, args, problems) {
 
 const args = parseArgs(process.argv);
 try {
+  await dumper.init(args.dump);
   if (args.probe) await probe();
   else await ingest(args);
 } catch (err) {

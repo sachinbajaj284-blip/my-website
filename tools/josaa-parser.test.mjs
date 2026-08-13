@@ -30,6 +30,8 @@ ${lift('stripTags')}
 ${lift('extractHiddenFields')}
 ${lift('extractSelects')}
 ${lift('findSelect')}
+${lift('CONTROL_NAME_HINTS')}
+${lift('findSelectByName')}
 ${lift('discoverFields')}
 ${lift('parseResultTable')}
 ${lift('parseRank')}
@@ -113,6 +115,70 @@ test('discovers controls by option vocabulary, not by id', () => {
 test('skips placeholder "Select ..." options', () => {
   const f = mod.discoverFields(FIXTURE);
   assert.deepEqual(f.year.options.map(o => o.text), ['2024', '2025', '2026']);
+});
+
+test('prefers option vocabulary over the name fallback when both would match', () => {
+  const f = mod.discoverFields(FIXTURE);
+  assert.equal(f.year.via, 'options');
+  assert.equal(f.instType.via, 'options');
+});
+
+/* The state that broke the 2026-08-05 workflow run: the six controls are present, but
+   JoSAA now serves them without options and fills them by postback. Vocabulary matching
+   has nothing to bite on, so every lookup returned null and the probe declared the whole
+   form missing. Note there is no gender control here — JoSAA dropped it. */
+const EMPTY_SELECTS_FIXTURE = `
+<html><body><form method="post" action="./openingclosingrankarchieve.aspx">
+<input type="hidden" name="__VIEWSTATE" value="/wEPDwUKLTE5OTU4Nzc4NQ%3D%3D" />
+<select name="ctl00$ContentPlaceHolder1$ddlYear"></select>
+<select name="ctl00$ContentPlaceHolder1$ddlroundno"></select>
+<select name="ctl00$ContentPlaceHolder1$ddlInstype"></select>
+<select name="ctl00$ContentPlaceHolder1$ddlInstitute"></select>
+<select name="ctl00$ContentPlaceHolder1$ddlBranch"></select>
+<select name="ctl00$ContentPlaceHolder1$ddlSeatType"></select>
+</form></body></html>`;
+
+test('falls back to control names when the dropdowns arrive empty', () => {
+  const f = mod.discoverFields(EMPTY_SELECTS_FIXTURE);
+  assert.equal(f.year.name, 'ctl00$ContentPlaceHolder1$ddlYear');
+  assert.equal(f.round.name, 'ctl00$ContentPlaceHolder1$ddlroundno');
+  assert.equal(f.instType.name, 'ctl00$ContentPlaceHolder1$ddlInstype');
+  assert.equal(f.seatType.name, 'ctl00$ContentPlaceHolder1$ddlSeatType');
+  assert.equal(f.year.via, 'name');
+});
+
+test('reports the empty controls as having no options rather than inventing some', () => {
+  const f = mod.discoverFields(EMPTY_SELECTS_FIXTURE);
+  assert.deepEqual(f.year.options, []);
+  assert.deepEqual(f.instType.options, []);
+});
+
+test('a missing gender control is absent, not fatal', () => {
+  const f = mod.discoverFields(EMPTY_SELECTS_FIXTURE);
+  assert.equal(f.gender, null);
+  /* The three the ingest actually posts must still be found. */
+  assert.ok(f.year && f.round && f.instType);
+});
+
+test('the name fallback ignores the ASP.NET container prefix', () => {
+  const renamed = EMPTY_SELECTS_FIXTURE.replace(/ctl00\$ContentPlaceHolder1\$/g, 'ctl00$MainContent$');
+  const f = mod.discoverFields(renamed);
+  assert.equal(f.year.name, 'ctl00$MainContent$ddlYear');
+  assert.equal(f.instType.name, 'ctl00$MainContent$ddlInstype');
+});
+
+test('does not mistake the institute or branch control for a required one', () => {
+  const f = mod.discoverFields(EMPTY_SELECTS_FIXTURE);
+  for (const key of ['year', 'round', 'instType', 'seatType']) {
+    assert.notEqual(f[key].name, 'ctl00$ContentPlaceHolder1$ddlInstitute', `${key} matched ddlInstitute`);
+    assert.notEqual(f[key].name, 'ctl00$ContentPlaceHolder1$ddlBranch', `${key} matched ddlBranch`);
+  }
+});
+
+test('still finds nothing when the controls are genuinely gone', () => {
+  const f = mod.discoverFields('<html><body><form><select name="ctl00$foo$ddlSomethingElse"></select></form></body></html>');
+  assert.equal(f.year, null);
+  assert.equal(f.instType, null);
 });
 
 test('parses the results grid', () => {
