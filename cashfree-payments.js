@@ -20,6 +20,42 @@
        window.lumeCashfreeGetConfig()
      ============================================================ */
 
+  /* ------------------------------------------------------- SDK, on demand --
+     Cashfree's SDK is only ever needed once someone starts a payment, which on
+     most pages is nobody. Fetching it up front made every visitor — including
+     the ones who came to read a career guide — wait on a third-party script
+     before the page could render. We load it at checkout instead.
+
+     The promise is cached, so a second checkout in the same session reuses the
+     first load, and a failed load can be retried rather than being stuck. */
+  var sdkPromise = null;
+  var SDK_URL = "https://sdk.cashfree.com/js/v3/cashfree.js";
+
+  function loadCashfreeSdk(){
+    if(window.Cashfree) return Promise.resolve();
+    if(sdkPromise) return sdkPromise;
+    sdkPromise = new Promise(function(resolve, reject){
+      var existing = document.querySelector('script[src="' + SDK_URL + '"]');
+      var s = existing || document.createElement("script");
+      s.addEventListener("load", function(){
+        /* The SDK defines window.Cashfree synchronously on execute; if it did
+           not, something served us the wrong file. */
+        if(window.Cashfree) resolve();
+        else reject(new Error("Cashfree SDK loaded but did not initialise."));
+      });
+      s.addEventListener("error", function(){
+        sdkPromise = null;
+        reject(new Error("Could not reach the payment provider. Check your connection, or pay by UPI below."));
+      });
+      if(!existing){
+        s.src = SDK_URL;
+        s.async = true;
+        document.head.appendChild(s);
+      }
+    });
+    return sdkPromise;
+  }
+
   var DEFAULTS = {
     mode: "production",
     createOrderEndpoint: "/api/cashfree/create-order",
@@ -887,6 +923,7 @@
       if(typeof options.onStarted === "function"){ try{ options.onStarted(data, { stage:"checkout-opened" }); }catch(e){} }
 
       renderLoading("Opening Cashfree checkout…");
+      return loadCashfreeSdk().then(function(){
       var cashfree = window.Cashfree({ mode: cfg.mode || "production" });
       return cashfree.checkout({ paymentSessionId: sessionId, redirectTarget: "_modal" })
         .then(function(result){
@@ -899,6 +936,7 @@
           verifyAndRender(options, orderId);
           return { ok:true, order:data, result:result };
         });
+      });
     })
     .catch(function(err){
       console.warn("[Lume Cashfree]", err);

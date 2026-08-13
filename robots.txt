@@ -7,4 +7,9 @@ Disallow: /*?*utm_
 Disallow: /*?*fbclid
 
 Sitemap: https://lumelive.co.in/sitemap.xml
-Sitemap: https://lumelive.co.in/sitemap-colleges.xml
+
+# sitemap-colleges.xml is written by tools/josaa-pages.mjs, which has not run
+# successfully yet. Listing a sitemap that 404s costs us crawl trust, so it stays
+# commented out until the JoSAA ingest publishes a dataset. Uncomment in the same
+# commit that adds colleges/.
+# Sitemap: https://lumelive.co.in/sitemap-colleges.xml

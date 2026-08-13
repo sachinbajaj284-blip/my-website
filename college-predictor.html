@@ -58,6 +58,16 @@ a{color:var(--teal);text-decoration:none}
 .btn.block{width:100%}
 .status{margin-top:14px;font-size:.9rem;font-weight:700;color:var(--muted)}
 .status.err{color:#A2372F;background:#FDF3F2;border:1px solid #F0CFCB;border-radius:12px;padding:12px 14px}
+/* Shown when we cannot answer the question the student came to ask. It reads as a
+   note rather than an error, because nothing they did was wrong. */
+.status.notice{display:block;font-weight:500;color:var(--ink);background:linear-gradient(135deg,#FFF8EC,#F4FAFA);border:1px solid rgba(201,147,58,.24);border-radius:14px;padding:16px 18px;text-align:left}
+.notice-head{display:block;font-size:1rem;font-weight:800;color:var(--navy);margin-bottom:6px}
+.notice-body{display:block;font-size:.9rem;line-height:1.55;color:var(--ink)}
+.notice-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+.notice-btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:11px 20px;border-radius:999px;background:#1EAE5C;color:#fff;font-weight:800;font-size:.88rem;text-decoration:none}
+.notice-btn:hover{background:#178f4a}
+.notice-btn:focus-visible,.notice-link:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.notice-link{font-weight:700;font-size:.88rem;color:var(--navy);text-decoration:underline;text-underline-offset:3px}
 .note{background:linear-gradient(135deg,#FFF8EC,#F4FAFA);border:1px solid rgba(201,147,58,.24);border-radius:14px;padding:16px 18px;margin:18px 0;font-size:.9rem;color:var(--ink)}
 .note b{color:var(--gold);display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
 #resultsWrap{scroll-margin-top:76px}

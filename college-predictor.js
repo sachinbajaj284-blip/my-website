@@ -87,6 +87,43 @@
     el.hidden = !msg;
   }
 
+  /* The two ways this tool can fail to answer, written for a student and a parent
+     rather than for whoever maintains the ingest. Both keep a way forward on screen:
+     someone who came here with a rank in hand is exactly who we want to talk to.
+     The markup is a fixed template — nothing from the page or the error is
+     interpolated into it. */
+  var FALLBACK = {
+    pending: {
+      head: 'This year’s cutoffs aren’t loaded yet',
+      body: 'JoSAA publishes its opening and closing ranks in stages through the counselling season, ' +
+            'and we only put them here once we have checked them against the official archive. ' +
+            'Rather than show you a guess, we’d rather look at your rank with you directly.'
+    },
+    network: {
+      head: 'We couldn’t load the cutoff data',
+      body: 'This is usually a connection problem and clears on a retry. ' +
+            'If it keeps happening, send us your rank and we’ll work through the options with you.'
+    }
+  };
+
+  function showFallback(kind) {
+    var copy = FALLBACK[kind] || FALLBACK.network;
+    var el = $('status');
+    el.className = 'status notice';
+    el.hidden = false;
+    el.innerHTML =
+      '<strong class="notice-head"></strong>' +
+      '<span class="notice-body"></span>' +
+      '<span class="notice-actions">' +
+        '<a class="notice-btn" href="https://wa.me/917015671280?text=' +
+          encodeURIComponent('Hi, I used the JEE college predictor on your site. My rank is ') +
+        '" rel="noopener">Ask about my rank on WhatsApp</a>' +
+        '<a class="notice-link" href="assessment.html">Take the free career snapshot</a>' +
+      '</span>';
+    el.querySelector('.notice-head').textContent = copy.head;
+    el.querySelector('.notice-body').textContent = copy.body;
+  }
+
   /* -------------------------------------------------------------------- init -- */
 
   function readInput() {
@@ -131,11 +168,10 @@
         render(state.results, input);
       })
       .catch(function (e) {
-        setStatus(
-          'Cutoff data is not available yet. ' +
-          'The JoSAA dataset has not been published to this site — run tools/josaa-ingest.mjs. (' + e.message + ')',
-          'err'
-        );
+        /* Whatever broke, the student is not the person who can fix it. Keep the
+           technical detail in the console for us and give them a way forward. */
+        if (window.console && console.warn) console.warn('[predictor]', e && e.message);
+        showFallback(e && e.code === 'NO_DATASET' ? 'pending' : 'network');
         $('resultsWrap').hidden = true;
       });
   }
