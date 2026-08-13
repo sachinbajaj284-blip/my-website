@@ -1,0 +1,465 @@
+<title>The Undiscovered Site</title>
+<style>
+:root{
+  --paper:#F7F6F3;
+  --surface:#FFFFFF;
+  --sunk:#EFEDE8;
+  --ink:#191A17;
+  --ink-soft:#3E4048;
+  --muted:#6C6E7A;
+  --rule:#DCD9D2;
+  --indigo:#2C3A7B;
+  --indigo-soft:#E7E9F4;
+  --crit:#A0341E;
+  --crit-soft:#F6E7E2;
+  --warn:#8A6410;
+  --warn-soft:#F6EFDC;
+  --good:#2C6650;
+  --good-soft:#E3EFE9;
+  --display:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#131417;
+    --surface:#1B1D21;
+    --sunk:#222429;
+    --ink:#EDECE8;
+    --ink-soft:#C3C4CC;
+    --muted:#8E90A0;
+    --rule:#31343B;
+    --indigo:#9AA8E8;
+    --indigo-soft:#22273F;
+    --crit:#E08A72;
+    --crit-soft:#33211C;
+    --warn:#D9AE55;
+    --warn-soft:#2E2718;
+    --good:#79BFA1;
+    --good-soft:#1B2B25;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#131417;
+  --surface:#1B1D21;
+  --sunk:#222429;
+  --ink:#EDECE8;
+  --ink-soft:#C3C4CC;
+  --muted:#8E90A0;
+  --rule:#31343B;
+  --indigo:#9AA8E8;
+  --indigo-soft:#22273F;
+  --crit:#E08A72;
+  --crit-soft:#33211C;
+  --warn:#D9AE55;
+  --warn-soft:#2E2718;
+  --good:#79BFA1;
+  --good-soft:#1B2B25;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:17px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:820px;margin:0 auto;padding:0 24px 120px}
+
+/* ---------- masthead ---------- */
+.mast{padding:72px 0 40px;border-bottom:2px solid var(--ink)}
+.eyebrow{
+  font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 28px;
+}
+h1{
+  font-family:var(--display);font-weight:600;font-size:clamp(38px,6.5vw,60px);
+  line-height:1.06;letter-spacing:-.02em;text-wrap:balance;margin:0 0 22px;
+}
+.standfirst{
+  font-size:20px;line-height:1.55;color:var(--ink-soft);max-width:60ch;margin:0;
+}
+.standfirst strong{color:var(--ink);font-weight:600}
+
+/* ---------- verdict strip ---------- */
+.verdict{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));
+  gap:1px;background:var(--rule);border:1px solid var(--rule);margin:40px 0 0;
+}
+.vcell{background:var(--surface);padding:18px 18px 20px}
+.vnum{
+  font-family:var(--mono);font-size:27px;font-weight:600;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;display:block;line-height:1.1;
+}
+.vlabel{font-size:13px;color:var(--muted);line-height:1.4;display:block;margin-top:6px}
+.vcell.bad .vnum{color:var(--crit)}
+.vcell.ok .vnum{color:var(--good)}
+
+/* ---------- sections ---------- */
+h2{
+  font-family:var(--display);font-weight:600;font-size:30px;letter-spacing:-.015em;
+  margin:72px 0 8px;text-wrap:balance;
+}
+.sectionnote{color:var(--muted);font-size:15px;margin:0 0 28px;max-width:62ch}
+h3{font-size:18px;font-weight:650;margin:32px 0 10px;letter-spacing:-.005em}
+p{margin:0 0 16px;max-width:68ch}
+a{color:var(--indigo)}
+a:focus-visible,summary:focus-visible{outline:2px solid var(--indigo);outline-offset:3px}
+
+/* ---------- the two-column keep/fix ---------- */
+.ledger{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin:28px 0 0}
+@media(max-width:640px){.ledger{grid-template-columns:1fr}}
+.col h4{
+  font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+  margin:0 0 14px;padding-bottom:8px;border-bottom:1px solid var(--rule);
+}
+.col.keep h4{color:var(--good)}
+.col.fix h4{color:var(--crit)}
+.col ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.col li{font-size:15px;line-height:1.5;padding-left:20px;position:relative;color:var(--ink-soft)}
+.col li::before{position:absolute;left:0;top:0;font-family:var(--mono);font-size:14px}
+.col.keep li::before{content:"+";color:var(--good)}
+.col.fix li::before{content:"–";color:var(--crit)}
+
+/* ---------- findings ---------- */
+.finding{
+  background:var(--surface);border:1px solid var(--rule);border-left:4px solid var(--muted);
+  padding:26px 28px;margin:0 0 20px;
+}
+.finding.crit{border-left-color:var(--crit)}
+.finding.warn{border-left-color:var(--warn)}
+.fhead{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.fnum{
+  font-family:var(--mono);font-size:13px;font-weight:600;color:var(--muted);
+  font-variant-numeric:tabular-nums;
+}
+.chip{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 8px;border-radius:2px;font-weight:600;
+}
+.chip.crit{background:var(--crit-soft);color:var(--crit)}
+.chip.warn{background:var(--warn-soft);color:var(--warn)}
+.chip.money{background:var(--indigo-soft);color:var(--indigo)}
+.finding h3{margin:0 0 12px;font-family:var(--display);font-size:23px;font-weight:600;letter-spacing:-.01em;width:100%}
+.finding p{font-size:16px;margin:0 0 14px}
+.finding p:last-child{margin-bottom:0}
+
+.evidence{
+  background:var(--sunk);border:1px solid var(--rule);font-family:var(--mono);
+  font-size:13px;line-height:1.7;padding:14px 16px;margin:0 0 16px;
+  overflow-x:auto;white-space:pre;color:var(--ink-soft);
+}
+.evidence b{color:var(--ink);font-weight:600}
+.evidence .flag{color:var(--crit);font-weight:600}
+
+.sofix{
+  border-top:1px solid var(--rule);margin-top:18px;padding-top:14px;
+  font-size:15.5px;color:var(--ink-soft);
+}
+.sofix strong{
+  font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--indigo);display:block;margin-bottom:6px;font-weight:600;
+}
+
+/* ---------- pricing table ---------- */
+.tablewrap{overflow-x:auto;margin:24px 0;border:1px solid var(--rule)}
+table{border-collapse:collapse;width:100%;font-size:15px;background:var(--surface)}
+th,td{text-align:left;padding:11px 16px;border-bottom:1px solid var(--rule)}
+th{
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);font-weight:600;background:var(--sunk);
+}
+tr:last-child td{border-bottom:none}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.you{color:var(--crit);font-weight:600}
+
+/* ---------- phase plan ---------- */
+.phase{
+  display:grid;grid-template-columns:92px 1fr;gap:24px;
+  padding:24px 0;border-bottom:1px solid var(--rule);
+}
+@media(max-width:600px){.phase{grid-template-columns:1fr;gap:8px}}
+.phase:last-of-type{border-bottom:none}
+.when{
+  font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--indigo);font-weight:600;padding-top:3px;
+}
+.phase h3{margin:0 0 8px;font-size:18px}
+.phase ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px}
+.phase li{font-size:15.5px;line-height:1.55;color:var(--ink-soft)}
+.phase li strong{color:var(--ink);font-weight:600}
+
+code{
+  font-family:var(--mono);font-size:.88em;background:var(--sunk);
+  padding:1px 5px;border:1px solid var(--rule);
+}
+.foot{
+  margin-top:80px;padding-top:24px;border-top:1px solid var(--rule);
+  font-size:14px;color:var(--muted);
+}
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <p class="eyebrow">Traffic audit · lumelive.co.in · 13 August 2026</p>
+  <h1>The site isn't broken. It's undiscovered.</h1>
+  <p class="standfirst">I read all 98 pages, the build tooling, and the CI history. The on-page SEO is <strong>better than most of your competitors'</strong> — canonicals, hreflang, schema, lazy-loaded WebP, a clean sitemap. That is not why traffic is missing. Traffic is missing because the one page that could have earned it <strong>has never had any data in it</strong>, and because nothing on this domain has ever been measured or promoted.</p>
+
+  <div class="verdict">
+    <div class="vcell"><span class="vnum">98</span><span class="vlabel">HTML pages built</span></div>
+    <div class="vcell bad"><span class="vnum">0</span><span class="vlabel">JoSAA rows ever ingested</span></div>
+    <div class="vcell bad"><span class="vnum">0</span><span class="vlabel">Search Console verifications</span></div>
+    <div class="vcell bad"><span class="vnum">0</span><span class="vlabel">Ad or retargeting pixels</span></div>
+    <div class="vcell ok"><span class="vnum">69</span><span class="vlabel">Pages with FAQ schema</span></div>
+  </div>
+</header>
+
+<h2>What to keep, what to stop</h2>
+<p class="sectionnote">Before the findings — the most expensive mistake here would be rebuilding the parts that already work. They're genuinely good.</p>
+
+<div class="ledger">
+  <div class="col keep">
+    <h4>Already working — don't touch</h4>
+    <ul>
+      <li>Structured data is thorough: Organization, ProfessionalService, LocalBusiness, FAQPage on 69 pages</li>
+      <li>Image handling is correct — <code>&lt;picture&gt;</code> with WebP, 22 of 24 images lazy-loaded, width/height set to stop layout shift</li>
+      <li>Canonicals and en-IN/hi-IN hreflang are properly paired</li>
+      <li>A real Hindi homepage exists, which most competitors don't have</li>
+      <li>Security headers, CSP, refund and privacy policy — you'd survive a payment-gateway review</li>
+    </ul>
+  </div>
+  <div class="col fix">
+    <h4>Costing you traffic today</h4>
+    <ul>
+      <li>The college predictor shows an error to every visitor who opens it</li>
+      <li><code>sitemap-colleges.xml</code> is advertised to Google but returns 404</li>
+      <li>22 city pages are near-identical to each other</li>
+      <li>No way to know whether Google has indexed you at all</li>
+      <li>Payment SDKs block rendering on a homepage where nobody pays</li>
+      <li>Zero third-party reviews anywhere on the domain</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Findings, ranked by what they cost you</h2>
+<p class="sectionnote">Ordered by revenue impact, not by effort. The first one is worth more than the other six combined, and it is time-critical.</p>
+
+<article class="finding crit">
+  <div class="fhead">
+    <span class="fnum">01</span>
+    <span class="chip crit">Critical</span>
+    <span class="chip money">Peak season is now</span>
+  </div>
+  <h3>Your only real traffic weapon was built, tested, and never switched on</h3>
+  <p>Someone did excellent work here. There is a full JoSAA cutoff pipeline — an ingester, a validator, a parser test suite, and a page generator that deliberately writes cutoff tables into the HTML because "a client-rendered table indexes as an empty page." It is wired to a scheduled GitHub Action. It has never produced a single row.</p>
+
+  <div class="evidence">data/josaa/          → institute-states.json only (3.7 KB)
+                     <span class="flag">manifest.json MISSING</span>
+colleges/            <span class="flag">directory does not exist</span>
+sitemap-colleges.xml <span class="flag">404 — but listed in robots.txt</span>
+
+Workflow "Refresh JoSAA dataset": <b>1 run, ever</b>
+  2026-08-05  triggered by schedule  <span class="flag">failure after 12s</span>
+  step 4  Check JoSAA is reachable ....... ok
+  step 5  Parser unit tests (11 passed) .. ok
+  step 6  Probe the JoSAA form .......... <span class="flag">FAILED</span>
+  steps 7-9  ingest / validate / generate . skipped</div>
+
+  <p>The probe failure is small and specific. JoSAA changed its page; <code>discoverFields()</code> identifies each dropdown by its option text rather than its id, and JoSAA now serves those dropdowns empty on first load, so nothing matches. The probe already printed the live control names for you:</p>
+
+  <div class="evidence">  year       <span class="flag">NOT FOUND</span>          All &lt;select&gt; controls seen:
+  round      <span class="flag">NOT FOUND</span>            ctl00$ContentPlaceHolder1$<b>ddlYear</b>
+  instType   <span class="flag">NOT FOUND</span>            ctl00$ContentPlaceHolder1$<b>ddlroundno</b>
+  seatType   <span class="flag">NOT FOUND</span>            ctl00$ContentPlaceHolder1$<b>ddlInstype</b>
+  gender     <span class="flag">NOT FOUND</span>            ctl00$ContentPlaceHolder1$<b>ddlInstitute</b>
+                                 ctl00$ContentPlaceHolder1$<b>ddlBranch</b>
+                                 ctl00$ContentPlaceHolder1$<b>ddlSeatType</b></div>
+
+  <p>Note there is no gender dropdown on that page any more — the ingester is still looking for one. Meanwhile <code>college-predictor.js:136</code> shows every visitor: <em>"The JoSAA dataset has not been published to this site."</em></p>
+
+  <p>This matters more than anything else on the list because cutoff and predictor queries are the highest-volume, highest-intent student searches in India, they peak between June and August, and they attract the inbound links your domain has none of. Every other page you've written — "career counselling in Pune," "what is CUET" — is a commodity that fifty sites already own. A working JoSAA predictor is not.</p>
+
+  <div class="sofix">
+    <strong>Do this first</strong>
+    Fix <code>discoverFields()</code> to fall back to those control names, drop the gender field, then run the workflow manually with <code>smoke_test = true</code>. When the smoke test parses cleanly, re-run with it off to pull 2024–2026 and commit. This is days of work at most and it is the difference between a site with a reason to exist and 98 pages of undifferentiated advice. Do it before the counselling season closes.
+  </div>
+</article>
+
+<article class="finding crit">
+  <div class="fhead">
+    <span class="fnum">02</span>
+    <span class="chip crit">Critical</span>
+  </div>
+  <h3>Your 22 city pages look like doorway pages to Google</h3>
+  <p>I measured vocabulary overlap between every city page and the Mumbai one. The metros are 68–76% identical to each other — same structure, same claims, same FAQs, with the city name swapped.</p>
+
+  <div class="evidence">page                          words   overlap vs Mumbai
+career-counselling-in-ahmedabad  1013   <span class="flag">0.757</span>
+career-counselling-in-guwahati   1021   <span class="flag">0.735</span>
+career-counselling-in-bangalore  1016   <span class="flag">0.732</span>
+career-counselling-in-kolkata    1017   <span class="flag">0.731</span>
+career-counselling-in-pune        997   <span class="flag">0.731</span>
+...
+career-counselling-in-rohtak     1900   0.284   <b>← genuinely different</b></div>
+
+  <p>Google's spam policy names doorway pages explicitly: pages generated for many cities that funnel users to the same content. The best case is that Google indexes one and ignores twenty-one. The worse case is that the pattern suppresses trust in the whole domain, which would also explain why nothing else ranks either. It doesn't help that these pages mostly link to <em>each other</em> — the homepage links to exactly one of them.</p>
+  <p>Rohtak is the exception, and it's the honest one: nearly twice the length, genuinely distinct, and the city you actually operate in.</p>
+
+  <div class="sofix">
+    <strong>The fix</strong>
+    Keep Rohtak and the Haryana cluster you can actually serve — Bhiwani, Hisar, Panipat, Sonipat, Gurugram, Faridabad, Noida. Those already score lower overlap because they contain real local detail. 301-redirect the fifteen metros you have no presence in into one strong "online career counselling in India" page. Fewer, thicker, honest pages beat twenty-two thin ones every time.
+  </div>
+</article>
+
+<article class="finding crit">
+  <div class="fhead">
+    <span class="fnum">03</span>
+    <span class="chip crit">Critical</span>
+  </div>
+  <h3>You are flying blind, and you cannot run ads even if you wanted to</h3>
+  <div class="evidence">google-site-verification   <span class="flag">0 pages of 98</span>
+Facebook / Meta Pixel      <span class="flag">0 pages</span>
+Google Ads conversion tag  <span class="flag">0 pages</span>
+GA4 (G-1CZ93P4P3V)         96 pages  <b>ok</b>
+  missing: internship-confidentiality-agreement.html
+           internship-consent-shadowing.html</div>
+  <p>GA4 tells you what happened after someone arrived. It cannot tell you whether Google has indexed you, which queries you appear for, or whether that 404ing colleges sitemap is throwing errors. That's Search Console, and there's no verification file anywhere in this repo.</p>
+  <p>The second half is more expensive. With no Meta Pixel and no Google Ads tag, you cannot run paid acquisition, and — more painfully — you cannot retarget. People take your free assessment, get a result, and leave forever. In India, Meta ads aimed at parents are the fastest paid channel in this category, and warm retargeting of assessment-takers is the cheapest conversion you will ever buy. You're throwing that audience away every day.</p>
+  <div class="sofix">
+    <strong>The fix</strong>
+    Verify Search Console this week and submit both sitemaps (after the colleges one exists). Add the Meta Pixel and a Google Ads tag — your CSP already permits the pattern, so it's a header change and a <code>connect-src</code> entry. Fire a custom event when someone completes the free assessment; that's your retargeting audience.
+  </div>
+</article>
+
+<article class="finding warn">
+  <div class="fhead">
+    <span class="fnum">04</span>
+    <span class="chip warn">Important</span>
+  </div>
+  <h3>The homepage makes a parent on 4G wait for a payment SDK</h3>
+  <div class="evidence">index.html      280 KB   <span class="flag">of which 146 KB is inline JS</span>
+  largest inline blocks:  60 KB · 29 KB · 15 KB · 11 KB
+index.css       200 KB
+
+render-blocking, no defer/async:
+  sdk.cashfree.com/js/v3/cashfree.js   <span class="flag">external</span>
+  cashfree-payments.js                  <span class="flag">55 KB</span>
+  lume-coupons.js                       <span class="flag">33 KB</span>
+  lume-capture.js                       6 KB  <b>defer ok</b></div>
+  <p>The 60 KB block is a personality item bank; the 15 KB block is a clinical screener. None of it is needed to render the page someone lands on. The Cashfree SDK and the coupon engine load synchronously on a page where no payment occurs. On a mid-range Android phone on Indian 4G — which is most of your audience — that's a slow first paint, and mobile page experience is both a ranking input and the reason people bounce before your copy ever loads.</p>
+  <p>Credit where it's due: your images are handled properly, which is usually the bigger sin. This is a script problem, not an asset problem.</p>
+  <div class="sofix">
+    <strong>The fix</strong>
+    Load the Cashfree SDK and <code>cashfree-payments.js</code> only when someone actually reaches checkout. Move the assessment item banks out of <code>index.html</code> into a file the assessment page loads. Add <code>defer</code> to what's left.
+  </div>
+</article>
+
+<article class="finding warn">
+  <div class="fhead">
+    <span class="fnum">05</span>
+    <span class="chip warn">Important</span>
+  </div>
+  <h3>Nobody else vouches for you — and that's exactly how competitors beat you locally</h3>
+  <p>I searched for your brand. It doesn't appear. For your own home city, the results are Sulekha, Edumilestones, Mindgroom, PlacementIndia and TheCareerGalaxy — several of which run the same programmatic city-page playbook you do, but with directory listings, review counts and domain age behind them.</p>
+  <div class="evidence">AggregateRating / Review schema:  <span class="flag">0 pages of 98</span></div>
+  <p>You have testimonial photos on the site but no review markup, no Google Business Profile presence, and no directory listings. For a query like "career counselling in Rohtak," the Google map pack sits <em>above</em> every organic result — and a local business with real reviews wins it. That's off-site work no amount of HTML in this repo can substitute for.</p>
+  <div class="sofix">
+    <strong>The fix</strong>
+    Create a Google Business Profile for Rohtak and ask your existing clients for reviews — twenty genuine ones will outrank all twenty-two city pages for local intent. List on Sulekha and Justdial, where your competitors already are. Then add real <code>Review</code> and <code>AggregateRating</code> schema.
+  </div>
+</article>
+
+<h2>The money problem is separate from the traffic problem</h2>
+<p class="sectionnote">You asked how to make serious money in India. Honestly: even with traffic fixed, your current pricing cannot get you there. Here's the arithmetic.</p>
+
+<article class="finding crit">
+  <div class="fhead">
+    <span class="fnum">06</span>
+    <span class="chip crit">Critical</span>
+    <span class="chip money">Revenue</span>
+  </div>
+  <h3>You are priced roughly 10× below the market you're competing in</h3>
+  <div class="tablewrap">
+  <table>
+    <tr><th>Provider</th><th>Typical price</th><th>What's sold</th></tr>
+    <tr><td>iDreamCareer</td><td class="num">₹2,000 – ₹15,000</td><td>Counsellor sessions + assessment</td></tr>
+    <tr><td>Mindler</td><td class="num">₹3,000 – ₹8,000</td><td>5-D psychometric + 34-page report</td></tr>
+    <tr><td class="you">Lume Live</td><td class="num you">₹249 – ₹999</td><td>Session + clarity report</td></tr>
+  </table>
+  </div>
+  <p>Across your 98 pages, <code>₹249</code> appears 419 times, <code>₹999</code> 165 times, <code>₹499</code> 130 times. Your only high-ticket item, ₹11,999, appears 29 times — and there is nothing at all between ₹999 and ₹11,999, which is precisely the ₹2,500–₹5,000 band where this market actually transacts.</p>
+  <p>The trap is that in Indian career counselling the buyer is a parent, not the student, and parents read price as a quality signal for their child's future. ₹249 doesn't read as a bargain — it reads as not serious. You are simultaneously working harder for less money <em>and</em> signalling that your work is worth less than Mindler's. Discounting to FIRST50 on top of an already-low anchor deepens both problems.</p>
+  <div class="sofix">
+    <strong>The fix</strong>
+    Keep a free assessment as the top of funnel — that part is right. Move the report to ₹1,499–₹1,999 and introduce a ₹3,499–₹4,999 package that bundles the report with two live sessions and a parent debrief. Your ₹11,999 tier should be a multi-month programme, not a bigger one-off. Raise prices before you buy traffic; otherwise every rupee of ad spend is buying ₹249 customers.
+  </div>
+</article>
+
+<article class="finding warn">
+  <div class="fhead">
+    <span class="fnum">07</span>
+    <span class="chip warn">Important</span>
+    <span class="chip money">Revenue</span>
+  </div>
+  <h3>The channel that actually pays in India is already built and sitting unused</h3>
+  <p>You have <code>school-partnerships.html</code>, <code>school-proposal.html</code> and <code>partner-with-us.html</code> in this repo. That is the business. One school contract covers 200–800 students in a single signature, at a per-student rate you never have to discount, with the school doing the distribution for you. Reaching 800 students at ₹249 each, one parent at a time through Google, is a far harder path to the same money.</p>
+  <p>You have a real advantage here that the national players don't: you're physically in Rohtak, in Haryana, within reach of Delhi NCR. Mindler and iDreamCareer sell to schools over video calls from Gurugram offices. You can sit in a principal's office on a Tuesday.</p>
+  <div class="sofix">
+    <strong>The fix</strong>
+    Treat D2C as lead generation and brand proof, not as the revenue line. Take the school proposal you already wrote to twenty Haryana and NCR schools in person before the academic year settles. Use the free assessment as the door-opener — offer it to a whole class at no cost, then sell the counselling layer on the back of the results.
+  </div>
+</article>
+
+<h2>What to do, in order</h2>
+<p class="sectionnote">Sequenced so that nothing here depends on something later in the list.</p>
+
+<div class="phase">
+  <div class="when">Week 1</div>
+  <div>
+    <h3>Stop the bleeding and start measuring</h3>
+    <ol>
+      <li><strong>Verify Google Search Console</strong> and submit the sitemap. You cannot manage what you can't see.</li>
+      <li><strong>Fix the JoSAA probe</strong> and run the workflow as a smoke test. Everything about your traffic ceiling depends on this.</li>
+      <li><strong>Remove <code>sitemap-colleges.xml</code> from robots.txt</strong> until it exists — you're currently pointing Google at a 404.</li>
+      <li><strong>Add the Meta Pixel</strong> so you start building a retargeting audience today rather than in a month.</li>
+    </ol>
+  </div>
+</div>
+
+<div class="phase">
+  <div class="when">Weeks 2–4</div>
+  <div>
+    <h3>Ship the asset and clean up the liability</h3>
+    <ol>
+      <li><strong>Full JoSAA ingest and page generation</strong> for 2024–2026, committed and in the sitemap. This is your linkable asset.</li>
+      <li><strong>Consolidate the metro city pages</strong> into one national page with 301s; keep the Haryana and NCR cluster.</li>
+      <li><strong>Defer the payment stack</strong> and move the assessment item banks off the homepage.</li>
+      <li><strong>Raise prices</strong> and add the ₹3,499–₹4,999 middle tier before any ad spend starts.</li>
+    </ol>
+  </div>
+</div>
+
+<div class="phase">
+  <div class="when">Months 2–3</div>
+  <div>
+    <h3>Build the two channels that compound</h3>
+    <ol>
+      <li><strong>Google Business Profile plus twenty real reviews</strong>, and listings on Sulekha and Justdial — this wins local intent faster than any content you write.</li>
+      <li><strong>Twenty school meetings</strong> using the proposal already in this repo. One signature changes your year.</li>
+      <li><strong>Meta retargeting</strong> to everyone who completed the free assessment, at the new price points.</li>
+      <li><strong>Publish the JoSAA data as a resource</strong> — cutoff analyses, branch trends, round-by-round movement. That earns the inbound links this domain has never had.</li>
+    </ol>
+  </div>
+</div>
+
+<h2>The short version</h2>
+<p>You don't have a content problem or an SEO-hygiene problem — both are in better shape than your competitors'. You have three problems: the one genuinely differentiated thing you built has no data in it and is silently erroring in front of every visitor; twenty-two lookalike city pages may be actively damaging your standing with Google; and you've never measured, promoted, or priced the business at a level where growth is possible.</p>
+<p>Fix the JoSAA pipeline first, and fix it this month — counselling season is running right now and it will not wait for the rest of the list.</p>
+
+<p class="foot">Based on a full read of the repository at commit <code>f3cd92b</code>, its CI history, and public search results for the competitive set. Competitor pricing from published listings; treat those figures as indicative. The live site itself was unreachable from this environment, so anything requiring a production response — real Core Web Vitals, actual index coverage, live 404 behaviour — should be confirmed in Search Console and PageSpeed Insights once verification is in place.</p>
+
+</div>
