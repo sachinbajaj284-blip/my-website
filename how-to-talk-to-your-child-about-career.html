@@ -35,11 +35,21 @@
       "description": "Real scripts, the 3-question framework, and the mistakes that turn career conversations into arguments — by an M.Sc Clinical Psychologist.",
       "datePublished": "2026-07-02",
       "dateModified": "2026-07-02",
-      "author": { "@id": "https://lumelive.co.in/#sachin-bajaj" },
-      "publisher": {"@type": "Organization","name": "Lume Live","logo": {"@type": "ImageObject","url": "https://lumelive.co.in/logo.png"}},
+      "author": {
+        "@id": "https://lumelive.co.in/#organization"
+      },
+      "publisher": {
+        "@id": "https://lumelive.co.in/#organization"
+      },
       "image": "https://lumelive.co.in/sachin.jpeg",
-      "mainEntityOfPage": "https://lumelive.co.in/how-to-talk-to-your-child-about-career.html",
-      "inLanguage": "en-IN"
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://lumelive.co.in/how-to-talk-to-your-child-about-career.html"
+      },
+      "inLanguage": "en-IN",
+      "isPartOf": {
+        "@id": "https://lumelive.co.in/#website"
+      }
     },
     {
       "@type": "Person",
@@ -49,26 +59,98 @@
       "description": "Sachin Bajaj holds an M.Sc in Clinical Psychology (Gurugram University) and a PGDGC from Jamia Millia Islamia, New Delhi. Founder of Lume Live, AILET 2026 Laureate, 500+ students guided across India.",
       "url": "https://lumelive.co.in/",
       "image": "https://lumelive.co.in/sachin.jpeg",
-      "knowsLanguage": ["en-IN","hi-IN"]
+      "knowsLanguage": [
+        "en-IN",
+        "hi-IN"
+      ]
     },
     {
       "@type": "BreadcrumbList",
       "@id": "https://lumelive.co.in/how-to-talk-to-your-child-about-career.html#breadcrumb",
       "itemListElement": [
-        {"@type":"ListItem","position":1,"name":"Home","item":"https://lumelive.co.in/"},
-        {"@type":"ListItem","position":2,"name":"Career Library","item":"https://lumelive.co.in/career-library.html"},
-        {"@type":"ListItem","position":3,"name":"How to Talk to Your Child About Career","item":"https://lumelive.co.in/how-to-talk-to-your-child-about-career.html"}
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://lumelive.co.in/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Career Library",
+          "item": "https://lumelive.co.in/career-library.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "How to Talk to Your Child About Career",
+          "item": "https://lumelive.co.in/how-to-talk-to-your-child-about-career.html"
+        }
       ]
     },
     {
       "@type": "FAQPage",
       "@id": "https://lumelive.co.in/how-to-talk-to-your-child-about-career.html#faq",
       "mainEntity": [
-        {"@type":"Question","name":"How do I start a career conversation with my teenager?","acceptedAnswer":{"@type":"Answer","text":"Start sideways, not head-on. Instead of 'beta, career ka kya socha hai?' at the dinner table, ask about something specific they already enjoy: 'You spent three hours editing that video — what part of it did you like most?' Career conversations that begin from the child's existing world get answered; conversations that begin from your worry get deflected."}},
-        {"@type":"Question","name":"What if my child has no career interest at all?","acceptedAnswer":{"@type":"Answer","text":"Almost no teenager has zero interests — they have interests they have learned not to mention because those interests were previously dismissed as distractions. Look at where their free time actually goes. Gaming, reels, cricket analysis, mehendi design — each contains real signals about how they think. A structured assessment can translate those signals into career language."}},
-        {"@type":"Question","name":"My child wants a career I think is risky. Should I say no?","acceptedAnswer":{"@type":"Answer","text":"Saying a flat no usually drives the interest underground and damages trust. A better response: take it seriously enough to investigate together. Ask them to research what the path actually involves, what the middle-of-the-road (not topper) outcome looks like, and what the backup routes are. Many risky-sounding dreams either mature into realistic plans or dissolve on contact with detail — and either outcome is better reached together than imposed."}},
-        {"@type":"Question","name":"When should a counsellor join the conversation?","acceptedAnswer":{"@type":"Answer","text":"Bring in a neutral third person when the same conversation has looped three or more times without progress, when the discussion always ends in raised voices or silence, or when parent and child hold two completely different plans. A counsellor changes the dynamic: the student speaks more freely with a professional, and the data from a validated assessment moves the debate from opinion versus opinion to evidence."}}
+        {
+          "@type": "Question",
+          "name": "How do I start a career conversation with my teenager?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Start sideways, not head-on. Instead of 'beta, career ka kya socha hai?' at the dinner table, ask about something specific they already enjoy: 'You spent three hours editing that video — what part of it did you like most?' Career conversations that begin from the child's existing world get answered; conversations that begin from your worry get deflected."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What if my child has no career interest at all?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Almost no teenager has zero interests — they have interests they have learned not to mention because those interests were previously dismissed as distractions. Look at where their free time actually goes. Gaming, reels, cricket analysis, mehendi design — each contains real signals about how they think. A structured assessment can translate those signals into career language."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "My child wants a career I think is risky. Should I say no?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Saying a flat no usually drives the interest underground and damages trust. A better response: take it seriously enough to investigate together. Ask them to research what the path actually involves, what the middle-of-the-road (not topper) outcome looks like, and what the backup routes are. Many risky-sounding dreams either mature into realistic plans or dissolve on contact with detail — and either outcome is better reached together than imposed."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "When should a counsellor join the conversation?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Bring in a neutral third person when the same conversation has looped three or more times without progress, when the discussion always ends in raised voices or silence, or when parent and child hold two completely different plans. A counsellor changes the dynamic: the student speaks more freely with a professional, and the data from a validated assessment moves the debate from opinion versus opinion to evidence."
+          }
+        }
       ]
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://lumelive.co.in/#organization",
+      "name": "Lume Live",
+      "url": "https://lumelive.co.in/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://lumelive.co.in/logo.png"
+      },
+      "email": "hello@lumelive.co.in",
+      "telephone": "+91-7015671280",
+      "sameAs": [
+        "https://www.facebook.com/profile.php?id=61589670451910",
+        "https://www.instagram.com/lumelive.co.in/?hl=en"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://lumelive.co.in/#website",
+      "name": "Lume Live",
+      "url": "https://lumelive.co.in/",
+      "inLanguage": "en-IN",
+      "publisher": {
+        "@id": "https://lumelive.co.in/#organization"
+      }
     }
   ]
 }

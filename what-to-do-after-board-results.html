@@ -35,11 +35,21 @@
       "description": "A counsellor's playbook for Class 10 and 12 students and parents after board results — for good results, disappointing results, and everything in between.",
       "datePublished": "2026-07-02",
       "dateModified": "2026-07-02",
-      "author": { "@id": "https://lumelive.co.in/#sachin-bajaj" },
-      "publisher": {"@type": "Organization","name": "Lume Live","logo": {"@type": "ImageObject","url": "https://lumelive.co.in/logo.png"}},
+      "author": {
+        "@id": "https://lumelive.co.in/#organization"
+      },
+      "publisher": {
+        "@id": "https://lumelive.co.in/#organization"
+      },
       "image": "https://lumelive.co.in/sachin.jpeg",
-      "mainEntityOfPage": "https://lumelive.co.in/what-to-do-after-board-results.html",
-      "inLanguage": "en-IN"
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://lumelive.co.in/what-to-do-after-board-results.html"
+      },
+      "inLanguage": "en-IN",
+      "isPartOf": {
+        "@id": "https://lumelive.co.in/#website"
+      }
     },
     {
       "@type": "Person",
@@ -49,27 +59,106 @@
       "description": "Sachin Bajaj holds an M.Sc in Clinical Psychology (Gurugram University) and a PGDGC from Jamia Millia Islamia, New Delhi. Founder of Lume Live, AILET 2026 Laureate, 500+ students guided across India.",
       "url": "https://lumelive.co.in/",
       "image": "https://lumelive.co.in/sachin.jpeg",
-      "knowsLanguage": ["en-IN","hi-IN"]
+      "knowsLanguage": [
+        "en-IN",
+        "hi-IN"
+      ]
     },
     {
       "@type": "BreadcrumbList",
       "@id": "https://lumelive.co.in/what-to-do-after-board-results.html#breadcrumb",
       "itemListElement": [
-        {"@type":"ListItem","position":1,"name":"Home","item":"https://lumelive.co.in/"},
-        {"@type":"ListItem","position":2,"name":"Career Library","item":"https://lumelive.co.in/career-library.html"},
-        {"@type":"ListItem","position":3,"name":"What To Do After Board Results","item":"https://lumelive.co.in/what-to-do-after-board-results.html"}
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://lumelive.co.in/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Career Library",
+          "item": "https://lumelive.co.in/career-library.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "What To Do After Board Results",
+          "item": "https://lumelive.co.in/what-to-do-after-board-results.html"
+        }
       ]
     },
     {
       "@type": "FAQPage",
       "@id": "https://lumelive.co.in/what-to-do-after-board-results.html#faq",
       "mainEntity": [
-        {"@type":"Question","name":"What should I do immediately after my board result?","acceptedAnswer":{"@type":"Answer","text":"For the first 48 hours: nothing irreversible. Whatever the marksheet says, do not choose a stream, sign up for a coaching batch, or announce a drop year while emotions are at their peak. Acknowledge the result, let the house settle, and put big decisions on a two-week calendar. Decisions made in results-week adrenaline are the ones families most often redo."}},
-        {"@type":"Question","name":"What are my options if my board result is poor?","acceptedAnswer":{"@type":"Answer","text":"More than results-day panic suggests. Both CBSE and HBSE offer supplementary/compartment exams for subjects you did not clear, and both boards have re-evaluation and re-checking processes with published deadlines — check your board's official website for the current dates. Beyond that, most careers remain reachable: cut-offs vary hugely across colleges, and skill-based routes keep growing. A poor result narrows some doors this year; it closes almost none permanently."}},
-        {"@type":"Question","name":"Can I still change my stream decision after Class 10 results?","acceptedAnswer":{"@type":"Answer","text":"Usually yes, within the admission window — schools finalise sections over weeks, not hours. If your pre-result stream choice was made under pressure or based on expected marks that did not materialise, this is exactly the moment to re-examine it with evidence: a structured look at interests and aptitude, then a calm family conversation. Changing lanes now costs days; changing after Class 11 begins costs a year."}},
-        {"@type":"Question","name":"My Class 12 result is out — how fast do I need to decide what is next?","acceptedAnswer":{"@type":"Answer","text":"Slower than the panic suggests. Real deadlines exist — college application windows, entrance-exam registrations — so list those dates first from official sources. But within them, you typically have days to weeks, not hours. Use that window deliberately: separate what you want from what pressure wants, take a structured assessment if direction is unclear, and decide on evidence rather than on the neighbourhood's timeline."}},
-        {"@type":"Question","name":"How can parents help after a disappointing result?","acceptedAnswer":{"@type":"Answer","text":"Your first sentence matters more than any plan. Lead with the relationship, not the analysis: something like whatever this marksheet says, nothing changes at home. Delay all strategy talk for at least a day or two, watch for signs the disappointment is turning into withdrawal or hopelessness, and bring in a counsellor if the shutdown persists — a neutral third person can reopen conversations that have jammed at home."}}
+        {
+          "@type": "Question",
+          "name": "What should I do immediately after my board result?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "For the first 48 hours: nothing irreversible. Whatever the marksheet says, do not choose a stream, sign up for a coaching batch, or announce a drop year while emotions are at their peak. Acknowledge the result, let the house settle, and put big decisions on a two-week calendar. Decisions made in results-week adrenaline are the ones families most often redo."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What are my options if my board result is poor?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "More than results-day panic suggests. Both CBSE and HBSE offer supplementary/compartment exams for subjects you did not clear, and both boards have re-evaluation and re-checking processes with published deadlines — check your board's official website for the current dates. Beyond that, most careers remain reachable: cut-offs vary hugely across colleges, and skill-based routes keep growing. A poor result narrows some doors this year; it closes almost none permanently."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I still change my stream decision after Class 10 results?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Usually yes, within the admission window — schools finalise sections over weeks, not hours. If your pre-result stream choice was made under pressure or based on expected marks that did not materialise, this is exactly the moment to re-examine it with evidence: a structured look at interests and aptitude, then a calm family conversation. Changing lanes now costs days; changing after Class 11 begins costs a year."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "My Class 12 result is out — how fast do I need to decide what is next?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Slower than the panic suggests. Real deadlines exist — college application windows, entrance-exam registrations — so list those dates first from official sources. But within them, you typically have days to weeks, not hours. Use that window deliberately: separate what you want from what pressure wants, take a structured assessment if direction is unclear, and decide on evidence rather than on the neighbourhood's timeline."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How can parents help after a disappointing result?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Your first sentence matters more than any plan. Lead with the relationship, not the analysis: something like whatever this marksheet says, nothing changes at home. Delay all strategy talk for at least a day or two, watch for signs the disappointment is turning into withdrawal or hopelessness, and bring in a counsellor if the shutdown persists — a neutral third person can reopen conversations that have jammed at home."
+          }
+        }
       ]
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://lumelive.co.in/#organization",
+      "name": "Lume Live",
+      "url": "https://lumelive.co.in/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://lumelive.co.in/logo.png"
+      },
+      "email": "hello@lumelive.co.in",
+      "telephone": "+91-7015671280",
+      "sameAs": [
+        "https://www.facebook.com/profile.php?id=61589670451910",
+        "https://www.instagram.com/lumelive.co.in/?hl=en"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://lumelive.co.in/#website",
+      "name": "Lume Live",
+      "url": "https://lumelive.co.in/",
+      "inLanguage": "en-IN",
+      "publisher": {
+        "@id": "https://lumelive.co.in/#organization"
+      }
     }
   ]
 }
