@@ -2297,3 +2297,46 @@ input[type="number"], input[type="date"], select, textarea {
 /* --- tap highlight -------------------------------------------------------
    The default grey flash on tap looks like a rendering fault on a dark hero. */
 a, button, [role="button"] { -webkit-tap-highlight-color: rgba(0,0,0,.06); }
+
+/* --- affordability band (#affordable) ------------------------------------
+   Answers the "cheapest / most affordable career counselling in India" query
+   by putting our price next to the market rate instead of just asserting it.
+   The three cards are a price comparison, not a plan picker, so only the
+   first one is styled as ours. */
+#affordable{background:var(--white);}
+.afd-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
+  max-width:880px;margin:34px auto 0;
+}
+.afd-card{
+  background:var(--gray);border:1px solid rgba(13,27,64,.07);border-radius:var(--radius);
+  padding:24px 18px;text-align:center;transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease);
+}
+.afd-card:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(13,27,64,.09);}
+.afd-ours{
+  background:linear-gradient(160deg,var(--navy),var(--navy2));
+  border-color:var(--gold);color:var(--white);
+  box-shadow:0 12px 34px rgba(13,27,64,.22);
+}
+.afd-tag{
+  font-size:.66rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--mid);margin-bottom:10px;
+}
+.afd-ours .afd-tag{color:var(--gold2);}
+.afd-amt{
+  font-size:1.85rem;font-weight:900;color:var(--navy);line-height:1.15;
+  font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1;
+}
+.afd-ours .afd-amt{color:var(--gold2);}
+.afd-cap{font-size:.76rem;color:var(--mid);line-height:1.65;margin-top:9px;}
+.afd-ours .afd-cap{color:rgba(255,255,255,.72);}
+.afd-note{
+  max-width:660px;margin:26px auto 0;text-align:center;
+  font-size:.86rem;line-height:1.85;color:var(--mid);
+}
+.afd-note a{color:var(--teal);font-weight:700;}
+@media(max-width:720px){
+  .afd-grid{grid-template-columns:1fr;gap:12px;max-width:420px;}
+  .afd-card{padding:20px 16px;}
+  .afd-amt{font-size:1.6rem;}
+}
