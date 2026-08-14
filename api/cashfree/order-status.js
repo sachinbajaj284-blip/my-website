@@ -129,7 +129,11 @@ module.exports = async function handler(req, res){
         currency: data.order_currency,
         phone: data.customer_details && data.customer_details.customer_phone,
         email: data.customer_details && data.customer_details.customer_email,
-        name: data.customer_details && data.customer_details.customer_name
+        name: data.customer_details && data.customer_details.customer_name,
+        // The account that paid, stamped onto the order by create-order.js
+        // from a verified sign-in. Contact details can be typed wrong or
+        // changed later; this doesn't.
+        uid: data.order_tags && data.order_tags.account_uid
       });
     }catch(err){
       console.error("[lume order-status] entitlement write failed:", String(err && err.message || err));

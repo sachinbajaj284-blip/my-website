@@ -13,6 +13,7 @@
 */
 
 const { db } = require("../_lib/firebaseAdmin");
+const { isEnforced } = require("../_lib/account");
 
 function json(res, status, body){
   res.statusCode = status;
@@ -45,7 +46,16 @@ module.exports = async function handler(req, res){
     }
   }
 
-  var ready = cashfreeReady; // Firebase is optional — checkout still works without it
+  /*
+    Firebase used to be optional here, and this line used to say so. It
+    isn't any more: every checkout must carry a signed-in account, and
+    create-order verifies that with the Admin SDK. With enforcement on
+    and the credentials missing, nobody can pay — so that state has to
+    fail this check rather than report a healthy gateway.
+  */
+  var accountRequired = isEnforced();
+  var accountCheckReady = !accountRequired || firebaseConfigured;
+  var ready = cashfreeReady && accountCheckReady;
 
   return json(res, ready ? 200 : 503, {
     ok: ready,
@@ -66,10 +76,21 @@ module.exports = async function handler(req, res){
       connected: firebaseConnected,
       error: firebaseError
     },
+    account_gate: {
+      required: accountRequired,
+      can_verify: accountCheckReady,
+      message: !accountRequired
+        ? "Account requirement is switched OFF (LUME_REQUIRE_ACCOUNT). Anyone can pay without signing in."
+        : accountCheckReady
+          ? "Every checkout requires a signed-in Lume Live account, and sign-ins can be verified."
+          : "Every checkout requires a signed-in account, but Firebase Admin is not configured — so NO ONE CAN PAY. Set the FIREBASE_* variables and redeploy, or set LUME_REQUIRE_ACCOUNT=0 to lift the requirement."
+    },
     public_base_url_set: !!process.env.LUME_PUBLIC_BASE_URL,
-    message: ready
-      ? "Cashfree credentials are configured. If checkout still fails, verify the keys are valid for the selected CASHFREE_ENV."
-      : "Cashfree credentials are MISSING. Set CASHFREE_CLIENT_ID and CASHFREE_CLIENT_SECRET in Vercel project environment variables, then redeploy.",
+    message: !cashfreeReady
+      ? "Cashfree credentials are MISSING. Set CASHFREE_CLIENT_ID and CASHFREE_CLIENT_SECRET in Vercel project environment variables, then redeploy."
+      : !accountCheckReady
+        ? "Cashfree is configured, but checkout requires a signed-in account and Firebase Admin is not configured — create-order will refuse every order until that is fixed."
+        : "Cashfree credentials are configured. If checkout still fails, verify the keys are valid for the selected CASHFREE_ENV.",
     firebase_message: !firebaseConfigured
       ? "Firebase Admin env vars are not set yet — purchase restore-on-new-device will silently no-op until you add FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL and FIREBASE_PRIVATE_KEY, then redeploy."
       : firebaseConnected

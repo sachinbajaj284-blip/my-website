@@ -822,6 +822,45 @@
     EL.body.querySelector(".lcf-back").addEventListener("click", closeModal);
   }
 
+  /* ------------------------------------------------------------
+     Account required.
+
+     Shown when someone presses Pay while signed out. Deliberately not
+     a dead end: the button opens whatever sign-in UI the page has, and
+     lumeAccount.onSignIn resumes the checkout the moment an account
+     appears — so the client lands back where they were, not at the
+     start. Closing the sign-in form leaves them on this screen with the
+     button still there, which is why nothing here needs to detect a
+     cancelled sign-in.
+     ------------------------------------------------------------ */
+  function renderAccountRequired(options){
+    if(window.gtag) gtag('event','payment_account_required',{event_category:'payment_funnel',event_label:options.sku||options.label||''});
+    EL.body.innerHTML =
+      '<div class="lcf-center">' +
+        '<div class="lcf-ico wait">👤</div>' +
+        '<h4 class="lcf-t">First, your Lume Live account</h4>' +
+        '<p class="lcf-p">Your ' + esc(options.label || "purchase") + ' is delivered to your account — the report, the session details and your receipt all live there, on any device you sign in from.</p>' +
+      '</div>' +
+      '<ol class="lcf-steps">' +
+        '<li class="lcf-now">Create your account, or sign in if you already have one.</li>' +
+        '<li>We bring you straight back here — nothing is lost.</li>' +
+        '<li>Finish your payment of <strong>' + esc(inr(options.amount)) + '</strong>.</li>' +
+      '</ol>' +
+      '<button class="lcf-btn gold" type="button" data-act="signup">Create account &amp; continue</button>' +
+      '<button class="lcf-btn ghost" type="button" data-act="signin">I already have an account</button>' +
+      '<button class="lcf-back" type="button">Cancel</button>';
+
+    function open(mode){
+      if(!window.lumeAccount){ return; }
+      window.lumeAccount.prompt(mode);
+      // One-shot: the next signed-in user resumes this exact checkout.
+      window.lumeAccount.onSignIn(function(){ startCheckout(options); });
+    }
+    EL.body.querySelector('[data-act="signup"]').addEventListener("click", function(){ open("signup"); });
+    EL.body.querySelector('[data-act="signin"]').addEventListener("click", function(){ open("signin"); });
+    EL.body.querySelector(".lcf-back").addEventListener("click", closeModal);
+  }
+
   function renderPending(options, orderId, statusLabel){
     EL.body.innerHTML =
       '<div class="lcf-center">' +
@@ -910,11 +949,43 @@
     return options;
   }
 
+  /* ------------------------------------------------------------
+     Who is buying this.
+
+     Every purchase belongs to an account, so the checkout asks before
+     it prices anything. Two outcomes are distinct and must stay that
+     way:
+
+       known:true, no user  -> signed out. Show the account screen.
+       known:false          -> we could not find out (lume-auth.js
+                               didn't load, Firebase unreachable).
+
+     The second deliberately does NOT block here. create-order enforces
+     the same rule server-side, so letting the request through means a
+     missing script produces one clear rejection from the server rather
+     than a second way to take every payment on the site down. That
+     failure mode has happened once already.
+     ------------------------------------------------------------ */
+  function readAccount(){
+    if(!window.lumeAccount || typeof window.lumeAccount.ready !== "function"){
+      return Promise.resolve({ known:false, token:"", user:null });
+    }
+    return window.lumeAccount.ready().then(function(user){
+      if(!user){ return { known:true, token:"", user:null }; }
+      return user.getIdToken().then(
+        function(token){ return { known:true, token:token, user:user }; },
+        function(){ return { known:true, token:"", user:user }; }
+      );
+    }).catch(function(){
+      return { known:false, token:"", user:null };
+    });
+  }
+
   function startCheckout(options){
     var cfg = getConfig();
     applyPageCoupon(options);
     openModal(options);
-    renderLoading("Creating your secure order…");
+    renderLoading("Checking your account…");
     logAttempt(options, { status:"INITIATED" });
     if(window.gtag) gtag('event','payment_initiated',{event_category:'payment_funnel',event_label:options.sku||options.label||'',value:Number(options.amount||0)});
 
@@ -922,6 +993,27 @@
       renderFailure(options, "This is a local preview. Cashfree checkout works on the live website. You can still pay by UPI below.");
       return Promise.resolve({ ok:false, reason:"preview" });
     }
+
+    return readAccount().then(function(account){
+      if(account.known && !account.user){
+        logAttempt(options, { status:"ACCOUNT_REQUIRED" });
+        renderAccountRequired(options);
+        return { ok:false, reason:"account-required" };
+      }
+      // The account is the most reliable contact detail we have: it was
+      // typed once, by this person, and it is where their purchase will
+      // be waiting. Only fills gaps — a page that collected its own
+      // details keeps them.
+      if(account.user){
+        if(!options.customerEmail && account.user.email){ options.customerEmail = account.user.email; }
+        if(!options.customerName && account.user.displayName){ options.customerName = account.user.displayName; }
+      }
+      renderLoading("Creating your secure order…");
+      return createOrder(options, cfg, account.token);
+    });
+  }
+
+  function createOrder(options, cfg, idToken){
     /* No window.Cashfree check belongs here. The SDK is fetched on demand by
        loadCashfreeSdk(), after the order exists — so at this point it is
        *expected* to be absent, and a pre-flight guard rejects every payment
@@ -943,10 +1035,28 @@
       returnUrl: buildReturnUrl(options)
     };
 
+    var headers = { "Content-Type":"application/json" };
+    // Proof of who is buying, verified server-side. The order is stamped
+    // with the account inside this token, never with anything the page
+    // could have typed into the payload.
+    if(idToken){ headers.Authorization = "Bearer " + idToken; }
+
     return fetch(cfg.createOrderEndpoint, {
-      method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify(payload)
+      method:"POST", headers:headers, body:JSON.stringify(payload)
     })
     .then(function(res){
+      // The server does not recognise this buyer — no account, or a
+      // sign-in that expired while the page sat open. No order was
+      // created and nothing was charged, so this is the account screen
+      // again rather than a payment failure.
+      if(res.status === 401 || res.status === 403){
+        return res.json().catch(function(){ return {}; }).then(function(data){
+          var err = new Error(data.error || "Please sign in to continue.");
+          err.handled = true;
+          err.accountRequired = true;
+          throw err;
+        });
+      }
       // 409 is the server refusing the coupon (expired or switched off in
       // the seconds since it was validated). It creates no order, so this
       // is a message to deliver rather than a failure to retry — the body
@@ -1012,6 +1122,11 @@
       // nothing has been charged. Close the payment modal and let the
       // coupon field on the page carry the explanation, so the client is
       // returned to the one control that can fix it.
+      if(err && err.handled && err.accountRequired){
+        logAttempt(options, { status:"ACCOUNT_REQUIRED", error:String(err.message || "") });
+        renderAccountRequired(options);
+        return { ok:false, reason:"account-required" };
+      }
       if(err && err.handled && err.couponRejected){
         logAttempt(options, { status:"COUPON_REJECTED", error:String(err.couponRejected.reason || "") });
         closeModal();

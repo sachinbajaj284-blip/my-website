@@ -40,7 +40,10 @@ function setCors(req, res, methods){
     res.setHeader("Vary", "Origin");
   }
   res.setHeader("Access-Control-Allow-Methods", methods || "POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  // Authorization carries the Firebase ID token that says which account a
+  // checkout belongs to (see _lib/account.js). Without it here, a
+  // cross-origin checkout fails at the preflight rather than at the gate.
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 }
 
 const MAX_BODY_BYTES = 16 * 1024; // 16 KB is far more than a checkout payload needs
