@@ -16,6 +16,7 @@
     "test": "npm run checkout:test && npm run coupons:test && npm run josaa:test",
     "checkout:test": "node tools/checkout.test.mjs",
     "coupons:test": "node tools/coupons.test.mjs",
+    "entitlements:test": "node tools/entitlements.test.mjs",
     "coupons:list": "node tools/seed-coupons.mjs --dry-run",
     "coupons:seed": "node tools/seed-coupons.mjs"
   },
