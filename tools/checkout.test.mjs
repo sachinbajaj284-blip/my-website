@@ -380,6 +380,29 @@ await test("every price shown next to a sku matches the catalogue", () => {
   assert.deepEqual(wrong, [], "page prices disagree with the catalogue:\n      " + wrong.join("\n      "));
 });
 
+await test("the report checkout always shows its coupon box", () => {
+  /*
+    The coupon field hides itself unless /api/coupons/active lists the sku
+    (promoted offers only), a code is stashed, or ?coupon= is in the URL.
+    An unpromoted invitation code satisfies none of those, so without
+    data-always-show there is nowhere on the ₹999 report checkout to type
+    one — which is exactly the state CLARITY100 shipped into.
+  */
+  const hosts = [];
+  for(const { file, text } of PAGES){
+    const re = /<div[^>]*data-lume-coupon-checkout[^>]*>/g;
+    let m;
+    while((m = re.exec(text))){
+      if(/data-sku="student-full-report"/.test(m[0])){
+        hosts.push({ file, tag: m[0] });
+      }
+    }
+  }
+  assert.ok(hosts.length >= 2, "expected a report coupon host on both index.html and assessment.html");
+  const missing = hosts.filter(h => !/data-always-show/.test(h.tag)).map(h => h.file);
+  assert.deepEqual(missing, [], "report checkouts without data-always-show: " + missing.join(", "));
+});
+
 await test("every page with a checkout loads the checkout helper", () => {
   const missing = PAGES
     .filter(p => /\.html$/.test(p.file))

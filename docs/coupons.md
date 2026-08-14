@@ -53,28 +53,39 @@ few seconds could in principle both get it — the exposure is one extra
 report, and the alternative (burning it at validate time) lets anyone
 destroy the offer by typing the code.
 
-**How the recipient actually uses it.** Send them this link:
+**Anyone can type it on the report checkout.** The ₹999 report checkout
+carries `data-always-show`, so its "Have a coupon code?" box is on screen for
+every visitor — an invitation code is never promoted, so without that flag
+there would be nowhere to type one. The trade-off is deliberate: anybody who
+learns the code can try it, and the one-use limit is what bounds that.
+
+**Or send the recipient a link**, which pre-fills the code for them:
 
 ```
 https://lumelive.co.in/assessment.html?coupon=CLARITY100#self-assessments
 ```
 
-This matters, because there is no coupon box waiting for them otherwise. The
-checkout coupon field is hidden by default and only reveals itself when one
-of three things is true (see `mountDeclarative` in `lume-coupons.js`):
+It reveals and pre-fills the field with "CLARITY100 ready"; the client taps
+**Apply**, the price row redraws to ₹1, and Pay carries the code to
+create-order, which re-derives the discount itself.
 
-1. `/api/coupons/active` lists this SKU — which only happens for **promoted**
-   offers, and CLARITY100 is deliberately not one;
+On checkouts *without* `data-always-show`, the coupon field stays hidden
+unless one of these is true (see `mountDeclarative` in `lume-coupons.js`):
+
+1. `/api/coupons/active` lists that SKU — **promoted** offers only;
 2. a code is stashed in `sessionStorage` from a tapped offer badge;
-3. **`?coupon=` is in the URL.**
+3. `?coupon=` is in the URL.
 
-So for an unpromoted code the link is the route. It reveals the field,
-pre-fills the code and shows "CLARITY100 ready"; the client taps **Apply**,
-the price row redraws to ₹1, and Pay carries the code to create-order, which
-re-derives the discount itself.
+An unpromoted code satisfies none of the first two, which is why a new
+invitation code needs either the link or the flag. CLARITY100 shipped with
+neither and was briefly unusable.
 
-Anyone who lands on the page without that link sees the plain ₹999 checkout
-with no coupon box at all — which is the intent for a one-use code.
+**It is not tied to a person.** The code is limited to one redemption in
+total; it is not bound to a named client, an email or an account. Whoever
+completes checkout with it first gets the free report. If it needs to be
+restricted to one named person, that is a new field on the coupon
+(`restricted_to_emails`, matched against the verified account email) and
+does not exist yet.
 
 To hand it to someone else afterwards, reset the counter: delete
 `coupons/CLARITY100` in Firestore (or set `times_used: 0`) and re-seed.

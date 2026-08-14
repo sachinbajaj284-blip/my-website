@@ -801,8 +801,19 @@
       detailSel: host.getAttribute("data-detail-el")
     });
 
-    // Hidden until we know an offer could apply here.
-    var held = !(urlCode() || readStashedCode());
+    /*
+      Hidden until we know an offer could apply here — a coupon box with
+      nothing to put in it just advertises that a discount exists.
+
+      data-always-show opts a checkout out of that. It is for a page that
+      hands out codes which are deliberately never promoted (an invitation
+      code has no offer badge and is absent from /api/coupons/active, so
+      none of the reveal conditions below would ever fire, and the client
+      would have nowhere to type it). Adding it means anyone can try a
+      code here, so use it where that is the point.
+    */
+    var alwaysShow = host.hasAttribute("data-always-show");
+    var held = !(alwaysShow || urlCode() || readStashedCode());
     if(held) host.style.display = "none";
 
     var api = mountCheckout(host, {
