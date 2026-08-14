@@ -84,6 +84,8 @@ async function recordPaidEntitlement(details){
     phone: phone || null,
     email: email || null,
     name: details.name || null,
+    // The Firebase account that bought this, when the order carried one.
+    uid: details.uid ? String(details.uid) : null,
     grantedAt: details.grantedAt || new Date().toISOString(),
     updatedAt: new Date().toISOString()
   }, { merge: true });

@@ -150,10 +150,52 @@ export function loadCheckoutHelper(file, options = {}){
   win.window = win;
   win.globalThis = win;
   win.self = win;
+  // The account layer, when a test supplies one. Left undefined otherwise,
+  // which is the "lume-auth.js didn't load" case the checkout must survive.
+  if(options.account){ win.lumeAccount = options.account; }
 
   vm.createContext(win);
   vm.runInContext(fs.readFileSync(file, "utf8"), win, { filename: file });
   return win;
+}
+
+/*
+  A stand-in for lume-auth.js.
+
+  `user` is who is signed in at the start — pass null for a signed-out
+  visitor, then call signIn() to play out what happens when they create
+  an account on the screen the checkout shows them.
+*/
+export function accountStub(user){
+  const waiters = [];
+  const stub = {
+    current: user || null,
+    prompts: [],
+    ready(){ return Promise.resolve(stub.current); },
+    prompt(mode){ stub.prompts.push(mode); },
+    onSignIn(fn){
+      if(stub.current) return fn(stub.current);
+      waiters.push(fn);
+    },
+    token(){ return Promise.resolve(stub.current ? "id-token-" + stub.current.uid : ""); },
+    // The client finishes signing up in the auth modal.
+    signIn(next){
+      stub.current = next || { uid:"uid_test", email:"client@example.com", displayName:"A Client",
+                               getIdToken: () => Promise.resolve("id-token-uid_test") };
+      waiters.splice(0, waiters.length).forEach(fn => fn(stub.current));
+      return stub.current;
+    }
+  };
+  return stub;
+}
+
+export function signedInUser(overrides){
+  return Object.assign({
+    uid: "uid_test",
+    email: "client@example.com",
+    displayName: "A Client",
+    getIdToken: () => Promise.resolve("id-token-uid_test")
+  }, overrides || {});
 }
 
 // The stock happy-path SDK: loads, and defines window.Cashfree the way the

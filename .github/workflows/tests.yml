@@ -35,6 +35,9 @@ jobs:
       - name: Checkout flow
         run: npm run checkout:test
 
+      - name: Account gate
+        run: npm run account:test
+
       - name: Coupon rules
         run: npm run coupons:test
 

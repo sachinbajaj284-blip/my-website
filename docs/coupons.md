@@ -18,16 +18,92 @@ and why the price is safe.
 
 ## Live offers
 
-**One offer runs: `FIRST50`.** Every other SKU sells at list price.
+**One offer is advertised: `FIRST50`.** `CLARITY100` exists but is parked
+until it names its recipient — see below. Every other SKU sells at list price.
 
-| Code | Discount | Applies to | Limits | Live |
-|---|---|---|---|---|
-| `FIRST50` | 50% | 1:1 Counselling Session (₹499 → ₹249) | **1 per customer, first session only** | **yes** |
-| `MIND50` | 50% | 1:1 Counselling Session | 200 uses | no |
-| `CAREER30` | 30% | Full Clarity Report, Career Roadmap | — | no |
-| `PARENT200` | ₹200 flat | Full Clarity Report, Stream Clarity Session | — | no |
-| `REFER200` | ₹200 flat | Full Clarity Report | — | no |
-| `INTERN500` | ₹500 flat | All three internship tracks | 50 uses | no |
+| Code | Discount | Applies to | Limits | Live | Shown on site |
+|---|---|---|---|---|---|
+| `FIRST50` | 50% | 1:1 Counselling Session (₹499 → ₹249) | **1 per customer, first session only** | **yes** | yes |
+| `CLARITY100` | 100% | Full Clarity Report (₹999 → **₹1**) | **1 use ever, locked to one account** | **parked** | **no** |
+| `MIND50` | 50% | 1:1 Counselling Session | 200 uses | no | no |
+| `CAREER30` | 30% | Full Clarity Report, Career Roadmap | — | no | no |
+| `PARENT200` | ₹200 flat | Full Clarity Report, Stream Clarity Session | — | no | no |
+| `REFER200` | ₹200 flat | Full Clarity Report | — | no | no |
+| `INTERN500` | ₹500 flat | All three internship tracks | 50 uses | no | no |
+
+### `CLARITY100` — the free Full Clarity Report
+
+A single invitation code, meant to be given to one named person.
+
+**It charges ₹1, not ₹0.** Cashfree will not create a zero-value order, so
+`discountFor()` caps every discount at `base - MIN_CHARGE`. The client sees
+₹999 struck through and ₹1 payable. Setting `discount_value` higher than 100
+changes nothing — the cap decides.
+
+**It is deliberately not promoted.** `promote: false` keeps it out of
+`/api/coupons/active`, which is what draws the offer badges. A one-use
+100%-off code on a public badge is claimed by the first stranger who reads
+it, not by the person it was meant for. Don't set that flag true; a test
+asserts it stays false.
+
+**It burns on payment, not on typing.** `recordRedemption` runs from
+order-status once Cashfree confirms PAID, so the code stays claimable until
+someone actually completes checkout. Two people checking out in the same
+few seconds could in principle both get it — the exposure is one extra
+report, and the alternative (burning it at validate time) lets anyone
+destroy the offer by typing the code.
+
+**Anyone can type it on the report checkout.** The ₹999 report checkout
+carries `data-always-show`, so its "Have a coupon code?" box is on screen for
+every visitor — an invitation code is never promoted, so without that flag
+there would be nowhere to type one. The trade-off is deliberate: anybody who
+learns the code can try it, and the one-use limit is what bounds that.
+
+**Or send the recipient a link**, which pre-fills the code for them:
+
+```
+https://lumelive.co.in/assessment.html?coupon=CLARITY100#self-assessments
+```
+
+It reveals and pre-fills the field with "CLARITY100 ready"; the client taps
+**Apply**, the price row redraws to ₹1, and Pay carries the code to
+create-order, which re-derives the discount itself.
+
+On checkouts *without* `data-always-show`, the coupon field stays hidden
+unless one of these is true (see `mountDeclarative` in `lume-coupons.js`):
+
+1. `/api/coupons/active` lists that SKU — **promoted** offers only;
+2. a code is stashed in `sessionStorage` from a tapped offer badge;
+3. `?coupon=` is in the URL.
+
+An unpromoted code satisfies none of the first two, which is why a new
+invitation code needs either the link or the flag. CLARITY100 shipped with
+neither and was briefly unusable.
+
+**It is locked to one account, and parked until that account is named.**
+`restricted_to_emails` holds the address it was issued to, matched against
+the email in the **verified Firebase token** — so it cannot be claimed by
+typing somebody else's address into a form, only by being signed in as them.
+The list is empty in the repo, and `is_active` is `false` while it is: with
+the report's coupon box now visible to every visitor, a live 100%-off code
+with no named recipient goes to whoever types the string first.
+
+To issue it, one edit — fill in the address and switch it on:
+
+```js
+is_active: true,
+restricted_to_emails: ["their-account-email@example.com"],
+```
+
+A test refuses the halfway state: CLARITY100 must be either inactive or
+restricted, never active with an empty list.
+
+**One use, ever.** `usage_limit: 1` is a lifetime cap across everybody, not
+per month or per campaign, and `per_customer_limit: 1` means the recipient
+cannot take a second one either. Once redeemed it is spent.
+
+To hand it to someone else afterwards, reset the counter: delete
+`coupons/CLARITY100` in Firestore (or set `times_used: 0`) and re-seed.
 
 The switched-off codes are kept in the catalogue rather than deleted: they
 document the shape of each kind of offer, and re-enabling one is a single

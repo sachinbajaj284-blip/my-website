@@ -22,7 +22,8 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
-import { loadCheckoutHelper, sdkThatWorks, sdkThatFails, sdkThatIsEmpty } from "./dom-stub.mjs";
+import { loadCheckoutHelper, sdkThatWorks, sdkThatFails, sdkThatIsEmpty,
+         accountStub, signedInUser } from "./dom-stub.mjs";
 
 const require = createRequire(import.meta.url);
 const ROOT = path.join(path.dirname(url.fileURLToPath(import.meta.url)), "..");
@@ -57,12 +58,20 @@ const ORDER = {
   coupon_code: ""
 };
 
+// Records every call, so a test can assert what was sent as well as what
+// came back. `calls[0].init.headers` is how the account token is checked.
 function fetchStub(body = ORDER, status = 200){
-  return () => Promise.resolve({
-    ok: status >= 200 && status < 300,
-    status,
-    json: () => Promise.resolve(body)
-  });
+  const calls = [];
+  const fn = (url, init) => {
+    calls.push({ url, init: init || {}, body: init && init.body ? JSON.parse(init.body) : null });
+    return Promise.resolve({
+      ok: status >= 200 && status < 300,
+      status,
+      json: () => Promise.resolve(body)
+    });
+  };
+  fn.calls = calls;
+  return fn;
 }
 
 function waitFor(check, what, timeoutMs = 3000){
@@ -194,6 +203,120 @@ await test("the amount the server priced replaces the page's", async () => {
   assert.equal(options.couponCode, "FIRST50");
 });
 
+// --- the account behind the purchase -------------------------------------
+
+group("every purchase belongs to an account");
+
+await test("a signed-out client is asked for an account, and no order is created", async () => {
+  const record = {};
+  const fetchFn = fetchStub();
+  const win = loadCheckoutHelper(HELPER, {
+    fetch: fetchFn, onScript: sdkThatWorks(record), account: accountStub(null)
+  });
+  win.lumeCashfreePay(Object.assign({}, PAYMENT));
+
+  await waitFor(() => /data-act="signup"/.test(modalBody(win)), "the account screen");
+  // Nothing was priced, nothing was reserved at Cashfree, nothing charged.
+  assert.equal(fetchFn.calls.length, 0, "no order should be created for a signed-out client");
+  assert.equal(record.checkout, undefined, "no checkout should open");
+  assert.match(modalBody(win), /account/i);
+});
+
+await test("a signed-in client's token is sent with the order", async () => {
+  const record = {};
+  const fetchFn = fetchStub();
+  const win = loadCheckoutHelper(HELPER, {
+    fetch: fetchFn, onScript: sdkThatWorks(record), account: accountStub(signedInUser())
+  });
+  win.lumeCashfreePay(Object.assign({}, PAYMENT));
+
+  await waitFor(() => record.checkout, "Cashfree.checkout() to be called");
+  const headers = fetchFn.calls[0].init.headers;
+  // create-order decides whose purchase this is from the token alone, so
+  // a checkout that forgets to send it is a checkout the server refuses.
+  assert.equal(headers.Authorization, "Bearer id-token-uid_test");
+});
+
+await test("the account fills in contact details the page didn't collect", async () => {
+  const record = {};
+  const fetchFn = fetchStub();
+  const win = loadCheckoutHelper(HELPER, {
+    fetch: fetchFn, onScript: sdkThatWorks(record), account: accountStub(signedInUser())
+  });
+  // internships and the handbook collect their own details; the session
+  // modal on index.html doesn't always have an email.
+  win.lumeCashfreePay({ sku:"wellness-session", amount:499, label:"1:1 Counselling Session" });
+
+  await waitFor(() => record.checkout, "Cashfree.checkout() to be called");
+  assert.equal(fetchFn.calls[0].body.customer.email, "client@example.com");
+  assert.equal(fetchFn.calls[0].body.customer.name, "A Client");
+});
+
+await test("a page's own details are not overwritten by the account", async () => {
+  const record = {};
+  const fetchFn = fetchStub();
+  const win = loadCheckoutHelper(HELPER, {
+    fetch: fetchFn, onScript: sdkThatWorks(record), account: accountStub(signedInUser())
+  });
+  win.lumeCashfreePay(Object.assign({}, PAYMENT, {
+    customerEmail:"typed@example.com", customerName:"Typed Name"
+  }));
+
+  await waitFor(() => record.checkout, "Cashfree.checkout() to be called");
+  assert.equal(fetchFn.calls[0].body.customer.email, "typed@example.com");
+  assert.equal(fetchFn.calls[0].body.customer.name, "Typed Name");
+});
+
+await test("signing in from the account screen resumes the same checkout", async () => {
+  const record = {};
+  const fetchFn = fetchStub();
+  const account = accountStub(null);
+  const win = loadCheckoutHelper(HELPER, {
+    fetch: fetchFn, onScript: sdkThatWorks(record), account
+  });
+  win.lumeCashfreePay(Object.assign({}, PAYMENT));
+
+  await waitFor(() => /data-act="signup"/.test(modalBody(win)), "the account screen");
+
+  // The client presses "Create account & continue", and completes it.
+  const overlay = win.document.body.children.find(c => c.className === "lcf-overlay");
+  overlay.querySelector(".lcf-body").querySelector('[data-act="signup"]').click();
+  assert.deepEqual(account.prompts, ["signup"], "the sign-in UI should have been opened");
+  account.signIn();
+
+  // They must land back in their payment, not at the beginning of it.
+  await waitFor(() => record.checkout, "the checkout to resume after signing in");
+  assert.equal(record.checkout.paymentSessionId, "session_test_abc");
+});
+
+await test("a sign-in the server rejects returns the client to the account screen", async () => {
+  const record = {};
+  // The sign-in expired while the page sat open: the browser still thinks
+  // it has a user, the server disagrees.
+  const fetchFn = fetchStub({ error:"Your sign-in has expired. Please sign in again to complete your payment.", code:"INVALID_ACCOUNT" }, 401);
+  const win = loadCheckoutHelper(HELPER, {
+    fetch: fetchFn, onScript: sdkThatWorks(record), account: accountStub(signedInUser())
+  });
+  win.lumeCashfreePay(Object.assign({}, PAYMENT));
+
+  await waitFor(() => /data-act="signup"/.test(modalBody(win)), "the account screen");
+  assert.equal(record.checkout, undefined, "no checkout should open on a refused sign-in");
+});
+
+await test("a missing account layer does not block the payment path", async () => {
+  const record = {};
+  const fetchFn = fetchStub();
+  // lume-auth.js failed to load. The gate still holds — create-order
+  // enforces it — so the request goes and the server answers. Blocking
+  // here instead would make one missing script a second way to take
+  // every payment on the site down, which is how the last outage worked.
+  const win = loadCheckoutHelper(HELPER, { fetch: fetchFn, onScript: sdkThatWorks(record) });
+  assert.equal(typeof win.lumeAccount, "undefined");
+  win.lumeCashfreePay(Object.assign({}, PAYMENT));
+
+  await waitFor(() => fetchFn.calls.length > 0, "the order request to be attempted");
+});
+
 // --- every checkout the site offers --------------------------------------
 
 group("every checkout the site offers");
@@ -255,6 +378,29 @@ await test("every price shown next to a sku matches the catalogue", () => {
   // price. A mismatch means a client agrees to one number and is asked
   // for another at the gateway.
   assert.deepEqual(wrong, [], "page prices disagree with the catalogue:\n      " + wrong.join("\n      "));
+});
+
+await test("the report checkout always shows its coupon box", () => {
+  /*
+    The coupon field hides itself unless /api/coupons/active lists the sku
+    (promoted offers only), a code is stashed, or ?coupon= is in the URL.
+    An unpromoted invitation code satisfies none of those, so without
+    data-always-show there is nowhere on the ₹999 report checkout to type
+    one — which is exactly the state CLARITY100 shipped into.
+  */
+  const hosts = [];
+  for(const { file, text } of PAGES){
+    const re = /<div[^>]*data-lume-coupon-checkout[^>]*>/g;
+    let m;
+    while((m = re.exec(text))){
+      if(/data-sku="student-full-report"/.test(m[0])){
+        hosts.push({ file, tag: m[0] });
+      }
+    }
+  }
+  assert.ok(hosts.length >= 2, "expected a report coupon host on both index.html and assessment.html");
+  const missing = hosts.filter(h => !/data-always-show/.test(h.tag)).map(h => h.file);
+  assert.deepEqual(missing, [], "report checkouts without data-always-show: " + missing.join(", "));
 });
 
 await test("every page with a checkout loads the checkout helper", () => {

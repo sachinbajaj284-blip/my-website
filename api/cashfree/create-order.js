@@ -17,6 +17,7 @@ const { checkRateLimit, clientKey } = require("../_lib/rateLimit");
 const { json, setCors, readBody } = require("../_lib/http");
 const { getProduct } = require("../_lib/catalog");
 const { quote } = require("../_lib/coupons");
+const { requireAccount } = require("../_lib/account");
 
 /*
   Before paying, the client chooses how they want the session to happen —
@@ -70,6 +71,20 @@ module.exports = async function handler(req, res){
     return json(res, 500, { error: "Cashfree credentials are not configured." });
   }
 
+  /*
+    Who is buying. Checked before the body is even read: an order that
+    belongs to nobody should not reach Cashfree, cost a rate-limit slot's
+    worth of work, or burn a coupon's per-customer allowance.
+
+    The page shows a sign-in screen before it gets here, so in normal use
+    this never fires. It fires for a request that skipped the page.
+  */
+  const identity = await requireAccount(req);
+  if(!identity.ok){
+    return json(res, identity.status, { error: identity.error, code: identity.code });
+  }
+  const account = identity.account;
+
   let body;
   try{ body = await readBody(req); }
   catch(err){
@@ -87,8 +102,12 @@ module.exports = async function handler(req, res){
 
   const customer = body.customer || {};
   const phone = String(customer.phone || "").replace(/\D/g, "").slice(-10);
-  const email = String(customer.email || "hello@lumelive.co.in").slice(0, 120);
-  const name = String(customer.name || "Lume Live Customer").slice(0, 80);
+  // The account's email is a better fallback than a Lume Live inbox
+  // address: it came from the token, and it is where this person already
+  // expects to hear from us.
+  const accountEmail = account ? account.email : "";
+  const email = String(customer.email || accountEmail || "hello@lumelive.co.in").slice(0, 120);
+  const name = String(customer.name || (account && account.name) || "Lume Live Customer").slice(0, 80);
   // Only the handbook is bought without a phone number — everything else
   // is a session or a report we have to be able to deliver.
   if(!phone && sku !== "parents-handbook"){
@@ -120,7 +139,14 @@ module.exports = async function handler(req, res){
   const priced = await quote({
     code: requestedCoupon,
     packId: sku,
-    customer: { phone: phone, email: body.customer && body.customer.email ? email : "" }
+    /*
+      The account's email counts as the customer's email here even when
+      the form didn't ask for one. Before accounts, leaving the email
+      blank was a way to look like a new person to a "one per customer"
+      offer; now every order carries an identity, so that limit means
+      what it says.
+    */
+    customer: { phone: phone, email: (body.customer && body.customer.email) ? email : accountEmail }
   });
   const couponApplied = priced.ok && priced.reason === "applied" && priced.coupon;
 
@@ -171,6 +197,12 @@ module.exports = async function handler(req, res){
     // strings.
     order_tags: Object.assign(
       { sku, source: "lume-live-website" },
+      // Whose purchase this is, taken from the verified token and not
+      // from the payload. order-status.js reads it back when Cashfree
+      // confirms payment, so the entitlement is written against the
+      // account rather than only against typed-in contact details.
+      account ? { account_uid: account.uid } : {},
+      account && account.email ? { account_email: account.email } : {},
       sessionMode ? { session_mode: sessionMode } : {},
       couponCode ? {
         coupon_code: couponCode,

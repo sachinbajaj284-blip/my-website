@@ -467,7 +467,26 @@
     function setOpen(open){
       panel.hidden = !open;
       toggleBtn.setAttribute("aria-expanded", open ? "true" : "false");
-      if(open) setTimeout(function(){ input.focus(); }, 30);
+      if(open){
+        setTimeout(function(){ input.focus(); }, 30);
+        warmAccount();
+      }
+    }
+
+    /*
+      Opening the coupon panel is the first sign that an account email is
+      about to matter: a code can be addressed to one (restricted_to_emails),
+      and validate can only say so if it knows who is asking.
+
+      Resolving it here rather than on page load keeps Firebase off the
+      critical path for the vast majority of visitors, who never open this.
+      By the time a code is typed and applied, the account is known.
+    */
+    var warmed = false;
+    function warmAccount(){
+      if(warmed || !window.lumeAccount || typeof window.lumeAccount.ready !== "function") return;
+      warmed = true;
+      window.lumeAccount.ready().catch(function(){ return null; });
     }
 
     function renderSummary(){
@@ -801,15 +820,36 @@
       detailSel: host.getAttribute("data-detail-el")
     });
 
-    // Hidden until we know an offer could apply here.
-    var held = !(urlCode() || readStashedCode());
+    /*
+      Hidden until we know an offer could apply here — a coupon box with
+      nothing to put in it just advertises that a discount exists.
+
+      data-always-show opts a checkout out of that. It is for a page that
+      hands out codes which are deliberately never promoted (an invitation
+      code has no offer badge and is absent from /api/coupons/active, so
+      none of the reveal conditions below would ever fire, and the client
+      would have nowhere to type it). Adding it means anyone can try a
+      code here, so use it where that is the point.
+    */
+    var alwaysShow = host.hasAttribute("data-always-show");
+    var held = !(alwaysShow || urlCode() || readStashedCode());
     if(held) host.style.display = "none";
 
     var api = mountCheckout(host, {
       getPack: function(){ return pack; },
       getSuggestedCode: function(){ return suggested; },
       getCustomer: function(){
-        return phoneEl ? { phone: String(phoneEl.value || "").replace(/\D/g, "").slice(-10), email: "" } : null;
+        // The signed-in account is the identity create-order will price
+        // against, so validate should answer for the same person —
+        // otherwise a code addressed to one account shows as valid here
+        // and is refused at the payment step.
+        var account = window.lumeAccount && typeof window.lumeAccount.current === "function"
+          ? window.lumeAccount.current()
+          : null;
+        var email = (account && account.email) || "";
+        var phone = phoneEl ? String(phoneEl.value || "").replace(/\D/g, "").slice(-10) : "";
+        if(!phone && !email) return null;
+        return { phone: phone, email: email };
       },
       onChange: function(state){ renderPrice(state, pack); }
     });
