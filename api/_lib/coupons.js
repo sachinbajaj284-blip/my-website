@@ -161,6 +161,44 @@ const DEFAULT_COUPONS = [
     description: "Early-cohort pricing for psychology students.",
     promote: false,
     first_time_only: false
+  },
+  {
+    /*
+      A single free Full Clarity Report, to be handed to one person.
+
+      Two things about this code are deliberate and worth knowing before
+      anyone edits it:
+
+      - It charges ₹1, not ₹0. Cashfree will not create a zero-value
+        order, so discountFor() caps every discount at base - MIN_CHARGE.
+        100% here means "as free as this gateway allows"; the client sees
+        ₹999 struck through and ₹1 payable. Raising discount_value above
+        100 changes nothing — the cap decides.
+
+      - promote:false keeps it out of /api/coupons/active, which is what
+        draws the offer badges on the site. A one-use 100%-off code shown
+        publicly would be claimed by the first stranger to see it, not by
+        the person it was meant for. Do not set this true.
+
+      usage_limit:1 is counted in Firestore by recordRedemption, and only
+      once Cashfree confirms payment — so the code stays claimable until
+      someone actually completes checkout with it, rather than being
+      burned by anyone who merely types it in.
+    */
+    code: "CLARITY100",
+    discount_type: "percentage",
+    discount_value: 100,
+    applicable_packs: ["student-full-report"],
+    is_active: true,
+    expiration_date: null,
+    // One use, in total, across everybody.
+    usage_limit: 1,
+    times_used: 0,
+    per_customer_limit: 1,
+    headline: "Full Clarity Report on us",
+    description: "A one-time invitation code for the ₹999 Full Clarity Report.",
+    promote: false,
+    first_time_only: false
   }
 ];
 

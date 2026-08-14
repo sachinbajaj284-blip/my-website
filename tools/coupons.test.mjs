@@ -190,9 +190,17 @@ await test("FIRST50 on the ₹999 report is refused, price unchanged", async () 
   assert.equal(q.discount_amount, 0);
 });
 
-await test("FIRST50 is the only live offer — every other code is switched off", () => {
+await test("only the intended codes are live", () => {
   const live = DEFAULT_COUPONS.filter(c => c.is_active !== false).map(c => c.code);
-  assert.deepEqual(live, ["FIRST50"]);
+  assert.deepEqual(live, ["FIRST50", "CLARITY100"]);
+});
+
+await test("FIRST50 is the only offer advertised on the site", () => {
+  // `promote` is what puts a code on the page. CLARITY100 is a one-use
+  // 100%-off code handed to one person: advertising it would mean the
+  // first stranger to read a badge claims the free report.
+  const promoted = DEFAULT_COUPONS.filter(c => c.promote).map(c => c.code);
+  assert.deepEqual(promoted, ["FIRST50"]);
 });
 
 await test("a switched-off code leaves every other SKU at full price", async () => {
@@ -362,6 +370,53 @@ await test("an unpaid past order does not disqualify anyone", async () => {
   assert.equal(q.ok, true);
 });
 
+await test("CLARITY100 takes the ₹999 report down to the ₹1 the gateway needs", async () => {
+  store.clear();
+  const q = await quote({ code: "CLARITY100", packId: "student-full-report", customer: ALICE });
+  assert.equal(q.ok, true);
+  assert.equal(q.reason, "applied");
+  assert.equal(q.base_amount, 999);
+  // Not ₹0: Cashfree refuses a zero-value order, so MIN_CHARGE stays payable.
+  assert.equal(q.final_amount, 1);
+  assert.equal(q.discount_amount, 998);
+});
+
+await test("CLARITY100 is one use in total, and only on the clarity report", async () => {
+  const clarity = DEFAULT_COUPONS.find(c => c.code === "CLARITY100");
+  assert.equal(clarity.usage_limit, 1, "one use across everybody");
+  assert.equal(clarity.per_customer_limit, 1);
+  assert.deepEqual(clarity.applicable_packs, ["student-full-report"]);
+  assert.equal(clarity.promote, false, "a free-report code must never be advertised");
+
+  // It buys nothing else, at any price.
+  store.clear();
+  for(const sku of ["wellness-session", "career-intelligence-roadmap", "internship-1-month", "parents-handbook"]){
+    const q = await quote({ code: "CLARITY100", packId: sku, customer: ALICE });
+    assert.equal(q.ok, false, sku + " must not accept CLARITY100");
+    assert.equal(q.reason, "not_applicable");
+    assert.equal(q.discount_amount, 0);
+  }
+});
+
+await test("CLARITY100 stops working once it has been claimed", async () => {
+  store.clear();
+  const before = await quote({ code: "CLARITY100", packId: "student-full-report", customer: ALICE });
+  assert.equal(before.ok, true);
+
+  // Someone completes checkout with it. recordRedemption is what counts,
+  // and it only runs after Cashfree confirms the payment.
+  const counted = await recordRedemption({
+    code: "CLARITY100", orderId: "lume_student999_free", sku: "student-full-report",
+    amount: 1, discount: 998, customer: ALICE
+  });
+  assert.equal(counted, true);
+
+  const after = await quote({ code: "CLARITY100", packId: "student-full-report", customer: BOB });
+  assert.equal(after.ok, false, "the second person must not get a free report");
+  assert.equal(after.reason, "limit_reached");
+  assert.equal(after.final_amount, 999, "and they are quoted the full price");
+});
+
 await test("FIRST50 is configured as one-per-customer, first-session-only", () => {
   const first50 = DEFAULT_COUPONS.find(c => c.code === "FIRST50");
   assert.equal(first50.per_customer_limit, 1);
@@ -404,7 +459,9 @@ await test("a dry run reports what would change and writes nothing", async () =>
 await test("seeding reports which codes are live at checkout", async () => {
   store.clear();
   const r = await coupons.seedCoupons({});
-  assert.deepEqual(r.live, ["FIRST50"]);
+  // Live means usable at checkout, which is not the same as advertised:
+  // CLARITY100 is a one-use invitation code and is never promoted.
+  assert.deepEqual(r.live, ["FIRST50", "CLARITY100"]);
 });
 
 console.log("\ncatalogue guards");

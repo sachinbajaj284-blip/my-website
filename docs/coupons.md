@@ -18,16 +18,43 @@ and why the price is safe.
 
 ## Live offers
 
-**One offer runs: `FIRST50`.** Every other SKU sells at list price.
+**One offer is advertised: `FIRST50`.** One more is live but unlisted:
+`CLARITY100`, below. Every other SKU sells at list price.
 
-| Code | Discount | Applies to | Limits | Live |
-|---|---|---|---|---|
-| `FIRST50` | 50% | 1:1 Counselling Session (₹499 → ₹249) | **1 per customer, first session only** | **yes** |
-| `MIND50` | 50% | 1:1 Counselling Session | 200 uses | no |
-| `CAREER30` | 30% | Full Clarity Report, Career Roadmap | — | no |
-| `PARENT200` | ₹200 flat | Full Clarity Report, Stream Clarity Session | — | no |
-| `REFER200` | ₹200 flat | Full Clarity Report | — | no |
-| `INTERN500` | ₹500 flat | All three internship tracks | 50 uses | no |
+| Code | Discount | Applies to | Limits | Live | Shown on site |
+|---|---|---|---|---|---|
+| `FIRST50` | 50% | 1:1 Counselling Session (₹499 → ₹249) | **1 per customer, first session only** | **yes** | yes |
+| `CLARITY100` | 100% | Full Clarity Report (₹999 → **₹1**) | **1 use in total, 1 per customer** | **yes** | **no** |
+| `MIND50` | 50% | 1:1 Counselling Session | 200 uses | no | no |
+| `CAREER30` | 30% | Full Clarity Report, Career Roadmap | — | no | no |
+| `PARENT200` | ₹200 flat | Full Clarity Report, Stream Clarity Session | — | no | no |
+| `REFER200` | ₹200 flat | Full Clarity Report | — | no | no |
+| `INTERN500` | ₹500 flat | All three internship tracks | 50 uses | no | no |
+
+### `CLARITY100` — the free Full Clarity Report
+
+A single invitation code, meant to be given to one named person.
+
+**It charges ₹1, not ₹0.** Cashfree will not create a zero-value order, so
+`discountFor()` caps every discount at `base - MIN_CHARGE`. The client sees
+₹999 struck through and ₹1 payable. Setting `discount_value` higher than 100
+changes nothing — the cap decides.
+
+**It is deliberately not promoted.** `promote: false` keeps it out of
+`/api/coupons/active`, which is what draws the offer badges. A one-use
+100%-off code on a public badge is claimed by the first stranger who reads
+it, not by the person it was meant for. Don't set that flag true; a test
+asserts it stays false.
+
+**It burns on payment, not on typing.** `recordRedemption` runs from
+order-status once Cashfree confirms PAID, so the code stays claimable until
+someone actually completes checkout. Two people checking out in the same
+few seconds could in principle both get it — the exposure is one extra
+report, and the alternative (burning it at validate time) lets anyone
+destroy the offer by typing the code.
+
+To hand it to someone else afterwards, reset the counter: delete
+`coupons/CLARITY100` in Firestore (or set `times_used: 0`) and re-seed.
 
 The switched-off codes are kept in the catalogue rather than deleted: they
 document the shape of each kind of offer, and re-enabling one is a single
