@@ -13,6 +13,8 @@
     "sitemap": "node tools/sitemap.mjs",
     "sitemap:check": "node tools/sitemap.mjs --check",
     "og:images": "node tools/og-images.mjs",
+    "test": "npm run checkout:test && npm run coupons:test && npm run josaa:test",
+    "checkout:test": "node tools/checkout.test.mjs",
     "coupons:test": "node tools/coupons.test.mjs",
     "coupons:list": "node tools/seed-coupons.mjs --dry-run",
     "coupons:seed": "node tools/seed-coupons.mjs"

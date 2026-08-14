@@ -1,0 +1,42 @@
+# Runs the money-path tests on every change.
+#
+# The checkout suite is here because a stale line in cashfree-payments.js
+# once took every payment on the site down for a day, and nothing in the
+# repo noticed — there was no CI that ran on a push at all, only the
+# scheduled JoSAA refresh. This is that missing gate.
+#
+# Everything runs on plain Node with no browser and no install step, so a
+# broken checkout is caught in seconds rather than by a customer.
+
+name: tests
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # No npm install: these suites deliberately depend on nothing outside
+      # the repo, so there is no lockfile step to break and nothing to
+      # download before the payment path can be checked.
+      - name: Checkout flow
+        run: npm run checkout:test
+
+      - name: Coupon rules
+        run: npm run coupons:test
+
+      - name: JoSAA parser
+        run: npm run josaa:test
