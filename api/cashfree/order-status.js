@@ -17,7 +17,8 @@
   FIREBASE_PRIVATE_KEY=...
 */
 
-const { recordPaidEntitlement, claimPaidNotification } = require("../_lib/entitlements");
+const { recordPaidEntitlement, claimPaidNotification,
+        isManualOrderId, findManualEntitlement } = require("../_lib/entitlements");
 const { notifyOwner } = require("../_lib/notify");
 const { json, setCors } = require("../_lib/http");
 const { recordRedemption } = require("../_lib/coupons");
@@ -49,15 +50,59 @@ module.exports = async function handler(req, res){
     return json(res, 405, { error: "Method not allowed" });
   }
 
+  const orderId = getOrderId(req);
+  if(!/^[A-Za-z0-9_-]{3,45}$/.test(orderId)){
+    return json(res, 400, { error: "Valid order_id is required." });
+  }
+
+  /*
+    Manual grants resolve from Firestore, not from Cashfree.
+
+    An off-platform payment (see /api/entitlements/grant) has no order at
+    the gateway, so asking Cashfree about one would 404 and
+    lumeCashfreeVerifyAccess would then delete the very access
+    restore-access had just handed the browser. Answering it here — in the
+    same shape, from the entitlement record that *is* the proof of payment
+    — means the whole existing chain works for these grants unchanged.
+
+    This runs before the credentials check because a manual grant needs no
+    Cashfree credentials to verify.
+  */
+  if(isManualOrderId(orderId)){
+    let record;
+    try{
+      record = await findManualEntitlement(orderId);
+    }catch(err){
+      console.error("[lume order-status] manual entitlement lookup failed:", String(err && err.message || err));
+      // Fail closed, and say it's a lookup failure rather than a verdict —
+      // the client retries instead of treating this as "not paid".
+      return json(res, 502, { error: "Could not verify that order right now. Please retry in a moment." });
+    }
+    if(!record){
+      return json(res, 404, { error: "Order not found." });
+    }
+    return json(res, 200, {
+      order_id: orderId,
+      cf_order_id: null,
+      order_status: "PAID",
+      order_amount: record.amount != null ? record.amount : null,
+      order_currency: record.currency || "INR",
+      sku: String(record.sku || ""),
+      coupon_code: "",
+      coupon_discount: 0,
+      session_mode: "",
+      // Same restraint as the Cashfree path below: first name only, so
+      // this public, order-id-only endpoint never leaks contact details.
+      customer: {
+        name: record.name ? String(record.name).split(" ")[0] : ""
+      }
+    });
+  }
+
   const clientId = process.env.CASHFREE_CLIENT_ID;
   const clientSecret = process.env.CASHFREE_CLIENT_SECRET;
   if(!clientId || !clientSecret){
     return json(res, 500, { error: "Cashfree credentials are not configured." });
-  }
-
-  const orderId = getOrderId(req);
-  if(!/^[A-Za-z0-9_-]{3,45}$/.test(orderId)){
-    return json(res, 400, { error: "Valid order_id is required." });
   }
 
   const env = (process.env.CASHFREE_ENV || "production").toLowerCase();
