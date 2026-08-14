@@ -30,22 +30,56 @@
      first load, and a failed load can be retried rather than being stuck. */
   var sdkPromise = null;
   var SDK_URL = "https://sdk.cashfree.com/js/v3/cashfree.js";
+  var SDK_TIMEOUT_MS = 15000;
 
   function loadCashfreeSdk(){
     if(window.Cashfree) return Promise.resolve();
     if(sdkPromise) return sdkPromise;
     sdkPromise = new Promise(function(resolve, reject){
-      var existing = document.querySelector('script[src="' + SDK_URL + '"]');
-      var s = existing || document.createElement("script");
-      s.addEventListener("load", function(){
+      var settled = false;
+      var timer = null;
+
+      /* Errors from here are marked so the checkout catch can show the
+         client this message — which names the likely cause and points at
+         UPI — rather than the generic "couldn't start checkout" line. */
+      function fail(message){
+        if(settled){ return; }
+        settled = true;
+        clearTimeout(timer);
+        /* Forget the cached rejection, so "Try payment again" makes a fresh
+           attempt instead of replaying this failure for the whole session. */
+        sdkPromise = null;
+        var err = new Error(message);
+        err.sdkFailed = true;
+        reject(err);
+      }
+
+      function ready(){
+        if(settled){ return; }
         /* The SDK defines window.Cashfree synchronously on execute; if it did
            not, something served us the wrong file. */
-        if(window.Cashfree) resolve();
-        else reject(new Error("Cashfree SDK loaded but did not initialise."));
-      });
+        if(!window.Cashfree){
+          fail("The payment provider's script loaded but didn't start. Please retry in a moment, or pay by UPI below.");
+          return;
+        }
+        settled = true;
+        clearTimeout(timer);
+        resolve();
+      }
+
+      /* A blocked or stalled script may fire neither load nor error — an ad
+         blocker and a dead connection both look like silence. Without this
+         the modal would spin on "Opening Cashfree checkout…" for ever, with
+         no way forward and no mention of the UPI fallback. */
+      timer = setTimeout(function(){
+        fail("The secure payment window couldn't load — this is usually a network or ad-blocker issue. Please retry in a moment, or pay by UPI below.");
+      }, SDK_TIMEOUT_MS);
+
+      var existing = document.querySelector('script[src="' + SDK_URL + '"]');
+      var s = existing || document.createElement("script");
+      s.addEventListener("load", ready);
       s.addEventListener("error", function(){
-        sdkPromise = null;
-        reject(new Error("Could not reach the payment provider. Check your connection, or pay by UPI below."));
+        fail("Could not reach the payment provider. Check your connection, or pay by UPI below.");
       });
       if(!existing){
         s.src = SDK_URL;
@@ -882,10 +916,12 @@
       renderFailure(options, "This is a local preview. Cashfree checkout works on the live website. You can still pay by UPI below.");
       return Promise.resolve({ ok:false, reason:"preview" });
     }
-    if(typeof window.Cashfree !== "function"){
-      renderFailure(options, "The secure payment window couldn't load — this is usually a network or ad-blocker issue. Please retry in a moment, pay by UPI below, or message us on WhatsApp and we'll complete it with you.");
-      return Promise.resolve({ ok:false, reason:"sdk-unavailable" });
-    }
+    /* No window.Cashfree check belongs here. The SDK is fetched on demand by
+       loadCashfreeSdk(), after the order exists — so at this point it is
+       *expected* to be absent, and a pre-flight guard rejects every payment
+       on the site. One stood here from before the load was made lazy and did
+       exactly that. If the SDK genuinely can't be fetched, loadCashfreeSdk
+       rejects with the message the client needs. */
 
     var payload = {
       sku: options.sku || "",
@@ -977,7 +1013,12 @@
         return { ok:false, reason:"coupon-rejected", couponRejected:err.couponRejected };
       }
       logAttempt(options, { status:"ERROR", error:String(err && err.message || err) });
-      renderFailure(options, "We couldn't start Cashfree checkout. Please try again, or pay by UPI below.");
+      // An SDK that wouldn't load already explains itself, and its message
+      // names the likely cause — pass it through rather than flattening
+      // every failure into the same generic line.
+      renderFailure(options, err && err.sdkFailed
+        ? err.message
+        : "We couldn't start Cashfree checkout. Please try again, or pay by UPI below.");
       return { ok:false, error:err };
     });
   }
