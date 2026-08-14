@@ -53,6 +53,29 @@ few seconds could in principle both get it — the exposure is one extra
 report, and the alternative (burning it at validate time) lets anyone
 destroy the offer by typing the code.
 
+**How the recipient actually uses it.** Send them this link:
+
+```
+https://lumelive.co.in/assessment.html?coupon=CLARITY100#self-assessments
+```
+
+This matters, because there is no coupon box waiting for them otherwise. The
+checkout coupon field is hidden by default and only reveals itself when one
+of three things is true (see `mountDeclarative` in `lume-coupons.js`):
+
+1. `/api/coupons/active` lists this SKU — which only happens for **promoted**
+   offers, and CLARITY100 is deliberately not one;
+2. a code is stashed in `sessionStorage` from a tapped offer badge;
+3. **`?coupon=` is in the URL.**
+
+So for an unpromoted code the link is the route. It reveals the field,
+pre-fills the code and shows "CLARITY100 ready"; the client taps **Apply**,
+the price row redraws to ₹1, and Pay carries the code to create-order, which
+re-derives the discount itself.
+
+Anyone who lands on the page without that link sees the plain ₹999 checkout
+with no coupon box at all — which is the intent for a one-use code.
+
 To hand it to someone else afterwards, reset the counter: delete
 `coupons/CLARITY100` in Firestore (or set `times_used: 0`) and re-seed.
 
