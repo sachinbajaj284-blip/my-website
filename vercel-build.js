@@ -6,6 +6,11 @@ const target = path.join(root, "public");
 
 const skipDirs = new Set([
   ".git",
+  // Workflow files are repository configuration, not pages. They were
+  // being copied into public/ and served from lumelive.co.in, which
+  // published the schedule and steps of every CI job to anyone who
+  // guessed the path.
+  ".github",
   ".vercel",
   "api",
   "godaddy-cashfree-node-app",

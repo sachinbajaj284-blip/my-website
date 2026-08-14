@@ -75,17 +75,23 @@
         fail("The secure payment window couldn't load — this is usually a network or ad-blocker issue. Please retry in a moment, or pay by UPI below.");
       }, SDK_TIMEOUT_MS);
 
-      var existing = document.querySelector('script[src="' + SDK_URL + '"]');
-      var s = existing || document.createElement("script");
+      /* Drop any tag left by an earlier attempt before injecting. If one
+         were still live we'd have returned at window.Cashfree above, so
+         anything found here has already failed — and a dead script fires
+         neither load nor error a second time. Attaching to it instead of
+         replacing it is what makes "Try payment again" hang rather than
+         retry. */
+      var stale = document.querySelector('script[src="' + SDK_URL + '"]');
+      if(stale && stale.parentNode){ stale.parentNode.removeChild(stale); }
+
+      var s = document.createElement("script");
       s.addEventListener("load", ready);
       s.addEventListener("error", function(){
         fail("Could not reach the payment provider. Check your connection, or pay by UPI below.");
       });
-      if(!existing){
-        s.src = SDK_URL;
-        s.async = true;
-        document.head.appendChild(s);
-      }
+      s.src = SDK_URL;
+      s.async = true;
+      document.head.appendChild(s);
     });
     return sdkPromise;
   }
