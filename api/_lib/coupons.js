@@ -189,9 +189,25 @@ const DEFAULT_COUPONS = [
     discount_type: "percentage",
     discount_value: 100,
     applicable_packs: ["student-full-report"],
-    is_active: true,
+    /*
+      PARKED, ON PURPOSE. Switch this to true in the same edit that fills
+      in restricted_to_emails below.
+
+      The report checkout now shows its coupon box to every visitor, so a
+      live 100%-off code is claimable by anyone who learns the string.
+      This one is meant for a single named person, and until their address
+      is here there is no way to tell them apart from anyone else — so it
+      is off rather than open.
+    */
+    is_active: false,
+    // The account this code was issued to. Matched against the email in
+    // the verified Firebase token, so it cannot be satisfied by typing
+    // somebody else's address into a form. Empty = anyone, which is
+    // exactly what this code must not be.
+    restricted_to_emails: [],
     expiration_date: null,
-    // One use, in total, across everybody.
+    // One use, in total, across everybody, for ever. There is no reset
+    // short of clearing the counter in Firestore by hand.
     usage_limit: 1,
     times_used: 0,
     per_customer_limit: 1,
@@ -271,7 +287,18 @@ function normalizeCoupon(raw, fallbackCode){
     // disqualify someone for having bought an unrelated PDF.
     first_time_skus: Array.isArray(raw.first_time_skus) && raw.first_time_skus.length
       ? raw.first_time_skus.map(function(s){ return String(s || "").trim(); }).filter(Boolean)
-      : packs
+      : packs,
+    /*
+      Addressed to specific people, by account email.
+
+      An empty list means "anyone may use it" — the same permissive
+      reading as applicable_packs, and the right default, since almost
+      every offer is open. A non-empty list is checked in
+      checkCustomerRules, which fails closed: no email means no match.
+    */
+    restricted_to_emails: Array.isArray(raw.restricted_to_emails)
+      ? raw.restricted_to_emails.map(normalizeEmail).filter(Boolean)
+      : []
   };
 }
 
@@ -476,7 +503,32 @@ async function hasPriorPurchase(skus, customer){
 */
 async function checkCustomerRules(coupon, customer){
   const c = customer || {};
-  const known = Boolean(normalizePhone(c.phone) || normalizeEmail(c.email));
+  const email = normalizeEmail(c.email);
+
+  /*
+    A code addressed to named people.
+
+    Deliberately checked BEFORE the "do we know who this is?" shortcut
+    below, and it fails closed: an anonymous request is precisely the
+    case this restriction exists to refuse, so treating a missing email
+    as "no objection" would hand an invitation code to anyone who left
+    the field empty.
+
+    The email compared here is the account's, not a typed one.
+    create-order passes the address out of the verified Firebase token,
+    so this cannot be satisfied by typing somebody else's address into a
+    form.
+  */
+  if(coupon.restricted_to_emails.length &&
+     (!email || coupon.restricted_to_emails.indexOf(email) === -1)){
+    return {
+      ok: false,
+      reason: "not_invited",
+      message: "This code was issued to a specific Lume Live account. Sign in with the email it was sent to, or continue without the code."
+    };
+  }
+
+  const known = Boolean(normalizePhone(c.phone) || email);
   if(!known) return null;
 
   if(coupon.per_customer_limit != null){

@@ -18,13 +18,13 @@ and why the price is safe.
 
 ## Live offers
 
-**One offer is advertised: `FIRST50`.** One more is live but unlisted:
-`CLARITY100`, below. Every other SKU sells at list price.
+**One offer is advertised: `FIRST50`.** `CLARITY100` exists but is parked
+until it names its recipient — see below. Every other SKU sells at list price.
 
 | Code | Discount | Applies to | Limits | Live | Shown on site |
 |---|---|---|---|---|---|
 | `FIRST50` | 50% | 1:1 Counselling Session (₹499 → ₹249) | **1 per customer, first session only** | **yes** | yes |
-| `CLARITY100` | 100% | Full Clarity Report (₹999 → **₹1**) | **1 use in total, 1 per customer** | **yes** | **no** |
+| `CLARITY100` | 100% | Full Clarity Report (₹999 → **₹1**) | **1 use ever, locked to one account** | **parked** | **no** |
 | `MIND50` | 50% | 1:1 Counselling Session | 200 uses | no | no |
 | `CAREER30` | 30% | Full Clarity Report, Career Roadmap | — | no | no |
 | `PARENT200` | ₹200 flat | Full Clarity Report, Stream Clarity Session | — | no | no |
@@ -80,12 +80,27 @@ An unpromoted code satisfies none of the first two, which is why a new
 invitation code needs either the link or the flag. CLARITY100 shipped with
 neither and was briefly unusable.
 
-**It is not tied to a person.** The code is limited to one redemption in
-total; it is not bound to a named client, an email or an account. Whoever
-completes checkout with it first gets the free report. If it needs to be
-restricted to one named person, that is a new field on the coupon
-(`restricted_to_emails`, matched against the verified account email) and
-does not exist yet.
+**It is locked to one account, and parked until that account is named.**
+`restricted_to_emails` holds the address it was issued to, matched against
+the email in the **verified Firebase token** — so it cannot be claimed by
+typing somebody else's address into a form, only by being signed in as them.
+The list is empty in the repo, and `is_active` is `false` while it is: with
+the report's coupon box now visible to every visitor, a live 100%-off code
+with no named recipient goes to whoever types the string first.
+
+To issue it, one edit — fill in the address and switch it on:
+
+```js
+is_active: true,
+restricted_to_emails: ["their-account-email@example.com"],
+```
+
+A test refuses the halfway state: CLARITY100 must be either inactive or
+restricted, never active with an empty list.
+
+**One use, ever.** `usage_limit: 1` is a lifetime cap across everybody, not
+per month or per campaign, and `per_customer_limit: 1` means the recipient
+cannot take a second one either. Once redeemed it is spent.
 
 To hand it to someone else afterwards, reset the counter: delete
 `coupons/CLARITY100` in Firestore (or set `times_used: 0`) and re-seed.
