@@ -192,9 +192,7 @@ await test("FIRST50 on the ₹999 report is refused, price unchanged", async () 
 
 await test("only the intended codes are live", () => {
   const live = DEFAULT_COUPONS.filter(c => c.is_active !== false).map(c => c.code);
-  // CLARITY100 is parked until it carries the address it was issued to —
-  // see the guard below, which is what keeps those two facts together.
-  assert.deepEqual(live, ["FIRST50"]);
+  assert.deepEqual(live, ["FIRST50", "CLARITY100"]);
 });
 
 await test("CLARITY100 cannot go live without the account it was issued to", () => {
@@ -383,20 +381,16 @@ await test("an unpaid past order does not disqualify anyone", async () => {
 });
 
 /*
-  CLARITY100 ships parked (is_active:false) until it carries the address
-  it was issued to. These exercise the real path with it switched on the
-  way it will be in production — Firestore fields layer over the built-in
-  definition, which is exactly how the live edit will be made.
+  CLARITY100 is live and issued to one account. These run against the
+  shipped definition with no Firestore override, so they assert the real
+  production configuration rather than a convenient stand-in.
 */
-const INVITED = { phone: "9811111111", email: "govind@example.com" };
+const CLARITY = DEFAULT_COUPONS.find(c => c.code === "CLARITY100");
+const INVITED = { phone: "9811111111", email: CLARITY.restricted_to_emails[0] };
 const UNINVITED = { phone: "9822222222", email: "someone@example.com" };
-function activateClarity(){
-  store.clear();
-  store.seed("coupons", "CLARITY100", { is_active: true, restricted_to_emails: ["govind@example.com"] });
-}
 
 await test("CLARITY100 takes the ₹999 report down to the ₹1 the gateway needs", async () => {
-  activateClarity();
+  store.clear();
   const q = await quote({ code: "CLARITY100", packId: "student-full-report", customer: INVITED });
   assert.equal(q.ok, true);
   assert.equal(q.reason, "applied");
@@ -407,7 +401,7 @@ await test("CLARITY100 takes the ₹999 report down to the ₹1 the gateway need
 });
 
 await test("CLARITY100 is refused for anyone but the account it was issued to", async () => {
-  activateClarity();
+  store.clear();
   const q = await quote({ code: "CLARITY100", packId: "student-full-report", customer: UNINVITED });
   assert.equal(q.ok, false);
   assert.equal(q.reason, "not_invited");
@@ -419,13 +413,13 @@ await test("CLARITY100 is refused for anyone but the account it was issued to", 
   assert.equal(anon.reason, "not_invited");
 });
 
-await test("CLARITY100 stays parked until its recipient is named", async () => {
-  store.clear();
-  // No Firestore override: the shipped definition, as it stands in the repo.
-  const q = await quote({ code: "CLARITY100", packId: "student-full-report", customer: INVITED });
-  assert.equal(q.ok, false);
-  assert.equal(q.reason, "inactive");
-  assert.equal(q.final_amount, 999);
+await test("CLARITY100 is issued to exactly one account", () => {
+  assert.equal(CLARITY.is_active, true);
+  assert.equal(CLARITY.restricted_to_emails.length, 1,
+    "one invitation code, one recipient — a second address doubles what it gives away");
+  // Stored lower-cased, because that is how the verified token's email is
+  // normalised before it is compared.
+  assert.equal(CLARITY.restricted_to_emails[0], CLARITY.restricted_to_emails[0].toLowerCase());
 });
 
 await test("CLARITY100 is one use in total, and only on the clarity report", async () => {
@@ -437,7 +431,7 @@ await test("CLARITY100 is one use in total, and only on the clarity report", asy
 
   // It buys nothing else, at any price, even switched on.
   for(const sku of ["wellness-session", "career-intelligence-roadmap", "internship-1-month", "parents-handbook"]){
-    activateClarity();
+    store.clear();
     const q = await quote({ code: "CLARITY100", packId: sku, customer: INVITED });
     assert.equal(q.ok, false, sku + " must not accept CLARITY100");
     assert.equal(q.reason, "not_applicable");
@@ -446,7 +440,7 @@ await test("CLARITY100 is one use in total, and only on the clarity report", asy
 });
 
 await test("CLARITY100 stops working once it has been claimed", async () => {
-  activateClarity();
+  store.clear();
   const before = await quote({ code: "CLARITY100", packId: "student-full-report", customer: INVITED });
   assert.equal(before.ok, true);
 
@@ -508,7 +502,7 @@ await test("seeding reports which codes are live at checkout", async () => {
   const r = await coupons.seedCoupons({});
   // Live means usable at checkout, which is not the same as advertised:
   // CLARITY100 is a one-use invitation code and is never promoted.
-  assert.deepEqual(r.live, ["FIRST50"]);
+  assert.deepEqual(r.live, ["FIRST50", "CLARITY100"]);
 });
 
 console.log("\ncatalogue guards");
