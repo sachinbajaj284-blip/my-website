@@ -374,6 +374,73 @@ Returns every `promote`-flagged offer that is active, unexpired and not fully
 claimed, with the price it produces. Drives the hero banner. Cached 5 minutes
 at the edge.
 
+### `POST /api/coupons/issue` — admin only
+
+Issues an invitation coupon to a named account, or revokes one. Same operation
+as `npm run coupons:issue`; both call the same `issueCoupon()`, so they cannot
+disagree about what issuing means.
+
+Use this rather than the CLI when you don't want production secrets on a
+laptop, and rather than the Firebase console because a misspelled field name
+there silently produces a live 100%-off code anyone can use — this reads the
+result back and refuses to report success in that state.
+
+```bash
+# issue it
+curl -X POST https://lumelive.co.in/api/coupons/issue \
+  -H "Authorization: Bearer $COUPON_ADMIN_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"code":"CLARITY100","email":"someone@example.com"}'
+
+# what it would do, without writing
+  -d '{"code":"CLARITY100","email":"someone@example.com","dry_run":true}'
+
+# take it back
+  -d '{"code":"CLARITY100","revoke":true}'
+```
+
+`email` or `emails` both work, one or many. The reply carries the **effective**
+configuration — the built-in definition and the Firestore document combined —
+so you see what checkout will do, not what you meant to write:
+
+```json
+{
+  "ok": true,
+  "code": "CLARITY100",
+  "message": "CLARITY100 is issued to someone@example.com. Nobody else can use it, and it is good for 1 more use(s).",
+  "effective": {
+    "is_active": true,
+    "restricted_to_emails": ["someone@example.com"],
+    "usage_limit": 1, "times_used": 0,
+    "applicable_packs": ["student-full-report"],
+    "promote": false
+  }
+}
+```
+
+Failures answer non-2xx (`400` for a refused issue, `401` unauthorised, `404`
+unarmed, `503` Firebase not configured), so a script notices without parsing
+the body.
+
+### Access to the admin routes
+
+`/api/coupons/seed` and `/api/coupons/issue` share one gate,
+`api/_lib/adminAuth.js` — a security control belongs in one place, for the same
+reason the CORS allow-list does.
+
+Set in Vercel → Project → Settings → Environment Variables:
+
+```
+COUPON_ADMIN_TOKEN   a long random secret, 24+ characters
+```
+
+With it **unset** — the state of every deploy until someone deliberately arms
+it — both routes answer `404`, exactly like an unrouted path, so their presence
+cannot be discovered by probing. A token shorter than 24 characters is treated
+as unset, and logged. A wrong token gets `401` and learns nothing about which
+part was wrong. Both are rate-limited to 5 attempts an hour per caller, ahead
+of the token check, so a stolen-token guessing loop is slow.
+
 ---
 
 ## Front-end

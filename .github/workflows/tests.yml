@@ -41,5 +41,8 @@ jobs:
       - name: Coupon rules
         run: npm run coupons:test
 
+      - name: Coupon admin endpoints
+        run: npm run admin:test
+
       - name: JoSAA parser
         run: npm run josaa:test

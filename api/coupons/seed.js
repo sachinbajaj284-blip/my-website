@@ -40,40 +40,19 @@
   re-seed never resets a counter a real redemption has incremented.
 */
 
-const crypto = require("crypto");
 const { json, setCors, readBody } = require("../_lib/http");
 const { checkRateLimit, clientKey } = require("../_lib/rateLimit");
+const { requireAdmin } = require("../_lib/adminAuth");
 const { seedCoupons } = require("../_lib/coupons");
 
-// A short token is not a secret. Refusing to run beats quietly accepting
-// something guessable on the one route that can rewrite prices.
-const MIN_TOKEN_LENGTH = 24;
-
-// Compares hashes rather than the raw strings: timingSafeEqual needs equal
-// lengths, and hashing first stops the comparison from leaking the token's
-// length as well as its contents.
-function tokenMatches(provided, expected){
-  const a = crypto.createHash("sha256").update(String(provided)).digest();
-  const b = crypto.createHash("sha256").update(String(expected)).digest();
-  return crypto.timingSafeEqual(a, b);
-}
-
-function bearer(req){
-  const header = String(req.headers.authorization || "");
-  const match = /^Bearer\s+(.+)$/i.exec(header.trim());
-  return match ? match[1].trim() : "";
-}
-
 module.exports = async function handler(req, res){
-  const expected = String(process.env.COUPON_ADMIN_TOKEN || "");
-
   // Not armed → indistinguishable from a route that was never deployed.
-  if(!expected){
-    return json(res, 404, { error: "Not found" });
-  }
-  if(expected.length < MIN_TOKEN_LENGTH){
-    console.error("[lume coupons] COUPON_ADMIN_TOKEN is shorter than " + MIN_TOKEN_LENGTH + " characters — seed endpoint disabled.");
-    return json(res, 404, { error: "Not found" });
+  // The token check itself lives in _lib/adminAuth.js, shared with
+  // /api/coupons/issue, because a security control copied into a second
+  // file is one that can drift.
+  const gate = requireAdmin(req, "coupon-seed");
+  if(!gate.ok && gate.status === 404){
+    return json(res, 404, { error: gate.error });
   }
 
   setCors(req, res, "POST,OPTIONS");
@@ -98,10 +77,9 @@ module.exports = async function handler(req, res){
     return json(res, 429, { error: "Too many attempts. Please wait and try again." });
   }
 
-  const provided = bearer(req);
-  if(!provided || !tokenMatches(provided, expected)){
-    // Deliberately says nothing about which part was wrong.
-    return json(res, 401, { error: "Unauthorized" });
+  // Deliberately says nothing about which part was wrong.
+  if(!gate.ok){
+    return json(res, gate.status, { error: gate.error });
   }
 
   let body = {};
