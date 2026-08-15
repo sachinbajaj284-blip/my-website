@@ -19,7 +19,8 @@
     "coupons:test": "node tools/coupons.test.mjs",
     "entitlements:test": "node tools/entitlements.test.mjs",
     "coupons:list": "node tools/seed-coupons.mjs --dry-run",
-    "coupons:seed": "node tools/seed-coupons.mjs"
+    "coupons:seed": "node tools/seed-coupons.mjs",
+    "coupons:issue": "node tools/issue-coupon.mjs"
   },
   "engines": {
     "node": ">=18"
