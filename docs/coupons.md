@@ -18,13 +18,13 @@ and why the price is safe.
 
 ## Live offers
 
-**One offer is advertised: `FIRST50`.** `CLARITY100` exists but is parked
-until it names its recipient — see below. Every other SKU sells at list price.
+**One offer is advertised: `FIRST50`.** `CLARITY100` is live but unlisted and
+issued to a single account — see below. Every other SKU sells at list price.
 
 | Code | Discount | Applies to | Limits | Live | Shown on site |
 |---|---|---|---|---|---|
 | `FIRST50` | 50% | 1:1 Counselling Session (₹499 → ₹249) | **1 per customer, first session only** | **yes** | yes |
-| `CLARITY100` | 100% | Full Clarity Report (₹999 → **₹1**) | **1 use ever, locked to one account** | **parked** | **no** |
+| `CLARITY100` | 100% | Full Clarity Report (₹999 → **₹1**) | **1 use ever, locked to one account** | **yes** | **no** |
 | `MIND50` | 50% | 1:1 Counselling Session | 200 uses | no | no |
 | `CAREER30` | 30% | Full Clarity Report, Career Roadmap | — | no | no |
 | `PARENT200` | ₹200 flat | Full Clarity Report, Stream Clarity Session | — | no | no |
@@ -80,23 +80,25 @@ An unpromoted code satisfies none of the first two, which is why a new
 invitation code needs either the link or the flag. CLARITY100 shipped with
 neither and was briefly unusable.
 
-**It is locked to one account, and parked until that account is named.**
-`restricted_to_emails` holds the address it was issued to, matched against
-the email in the **verified Firebase token** — so it cannot be claimed by
-typing somebody else's address into a form, only by being signed in as them.
-The list is empty in the repo, and `is_active` is `false` while it is: with
-the report's coupon box now visible to every visitor, a live 100%-off code
-with no named recipient goes to whoever types the string first.
-
-To issue it, one edit — fill in the address and switch it on:
-
-```js
-is_active: true,
-restricted_to_emails: ["their-account-email@example.com"],
-```
+**It is locked to one account.** `restricted_to_emails` holds the address it
+was issued to, matched against the email in the **verified Firebase token** —
+so it cannot be claimed by typing that address into a form, only by being
+signed in as that account. That is what lets the code be live while the
+report's coupon box is on screen for every visitor: anyone may type
+CLARITY100, and everyone but the named account is refused with `not_invited`.
 
 A test refuses the halfway state: CLARITY100 must be either inactive or
-restricted, never active with an empty list.
+restricted, never active with an empty list — a 100%-off code with no named
+recipient belongs to whoever types the string first.
+
+**The address has to be the one they sign in with.** The comparison is exact
+after lower-casing; it does not know about Gmail's dots-and-plus aliasing, so
+`a.b@gmail.com` and `ab@gmail.com` are two different people here. If the
+recipient signs up with a variant, the code refuses them — confirm the
+address on the account, not the one you were given verbally.
+
+To re-issue it to somebody else, change the address and clear the counter
+(below).
 
 **One use, ever.** `usage_limit: 1` is a lifetime cap across everybody, not
 per month or per campaign, and `per_customer_limit: 1` means the recipient
@@ -161,6 +163,7 @@ deploy.
 | `min_amount` | number / null | Optional minimum order value. |
 | `headline`, `description` | string | Hero banner copy. |
 | `promote` | boolean | Show this code in the hero banner. |
+| `restricted_to_emails` | string[] | Account emails this code was issued to. **Empty = anyone.** Matched against the verified token's email; fails closed when the caller is unidentified. |
 
 
 Pack ids come from `api/_lib/catalog.js`.

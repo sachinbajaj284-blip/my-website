@@ -189,22 +189,22 @@ const DEFAULT_COUPONS = [
     discount_type: "percentage",
     discount_value: 100,
     applicable_packs: ["student-full-report"],
+    is_active: true,
     /*
-      PARKED, ON PURPOSE. Switch this to true in the same edit that fills
-      in restricted_to_emails below.
+      The one account this code was issued to.
 
-      The report checkout now shows its coupon box to every visitor, so a
-      live 100%-off code is claimable by anyone who learns the string.
-      This one is meant for a single named person, and until their address
-      is here there is no way to tell them apart from anyone else — so it
-      is off rather than open.
+      Matched against the email inside the verified Firebase token, so it
+      cannot be satisfied by typing this address into a form — only by
+      being signed in as this account. That is why the code can be live
+      while the report's coupon box is on screen for every visitor:
+      anyone may type CLARITY100, and everyone but this account is
+      refused.
+
+      Never let this list go empty while is_active is true. A 100%-off
+      code with no named recipient belongs to whoever types the string
+      first; a test refuses that combination.
     */
-    is_active: false,
-    // The account this code was issued to. Matched against the email in
-    // the verified Firebase token, so it cannot be satisfied by typing
-    // somebody else's address into a form. Empty = anyone, which is
-    // exactly what this code must not be.
-    restricted_to_emails: [],
+    restricted_to_emails: ["govind1757singh@gmail.com"],
     expiration_date: null,
     // One use, in total, across everybody, for ever. There is no reset
     // short of clearing the counter in Firestore by hand.
