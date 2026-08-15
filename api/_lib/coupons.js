@@ -190,20 +190,20 @@ const DEFAULT_COUPONS = [
     discount_value: 100,
     applicable_packs: ["student-full-report"],
     /*
-      PARKED, ON PURPOSE. Switch this to true in the same edit that fills
-      in restricted_to_emails below.
+      OFF here on purpose, and issued from Firestore instead.
 
-      The report checkout now shows its coupon box to every visitor, so a
-      live 100%-off code is claimable by anyone who learns the string.
-      This one is meant for a single named person, and until their address
-      is here there is no way to tell them apart from anyone else — so it
-      is off rather than open.
+      The recipient's email address is personal data and this repository
+      is public, so it is not written down here — `npm run coupons:issue`
+      puts it on the `coupons/CLARITY100` document, which Firestore
+      layers over this definition (see loadCoupon).
+
+      That makes this pair the fail-safe: if the document is missing, or
+      Firestore is unreachable, the code falls back to inactive and
+      unrestricted — off for everybody — rather than to a live 100%-off
+      code with no named recipient, which would belong to whoever typed
+      the string first. Do not switch this to true; issue it instead.
     */
     is_active: false,
-    // The account this code was issued to. Matched against the email in
-    // the verified Firebase token, so it cannot be satisfied by typing
-    // somebody else's address into a form. Empty = anyone, which is
-    // exactly what this code must not be.
     restricted_to_emails: [],
     expiration_date: null,
     // One use, in total, across everybody, for ever. There is no reset
@@ -813,12 +813,34 @@ async function seedCoupons({ dryRun = false } = {}){
     for(const coupon of DEFAULT_COUPONS){
       const ref = firestore.collection(COLLECTION).doc(coupon.code);
       const existing = await ref.get();
-      const timesUsed = existing.exists ? Math.max(0, Number(existing.data().times_used) || 0) : 0;
+      const prev = existing.exists ? existing.data() : {};
+      const timesUsed = Math.max(0, Number(prev.times_used) || 0);
 
-      written.push({ code: coupon.code, action: existing.exists ? "updated" : "created", times_used: timesUsed });
+      /*
+        An issued invitation code is not seedable state.
+
+        Codes like CLARITY100 ship parked with an empty recipient list
+        precisely so the address never enters the repository — the
+        issuing happens on the Firestore document. Writing the defaults
+        straight over that would set is_active:false and wipe the
+        recipient, silently revoking a code somebody had already been
+        given, on a routine `npm run coupons:seed`. So an existing
+        issuance wins over the defaults, the same way times_used does.
+      */
+      const issued = Array.isArray(prev.restricted_to_emails) && prev.restricted_to_emails.length > 0;
+      const keep = issued
+        ? { restricted_to_emails: prev.restricted_to_emails, is_active: prev.is_active !== false }
+        : {};
+
+      written.push({
+        code: coupon.code,
+        action: existing.exists ? "updated" : "created",
+        times_used: timesUsed,
+        issued_to: issued ? prev.restricted_to_emails.length : 0
+      });
       if(dryRun) continue;
 
-      await ref.set(Object.assign({}, coupon, {
+      await ref.set(Object.assign({}, coupon, keep, {
         times_used: timesUsed,
         updatedAt: new Date().toISOString()
       }), { merge: true });
@@ -878,6 +900,115 @@ async function seedCoupons({ dryRun = false } = {}){
   };
 }
 
+/*
+  Issues an invitation code to named accounts.
+
+  An invitation code is one addressed to specific people rather than
+  offered to everybody. The recipients' email addresses are personal
+  data, and this repository is public, so they are not committed: the
+  code ships parked (is_active:false, empty recipient list) and is
+  issued here, onto its Firestore document, which loadCoupon layers over
+  the built-in definition.
+
+  Lives beside seedCoupons rather than in the CLI for the same reason
+  that does — writing "what a coupon is" in two places is how the two
+  drift apart.
+
+  Two things it will not do:
+
+  - issue with an empty recipient list. That combination — active, no
+    recipient — is a 100%-off code belonging to whoever types the string
+    first, and is exactly what parking the code in the repo avoids.
+  - report success without reading back the *effective* coupon through
+    loadCoupon. A write that lands under a misspelled field name throws
+    nothing and leaves the code live and open; the read-back is what
+    turns that into a visible failure.
+
+  Returns { ok, configured, dryRun, code, emails, effective, message }.
+*/
+async function issueCoupon({ code, emails, revoke = false, dryRun = false } = {}){
+  const key = normalizeCode(code);
+  if(!key){
+    return { ok: false, code: "", message: "A coupon code is required." };
+  }
+  if(!DEFAULTS_BY_CODE[key]){
+    return { ok: false, code: key, message: "No coupon called " + key + " exists in the catalogue." };
+  }
+
+  const list = Array.from(new Set((emails || []).map(normalizeEmail).filter(Boolean)));
+  if(!revoke && !list.length){
+    return {
+      ok: false, code: key,
+      message: "Issuing " + key + " needs at least one account email. Without one it would be a discount for whoever types the code first."
+    };
+  }
+
+  const firestore = firestoreOrNull();
+  if(!firestore){
+    return {
+      ok: false, configured: false, code: key, emails: list,
+      message: "Firebase Admin is not configured (FIREBASE_PROJECT_ID / FIREBASE_CLIENT_EMAIL / FIREBASE_PRIVATE_KEY)."
+    };
+  }
+
+  const patch = revoke
+    ? { code: key, is_active: false, updatedAt: new Date().toISOString() }
+    : { code: key, is_active: true, restricted_to_emails: list, updatedAt: new Date().toISOString() };
+
+  if(dryRun){
+    return {
+      ok: true, configured: true, dryRun: true, code: key, emails: list, effective: null,
+      message: "Dry run — nothing written. Would " + (revoke ? "revoke " : "issue ") + key +
+               (revoke ? "" : " to " + list.join(", ")) + "."
+    };
+  }
+
+  try{
+    await firestore.collection(COLLECTION).doc(key).set(patch, { merge: true });
+  }catch(err){
+    return { ok: false, configured: true, code: key, emails: list,
+             message: "Write failed: " + String(err && err.message || err) };
+  }
+
+  // What checkout will actually see, defaults and document combined.
+  const effective = await loadCoupon(key);
+  if(!effective){
+    return { ok: false, configured: true, code: key, emails: list, effective: null,
+             message: "Wrote the document but could not read " + key + " back." };
+  }
+
+  const summary = {
+    is_active: effective.is_active,
+    restricted_to_emails: effective.restricted_to_emails,
+    usage_limit: effective.usage_limit,
+    times_used: effective.times_used,
+    applicable_packs: effective.applicable_packs,
+    promote: effective.promote
+  };
+
+  if(effective.is_active && !effective.restricted_to_emails.length){
+    return {
+      ok: false, configured: true, code: key, emails: list, effective: summary,
+      message: "REFUSING TO REPORT SUCCESS: " + key + " is now live with no recipient — anyone who types it gets the discount. Revoke it (--revoke) and try again."
+    };
+  }
+  if(!revoke && !effective.is_active){
+    return {
+      ok: false, configured: true, code: key, emails: list, effective: summary,
+      message: key + " was written but reads back as inactive. Check the document in Firestore."
+    };
+  }
+
+  return {
+    ok: true, configured: true, dryRun: false, code: key, emails: list, effective: summary,
+    message: revoke
+      ? key + " is revoked — it is no longer accepted at checkout."
+      : key + " is issued to " + effective.restricted_to_emails.join(", ") +
+        ". Nobody else can use it, and it is good for " +
+        (effective.usage_limit == null ? "unlimited uses" : (effective.usage_limit - effective.times_used) + " more use(s)") + "."
+  };
+}
+
 module.exports = {
   COLLECTION,
   REDEMPTIONS,
@@ -896,5 +1027,6 @@ module.exports = {
   discountFor,
   quote,
   recordRedemption,
-  seedCoupons
+  seedCoupons,
+  issueCoupon
 };
