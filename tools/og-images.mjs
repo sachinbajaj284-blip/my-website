@@ -35,6 +35,9 @@ const PAGES = {
   'privacy-policy':                 { eyebrow: 'Policies',           title: 'Your Privacy, Handled With Care' },
   'refund-policy':                  { eyebrow: 'Policies',           title: 'Transparent Payment Support' },
   terms:                            { eyebrow: 'Policies',           title: 'Clear Terms For A Calm Experience' },
+  'stream-selector-hi':             { eyebrow: 'फ्री क्विज़ · हिंदी',    title: '10वीं के बाद कौन-सी stream सही है?',
+                                      foot: 'lumelive.co.in <i>· करियर और मेंटल-हेल्थ काउंसलिंग</i>',
+                                      pill: 'पहला session सिर्फ ₹249' },
 };
 
 const logo = 'data:image/png;base64,' + fs.readFileSync(path.join(ROOT, 'logo.png')).toString('base64');
@@ -51,13 +54,36 @@ const FACES = `
   @font-face{font-family:Playf;src:url(${font('playfair-800')}) format('woff2');font-weight:800}
 `;
 
+// Montserrat and Playfair carry no Devanagari, and the render container has no
+// system Devanagari font either, so a Hindi card without these comes out as
+// rows of tofu boxes.
+//
+// They are added only to cards that actually contain Devanagari. Noto Sans
+// Devanagari also covers ₹ and ·, and it wins those glyphs over the system
+// fallback Montserrat was using — putting it in every card's stack silently
+// re-renders all twelve English cards that are already checked in.
+const DEVA_FACES = `
+  @font-face{font-family:Deva;src:url(${font('noto-sans-devanagari-800')}) format('woff2');font-weight:800}
+  @font-face{font-family:DevaSerif;src:url(${font('noto-serif-devanagari-700')}) format('woff2');font-weight:700}
+`;
+const hasDevanagari = s => /[\u0900-\u097F]/.test(s);
+
 const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 
-const card = ({ eyebrow, title }) => `<!doctype html><meta charset="utf-8">
+// foot carries its own markup (the <i> that greys the tagline) so it is
+// interpolated raw; pill is plain text and goes through esc().
+const DEFAULT_FOOT = 'lumelive.co.in <i>· Career &amp; Mental-Health Counselling</i>';
+const DEFAULT_PILL = 'Founder-led · ₹249 first session';
+
+const card = ({ eyebrow, title, foot = DEFAULT_FOOT, pill = DEFAULT_PILL }) => {
+  const deva = hasDevanagari(eyebrow + title + foot + pill);
+  const sans  = deva ? 'Mont,Deva,Arial,sans-serif' : 'Mont,Arial,sans-serif';
+  const serif = deva ? 'Playf,DevaSerif,Georgia,serif' : 'Playf,Georgia,serif';
+  return `<!doctype html><meta charset="utf-8">
 <style>
-${FACES}
+${FACES}${deva ? DEVA_FACES : ''}
   *{margin:0;padding:0;box-sizing:border-box}
-  body{width:1200px;height:630px;overflow:hidden;font-family:Mont,Arial,sans-serif;
+  body{width:1200px;height:630px;overflow:hidden;font-family:${sans};
        background:
          radial-gradient(70% 90% at 0% 0%, rgba(10,110,110,.55), transparent 62%),
          radial-gradient(50% 70% at 100% 108%, rgba(201,147,58,.16), transparent 60%),
@@ -72,7 +98,7 @@ ${FACES}
   .brand span b{color:#E8B95A;font-weight:900}
   .eyebrow{font-size:20px;font-weight:800;letter-spacing:.19em;text-transform:uppercase;
            color:#E8B95A;margin-bottom:22px}
-  h1{font-family:Playf,Georgia,serif;font-weight:800;color:#fff;
+  h1{font-family:${serif};font-weight:800;color:#fff;
      font-size:${title.length > 44 ? 62 : 72}px;line-height:1.12;max-width:1010px;
      letter-spacing:-.01em}
   .foot{display:flex;align-items:center;justify-content:space-between;gap:24px}
@@ -89,9 +115,10 @@ ${FACES}
   <h1>${esc(title)}</h1>
 </div>
 <div class="foot">
-  <div class="site">lumelive.co.in <i>· Career &amp; Mental-Health Counselling</i></div>
-  <div class="pill">Founder-led · ₹249 first session</div>
+  <div class="site">${foot}</div>
+  <div class="pill">${esc(pill)}</div>
 </div>`;
+};
 
 const only = process.argv.slice(2);
 const targets = Object.entries(PAGES).filter(([slug]) => !only.length || only.includes(slug));
