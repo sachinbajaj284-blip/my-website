@@ -624,6 +624,15 @@ function realityNotes(r){
 /* State                                                               */
 /* ------------------------------------------------------------------ */
 var answers = [], cur = 0, started = false, result = null;
+/* Guards the beat between tapping an option and the next question arriving,
+   so a fast tapper (or a held key) cannot answer two questions with one
+   intent. */
+var advancing = false;
+var CONFIRM_MS = 120;
+
+function reduceMotion(){
+  return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+}
 
 function $(id){ return document.getElementById(id); }
 function esc(s){ return String(s).replace(/[&<>"]/g, function(c){
@@ -654,11 +663,13 @@ function decodeAnswers(code){
 /* ------------------------------------------------------------------ */
 /* Quiz rendering                                                      */
 /* ------------------------------------------------------------------ */
-function renderQ(){
+function renderQ(dir){
   var q = Q[cur];
   var pct = cur / Q.length * 100;
   var bar = $("bar");
-  bar.style.width = pct + "%";
+  /* A floor on the visible fill only — an empty track on question one reads
+     as a broken bar. aria-valuenow stays truthful. */
+  bar.style.width = Math.max(pct, 2.5) + "%";
   bar.parentNode.setAttribute("aria-valuenow", String(Math.round(pct)));
 
   $("pcount").textContent = t("question") + " " + (cur + 1) + " " + t("of") + " " + Q.length;
@@ -681,9 +692,19 @@ function renderQ(){
     b.setAttribute("role", "radio");
     b.setAttribute("aria-checked", answers[cur] === i ? "true" : "false");
     b.innerHTML = '<span class="key" aria-hidden="true">' + (i + 1) + "</span><span>" + esc(opt[LANG]) + "</span>";
+    b.style.setProperty("--i", i);
     b.onclick = function(){ choose(i); };
     box.appendChild(b);
   });
+
+  /* Restarting the animation needs the class gone, a reflow, then the class
+     back — the question text and stage tag are the same elements every time,
+     so nothing replays on its own. */
+  var zone = $("qzone");
+  zone.classList.remove("q-in", "q-rev");
+  void zone.offsetWidth;
+  zone.classList.add("q-in");
+  if(dir < 0) zone.classList.add("q-rev");
 
   var skip = $("skipBtn");
   if(q.skippable){ skip.classList.remove("hide"); skip.textContent = t("skip"); }
@@ -698,7 +719,7 @@ function renderQ(){
 function advance(){
   if(cur < Q.length - 1){
     cur++;
-    renderQ();
+    renderQ(1);
     /* On a phone the next question's text lands above the fold after a
        tap near the bottom of the list. Pull the card back into view. */
     $("quiz").scrollIntoView({ block:"start", behavior:"smooth" });
@@ -706,6 +727,7 @@ function advance(){
 }
 
 function choose(i){
+  if(advancing) return;
   answers[cur] = i;
   /* Per-question events: without them there is no way to see which
      question people quit on, which is the only number that tells you
@@ -715,10 +737,20 @@ function choose(i){
     event_label:"q" + (cur + 1) + "_" + Q[cur].stage,
     value: cur + 1
   });
-  advance();
+
+  /* Show the choice landing before replacing it. Without this the option you
+     picked is gone before you have seen it register, which reads as a
+     misfire on a phone. */
+  var opts = $("opts").children;
+  for(var k = 0; k < opts.length; k++) opts[k].setAttribute("aria-checked", k === i ? "true" : "false");
+  if(opts[i]) opts[i].classList.add("confirm");
+
+  if(reduceMotion()) return advance();
+  advancing = true;
+  setTimeout(function(){ advancing = false; advance(); }, CONFIRM_MS);
 }
-function skipQ(){ answers[cur] = -1; advance(); }
-function goBack(){ if(cur > 0){ cur--; renderQ(); } }
+function skipQ(){ if(advancing) return; answers[cur] = -1; advance(); }
+function goBack(){ if(advancing) return; if(cur > 0){ cur--; renderQ(-1); } }
 
 /* 1–4 select an option, so a student on a laptop never has to reach for
    the mouse. Ignored while a form field has focus. */
@@ -765,16 +797,16 @@ function renderResult(){
       '<div class="fhead"><span class="fname">' + esc(c.name[LANG]) + "</span>" +
       (idx < 3 && row.rel >= 55 ? '<span class="badge ' + badge + '">' + esc(label) + "</span>" : "") +
       "</div>" +
-      '<div class="fsub">' + esc(c.sub[LANG]) + " · " + row.rel + "% " + esc(t("relative")) + "</div>" +
-      '<div class="track"><div class="fill" style="width:' + row.rel + '%"></div></div></div>';
+      '<div class="fsub">' + esc(c.sub[LANG]) + ' · <span class="pctn" data-to="' + row.rel + '">0</span>% ' + esc(t("relative")) + "</div>" +
+      '<div class="track"><div class="fill" style="--w:' + row.rel + '%"></div></div></div>';
   });
   $("fitlist").innerHTML = html;
 
   var ax = "";
   AXES.forEach(function(a){
     var pct = Math.round(r.axes[a] * 100);
-    ax += '<div class="axis"><div class="lab"><span>' + esc(AXIS_LABEL[a][LANG]) + "</span><span>" + pct + "%</span></div>" +
-      '<div class="track"><div class="fill" style="width:' + pct + '%"></div></div></div>';
+    ax += '<div class="axis"><div class="lab"><span>' + esc(AXIS_LABEL[a][LANG]) + '</span><span><span class="pctn" data-to="' + pct + '">0</span>%</span></div>' +
+      '<div class="track"><div class="fill" style="--w:' + pct + '%"></div></div></div>';
   });
   $("axes").innerHTML = ax;
 
@@ -807,6 +839,55 @@ function renderResult(){
     pn.classList.remove("hide");
     pn.innerHTML = "<b>" + esc(t("pressureLabel")) + "</b>" + esc(t("pressure"));
   }else pn.classList.add("hide");
+
+  playResult();
+}
+
+/* ------------------------------------------------------------------ */
+/* Result reveal                                                       */
+/* ------------------------------------------------------------------ */
+function countUp(el){
+  var to = parseInt(el.getAttribute("data-to"), 10) || 0;
+  if(reduceMotion()){ el.textContent = to; return; }
+  var start = null, dur = 950;
+  requestAnimationFrame(function step(ts){
+    if(start === null) start = ts;
+    var t = Math.min(1, (ts - start) / dur);
+    el.textContent = Math.round(to * (1 - Math.pow(1 - t, 3)));
+    if(t < 1) requestAnimationFrame(step);
+  });
+}
+
+function playResult(){
+  var res = $("result");
+
+  /* The result is a lot of information at once. Cascading it gives the eye a
+     reading order instead of one wall arriving whole. */
+  var kids = res.children, shown = 0;
+  for(var i = 0; i < kids.length; i++){
+    if(kids[i].classList.contains("hide")) continue;
+    /* Capped: the result is taller than a screen, and an uncapped stagger
+       leaves the lower half invisible to anyone who scrolls straight down. */
+    kids[i].style.animationDelay = (Math.min(shown, 7) * 0.05).toFixed(2) + "s";
+    shown++;
+  }
+  res.classList.remove("reveal");
+  void res.offsetWidth;
+  res.classList.add("reveal");
+
+  var top = res.querySelector(".fit.top");
+  if(top) top.classList.add("pulse");
+
+  var fills = res.querySelectorAll("#fitlist .fill, #axes .fill");
+  var nums  = res.querySelectorAll(".pctn");
+  function fill(){
+    for(var i = 0; i < fills.length; i++) fills[i].style.width = fills[i].style.getPropertyValue("--w");
+    for(var j = 0; j < nums.length; j++) countUp(nums[j]);
+  }
+  if(reduceMotion()) return fill();
+  /* Two frames: the first commits width:0, the second gives the transition
+     something to animate from. One frame and the bars snap. */
+  requestAnimationFrame(function(){ requestAnimationFrame(fill); });
 }
 
 /* ------------------------------------------------------------------ */
@@ -911,11 +992,12 @@ function restart(){
   answers = []; cur = 0; result = null;
   try{ localStorage.removeItem(STORE); }catch(e){}
   if(location.search) history.replaceState(null, "", location.pathname);
+  $("result").classList.remove("reveal");
   $("result").classList.add("hide");
   $("quiz").classList.remove("hide");
   $("leadForm").classList.remove("hide");
   $("leadOk").classList.add("hide");
-  renderQ();
+  renderQ(1);
   window.scrollTo({ top:0, behavior:"smooth" });
 }
 
@@ -966,7 +1048,7 @@ function boot(){
     track("stream_quiz_result_opened", { event_category:"lead_tools", event_label: result.ranked[0].key });
     return;
   }
-  renderQ();
+  renderQ(1);
 }
 
 if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);

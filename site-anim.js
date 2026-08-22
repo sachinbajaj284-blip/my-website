@@ -31,6 +31,9 @@
     var groups=new Map();
     els.forEach(function(el){
       if(el.closest(".sa-reveal"))return;
+      // Opt-out for sections that run their own entrance animation; without
+      // it the shared reveal also fades and underlines their headings.
+      if(el.closest("[data-no-sa]"))return;
       var r=el.getBoundingClientRect();
       // never hide content already on screen or not rendered (display:none)
       if(r.top<=fold||r.height===0)return;
