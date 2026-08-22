@@ -33,7 +33,7 @@ const PRIORITY = [
   [/^mental-health-counselling-/,      '0.85', 'monthly'],
   [/^(services-pricing|for-parents)\.html$/, '0.8', 'monthly'],
   [/^(career-explorer|career-library|compare-careers)\.html$/, '0.8', 'weekly'],
-  [/^(college-predictor|colleges|choice-list|stream-selector)\.html$/, '0.8', 'weekly'],
+  [/^(college-predictor|colleges|choice-list|stream-selector(-hi)?)\.html$/, '0.8', 'weekly'],
   [/^career-as-/,                      '0.75', 'monthly'],
   [/^career-options-after-/,           '0.75', 'monthly'],
   [/-vs-/,                             '0.7',  'monthly'],
@@ -43,13 +43,24 @@ const PRIORITY = [
 ];
 const DEFAULT = ['0.65', 'monthly'];
 
-// The two homepages are translations of each other.
-const ALTERNATES = [
-  ['en-in',     ORIGIN],
-  ['hi-in',     ORIGIN + 'index-hi.html'],
-  ['x-default', ORIGIN],
+// Pages that exist in both languages. Each group lists its own alternates,
+// and every page in the group carries the whole group in its sitemap entry.
+const TRANSLATION_GROUPS = [
+  { pages: ['index.html', 'index-hi.html'], alternates: [
+    ['en-in',     ORIGIN],
+    ['hi-in',     ORIGIN + 'index-hi.html'],
+    ['x-default', ORIGIN],
+  ]},
+  { pages: ['stream-selector.html', 'stream-selector-hi.html'], alternates: [
+    ['en-in',     ORIGIN + 'stream-selector.html'],
+    ['hi-in',     ORIGIN + 'stream-selector-hi.html'],
+    ['x-default', ORIGIN + 'stream-selector.html'],
+  ]},
 ];
-const HREFLANG_PAGES = new Set(['index.html', 'index-hi.html']);
+const alternatesFor = f => {
+  const g = TRANSLATION_GROUPS.find(g => g.pages.includes(f));
+  return g ? g.alternates : null;
+};
 
 const lastmod = file => {
   try {
@@ -80,10 +91,8 @@ const body = pages.map(f => {
   const loc = f === 'index.html' ? ORIGIN : ORIGIN + f;
   const rule = PRIORITY.find(([re]) => re.test(f));
   const [priority, changefreq] = rule ? rule.slice(1) : DEFAULT;
-  const alts = HREFLANG_PAGES.has(f)
-    ? ALTERNATES.map(([l, href]) =>
-        `\n    <xhtml:link rel="alternate" hreflang="${l}" href="${href}"/>`).join('')
-    : '';
+  const alts = (alternatesFor(f) || []).map(([l, href]) =>
+    `\n    <xhtml:link rel="alternate" hreflang="${l}" href="${href}"/>`).join('');
   return `  <url>
     <loc>${loc}</loc>
     <lastmod>${lastmod(f)}</lastmod>
