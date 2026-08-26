@@ -41,9 +41,9 @@
 */
 
 const crypto = require("crypto");
-const { json, setCors, readBody } = require("../_lib/http");
-const { checkRateLimit, clientKey } = require("../_lib/rateLimit");
-const { seedCoupons } = require("../_lib/coupons");
+const { json, setCors, readBody } = require("../../http");
+const { checkRateLimit, clientKey } = require("../../rateLimit");
+const { seedCoupons } = require("../../coupons");
 
 // A short token is not a secret. Refusing to run beats quietly accepting
 // something guessable on the one route that can rewrite prices.

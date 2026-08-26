@@ -121,7 +121,7 @@ await test("segment() reads the last path element", () => {
   from the same directory it is checking — a disk-to-disk comparison
   would agree with itself no matter what the catch-all actually wired.
 */
-for(const group of ["agent", "assessment"]){
+for(const group of ["agent", "assessment", "coupons"]){
   await test("every " + group + " handler on disk is wired, and every wired name resolves", () => {
     const onDisk = readdirSync(new URL("../api/_lib/routes/" + group + "/", import.meta.url))
       .filter(f => f.endsWith(".js"))
