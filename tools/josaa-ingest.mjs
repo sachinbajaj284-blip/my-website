@@ -139,6 +139,31 @@ function summarise(html) {
   const targets = new Set([...html.matchAll(/__doPostBack\((?:&#39;|['"])([^'"&]+)/g)].map(m => m[1]));
   lines.push('', `__doPostBack targets: ${targets.size ? [...targets].join(', ') : '(none)'}`);
 
+  /* If the dropdowns do not fire __doPostBack, something else fills them, and the whole
+     posting strategy depends on which. An onchange handler names it. */
+  lines.push('', 'select onchange handlers:');
+  const handlers = [...html.matchAll(/<select[^>]*name=["']([^"']+)["'][^>]*>/gi)]
+    .map(m => [m[1], m[0].match(/onchange=["']([^"']*)["']/i)?.[1]])
+    .filter(([, h]) => h);
+  handlers.forEach(([name, h]) => lines.push(`  ${name} -> ${h.slice(0, 160)}`));
+  if (!handlers.length) lines.push('  (none — the dropdowns are not wired in markup)');
+
+  /* Client-side population means a JSON endpoint somewhere. These are the shapes it
+     takes on ASP.NET pages: a PageMethod, a ScriptService, or a plain jQuery call. */
+  lines.push('', 'candidate data endpoints in inline script:');
+  const endpoints = new Set();
+  for (const [, u] of html.matchAll(/url\s*:\s*["']([^"']+)["']/gi)) endpoints.add(u);
+  for (const [, u] of html.matchAll(/(?:fetch|open)\s*\(\s*["']([^"']+\.(?:aspx|asmx|json|svc)[^"']*)["']/gi)) endpoints.add(u);
+  for (const [, u] of html.matchAll(/["'](\/[^"']*\/(?:[A-Za-z]+)\.(?:asmx|svc)(?:\/[A-Za-z]+)?)["']/g)) endpoints.add(u);
+  for (const [, m] of html.matchAll(/PageMethods\.([A-Za-z_]\w*)/g)) endpoints.add('PageMethods.' + m);
+  [...endpoints].slice(0, 20).forEach(u => lines.push(`  ${u}`));
+  if (!endpoints.size) lines.push('  (none found)');
+
+  lines.push('', 'external scripts:');
+  const srcs = [...html.matchAll(/<script[^>]*src=["']([^"']+)["']/gi)].map(m => m[1]);
+  srcs.slice(0, 15).forEach(u => lines.push(`  ${u}`));
+  if (!srcs.length) lines.push('  (none)');
+
   lines.push('', 'tables:');
   const tables = [...html.matchAll(/<table[\s\S]*?<\/table>/gi)].map(m => m[0]);
   tables.forEach((t, i) => {
@@ -186,6 +211,50 @@ function absorbCookies(res) {
   }
 }
 
+/*
+  undici reports every transport failure as the bare string "fetch failed" and hides the
+  real reason on err.cause — which is how a run could fail five times in a row and tell
+  nobody whether it was DNS, a refused connection or a certificate the runner would not
+  verify. Walk the chain and print what actually happened.
+*/
+function describeError(err) {
+  const parts = [];
+  let node = err;
+  let depth = 0;
+  while (node && depth++ < 5) {
+    const bits = [node.code, node.errno, node.syscall, node.reason, node.message]
+      .filter(Boolean)
+      .filter((v, i, a) => a.indexOf(v) === i);
+    if (bits.length) parts.push(bits.join(' '));
+    node = node.cause;
+  }
+  return parts.join('  <-  ') || String(err);
+}
+
+/* Certificate failures are the one class worth naming out loud: Indian government sites
+   periodically renew with an incomplete chain, curl papers over it and Node does not,
+   which looks like an outage and is not one. */
+const TLS_CODES = new Set([
+  'UNABLE_TO_VERIFY_LEAF_SIGNATURE', 'SELF_SIGNED_CERT_IN_CHAIN',
+  'DEPTH_ZERO_SELF_SIGNED_CERT', 'CERT_HAS_EXPIRED', 'ERR_TLS_CERT_ALTNAME_INVALID',
+  'UNABLE_TO_GET_ISSUER_CERT_LOCALLY',
+]);
+
+function tlsHint(err) {
+  let node = err;
+  let depth = 0;
+  while (node && depth++ < 5) {
+    if (node.code && TLS_CODES.has(node.code)) {
+      return `\nThis is a TLS trust failure (${node.code}), not an outage — curl may well ` +
+             `still fetch the page.\nJoSAA has probably renewed with an incomplete chain. ` +
+             `Fetch the missing intermediate and\npoint NODE_EXTRA_CA_CERTS at it, rather ` +
+             `than disabling verification.`;
+    }
+    node = node.cause;
+  }
+  return '';
+}
+
 async function request(url, { method = 'GET', body = null, referer = ARCHIVE } = {}) {
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     await throttle();
@@ -208,9 +277,13 @@ async function request(url, { method = 'GET', body = null, referer = ARCHIVE } =
       if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
       return await res.text();
     } catch (err) {
-      if (attempt === MAX_RETRIES) throw new Error(`${url} failed after ${MAX_RETRIES + 1} tries: ${err.message}`);
+      if (attempt === MAX_RETRIES) {
+        throw new Error(
+          `${url} failed after ${MAX_RETRIES + 1} tries: ${describeError(err)}${tlsHint(err)}`
+        );
+      }
       const backoff = 2000 * Math.pow(2, attempt);
-      console.warn(`  ! ${err.message} — retrying in ${backoff / 1000}s`);
+      console.warn(`  ! ${describeError(err)} — retrying in ${backoff / 1000}s`);
       await sleep(backoff);
     }
   }

@@ -68,6 +68,33 @@ jobs:
           fi
           echo "Fetched $(wc -c < /tmp/josaa-probe.html) bytes"
 
+          # curl and Node do not trust the same things. curl succeeding tells us the host
+          # is up; it does not tell us the ingest can reach it, and a run has already
+          # failed in exactly that gap. Ask Node directly, and show the chain if it says no.
+          echo "--- Node fetch ---"
+          node -e "
+            const url = process.argv[1];
+            fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } })
+              .then(r => console.log('node fetch OK — HTTP ' + r.status))
+              .catch(e => {
+                console.log('node fetch FAILED');
+                let c = e, d = 0;
+                while (c && d++ < 5) { console.log('   ' + [c.code, c.errno, c.syscall, c.message].filter(Boolean).join(' ')); c = c.cause; }
+                process.exitCode = 3;
+              });
+          " "$URL" || NODE_FETCH_FAILED=1
+
+          if [ "${NODE_FETCH_FAILED:-0}" = "1" ]; then
+            echo "--- TLS chain (curl works, Node does not — usually a missing intermediate) ---"
+            echo | openssl s_client -connect josaa.admissions.nic.in:443 \
+              -servername josaa.admissions.nic.in 2>&1 \
+              | sed -n '/Certificate chain/,/Server certificate/p' | head -30 || true
+            echo | openssl s_client -connect josaa.admissions.nic.in:443 \
+              -servername josaa.admissions.nic.in 2>&1 \
+              | grep -iE 'verify (error|return code)' || true
+            echo "::warning::curl reached JoSAA but Node could not. The ingest uses Node."
+          fi
+
       # Parser unit tests need no network and catch a broken helper before we hit the
       # government server thousands of times.
       - name: Parser unit tests
