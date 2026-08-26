@@ -268,7 +268,7 @@ function tlsHint(err) {
   return '';
 }
 
-async function request(url, { method = 'GET', body = null, referer = ARCHIVE } = {}) {
+async function request(url, { method = 'GET', body = null, referer = ARCHIVE, async: isAsync = false } = {}) {
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     await throttle();
     try {
@@ -286,6 +286,9 @@ async function request(url, { method = 'GET', body = null, referer = ARCHIVE } =
           'Referer': referer,
           ...(cookieJar.size ? { Cookie: cookieHeader() } : {}),
           ...(method === 'POST' ? { 'Content-Type': 'application/x-www-form-urlencoded' } : {}),
+          /* ASP.NET decides between a page and a delta on this header. Without it
+             a partial postback is answered with a full render. */
+          ...(isAsync ? { 'X-MicrosoftAjax': 'Delta=true', 'X-Requested-With': 'XMLHttpRequest' } : {}),
         },
       });
       absorbCookies(res);
@@ -561,6 +564,89 @@ async function fetchArchiveForm() {
   return { html, fields: discoverFields(html), hidden: extractHiddenFields(html) };
 }
 
+/* --------------------------------------------------------- asp.net ajax -- */
+
+/*
+  The archive form's dropdowns live inside an UpdatePanel.
+
+  Run #10's contract inspection settled this: the served page contains
+  Sys.WebForms, PageRequestManager and UpdatePanel, and nothing anywhere writes
+  ctl00$hdnSecKey — it is an empty hidden field, not a token. So the reason a
+  well-formed full postback came back as the 11,950-byte "Not Available" page is
+  that the browser never sends one. It sends a PARTIAL postback:
+
+    <scriptManagerName> = <updatePanelId>|<eventTarget>
+    __ASYNCPOST         = true
+
+  and gets back a pipe-delimited delta rather than a page.
+
+  Both ids are read off the page rather than hardcoded, because they carry the
+  ASP.NET container prefix and that is exactly the thing that changes between
+  admission years.
+*/
+function discoverAjax(html) {
+  const init = /Sys\.WebForms\.PageRequestManager\._initialize\(\s*'([^']*)'\s*,\s*'([^']*)'\s*(?:,\s*\[([^\]]*)\])?/.exec(html);
+  if (!init) return null;
+
+  /* The panel list is rendered as ['tctl00$...$UpdatePanel1',''] — a leading 't'
+     or 'f' marks whether the panel always updates. Strip it. */
+  const panels = (init[3] || '')
+    .split(',')
+    .map(part => part.trim().replace(/^['"]|['"]$/g, ''))
+    .filter(Boolean)
+    .map(id => id.replace(/^[tf]/, ''));
+
+  return { scriptManager: init[1], formId: init[2], panels };
+}
+
+/*
+  A delta is a flat run of length-prefixed records:
+
+    <len>|<type>|<id>|<content of exactly len chars>|
+
+  The two that matter are `updatePanel`, whose content is the re-rendered HTML
+  for that panel, and `hiddenField`, which is how the server hands back the new
+  __VIEWSTATE and __EVENTVALIDATION. `error` carries a server-side exception,
+  which must surface rather than being read as an empty page.
+
+  Length is counted in characters, so the content is sliced rather than split —
+  a record whose HTML contains a pipe would otherwise tear the whole parse apart.
+*/
+function parseAsyncDelta(text) {
+  const out = { panels: {}, hidden: {}, error: null, records: 0 };
+  let i = 0;
+
+  while (i < text.length) {
+    const lenEnd = text.indexOf('|', i);
+    if (lenEnd < 0) break;
+    const len = Number(text.slice(i, lenEnd));
+    if (!Number.isFinite(len) || len < 0) break;
+
+    const typeEnd = text.indexOf('|', lenEnd + 1);
+    if (typeEnd < 0) break;
+    const type = text.slice(lenEnd + 1, typeEnd);
+
+    const idEnd = text.indexOf('|', typeEnd + 1);
+    if (idEnd < 0) break;
+    const id = text.slice(typeEnd + 1, idEnd);
+
+    const content = text.substr(idEnd + 1, len);
+    i = idEnd + 1 + len + 1;
+    out.records++;
+
+    if (type === 'updatePanel') out.panels[id] = content;
+    else if (type === 'hiddenField') out.hidden[id] = content;
+    else if (type === 'error') out.error = content;
+  }
+
+  return out;
+}
+
+/* A delta always opens with a length and a pipe; a page never does. */
+function looksLikeDelta(text) {
+  return /^\d+\|/.test(String(text || '').trimStart());
+}
+
 /* ------------------------------------------------------------ form session -- */
 
 /*
@@ -599,7 +685,44 @@ class FormSession {
     this.values = extractSelectedValues(html);
     this.button = findSubmitButton(html) || this.button || null;
     this.fields = discoverFields(html);
+    /* Only the full page carries the _initialize call, so keep the first one
+       seen: a delta re-renders the panel, not the script that set it up. */
+    this.ajax = discoverAjax(html) || this.ajax || null;
     return this;
+  }
+
+  /*
+    Fold a partial-postback delta back in. The panel HTML replaces what we know
+    about the controls inside it; the hiddenField records replace __VIEWSTATE and
+    __EVENTVALIDATION, which is the whole reason the next request can succeed.
+  */
+  applyDelta(delta) {
+    const panelHtml = Object.values(delta.panels).join('\n');
+    if (panelHtml) {
+      const selects = extractSelects(panelHtml);
+      const values = extractSelectedValues(panelHtml);
+      Object.assign(this.selects, selects);
+      Object.assign(this.values, values);
+      this.html = panelHtml;
+      this.fields = discoverFields(this.renderedForm());
+      const button = findSubmitButton(panelHtml);
+      if (button) this.button = button;
+    }
+    for (const [name, value] of Object.entries(delta.hidden)) this.hidden[name] = value;
+    return this;
+  }
+
+  /*
+    discoverFields() wants markup, but after a delta what we hold is a set of
+    controls spread across the original page and one panel. Re-emit the current
+    controls as minimal markup so discovery keeps working off one view.
+  */
+  renderedForm() {
+    return Object.entries(this.selects).map(([name, options]) =>
+      '<select name="' + name + '">' +
+      options.map(o => '<option value="' + o.value + '">' + o.text + '</option>').join('') +
+      '</select>'
+    ).join('');
   }
 
   /** Options currently offered by a control, by its full posted name. */
@@ -625,6 +748,19 @@ class FormSession {
        click handler; __EVENTTARGET stays empty for a real button press. */
     if (submit && this.button) payload.set(this.button.name, this.button.value);
 
+    /*
+      Inside an UpdatePanel every one of these is a partial postback, including
+      the button press. The ScriptManager field names which panel is being
+      updated and what triggered it; without it the server renders the whole page
+      and, on this form, refuses.
+    */
+    if (this.ajax && this.ajax.scriptManager) {
+      const panel = this.ajax.panels[0] || '';
+      const trigger = submit && this.button ? this.button.name : (changed || '');
+      payload.set(this.ajax.scriptManager, panel + '|' + trigger);
+      payload.set('__ASYNCPOST', 'true');
+    }
+
     return payload;
   }
 }
@@ -633,9 +769,18 @@ class FormSession {
 async function step(session, opts, { label, dump }) {
   const payload = session.buildPayload(opts);
   const body = payload.toString();
-  const html = await request(ARCHIVE, { method: 'POST', body });
+  const html = await request(ARCHIVE, { method: 'POST', body, async: Boolean(session.ajax) });
   if (dump) await dumper.write(label, { url: ARCHIVE, method: 'POST', payload: body, html });
-  session.load(html);
+
+  if (looksLikeDelta(html)) {
+    const delta = parseAsyncDelta(html);
+    if (delta.error) {
+      throw new Error('JoSAA returned a server error in the partial postback: ' + delta.error.slice(0, 300));
+    }
+    session.applyDelta(delta);
+  } else {
+    session.load(html);
+  }
   /* Remember what we just chose: the response re-renders the control and, if the server
      honoured the choice, marks it selected — but if it re-renders it empty we would
      otherwise silently drop back to the placeholder on the next step. */

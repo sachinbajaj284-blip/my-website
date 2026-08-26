@@ -39,10 +39,13 @@ ${lift('splitBranch')}
 ${lift('instituteType')}
 ${lift('extractSelectedValues')}
 ${lift('findSubmitButton')}
+${lift('discoverAjax')}
+${lift('parseAsyncDelta')}
+${lift('looksLikeDelta')}
 ${lift('FormSession')}
 ${lift('chooseOption')}
 ${lift('chooseAll')}
-export { decodeEntities, stripTags, extractHiddenFields, extractSelects, discoverFields, parseResultTable, parseRank, splitBranch, instituteType, extractSelectedValues, findSubmitButton, FormSession, chooseOption, chooseAll };
+export { decodeEntities, stripTags, extractHiddenFields, extractSelects, discoverFields, parseResultTable, parseRank, splitBranch, instituteType, extractSelectedValues, findSubmitButton, discoverAjax, parseAsyncDelta, looksLikeDelta, FormSession, chooseOption, chooseAll };
 `)}`);
 
 const FIXTURE = `
@@ -345,6 +348,114 @@ test('discovery still recognises the live form shape', () => {
   assert.equal(fields.year.name, 'ctl00$ContentPlaceHolder1$ddlYear');
   assert.equal(fields.instType.name, 'ctl00$ContentPlaceHolder1$ddlInstype');
   assert.equal(fields.round.name, 'ctl00$ContentPlaceHolder1$ddlroundno');
+});
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   The partial postback.
+
+   Run #10's contract inspection found Sys.WebForms, PageRequestManager and
+   UpdatePanel on the served page, and nothing writing ctl00$hdnSecKey. The
+   dropdowns are in an UpdatePanel, so the browser sends an async postback and
+   receives a delta — which is why a well-formed full postback was refused.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+const AJAX_PAGE = LIVE_SHAPE.replace('</form>', `
+<script>
+Sys.WebForms.PageRequestManager._initialize('ctl00$ScriptManager1', 'aspnetForm', ['tctl00$ContentPlaceHolder1$UpdatePanel1',''], [], [], 90, 'ctl00');
+</script></form>`);
+
+test('the ScriptManager and UpdatePanel ids are read off the page, not hardcoded', () => {
+  const ajax = mod.discoverAjax(AJAX_PAGE);
+  assert.equal(ajax.scriptManager, 'ctl00$ScriptManager1');
+  assert.equal(ajax.formId, 'aspnetForm');
+  // The 't'/'f' prefix marks always-update; it is not part of the id.
+  assert.deepEqual(ajax.panels, ['ctl00$ContentPlaceHolder1$UpdatePanel1']);
+});
+
+test('a page with no ScriptManager reports none rather than inventing one', () => {
+  assert.equal(mod.discoverAjax('<html><form></form></html>'), null);
+});
+
+test('an async postback names the panel and the trigger', () => {
+  const session = new mod.FormSession(AJAX_PAGE);
+  const payload = session.buildPayload({ changed: 'ctl00$ContentPlaceHolder1$ddlYear', value: '2024' });
+  assert.equal(payload.get('ctl00$ScriptManager1'),
+               'ctl00$ContentPlaceHolder1$UpdatePanel1|ctl00$ContentPlaceHolder1$ddlYear');
+  assert.equal(payload.get('__ASYNCPOST'), 'true');
+});
+
+test('the submit is a partial postback too, triggered by the button', () => {
+  const session = new mod.FormSession(AJAX_PAGE);
+  const payload = session.buildPayload({ submit: true });
+  assert.equal(payload.get('ctl00$ScriptManager1'),
+               'ctl00$ContentPlaceHolder1$UpdatePanel1|ctl00$ContentPlaceHolder1$btnSubmit');
+  assert.equal(payload.get('ctl00$ContentPlaceHolder1$btnSubmit'), 'Submit');
+});
+
+test('a form with no UpdatePanel posts normally', () => {
+  const session = new mod.FormSession(LIVE_SHAPE);
+  const payload = session.buildPayload({ submit: true });
+  assert.ok(!payload.has('__ASYNCPOST'));
+});
+
+test('a delta is recognised and a page is not', () => {
+  assert.equal(mod.looksLikeDelta('120|updatePanel|x|<div></div>|'), true);
+  assert.equal(mod.looksLikeDelta('<html><body>Not Available</body></html>'), false);
+  assert.equal(mod.looksLikeDelta(''), false);
+});
+
+test('a delta yields its panels and its refreshed hidden fields', () => {
+  const panel = '<select name="ctl00$ContentPlaceHolder1$ddlroundno"><option value="1">1</option><option value="6">6</option></select>';
+  const delta =
+    panel.length + '|updatePanel|ctl00$ContentPlaceHolder1$UpdatePanel1|' + panel + '|' +
+    '7|hiddenField|__VIEWSTATE|STATE-2|' +
+    '4|hiddenField|__EVENTVALIDATION|EV-2|';
+
+  const parsed = mod.parseAsyncDelta(delta);
+  assert.equal(parsed.panels['ctl00$ContentPlaceHolder1$UpdatePanel1'], panel);
+  assert.equal(parsed.hidden.__VIEWSTATE, 'STATE-2');
+  assert.equal(parsed.hidden.__EVENTVALIDATION, 'EV-2');
+  assert.equal(parsed.error, null);
+});
+
+test('content is sliced by its declared length, so a pipe inside HTML does not tear the parse', () => {
+  const panel = '<div title="a|b">x</div>';
+  const delta = panel.length + '|updatePanel|P1|' + panel + '|5|hiddenField|__VIEWSTATE|AFTER|';
+  const parsed = mod.parseAsyncDelta(delta);
+  assert.equal(parsed.panels.P1, panel);
+  assert.equal(parsed.hidden.__VIEWSTATE, 'AFTER');
+});
+
+test('a server error inside a delta is surfaced, not read as an empty page', () => {
+  const parsed = mod.parseAsyncDelta('27|error|500|Object reference not set|');
+  assert.match(parsed.error, /Object reference/);
+});
+
+test('applying a delta refreshes both the controls and the state', () => {
+  const session = new mod.FormSession(AJAX_PAGE);
+  assert.equal(session.optionsFor('ctl00$ContentPlaceHolder1$ddlroundno').length, 0);
+
+  const panel = '<select name="ctl00$ContentPlaceHolder1$ddlroundno"><option value="1">1</option><option value="6">6</option></select>';
+  session.applyDelta({
+    panels: { P1: panel },
+    hidden: { __VIEWSTATE: 'STATE-2', __EVENTVALIDATION: 'EV-2' },
+    error: null,
+  });
+
+  const options = session.optionsFor('ctl00$ContentPlaceHolder1$ddlroundno');
+  assert.deepEqual(options.map(o => o.text), ['1', '6']);
+  assert.equal(session.hidden.__VIEWSTATE, 'STATE-2');
+
+  // And the next request carries the refreshed state, not the page's original.
+  const payload = session.buildPayload({ changed: 'ctl00$ContentPlaceHolder1$ddlroundno', value: '6' });
+  assert.equal(payload.get('__VIEWSTATE'), 'STATE-2');
+  assert.equal(payload.get('ctl00$ContentPlaceHolder1$ddlroundno'), '6');
+});
+
+test('a delta keeps the ScriptManager wiring the full page established', () => {
+  const session = new mod.FormSession(AJAX_PAGE);
+  session.applyDelta({ panels: { P1: '<select name="x"></select>' }, hidden: {}, error: null });
+  assert.equal(session.ajax.scriptManager, 'ctl00$ScriptManager1');
 });
 
 console.log(`\n${passed} passed`);
