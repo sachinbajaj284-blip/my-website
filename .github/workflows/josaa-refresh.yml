@@ -182,7 +182,10 @@ jobs:
         with:
           name: josaa-raw-dump
           path: work/dump/
-          if-no-files-found: error
+          # A dump run that never reached JoSAA writes nothing, and that is a
+          # network result rather than a broken job. Run #11 failed here purely
+          # because the directory was empty, which buried the actual finding.
+          if-no-files-found: warn
           retention-days: 14
 
       - name: Ingest cutoffs

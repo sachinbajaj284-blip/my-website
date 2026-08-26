@@ -21,6 +21,7 @@
 
 import fs from 'node:fs/promises';
 import dns from 'node:dns';
+import https from 'node:https';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
@@ -47,6 +48,22 @@ const MAX_RETRIES = 4;
    combination, so this is patient — but bounded, so a stall fails and retries instead
    of hanging the job for five minutes. */
 const REQUEST_TIMEOUT_MS = 60_000;
+
+/*
+  How long to wait for the TCP+TLS handshake specifically.
+
+  This is the number that was actually failing. undici — which is what global
+  fetch is — applies its own connect timeout of 10 seconds and reaches it long
+  before any AbortSignal budget matters, so run #11 reported
+  "UND_ERR_CONNECT_TIMEOUT ... timeout: 10000ms" five times while curl, with
+  -m 30, had fetched the same page six seconds earlier. JoSAA is simply slow to
+  accept a connection.
+
+  undici's connect timeout is only reachable through a custom Agent, and this
+  project installs nothing for the ingest, so request() below uses node:https
+  instead of fetch and sets both timeouts itself.
+*/
+const CONNECT_TIMEOUT_MS = 30_000;
 
 const INSTITUTE_TYPES = ['IIT', 'NIT', 'IIIT', 'Other-GFTI'];
 
@@ -215,8 +232,11 @@ function cookieHeader() {
   return [...cookieJar.entries()].map(([k, v]) => `${k}=${v}`).join('; ');
 }
 
-function absorbCookies(res) {
-  const raw = res.headers.getSetCookie?.() ?? [];
+/* node:https hands back a plain header bag, where set-cookie is already the
+   array form (it is the one header Node never folds into a single string). */
+function absorbCookies(headers) {
+  const value = headers && headers['set-cookie'];
+  const raw = Array.isArray(value) ? value : (value ? [value] : []);
   for (const line of raw) {
     const [pair] = line.split(';');
     const idx = pair.indexOf('=');
@@ -268,33 +288,114 @@ function tlsHint(err) {
   return '';
 }
 
+/*
+  One HTTP exchange, on node:https rather than fetch.
+
+  fetch is friendlier, but it hides the connect timeout behind undici and there
+  is no way to raise it without adding a dependency this workflow does not
+  install. Everything below is what fetch was giving us — redirects, cookies,
+  a body as text — with the two timeouts that matter made explicit:
+
+    connect  the handshake, which is what JoSAA is slow at
+    overall  the whole exchange, so a half-open socket cannot hang the job
+
+  Accept-Encoding is pinned to identity so there is no compressed body to
+  inflate; the pages are tens of kilobytes and the ingest is rate-limited
+  anyway, so the bandwidth is irrelevant next to the complexity.
+*/
+function httpRequest(url, { method, headers, body, redirectsLeft = 5 }) {
+  return new Promise((resolve, reject) => {
+    const target = new URL(url);
+    const req = https.request({
+      protocol: target.protocol,
+      hostname: target.hostname,
+      port: target.port || 443,
+      path: target.pathname + target.search,
+      method,
+      headers,
+      /* Node resolves this itself; ipv4first is set at the top of the file. */
+      timeout: CONNECT_TIMEOUT_MS,
+    });
+
+    let settled = false;
+    const fail = (err) => { if (!settled) { settled = true; req.destroy(); reject(err); } };
+
+    const overall = setTimeout(() => {
+      const err = new Error('Overall request timeout after ' + REQUEST_TIMEOUT_MS + 'ms');
+      err.code = 'REQUEST_TIMEOUT';
+      fail(err);
+    }, REQUEST_TIMEOUT_MS);
+
+    /* `timeout` here is socket inactivity, which covers the handshake: nothing
+       arrives on a socket that never connects. */
+    req.on('timeout', () => {
+      const err = new Error('Connect/idle timeout after ' + CONNECT_TIMEOUT_MS + 'ms');
+      err.code = 'CONNECT_TIMEOUT';
+      fail(err);
+    });
+    req.on('error', fail);
+
+    req.on('response', (res) => {
+      const location = res.headers.location;
+      if (location && res.statusCode >= 300 && res.statusCode < 400 && redirectsLeft > 0) {
+        res.resume();
+        clearTimeout(overall);
+        settled = true;
+        resolve(httpRequest(new URL(location, url).toString(), {
+          method: 'GET', headers, body: null, redirectsLeft: redirectsLeft - 1,
+        }));
+        return;
+      }
+
+      const chunks = [];
+      res.on('data', c => chunks.push(c));
+      res.on('end', () => {
+        clearTimeout(overall);
+        if (settled) return;
+        settled = true;
+        resolve({
+          status: res.statusCode,
+          headers: res.headers,
+          text: Buffer.concat(chunks).toString('utf8'),
+        });
+      });
+      res.on('error', fail);
+    });
+
+    if (body) req.write(body);
+    req.end();
+  });
+}
+
 async function request(url, { method = 'GET', body = null, referer = ARCHIVE, async: isAsync = false } = {}) {
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     await throttle();
     try {
-      const res = await fetch(url, {
+      const res = await httpRequest(url, {
         method,
         body,
-        redirect: 'follow',
-        /* Without this a stalled connection sits on undici's 300s default while the job
-           looks hung. JoSAA is slow but not that slow, and a clean timeout retries. */
-        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36',
           'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
           'Accept-Language': 'en-IN,en;q=0.9',
+          'Accept-Encoding': 'identity',
           'Referer': referer,
           ...(cookieJar.size ? { Cookie: cookieHeader() } : {}),
-          ...(method === 'POST' ? { 'Content-Type': 'application/x-www-form-urlencoded' } : {}),
+          ...(method === 'POST' ? {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Length': Buffer.byteLength(body || ''),
+          } : {}),
           /* ASP.NET decides between a page and a delta on this header. Without it
              a partial postback is answered with a full render. */
           ...(isAsync ? { 'X-MicrosoftAjax': 'Delta=true', 'X-Requested-With': 'XMLHttpRequest' } : {}),
         },
       });
-      absorbCookies(res);
+
+      absorbCookies(res.headers);
+
       if (res.status === 429 || res.status >= 500) throw new Error(`HTTP ${res.status}`);
-      if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
-      return await res.text();
+      if (res.status < 200 || res.status >= 300) throw new Error(`HTTP ${res.status}`);
+      return res.text;
     } catch (err) {
       if (attempt === MAX_RETRIES) {
         throw new Error(

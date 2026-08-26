@@ -120,6 +120,31 @@ chain, and names a TLS trust failure explicitly when it sees one. It also asks f
 first, because several `nic.in` hosts publish an AAAA record that accepts a connection and
 then never answers.
 
+### Why the ingest is on `node:https` and not `fetch`
+
+That diagnostic immediately earned its keep. Run #11 reported, five times:
+
+```
+UND_ERR_CONNECT_TIMEOUT Connect Timeout Error
+  (attempted address: josaa.admissions.nic.in:443, timeout: 10000ms)
+```
+
+**10 seconds is not a number this file set.** `REQUEST_TIMEOUT_MS` is 60 s, applied with
+an `AbortSignal` — but undici, which is what global `fetch` is, applies its *own* connect
+timeout of 10 s and reaches it long before any signal budget matters. The signal never
+governed the phase that was failing.
+
+That is almost certainly the whole curl-works-but-Node-does-not story: in run #11 curl
+fetched the page with `-m 30` at 14:12:14, and Node gave up at 10 s six seconds later.
+JoSAA is simply slow to complete a handshake.
+
+undici's connect timeout is reachable only through a custom `Agent`, and adding `undici`
+as a dependency would break a workflow that deliberately installs nothing. So `request()`
+uses `node:https` and sets both timeouts itself — `CONNECT_TIMEOUT_MS` (30 s) for the
+handshake, `REQUEST_TIMEOUT_MS` (60 s) for the whole exchange. Redirects, cookies and the
+delta header all still work the same way; `Accept-Encoding` is pinned to `identity` so
+there is no compressed body to inflate.
+
 **If three attempts fail, that is not a bug in this pipeline.** Re-run later, or use
 option B from a machine in India.
 
