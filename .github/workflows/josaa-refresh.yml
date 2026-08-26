@@ -56,14 +56,25 @@ jobs:
         run: |
           set -e
           URL="https://josaa.admissions.nic.in/applicant/seatmatrix/openingclosingrankarchieve.aspx"
-          CODE=$(curl -sS -o /tmp/josaa-probe.html -w '%{http_code}' -m 45 \
-            -A 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36' \
-            "$URL" || echo "000")
-          echo "HTTP $CODE"
+          # JoSAA is intermittently unreachable from GitHub's IP ranges: on 26 August one
+          # run fetched it fine and the next timed out completely, four minutes apart.
+          # One timeout is not an outage, so try a few times before believing it.
+          CODE=000
+          for attempt in 1 2 3; do
+            CODE=$(curl -sS -o /tmp/josaa-probe.html -w '%{http_code}' -m 60 \
+              -A 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36' \
+              "$URL" || echo "000")
+            echo "attempt $attempt: HTTP $CODE"
+            [ "$CODE" = "200" ] && break
+            [ "$attempt" -lt 3 ] && sleep 20
+          done
           if [ "$CODE" != "200" ]; then
-            echo "::error::Could not reach the JoSAA archive (HTTP $CODE)."
-            echo "If this is a geo-block, run the ingest from a machine in India instead:"
-            echo "  npm run josaa:probe && npm run josaa:refresh"
+            echo "::error::Could not reach the JoSAA archive after 3 attempts (last HTTP $CODE)."
+            echo "This is usually JoSAA refusing or throttling non-Indian traffic rather than"
+            echo "anything wrong with the ingest. Options, in order of least effort:"
+            echo "  1. Re-run this workflow later — it has come back on its own before."
+            echo "  2. Run it from a machine in India:  npm run josaa:probe && npm run josaa:refresh"
+            echo "  3. Run it from a self-hosted runner with an Indian egress IP."
             exit 1
           fi
           echo "Fetched $(wc -c < /tmp/josaa-probe.html) bytes"

@@ -20,9 +20,17 @@
  */
 
 import fs from 'node:fs/promises';
+import dns from 'node:dns';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
+
+/*
+  Node has preferred IPv6 since v17. Several nic.in hosts publish an AAAA record that
+  accepts a connection and then never answers, which surfaces as a connect timeout that
+  curl — still IPv4-first on many builds — does not see. Ask for IPv4 first.
+*/
+dns.setDefaultResultOrder('ipv4first');
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CACHE = path.join(ROOT, 'tools', '.cache', 'josaa');
@@ -34,6 +42,11 @@ const ARCHIVE = `${BASE}/applicant/seatmatrix/openingclosingrankarchieve.aspx`;
 /* JoSAA rejects bursts. One request every REQUEST_GAP_MS, single-threaded, always. */
 const REQUEST_GAP_MS = 1500;
 const MAX_RETRIES = 4;
+
+/* JoSAA is a slow server on a good day and the cascade makes six requests per
+   combination, so this is patient — but bounded, so a stall fails and retries instead
+   of hanging the job for five minutes. */
+const REQUEST_TIMEOUT_MS = 60_000;
 
 const INSTITUTE_TYPES = ['IIT', 'NIT', 'IIIT', 'Other-GFTI'];
 
@@ -263,6 +276,9 @@ async function request(url, { method = 'GET', body = null, referer = ARCHIVE } =
         method,
         body,
         redirect: 'follow',
+        /* Without this a stalled connection sits on undici's 300s default while the job
+           looks hung. JoSAA is slow but not that slow, and a clean timeout retries. */
+        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36',
           'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -322,6 +338,51 @@ function extractSelects(html) {
     selects[name] = options;
   }
   return selects;
+}
+
+/*
+  The value each <select> currently carries, including the placeholder that
+  extractSelects() filters out of the option list. A postback has to echo back every
+  control on the form, not just the one that changed, so this is what the untouched ones
+  are set to.
+*/
+function extractSelectedValues(html) {
+  const values = {};
+  const re = /<select[^>]*name=["']([^"']+)["'][^>]*>([\s\S]*?)<\/select>/gi;
+  for (const [, name, inner] of html.matchAll(re)) {
+    /* Read the whole option tag, not the part before value=. `selected` sits on either
+       side of it depending on who generated the markup, and looking at only one side
+       means a selected year reads as the placeholder — which would post --Select-- and
+       get nothing back. */
+    const options = [...inner.matchAll(/<option\b([^>]*)>/gi)].map(m => ({
+      attrs: m[1],
+      value: decodeEntities(m[1].match(/value=["']([^"']*)["']/i)?.[1] ?? ''),
+    }));
+    const chosen = options.find(o => /\bselected\b/i.test(o.attrs));
+    values[name] = chosen ? chosen.value : (options[0] ? options[0].value : '');
+  }
+  return values;
+}
+
+/*
+  The button that actually runs the query.
+
+  ASP.NET renders a grid from a button's click handler. Posting the form without the
+  button's name means Page_Load runs and the handler never does, so the response is the
+  page with no grid on it — which is exactly the 11,950-byte "Not Available" page every
+  filter combination came back with on 13 August.
+*/
+function findSubmitButton(html) {
+  for (const [tag] of html.matchAll(/<input[^>]*type=["'](?:submit|button)["'][^>]*>/gi)) {
+    const name = tag.match(/name=["']([^"']+)["']/i)?.[1];
+    if (!name) continue;
+    const value = tag.match(/value=["']([^"']*)["']/i)?.[1] ?? '';
+    /* Skip the ones that navigate away rather than query: the CSC login on this page
+       is a submit input too. */
+    if (/login|logout|reset|clear|back/i.test(name + ' ' + value)) continue;
+    return { name, value: decodeEntities(value) };
+  }
+  return null;
 }
 
 /**
@@ -500,6 +561,108 @@ async function fetchArchiveForm() {
   return { html, fields: discoverFields(html), hidden: extractHiddenFields(html) };
 }
 
+/* ------------------------------------------------------------ form session -- */
+
+/*
+  A conversation with the ASP.NET form, rather than a single shot at it.
+
+  The 13 August dump settled what the page is: ddlYear arrives with eleven options and
+  ddlroundno, ddlInstype, ddlInstitute, ddlBranch and ddlSeatType all arrive with none —
+  the server fills each one from the postback that follows the choice above it. It also
+  showed a submit control, ctl00$ContentPlaceHolder1$btnSubmit, that the ingest never
+  posted.
+
+  So the old approach could not have worked, and its failure mode was quiet: one POST
+  setting every field at once, carrying the GET's __VIEWSTATE, with no button and an
+  empty __EVENTTARGET. ASP.NET answered the only way it can — it rendered the page,
+  never ran the button's handler, and returned the same 11,950-byte "Not Available"
+  body for every filter. Twelve identical pages read as twelve failed parses.
+
+  This class does what a browser does:
+
+    - every request carries the hidden state from the LAST response, not the first.
+      __VIEWSTATE and __EVENTVALIDATION are per-response, and a stale __EVENTVALIDATION
+      is what rejects a value the server did not itself render.
+    - every request echoes back every control on the form, at whatever it is currently
+      set to, because that is what a browser submits.
+    - a change posts __EVENTTARGET naming the control that changed, so the server knows
+      which cascade step to run.
+    - the query posts the button, because that is the thing that builds the grid.
+*/
+class FormSession {
+  constructor(html) { this.load(html); }
+
+  load(html) {
+    this.html = html;
+    this.hidden = extractHiddenFields(html);
+    this.selects = extractSelects(html);
+    this.values = extractSelectedValues(html);
+    this.button = findSubmitButton(html) || this.button || null;
+    this.fields = discoverFields(html);
+    return this;
+  }
+
+  /** Options currently offered by a control, by its full posted name. */
+  optionsFor(name) { return this.selects[name] || []; }
+
+  /**
+   * One postback. `changed` is the control whose value we are setting, and becomes
+   * __EVENTTARGET; pass `submit: true` instead to press the query button.
+   */
+  buildPayload({ changed = null, value = null, submit = false }) {
+    const payload = new URLSearchParams();
+
+    for (const [k, v] of Object.entries(this.hidden)) payload.set(k, v);
+    for (const [name, current] of Object.entries(this.values)) payload.set(name, current);
+
+    if (changed) payload.set(changed, value == null ? '' : String(value));
+
+    payload.set('__EVENTTARGET', submit ? '' : (changed || ''));
+    payload.set('__EVENTARGUMENT', '');
+    payload.set('__LASTFOCUS', '');
+
+    /* A button posts as a normal field. Its presence is what tells ASP.NET to run the
+       click handler; __EVENTTARGET stays empty for a real button press. */
+    if (submit && this.button) payload.set(this.button.name, this.button.value);
+
+    return payload;
+  }
+}
+
+/** Sends one step of the conversation and folds the response back into the session. */
+async function step(session, opts, { label, dump }) {
+  const payload = session.buildPayload(opts);
+  const body = payload.toString();
+  const html = await request(ARCHIVE, { method: 'POST', body });
+  if (dump) await dumper.write(label, { url: ARCHIVE, method: 'POST', payload: body, html });
+  session.load(html);
+  /* Remember what we just chose: the response re-renders the control and, if the server
+     honoured the choice, marks it selected — but if it re-renders it empty we would
+     otherwise silently drop back to the placeholder on the next step. */
+  if (opts.changed) session.values[opts.changed] = opts.value == null ? '' : String(opts.value);
+  return html;
+}
+
+/*
+  Pick an option by what it says, and say so out loud when nothing matches.
+
+  The previous version fell back to `options[options.length - 1]`, which meant a failed
+  match silently selected whatever happened to sort last — asking for 2024 and being
+  handed some other year, with nothing in the log to say so. A pull that cannot select
+  what it was asked for has to stop, not improvise.
+*/
+function chooseOption(options, matcher, what) {
+  const hit = options.find(matcher);
+  if (hit) return hit;
+  const seen = options.slice(0, 8).map(o => o.text).join(', ') || '(none)';
+  throw new Error(`Could not find ${what} among the options the form offered: ${seen}`);
+}
+
+/** "All" where the form offers it, otherwise the first real option. */
+function chooseAll(options) {
+  return options.find(o => /^all\b/i.test(o.text.trim())) || options[0] || null;
+}
+
 /* The ingest only ever posts these three. gender is reported for visibility but JoSAA
    removed it from the archive form, and row gender comes from the results table, so a
    missing gender control must not fail the probe. */
@@ -571,10 +734,10 @@ async function ingest(args) {
       .update(rows.map(r => `${r.institute}|${r.branch}|${r.seatType}|${r.openRank}|${r.closeRank}`).join('\n'))
       .digest('hex');
 
-  /* A dump is for reading, not for coverage. Three exchanges show whether the response
-     varies with the posted filter, which is the whole question; twelve just makes a
-     bigger artifact to scroll through. */
-  const DUMP_MAX_POSTS = 3;
+  /* A dump is for reading, not for coverage. One combination now traces six labelled
+     steps — year, round, type, the three "All" selections and the submit — which is the
+     whole conversation; a second copy of it just makes a bigger artifact to scroll. */
+  const DUMP_MAX_POSTS = 1;
   let dumpPosts = 0;
 
   for (const year of args.years) {
@@ -589,32 +752,71 @@ async function ingest(args) {
 
       const html = await cached(key, async () => {
         if (!form) throw new Error('no cache and --from-cache set');
-        const payload = new URLSearchParams({ ...form.hidden });
-        /* `literal` is what to post when the control came back with no options to choose
-           from. Previously this fell through to `undefined` and set nothing, so the
-           postback quietly used whatever the form defaulted to and every year/type
-           combination returned the same page. Posting the literal is what the dropdown
-           would have carried anyway — JoSAA's option values for these are the year and
-           the institute-type string themselves. */
-        const set = (field, matcher, literal) => {
-          if (!field) return;
-          const opt = field.options.find(matcher) ?? field.options[field.options.length - 1];
-          if (opt) { payload.set(field.name, opt.value); return; }
-          if (literal != null) {
-            payload.set(field.name, String(literal));
-            if (args.verbose) console.log(`     ${field.name} has no options; posting literal ${literal}`);
+        if (args.verbose) console.log(`  -> ${year} ${instType} round=${round}`);
+
+        /*
+          A fresh form per combination. The query response does not carry the dropdowns
+          any more — the "Not Available" page had no <select> at all — so there is
+          nothing left to drive a second query from, and re-fetching is both simpler and
+          honest about that.
+        */
+        const session = new FormSession(await request(ARCHIVE));
+        const tag = `${year}-${instType}`.toLowerCase();
+
+        const nameOf = key => session.fields[key]?.name;
+
+        // 1. Year. The only control the served page fills in for us.
+        const yearName = nameOf('year');
+        if (!yearName) throw new Error('No year control on the form. Run --probe.');
+        const yearOpt = chooseOption(
+          session.optionsFor(yearName), o => o.text.trim() === String(year), `year ${year}`
+        );
+        await step(session, { changed: yearName, value: yearOpt.value },
+                   { label: `${tag}-1-year`, dump: args.dump });
+
+        // 2. Round. Populated by the year postback. Default to the last one, which is
+        //    the final round — the ranks people actually quote.
+        const roundName = nameOf('round');
+        if (roundName) {
+          const opts = session.optionsFor(roundName);
+          if (opts.length) {
+            const roundOpt = args.round != null
+              ? chooseOption(opts, o => o.text.trim() === String(args.round), `round ${args.round}`)
+              : opts[opts.length - 1];
+            await step(session, { changed: roundName, value: roundOpt.value },
+                       { label: `${tag}-2-round`, dump: args.dump });
           }
-        };
-        set(form.fields.year, o => o.text.trim() === String(year), year);
-        set(form.fields.instType, o => o.text.toLowerCase().includes(instType.split('-')[0].toLowerCase()), instType);
-        if (args.round != null) set(form.fields.round, o => o.text.trim() === String(args.round), args.round);
-        payload.set('__EVENTTARGET', '');
-        payload.set('__EVENTARGUMENT', '');
-        if (args.verbose) console.log(`  -> POST ${year} ${instType} round=${round}`);
-        const body = payload.toString();
-        const responseHtml = await request(ARCHIVE, { method: 'POST', body });
-        await dumper.write(`post-${year}-${instType}`, { url: ARCHIVE, method: 'POST', payload: body, html: responseHtml });
-        return responseHtml;
+        }
+
+        // 3. Institute type. Populated by the round postback.
+        const typeName = nameOf('instType');
+        if (!typeName) throw new Error('No institute-type control on the form. Run --probe.');
+        const needle = instType.split('-')[0].toLowerCase();
+        const typeOpt = chooseOption(
+          session.optionsFor(typeName),
+          o => o.text.toLowerCase().includes(needle),
+          `institute type ${instType}`
+        );
+        await step(session, { changed: typeName, value: typeOpt.value },
+                   { label: `${tag}-3-insttype`, dump: args.dump });
+
+        // 4. Institute, branch and seat type: take "All" so one query covers the type.
+        for (const [key, pattern] of [['institute', /ddl_?institute$/i], ['branch', /ddl_?branch$/i], ['seatType', /ddl_?seattype$/i]]) {
+          const found = findSelectByName(session.selects, pattern);
+          if (!found || !found.options.length) continue;
+          const all = chooseAll(found.options);
+          if (!all) continue;
+          await step(session, { changed: found.name, value: all.value },
+                     { label: `${tag}-4-${key}`, dump: args.dump });
+        }
+
+        // 5. Press Submit. This is the step that was missing entirely, and without it
+        //    ASP.NET never runs the handler that builds the grid.
+        if (!session.button) {
+          throw new Error('No submit button found on the form — the grid is built by one. Run --dump.');
+        }
+        if (args.verbose) console.log(`     pressing ${session.button.name}`);
+        return await step(session, { submit: true }, { label: `${tag}-5-submit`, dump: args.dump });
       }, args);
 
       if (!html) { problems.push(`${year}/${instType}: no cached page and network disabled`); continue; }

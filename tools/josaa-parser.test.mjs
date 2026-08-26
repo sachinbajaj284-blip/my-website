@@ -18,7 +18,7 @@ const src = await fs.readFile(path.join(ROOT, 'tools', 'josaa-ingest.mjs'), 'utf
 
 /* josaa-ingest.mjs runs on import, so lift the pure helpers out rather than importing it. */
 const lift = name => {
-  const re = new RegExp(`(?:^|\\n)(?:const|function)\\s+${name}\\b[\\s\\S]*?(?=\\n(?:const|function|async function|/\\*|let)\\s)`, 'm');
+  const re = new RegExp(`(?:^|\\n)(?:const|function|class)\\s+${name}\\b[\\s\\S]*?(?=\\n(?:const|function|async function|class|/\\*|let)\\s)`, 'm');
   const m = src.match(re);
   if (!m) throw new Error(`Could not lift ${name} from josaa-ingest.mjs`);
   return m[0];
@@ -37,7 +37,12 @@ ${lift('parseResultTable')}
 ${lift('parseRank')}
 ${lift('splitBranch')}
 ${lift('instituteType')}
-export { decodeEntities, stripTags, extractHiddenFields, extractSelects, discoverFields, parseResultTable, parseRank, splitBranch, instituteType };
+${lift('extractSelectedValues')}
+${lift('findSubmitButton')}
+${lift('FormSession')}
+${lift('chooseOption')}
+${lift('chooseAll')}
+export { decodeEntities, stripTags, extractHiddenFields, extractSelects, discoverFields, parseResultTable, parseRank, splitBranch, instituteType, extractSelectedValues, findSubmitButton, FormSession, chooseOption, chooseAll };
 `)}`);
 
 const FIXTURE = `
@@ -229,6 +234,117 @@ test('classifies institute type from the name', () => {
 
 test('decodes entities in cell text', () => {
   assert.equal(mod.stripTags('<td>Metallurgical &amp; Materials&nbsp;Engg.</td>'), 'Metallurgical & Materials Engg.');
+});
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   The postback conversation.
+
+   The 13 August dump is the source for this fixture's shape: ddlYear arrives with
+   options, the other five arrive empty, and there is a btnSubmit the old ingest never
+   posted. That combination is why every filter returned the same "Not Available" page.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+const LIVE_SHAPE = `
+<html><body><form method="post">
+<input type="hidden" name="__VIEWSTATE" value="STATE-1" />
+<input type="hidden" name="__VIEWSTATEGENERATOR" value="AD19A6D0" />
+<input type="hidden" name="__EVENTVALIDATION" value="EV-1" />
+<input type="hidden" name="ctl00$hdnSecKey" value="" />
+<select name="ctl00$ContentPlaceHolder1$ddlYear">
+  <option value="0">--Select--</option>
+  <option value="2025">2025</option>
+  <option value="2024" selected="selected">2024</option>
+</select>
+<select name="ctl00$ContentPlaceHolder1$ddlroundno"></select>
+<select name="ctl00$ContentPlaceHolder1$ddlInstype"></select>
+<select name="ctl00$ContentPlaceHolder1$ddlInstitute"></select>
+<select name="ctl00$ContentPlaceHolder1$ddlBranch"></select>
+<select name="ctl00$ContentPlaceHolder1$ddlSeatType"></select>
+<input type="submit" name="ctl00$BtnCscLogin" value="CSC Login" />
+<input type="submit" name="ctl00$ContentPlaceHolder1$btnSubmit" value="Submit" />
+</form></body></html>`;
+
+test('reads the value a control is actually sitting on', () => {
+  const values = mod.extractSelectedValues(LIVE_SHAPE);
+  assert.equal(values['ctl00$ContentPlaceHolder1$ddlYear'], '2024');
+  /* An empty control still has to be echoed back, as empty. */
+  assert.equal(values['ctl00$ContentPlaceHolder1$ddlroundno'], '');
+});
+
+test('falls back to the first option when nothing is marked selected', () => {
+  const html = `<select name="x"><option value="0">--Select--</option><option value="9">Nine</option></select>`;
+  assert.equal(mod.extractSelectedValues(html).x, '0');
+});
+
+test('finds the query button and ignores the login button beside it', () => {
+  const button = mod.findSubmitButton(LIVE_SHAPE);
+  assert.equal(button.name, 'ctl00$ContentPlaceHolder1$btnSubmit');
+  assert.equal(button.value, 'Submit');
+});
+
+test('a page with no button at all reports none rather than guessing', () => {
+  assert.equal(mod.findSubmitButton('<html><form></form></html>'), null);
+});
+
+test('a postback carries the current hidden state, not the first page it ever saw', () => {
+  const session = new mod.FormSession(LIVE_SHAPE);
+  session.load(LIVE_SHAPE.replace('STATE-1', 'STATE-2').replace('EV-1', 'EV-2'));
+  const payload = session.buildPayload({ changed: 'ctl00$ContentPlaceHolder1$ddlYear', value: '2024' });
+  assert.equal(payload.get('__VIEWSTATE'), 'STATE-2');
+  assert.equal(payload.get('__EVENTVALIDATION'), 'EV-2');
+});
+
+test('a postback echoes every control on the form, not just the one that changed', () => {
+  const session = new mod.FormSession(LIVE_SHAPE);
+  const payload = session.buildPayload({ changed: 'ctl00$ContentPlaceHolder1$ddlYear', value: '2025' });
+  for (const name of ['ddlYear', 'ddlroundno', 'ddlInstype', 'ddlInstitute', 'ddlBranch', 'ddlSeatType']) {
+    assert.ok(payload.has('ctl00$ContentPlaceHolder1$' + name), name + ' was not echoed back');
+  }
+  assert.equal(payload.get('ctl00$ContentPlaceHolder1$ddlYear'), '2025');
+  assert.equal(payload.get('ctl00$hdnSecKey'), '');
+});
+
+test('changing a control names it as __EVENTTARGET so the server runs that cascade step', () => {
+  const session = new mod.FormSession(LIVE_SHAPE);
+  const payload = session.buildPayload({ changed: 'ctl00$ContentPlaceHolder1$ddlInstype', value: 'IIT' });
+  assert.equal(payload.get('__EVENTTARGET'), 'ctl00$ContentPlaceHolder1$ddlInstype');
+  assert.ok(!payload.has('ctl00$ContentPlaceHolder1$btnSubmit'), 'a cascade step must not press Submit');
+});
+
+test('the query presses the button — the step the old ingest never took', () => {
+  const session = new mod.FormSession(LIVE_SHAPE);
+  const payload = session.buildPayload({ submit: true });
+  assert.equal(payload.get('ctl00$ContentPlaceHolder1$btnSubmit'), 'Submit');
+  /* A real button press leaves __EVENTTARGET empty; ASP.NET runs the handler because
+     the button's name is present, and that is what builds the grid. */
+  assert.equal(payload.get('__EVENTTARGET'), '');
+});
+
+test('a submit never carries the login button', () => {
+  const session = new mod.FormSession(LIVE_SHAPE);
+  const payload = session.buildPayload({ submit: true });
+  assert.ok(!payload.has('ctl00$BtnCscLogin'));
+});
+
+test('an option that cannot be found stops the pull instead of picking something else', () => {
+  const options = [{ value: '2025', text: '2025' }, { value: '2024', text: '2024' }];
+  assert.equal(mod.chooseOption(options, o => o.text === '2024', 'year 2024').value, '2024');
+  /* The old code fell back to the last option here, which meant asking for 2019 and
+     silently recording 2024's ranks under it. */
+  assert.throws(() => mod.chooseOption(options, o => o.text === '2019', 'year 2019'), /2019/);
+});
+
+test('"All" is preferred where the form offers it', () => {
+  assert.equal(mod.chooseAll([{ value: '1', text: 'IIT Bombay' }, { value: 'ALL', text: 'All' }]).value, 'ALL');
+  assert.equal(mod.chooseAll([{ value: '1', text: 'IIT Bombay' }]).value, '1');
+  assert.equal(mod.chooseAll([]), null);
+});
+
+test('discovery still recognises the live form shape', () => {
+  const fields = mod.discoverFields(LIVE_SHAPE);
+  assert.equal(fields.year.name, 'ctl00$ContentPlaceHolder1$ddlYear');
+  assert.equal(fields.instType.name, 'ctl00$ContentPlaceHolder1$ddlInstype');
+  assert.equal(fields.round.name, 'ctl00$ContentPlaceHolder1$ddlroundno');
 });
 
 console.log(`\n${passed} passed`);

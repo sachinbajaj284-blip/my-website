@@ -39,6 +39,90 @@ configured.
 If `--probe` times out from a runner but works from your laptop, JoSAA is likely
 throttling or geo-blocking non-Indian IPs — use option B.
 
+---
+
+## How the ingest talks to the form
+
+This is the part that was wrong for a long time, so it is worth writing down.
+
+The archive page is ASP.NET WebForms with **cascading dropdowns**. The 13 August 2026
+dump settled its shape:
+
+```
+ctl00$ContentPlaceHolder1$ddlYear        11 options   ← the only one that arrives filled
+ctl00$ContentPlaceHolder1$ddlroundno      0 options
+ctl00$ContentPlaceHolder1$ddlInstype      0 options
+ctl00$ContentPlaceHolder1$ddlInstitute    0 options
+ctl00$ContentPlaceHolder1$ddlBranch       0 options
+ctl00$ContentPlaceHolder1$ddlSeatType     0 options
+
+submit control: ctl00$ContentPlaceHolder1$btnSubmit  value=Submit
+```
+
+Each control is filled by the postback that follows the choice above it, and the grid is
+built by the **button's click handler**.
+
+The original ingest sent a single POST that set every field at once, carried the initial
+GET's `__VIEWSTATE`, left `__EVENTTARGET` empty, and never posted the button. ASP.NET
+answered the only way it could: it rendered the page, never ran the handler, and returned
+an identical 11,950-byte *"Not Available"* body for every filter combination. Twelve
+identical pages read downstream as twelve failed parses, which is why the pipeline
+reported "no result rows parsed" and nobody could see why.
+
+`FormSession` now holds a conversation instead:
+
+1. `GET` the form.
+2. Postback selecting the **year**, with `__EVENTTARGET` naming `ddlYear`.
+3. Postback selecting the **round** — default the last option, which is the final round.
+4. Postback selecting the **institute type**.
+5. Postback selecting **All** for institute, branch and seat type where offered.
+6. Postback pressing **btnSubmit**, which is the step that builds the grid.
+
+Three rules make that work, each with a test:
+
+- **Every request carries the hidden state from the last response**, not the first.
+  `__VIEWSTATE` and `__EVENTVALIDATION` are per-response, and a stale `__EVENTVALIDATION`
+  is what rejects a value the server did not itself render.
+- **Every request echoes back every control on the form**, at whatever it is currently
+  set to. That is what a browser submits.
+- **A cascade step sets `__EVENTTARGET`; the query posts the button and leaves it empty.**
+
+A fresh form is fetched per year/institute-type combination, because the query response
+carries no `<select>` at all — there is nothing left to drive a second query from.
+
+### Two silent failures that are now loud
+
+**A missing option stops the pull.** `chooseOption()` used to fall back to
+`options[options.length - 1]`, so asking for a year that was not on offer silently
+recorded some other year's ranks under it. It now throws and names what it was looking
+for.
+
+**A selected value is read from the whole option tag.** `selected` sits on either side of
+`value=` depending on who generated the markup. Reading only one side made a selected
+year read as the `--Select--` placeholder, which would post `0` and get nothing back.
+
+---
+
+## When the network is the problem
+
+On 26 August 2026 one run fetched the page fine and the next timed out completely, four
+minutes apart, from the same runner. JoSAA is intermittently unreachable from GitHub's IP
+ranges.
+
+The workflow now tries three times before believing a failure, and asks **Node** whether
+it can reach the host rather than inferring it from `curl` — the two do not trust the same
+things, and a run has already failed in exactly that gap. When they disagree it prints the
+certificate chain.
+
+The ingest reports the real cause too: undici puts every transport failure on `err.cause`
+and reports `err.message` as the useless string `"fetch failed"`, so `request()` walks the
+chain, and names a TLS trust failure explicitly when it sees one. It also asks for IPv4
+first, because several `nic.in` hosts publish an AAAA record that accepts a connection and
+then never answers.
+
+**If three attempts fail, that is not a bug in this pipeline.** Re-run later, or use
+option B from a machine in India.
+
 ## Prerequisites
 
 Node 18+. The ingest tools use only Node built-ins, so there is nothing to `npm install`.
