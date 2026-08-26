@@ -25,7 +25,7 @@ const { buildCohortStats, principalView, counsellorView, enrolledStream, spread,
 const cohorts = require("../api/_lib/cohorts.js");
 const { validate } = require("../api/_lib/assessments.js");
 const { RIASEC, ANCHORS, VARK } = require("../api/_lib/reportTables.js");
-const attentionHandler = require("../api/agent/cohort-attention.js");
+const attentionHandler = require("../api/_lib/routes/agent/cohort-attention.js");
 
 let passed = 0, failed = 0;
 

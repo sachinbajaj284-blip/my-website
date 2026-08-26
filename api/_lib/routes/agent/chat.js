@@ -20,11 +20,11 @@
     { "action":"unlock", "phone":"...", "by":"Name" }   take the lock off
 */
 
-const { json, setCors, readBody } = require("../_lib/http");
-const { checkRateLimit, clientKey } = require("../_lib/rateLimit");
-const { checkAdminToken } = require("../_lib/adminAuth");
-const { handleInbound } = require("../_lib/chatTurn");
-const conversations = require("../_lib/conversations");
+const { json, setCors, readBody } = require("../../http");
+const { checkRateLimit, clientKey } = require("../../rateLimit");
+const { checkAdminToken } = require("../../adminAuth");
+const { handleInbound } = require("../../chatTurn");
+const conversations = require("../../conversations");
 
 module.exports = async function handler(req, res){
   const gate = checkAdminToken(req, "AGENT_ADMIN_TOKEN", "agent");

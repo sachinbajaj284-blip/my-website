@@ -38,13 +38,13 @@
   blocks and user message without calling the model or writing anything.
 */
 
-const { json, setCors, readBody } = require("../_lib/http");
-const { checkRateLimit, clientKey } = require("../_lib/rateLimit");
-const { checkAdminToken } = require("../_lib/adminAuth");
-const { getRun, latestRun } = require("../_lib/assessments");
-const { buildUserMessage, draftReport } = require("../_lib/reportAgent");
-const { systemBlocks } = require("../_lib/reportStyle");
-const { saveDraft } = require("../_lib/reports");
+const { json, setCors, readBody } = require("../../http");
+const { checkRateLimit, clientKey } = require("../../rateLimit");
+const { checkAdminToken } = require("../../adminAuth");
+const { getRun, latestRun } = require("../../assessments");
+const { buildUserMessage, draftReport } = require("../../reportAgent");
+const { systemBlocks } = require("../../reportStyle");
+const { saveDraft } = require("../../reports");
 
 // A run is addressed directly, or by whose latest profile it is. The
 // second is what a counsellor actually has to hand after a session.

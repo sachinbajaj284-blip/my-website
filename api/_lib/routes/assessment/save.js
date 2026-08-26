@@ -32,10 +32,10 @@
   here instead of quietly storing a profile nothing downstream can read.
 */
 
-const { json, setCors, readBody } = require("../_lib/http");
-const { checkRateLimit, clientKey } = require("../_lib/rateLimit");
-const { requireAccount } = require("../_lib/account");
-const { validate, saveRun } = require("../_lib/assessments");
+const { json, setCors, readBody } = require("../../http");
+const { checkRateLimit, clientKey } = require("../../rateLimit");
+const { requireAccount } = require("../../account");
+const { validate, saveRun } = require("../../assessments");
 
 module.exports = async function handler(req, res){
   setCors(req, res, "POST,OPTIONS");

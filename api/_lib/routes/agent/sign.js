@@ -24,10 +24,10 @@
   usually means somebody is clicking through rather than reading.
 */
 
-const { json, setCors, readBody } = require("../_lib/http");
-const { checkRateLimit, clientKey } = require("../_lib/rateLimit");
-const { checkAdminToken } = require("../_lib/adminAuth");
-const { signReport } = require("../_lib/reports");
+const { json, setCors, readBody } = require("../../http");
+const { checkRateLimit, clientKey } = require("../../rateLimit");
+const { checkAdminToken } = require("../../adminAuth");
+const { signReport } = require("../../reports");
 
 module.exports = async function handler(req, res){
   const gate = checkAdminToken(req, "AGENT_ADMIN_TOKEN", "agent");

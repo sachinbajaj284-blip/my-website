@@ -37,14 +37,14 @@
   a counsellor, and the review queue is where they go.
 */
 
-const { json, setCors, readBody } = require("../_lib/http");
-const { checkRateLimit, clientKey } = require("../_lib/rateLimit");
-const { checkAdminToken } = require("../_lib/adminAuth");
-const { listByCohort } = require("../_lib/assessments");
-const { saveDraft } = require("../_lib/reports");
-const { buildBatchRequests, collectResults, draftCohortSummary } = require("../_lib/cohortAgent");
-const { buildCohortStats, principalView } = require("../_lib/cohortStats");
-const cohorts = require("../_lib/cohorts");
+const { json, setCors, readBody } = require("../../http");
+const { checkRateLimit, clientKey } = require("../../rateLimit");
+const { checkAdminToken } = require("../../adminAuth");
+const { listByCohort } = require("../../assessments");
+const { saveDraft } = require("../../reports");
+const { buildBatchRequests, collectResults, draftCohortSummary } = require("../../cohortAgent");
+const { buildCohortStats, principalView } = require("../../cohortStats");
+const cohorts = require("../../cohorts");
 
 function batchClient(){
   const Anthropic = require("@anthropic-ai/sdk");

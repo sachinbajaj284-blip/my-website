@@ -35,12 +35,12 @@
   has to pass.
 */
 
-const { json, setCors } = require("../_lib/http");
-const { checkRateLimit, clientKey } = require("../_lib/rateLimit");
-const { checkAdminToken } = require("../_lib/adminAuth");
-const { listByCohort } = require("../_lib/assessments");
-const { buildCohortStats, counsellorView } = require("../_lib/cohortStats");
-const { getCohort } = require("../_lib/cohorts");
+const { json, setCors } = require("../../http");
+const { checkRateLimit, clientKey } = require("../../rateLimit");
+const { checkAdminToken } = require("../../adminAuth");
+const { listByCohort } = require("../../assessments");
+const { buildCohortStats, counsellorView } = require("../../cohortStats");
+const { getCohort } = require("../../cohorts");
 
 module.exports = async function handler(req, res){
   const gate = checkAdminToken(req, "AGENT_ADMIN_TOKEN", "agent");

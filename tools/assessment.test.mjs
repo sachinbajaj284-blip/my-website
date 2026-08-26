@@ -22,9 +22,9 @@ const store = install();
 
 const require = createRequire(import.meta.url);
 const { validate, saveRun, latestRun, listRuns, deleteRuns, COLLECTION } = require("../api/_lib/assessments.js");
-const saveHandler = require("../api/assessment/save.js");
-const latestHandler = require("../api/assessment/latest.js");
-const deleteHandler = require("../api/assessment/delete.js");
+const saveHandler = require("../api/_lib/routes/assessment/save.js");
+const latestHandler = require("../api/_lib/routes/assessment/latest.js");
+const deleteHandler = require("../api/_lib/routes/assessment/delete.js");
 
 let passed = 0;
 let failed = 0;
