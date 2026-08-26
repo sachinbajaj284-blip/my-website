@@ -297,6 +297,44 @@ await test("the cached prefix does not vary between two clients", async () => {
   assert.notDeepEqual(requests[0].messages, requests[1].messages);
 });
 
+await test("the agent is named Buddy and does not pass itself off as a counsellor", async () => {
+  const prefix = systemBlocks().map(b => b.text).join("\n");
+  assert.match(prefix, /You are Buddy/);
+  assert.match(prefix, /Introduce yourself as Buddy/);
+  assert.match(prefix, /assistant, not a counsellor/);
+  assert.ok(!/Lume AI/.test(prefix), "the old name should be gone from the prompt");
+});
+
+await test("the agent is told to do the asking, and told where to stop", async () => {
+  /*
+    A student who is worried but cannot name the question is the common
+    case, not the edge case — so the agent asks rather than waiting. The
+    risk in that instruction is the opposite failure: an intake form that
+    interrogates somebody before it will tell them anything, or one that
+    collects identifiers it has no business holding. Both halves are
+    pinned here because the second is what makes the first safe.
+  */
+  const prefix = systemBlocks().map(b => b.text).join("\n");
+
+  // It asks.
+  assert.match(prefix, /Lead with the question\. Do not wait to be asked one\./);
+  assert.match(prefix, /Never open with "how can I help\?"/);
+
+  // It does not interrogate.
+  assert.match(prefix, /One question per message/);
+  assert.match(prefix, /Answer first when they asked something real/);
+  assert.match(prefix, /Ask only what changes your answer/);
+  assert.match(prefix, /Stop asking once you can answer/);
+
+  // It does not hoard identity, and does not re-ask what it already has.
+  assert.match(prefix, /Never ask for identifiers/);
+  assert.match(prefix, /Never ask for what a tool can tell you/);
+
+  // One question at a time is the counselling craft's rule too — the two
+  // blocks must not contradict each other on this.
+  assert.match(prefix, /one question at a time/i);
+});
+
 await test("the counselling craft reaches the model, and is shared with the report agent", async () => {
   const prefix = systemBlocks().map(b => b.text).join("\n");
 
