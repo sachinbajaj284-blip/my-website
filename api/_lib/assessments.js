@@ -228,6 +228,14 @@ async function listRuns(uid){
   return rows.sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")));
 }
 
+// One run by id. Here rather than in the callers so `assessments` is
+// still a collection only this file knows the name of.
+async function getRun(runId){
+  const firestore = db();
+  const snap = await firestore.collection(COLLECTION).doc(String(runId)).get();
+  return snap.exists ? snap.data() : null;
+}
+
 async function latestRun(uid){
   const rows = await listRuns(uid);
   return rows.length ? rows[0] : null;
@@ -280,6 +288,7 @@ module.exports = {
   validate,
   saveRun,
   listRuns,
+  getRun,
   latestRun,
   deleteRuns,
   publicView,
