@@ -40,9 +40,77 @@ const OUT = path.join(ROOT, 'data', 'josaa');
 const BASE = 'https://josaa.admissions.nic.in';
 const ARCHIVE = `${BASE}/applicant/seatmatrix/openingclosingrankarchieve.aspx`;
 
-/* JoSAA rejects bursts. One request every REQUEST_GAP_MS, single-threaded, always. */
-const REQUEST_GAP_MS = 1500;
-const MAX_RETRIES = 4;
+/*
+  Pacing.
+
+  Every run so far has failed the same way and it is not the postback contract.
+  Run #14 is the clearest record: the workflow's reachability check, the probe,
+  a Common.js fetch and the ingest's opening GET all succeeded inside eight
+  seconds, and then every single request after that connect-timed-out for four
+  minutes without exception.
+
+  A connect timeout happens before the request is written. The server cannot
+  know the method, the headers or the body yet — so nothing about *what* we
+  were sending can explain it, which retires the theory that JoSAA was
+  rejecting our postback. What changed between the request that worked and the
+  request that did not is only that the address had just made several requests.
+  Dropped SYNs rather than a refusal is what a WAF blackhole looks like, and it
+  explains the detail that made no sense for months: the first request of every
+  run succeeds, because every run gets a fresh runner and a fresh IP.
+
+  So the gap is now measured in seconds rather than milliseconds, and jittered.
+  A request exactly every 1500 ms is itself a signature — no human browses on a
+  metronome — and 1.5 s was in any case far too fast for a host that appears to
+  budget a handful of requests before it stops answering.
+*/
+const REQUEST_GAP_MS = envInt('JOSAA_GAP_MS', 6000);
+
+/* Full jitter on the gap: the wait is uniform in [gap, gap + jitter). */
+const REQUEST_JITTER_MS = envInt('JOSAA_JITTER_MS', 4000);
+
+/*
+  What to wait after a connect timeout, as opposed to any other error.
+
+  These are the two failures that need different treatment. An HTTP 500 or a
+  torn connection is worth retrying in a few seconds. A connect timeout, on the
+  present reading, means the address is being dropped — and no amount of
+  retrying at two, four, eight and sixteen seconds gets through that, which is
+  exactly what runs #11 to #14 demonstrated at length. A block has a cooldown
+  measured in minutes, so the retry has to outlast it or not bother.
+*/
+const BLOCK_BACKOFF_MS = envInt('JOSAA_BLOCK_BACKOFF_MS', 90_000);
+const MAX_RETRIES = envInt('JOSAA_MAX_RETRIES', 4);
+
+/*
+  A ceiling on how long the whole run may spend waiting out blocks.
+
+  Patience per request and patience per run are different budgets, and without
+  this the first is allowed to consume the second. One blocked request can now
+  wait 90 + 180 + 270 + 360 s — fifteen minutes — and a full pull is seventy-two
+  requests, so two unlucky ones exhaust a forty-five minute job and the run ends
+  on a timeout: the least informative failure available, with no summary, no
+  artifact, and nothing said about why.
+
+  Waiting is worth it for a rate limit that lifts in a minute or two. It is not
+  worth it for an address that has been dropped for the day, and past ten
+  minutes of accumulated waiting the second is much likelier. So the run stops
+  and says so, while there is still time in the job to report it.
+*/
+const BLOCK_BUDGET_MS = envInt('JOSAA_BLOCK_BUDGET_MS', 10 * 60_000);
+
+/* Every knob above is settable from the environment so a run from India — where
+   the host is reachable and none of this caution is needed — can tighten them
+   without a code change:  JOSAA_GAP_MS=800 npm run josaa:refresh  */
+function envInt(name, fallback) {
+  const raw = process.env[name];
+  if (raw == null || raw === '') return fallback;
+  const n = Number.parseInt(raw, 10);
+  if (!Number.isFinite(n) || n < 0) {
+    console.warn(`  ! ${name}=${raw} is not a non-negative integer — using ${fallback}`);
+    return fallback;
+  }
+  return n;
+}
 
 /* JoSAA is a slow server on a good day and the cascade makes six requests per
    combination, so this is patient — but bounded, so a stall fails and retries instead
@@ -89,7 +157,7 @@ const INSTITUTE_TYPES = ['IIT', 'NIT', 'IIIT', 'Other-GFTI'];
 function parseArgs(argv) {
   const a = {
     years: [], round: null, limit: Infinity,
-    fromCache: false, probe: false, verbose: false, dump: null,
+    fromCache: false, probe: false, verbose: false, dump: null, pacingProbe: false,
   };
   for (let i = 2; i < argv.length; i++) {
     const k = argv[i];
@@ -98,6 +166,7 @@ function parseArgs(argv) {
     else if (k === '--limit') a.limit = parseInt(argv[++i], 10);
     else if (k === '--from-cache') a.fromCache = true;
     else if (k === '--probe') a.probe = true;
+    else if (k === '--pacing-probe') a.pacingProbe = true;
     else if (k === '--dump') a.dump = (argv[i + 1] && !argv[i + 1].startsWith('--')) ? argv[++i] : path.join(ROOT, 'work', 'dump');
     else if (k === '--verbose' || k === '-v') a.verbose = true;
     else if (k === '--help' || k === '-h') { printHelp(); process.exit(0); }
@@ -116,6 +185,9 @@ josaa-ingest — build data/josaa/* from the official JoSAA archive.
   --limit N                Stop after N result rows — smoke testing
   --from-cache             Re-parse cached HTML, make no network calls
   --probe                  Fetch the form, print discovered fields, exit
+  --pacing-probe           Fetch the same page repeatedly and report where it stops
+                           answering. Distinguishes a rate block from a rejected
+                           postback; makes no POSTs at all.
   --dump [dir]             Write every request and response to dir (default work/dump)
                            for inspection. Use when the ingest returns no rows and you
                            need to see what JoSAA actually sent back.
@@ -233,10 +305,40 @@ function summarise(html) {
 let lastRequestAt = 0;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+/* Jittered so the request train does not look like a metronome. */
+function nextGap() {
+  return REQUEST_GAP_MS + Math.floor(Math.random() * (REQUEST_JITTER_MS + 1));
+}
+
 async function throttle() {
-  const wait = REQUEST_GAP_MS - (Date.now() - lastRequestAt);
+  const wait = nextGap() - (Date.now() - lastRequestAt);
   if (wait > 0) await sleep(wait);
   lastRequestAt = Date.now();
+}
+
+/* A connect timeout is treated as a probable block rather than a slow server,
+   and backed off for minutes instead of seconds. See BLOCK_BACKOFF_MS. */
+function isConnectTimeout(err) {
+  const msg = String((err && err.message) || '');
+  if (/Connect\/idle timeout/i.test(msg)) return true;
+  const code = err && (err.code || (err.cause && err.cause.code));
+  return code === 'UND_ERR_CONNECT_TIMEOUT' || code === 'ETIMEDOUT' || code === 'ECONNREFUSED';
+}
+
+/* Cumulative time spent waiting out suspected blocks, across the whole run. */
+let blockedWaitMs = 0;
+
+function blockBudgetLeft() {
+  return Math.max(0, BLOCK_BUDGET_MS - blockedWaitMs);
+}
+
+function backoffFor(err, attempt) {
+  if (isConnectTimeout(err)) {
+    /* Linear, not exponential: the wait is already long, and doubling it twice
+       runs past the job timeout without testing anything new. */
+    return BLOCK_BACKOFF_MS * (attempt + 1);
+  }
+  return 2000 * Math.pow(2, attempt);
 }
 
 /**
@@ -385,43 +487,71 @@ function httpRequest(url, { method, headers, body, redirectsLeft = 5 }) {
   });
 }
 
-async function request(url, { method = 'GET', body = null, referer = ARCHIVE, async: isAsync = false } = {}) {
+/*
+  One attempt: no throttle, no retry. request() wraps this with both; the pacing
+  probe uses it bare, because retrying is precisely what it must not do while
+  measuring how many requests the host will answer.
+*/
+async function requestOnce(url, { method = 'GET', body = null, referer = ARCHIVE, async: isAsync = false } = {}) {
+  const res = await httpRequest(url, {
+    method,
+    body,
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36',
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      'Accept-Language': 'en-IN,en;q=0.9',
+      'Accept-Encoding': 'identity',
+      'Referer': referer,
+      ...(cookieJar.size ? { Cookie: cookieHeader() } : {}),
+      ...(method === 'POST' ? {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Length': Buffer.byteLength(body || ''),
+      } : {}),
+      /* ASP.NET decides between a page and a delta on this header. Without it
+         a partial postback is answered with a full render. */
+      ...(isAsync ? { 'X-MicrosoftAjax': 'Delta=true', 'X-Requested-With': 'XMLHttpRequest' } : {}),
+    },
+  });
+
+  absorbCookies(res.headers);
+
+  if (res.status === 429 || res.status >= 500) throw new Error(`HTTP ${res.status}`);
+  if (res.status < 200 || res.status >= 300) throw new Error(`HTTP ${res.status}`);
+  return res.text;
+}
+
+async function request(url, opts = {}) {
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     await throttle();
     try {
-      const res = await httpRequest(url, {
-        method,
-        body,
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36',
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-          'Accept-Language': 'en-IN,en;q=0.9',
-          'Accept-Encoding': 'identity',
-          'Referer': referer,
-          ...(cookieJar.size ? { Cookie: cookieHeader() } : {}),
-          ...(method === 'POST' ? {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Content-Length': Buffer.byteLength(body || ''),
-          } : {}),
-          /* ASP.NET decides between a page and a delta on this header. Without it
-             a partial postback is answered with a full render. */
-          ...(isAsync ? { 'X-MicrosoftAjax': 'Delta=true', 'X-Requested-With': 'XMLHttpRequest' } : {}),
-        },
-      });
-
-      absorbCookies(res.headers);
-
-      if (res.status === 429 || res.status >= 500) throw new Error(`HTTP ${res.status}`);
-      if (res.status < 200 || res.status >= 300) throw new Error(`HTTP ${res.status}`);
-      return res.text;
+      return await requestOnce(url, opts);
     } catch (err) {
       if (attempt === MAX_RETRIES) {
         throw new Error(
           `${url} failed after ${MAX_RETRIES + 1} tries: ${describeError(err)}${tlsHint(err)}`
         );
       }
-      const backoff = 2000 * Math.pow(2, attempt);
-      console.warn(`  ! ${describeError(err)} — retrying in ${backoff / 1000}s`);
+      const blocked = isConnectTimeout(err);
+      let backoff = backoffFor(err, attempt);
+
+      if (blocked) {
+        if (blockBudgetLeft() === 0) {
+          throw new Error(
+            `${url}: gave up after ${Math.round(blockedWaitMs / 60000)} minutes of waiting out connect ` +
+            `timeouts. The address appears to be blocked rather than throttled — ` +
+            `run from an Indian IP (npm run josaa:probe && npm run josaa:refresh), ` +
+            `or raise JOSAA_BLOCK_BUDGET_MS to keep waiting.`
+          );
+        }
+        backoff = Math.min(backoff, blockBudgetLeft());
+        blockedWaitMs += backoff;
+      }
+
+      const why = blocked
+        ? ` (connect timeout — treating as a rate block; ${Math.round(blockedWaitMs / 1000)}s of ` +
+          `${Math.round(BLOCK_BUDGET_MS / 1000)}s block budget used)`
+        : '';
+      console.warn(`  ! ${describeError(err)}${why} — retrying in ${Math.round(backoff / 1000)}s`);
       await sleep(backoff);
     }
   }
@@ -1229,12 +1359,69 @@ async function emit(records, args, problems) {
   }
 }
 
+/* --------------------------------------------------------- pacing probe -- */
+
+/*
+  Is it us, or is it the address?
+
+  Runs #11 to #14 all failed with the opening GET succeeding and every later
+  request timing out at connect, and the reading in the constants above is that
+  this is a rate block rather than anything about the requests themselves. That
+  is a claim about the address, and it is cheap to test: fetch the same page,
+  the same way, several times over, and make no POSTs at all.
+
+  If the run gets through every fetch, the address is fine and whatever is
+  wrong is in the postback after all. If it dies partway through — on a plain,
+  identical GET — then nothing about our request shape is responsible, and the
+  only lever left is pacing.
+
+  The number of the last fetch that succeeded is the useful output, because it
+  says roughly how large the budget is.
+*/
+async function pacingProbe() {
+  const ATTEMPTS = envInt('JOSAA_PROBE_ATTEMPTS', 8);
+  console.log(`Pacing probe: ${ATTEMPTS} identical GETs of the archive page.`);
+  console.log(`Gap ${REQUEST_GAP_MS}ms + up to ${REQUEST_JITTER_MS}ms jitter. No POSTs.\n`);
+
+  const started = Date.now();
+  let lastOk = 0;
+  let firstFailAt = null;
+
+  for (let i = 1; i <= ATTEMPTS; i++) {
+    const t0 = Date.now();
+    try {
+      /* One try each: a retry here would wait out the very block we are
+         measuring and destroy the measurement. */
+      const html = await requestOnce(ARCHIVE);
+      lastOk = i;
+      const secs = ((Date.now() - started) / 1000).toFixed(1);
+      console.log(`  ${String(i).padStart(2)}. ok    ${String(Date.now() - t0).padStart(6)}ms  ${html.length} bytes  (t+${secs}s)`);
+    } catch (err) {
+      const secs = ((Date.now() - started) / 1000).toFixed(1);
+      if (firstFailAt == null) firstFailAt = i;
+      console.log(`  ${String(i).padStart(2)}. FAIL  ${String(Date.now() - t0).padStart(6)}ms  ${describeError(err)}  (t+${secs}s)`);
+    }
+    if (i < ATTEMPTS) await throttle();
+  }
+
+  console.log('');
+  if (firstFailAt == null) {
+    console.log(`All ${ATTEMPTS} GETs succeeded. The address is not being blocked at this pace,`);
+    console.log('so a cascade that still fails is failing on the postback, not on pacing.');
+    return;
+  }
+  console.log(`Plain GETs started failing at attempt ${firstFailAt}; ${lastOk} succeeded.`);
+  console.log('An identical GET failing rules out the request shape — nothing about the');
+  console.log('postback can explain a GET that worked once and then did not. Pacing is the lever.');
+}
+
 /* -------------------------------------------------------------------- main -- */
 
 const args = parseArgs(process.argv);
 try {
   await dumper.init(args.dump);
-  if (args.probe) await probe();
+  if (args.pacingProbe) await pacingProbe();
+  else if (args.probe) await probe();
   else await ingest(args);
 } catch (err) {
   console.error(`\nFAILED: ${err.message}`);
