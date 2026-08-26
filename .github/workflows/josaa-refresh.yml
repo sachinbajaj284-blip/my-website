@@ -25,6 +25,10 @@ on:
         description: 'Save the raw request/response of a few exchanges as an artifact. Use when a pull returns no rows. Never commits.'
         type: boolean
         default: false
+      pacing_probe:
+        description: 'Only measure how many plain GETs JoSAA answers before it stops. Makes no POSTs, pulls nothing.'
+        type: boolean
+        default: false
       commit:
         description: 'Commit the dataset and generated pages back to this branch'
         type: boolean
@@ -53,6 +57,9 @@ jobs:
       # sites occasionally block or throttle non-Indian IPs; if that is what is happening,
       # this step says so instead of leaving a confusing parser error later.
       - name: Check JoSAA is reachable
+        # Skipped for a pacing probe: that run is measuring how many requests a fresh
+        # address gets, and this step would spend the first one before counting starts.
+        if: ${{ !inputs.pacing_probe }}
         run: |
           set -e
           URL="https://josaa.admissions.nic.in/applicant/seatmatrix/openingclosingrankarchieve.aspx"
@@ -65,15 +72,21 @@ jobs:
           # ranges, so the useful strategy is a short per-attempt timeout over a long
           # wall-clock window rather than a few patient attempts. Eight tries spread over
           # about ten minutes catches a window; three over four minutes does not.
+          # Two attempts, not eight. The eight-attempt loop was written for the theory
+          # that JoSAA flaps on a three-minute cycle; run #14 replaced that theory. What
+          # actually happens is that the address is answered for the first few requests
+          # and then dropped, so a probe that hammers the host eight times is not
+          # measuring reachability — it is spending the very budget the ingest needs,
+          # and then handing the ingest a blocked IP.
           CODE=000
-          ATTEMPTS=8
+          ATTEMPTS=2
           for attempt in $(seq 1 $ATTEMPTS); do
             CODE=$(curl -sS -o /tmp/josaa-probe.html -w '%{http_code}' -m 30 \
               -A 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36' \
               "$URL" || echo "000")
             echo "attempt $attempt/$ATTEMPTS: HTTP $CODE"
             [ "$CODE" = "200" ] && break
-            [ "$attempt" -lt "$ATTEMPTS" ] && sleep 45
+            [ "$attempt" -lt "$ATTEMPTS" ] && sleep 60
           done
           if [ "$CODE" != "200" ]; then
             echo "::error::Could not reach the JoSAA archive after $ATTEMPTS attempts over ~10 minutes (last HTTP $CODE)."
@@ -120,7 +133,10 @@ jobs:
 
       # JoSAA renames its ASP.NET controls between admission years. The probe reports
       # whether field discovery still matches the live page.
+      # Costs a request, so it is not run ahead of a real pull: the ingest fetches the
+      # same form itself and discovers the same fields from it.
       - name: Probe the JoSAA form
+        if: ${{ inputs.dump && !inputs.pacing_probe }}
         run: node tools/josaa-ingest.mjs --probe
 
       # A correctly shaped postback still comes back as the 11,950-byte "Not Available"
@@ -128,7 +144,11 @@ jobs:
       # two candidates are an anti-automation token (the form ships an empty
       # ctl00$hdnSecKey and loads Common.js) and an UpdatePanel expecting an async post.
       # This step says which, and costs one extra request.
+      # Answered in run #10 — UpdatePanel present, nothing writes hdnSecKey — so this is
+      # now a diagnostic kept for the next time the contract changes, not a per-run cost.
+      # It fetches Common.js, and requests are the scarce resource here.
       - name: Inspect the postback contract
+        if: ${{ inputs.dump && !inputs.pacing_probe }}
         run: |
           echo "--- hidden fields on the served page ---"
           grep -oE '<input[^>]*type="hidden"[^>]*>' /tmp/josaa-probe.html \
@@ -154,6 +174,13 @@ jobs:
           else
             echo "(could not fetch Common.js)"
           fi
+
+      # Does the address get blocked, or is the postback being rejected? Identical GETs,
+      # no POSTs: if a plain GET that worked stops working, nothing about the request
+      # shape is responsible and pacing is the only lever left.
+      - name: Measure the request budget
+        if: ${{ inputs.pacing_probe }}
+        run: node tools/josaa-ingest.mjs --pacing-probe
 
       # A dump run is a diagnostic, not a pull: it saves what JoSAA actually returned and
       # is expected to produce no dataset, so it must not fail the job on empty output.
@@ -188,8 +215,22 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
+      # Let the address go quiet before the pull.
+      #
+      # Everything above this line — the reachability check, and the probe and contract
+      # inspection when they run — costs requests against whatever budget JoSAA allows,
+      # and in run #14 the budget looked like three or four before the host stopped
+      # answering for four minutes. Starting the ingest immediately after the pre-flight
+      # is starting it on an address that has just spent its allowance, which is a fair
+      # description of every failed run so far.
+      - name: Let the rate limit recover
+        if: ${{ !inputs.pacing_probe }}
+        run: |
+          echo "Idling 120s so the pre-flight requests age out before the pull starts."
+          sleep 120
+
       - name: Ingest cutoffs
-        if: ${{ inputs.dump != true }}
+        if: ${{ inputs.dump != true && !inputs.pacing_probe }}
         run: |
           if [ "${{ inputs.smoke_test }}" = "true" ]; then
             node tools/josaa-ingest.mjs --years "${{ inputs.years || '2024,2025,2026' }}" --limit 300 --verbose
@@ -198,11 +239,11 @@ jobs:
           fi
 
       - name: Validate dataset
-        if: ${{ inputs.dump != true }}
+        if: ${{ inputs.dump != true && !inputs.pacing_probe }}
         run: node tools/josaa-validate.mjs
 
       - name: Generate browse pages
-        if: ${{ inputs.dump != true }}
+        if: ${{ inputs.dump != true && !inputs.pacing_probe }}
         run: node tools/josaa-pages.mjs
 
       # Always publish the result as an artifact, so a smoke test — or a run you choose not

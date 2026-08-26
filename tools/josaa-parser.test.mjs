@@ -18,7 +18,7 @@ const src = await fs.readFile(path.join(ROOT, 'tools', 'josaa-ingest.mjs'), 'utf
 
 /* josaa-ingest.mjs runs on import, so lift the pure helpers out rather than importing it. */
 const lift = name => {
-  const re = new RegExp(`(?:^|\\n)(?:const|function|class)\\s+${name}\\b[\\s\\S]*?(?=\\n(?:const|function|async function|class|/\\*|let)\\s)`, 'm');
+  const re = new RegExp(`(?:^|\\n)(?:const|let|function|class)\\s+${name}\\b[\\s\\S]*?(?=\\n(?:const|function|async function|class|/\\*|let)\\s)`, 'm');
   const m = src.match(re);
   if (!m) throw new Error(`Could not lift ${name} from josaa-ingest.mjs`);
   return m[0];
@@ -45,7 +45,18 @@ ${lift('looksLikeDelta')}
 ${lift('FormSession')}
 ${lift('chooseOption')}
 ${lift('chooseAll')}
-export { decodeEntities, stripTags, extractHiddenFields, extractSelects, discoverFields, parseResultTable, parseRank, splitBranch, instituteType, extractSelectedValues, findSubmitButton, discoverAjax, parseAsyncDelta, looksLikeDelta, FormSession, chooseOption, chooseAll };
+${lift('envInt')}
+${lift('REQUEST_GAP_MS')}
+${lift('REQUEST_JITTER_MS')}
+${lift('BLOCK_BACKOFF_MS')}
+${lift('MAX_RETRIES')}
+${lift('nextGap')}
+${lift('isConnectTimeout')}
+${lift('backoffFor')}
+${lift('BLOCK_BUDGET_MS')}
+${lift('blockedWaitMs')}
+${lift('blockBudgetLeft')}
+export { decodeEntities, stripTags, extractHiddenFields, extractSelects, discoverFields, parseResultTable, parseRank, splitBranch, instituteType, extractSelectedValues, findSubmitButton, discoverAjax, parseAsyncDelta, looksLikeDelta, FormSession, chooseOption, chooseAll, envInt, nextGap, isConnectTimeout, backoffFor, REQUEST_GAP_MS, REQUEST_JITTER_MS, BLOCK_BACKOFF_MS, MAX_RETRIES, BLOCK_BUDGET_MS, blockBudgetLeft };
 `)}`);
 
 const FIXTURE = `
@@ -456,6 +467,121 @@ test('a delta keeps the ScriptManager wiring the full page established', () => {
   const session = new mod.FormSession(AJAX_PAGE);
   session.applyDelta({ panels: { P1: '<select name="x"></select>' }, hidden: {}, error: null });
   assert.equal(session.ajax.scriptManager, 'ctl00$ScriptManager1');
+});
+
+
+/* ------------------------------------------------------------- pacing -- */
+
+/*
+  Runs #11 to #14 all died the same way: the opening request succeeded and
+  every one after it timed out at connect. A connect timeout happens before
+  the request is written, so nothing about the postback can explain it — the
+  variable is the address, not the payload. These pin the pacing that follows
+  from that reading.
+*/
+
+test('a connect timeout is recognised however it is reported', () => {
+  assert.equal(mod.isConnectTimeout(new Error('Connect/idle timeout after 30000ms')), true);
+  assert.equal(mod.isConnectTimeout(Object.assign(new Error('x'), { code: 'UND_ERR_CONNECT_TIMEOUT' })), true);
+  assert.equal(mod.isConnectTimeout(Object.assign(new Error('x'), { code: 'ETIMEDOUT' })), true);
+  // undici buries the real code on the cause.
+  assert.equal(mod.isConnectTimeout(Object.assign(new Error('fetch failed'), { cause: { code: 'ETIMEDOUT' } })), true);
+});
+
+test('an ordinary server error is not mistaken for a block', () => {
+  assert.equal(mod.isConnectTimeout(new Error('HTTP 500')), false);
+  assert.equal(mod.isConnectTimeout(new Error('HTTP 429')), false);
+  assert.equal(mod.isConnectTimeout(new Error('socket hang up')), false);
+  assert.equal(mod.isConnectTimeout(null), false);
+});
+
+test('a connect timeout backs off in minutes, an HTTP error in seconds', () => {
+  const blocked = mod.backoffFor(new Error('Connect/idle timeout after 30000ms'), 0);
+  const server  = mod.backoffFor(new Error('HTTP 500'), 0);
+  assert.ok(blocked >= 60_000, `expected a minutes-long wait, got ${blocked}ms`);
+  assert.ok(server <= 5_000, `expected a seconds-long wait, got ${server}ms`);
+  assert.ok(blocked > server * 10);
+});
+
+test('the block backoff grows linearly, not exponentially', () => {
+  const e = new Error('Connect/idle timeout after 30000ms');
+  const waits = [0, 1, 2, 3].map(a => mod.backoffFor(e, a));
+  assert.deepEqual(waits, waits.map((_, i) => mod.BLOCK_BACKOFF_MS * (i + 1)));
+  // Doubling a 90s wait four times overruns the job without testing anything new.
+  assert.ok(waits[3] < 8 * mod.BLOCK_BACKOFF_MS);
+});
+
+test('the retry schedule outlasts a block measured in minutes', () => {
+  /*
+    The point of the change. The old schedule was 2+4+8+16s — thirty seconds
+    of patience against something that held for four minutes solid in run #14,
+    which is why every run spent its retries inside the block and reported an
+    outage.
+  */
+  const e = new Error('Connect/idle timeout after 30000ms');
+  let total = 0;
+  for (let attempt = 0; attempt < mod.MAX_RETRIES; attempt++) total += mod.backoffFor(e, attempt);
+  assert.ok(total >= 5 * 60_000, `retries only cover ${Math.round(total / 1000)}s; run #14 blocked for 240s`);
+});
+
+test('the gap is jittered within its declared bounds', () => {
+  for (let i = 0; i < 200; i++) {
+    const gap = mod.nextGap();
+    assert.ok(gap >= mod.REQUEST_GAP_MS, `${gap} below floor`);
+    assert.ok(gap <= mod.REQUEST_GAP_MS + mod.REQUEST_JITTER_MS, `${gap} above ceiling`);
+  }
+});
+
+test('the gap actually varies — a metronome is a signature', () => {
+  const seen = new Set();
+  for (let i = 0; i < 200; i++) seen.add(mod.nextGap());
+  assert.ok(seen.size > 20, `only ${seen.size} distinct gaps in 200 draws`);
+});
+
+test('the pace is slow enough to be plausible, not the old 1.5s burst', () => {
+  assert.ok(mod.REQUEST_GAP_MS >= 5000,
+    `gap is ${mod.REQUEST_GAP_MS}ms; the pace that got blocked was 1500ms`);
+});
+
+test('envInt falls back on anything that is not a non-negative integer', () => {
+  const KEY = 'JOSAA_TEST_ONLY_KEY';
+  const restore = process.env[KEY];
+  try {
+    for (const bad of [undefined, '', 'abc', '-1', 'NaN']) {
+      if (bad === undefined) delete process.env[KEY]; else process.env[KEY] = bad;
+      assert.equal(mod.envInt(KEY, 4242), 4242, `${JSON.stringify(bad)} should fall back`);
+    }
+    process.env[KEY] = '800';
+    assert.equal(mod.envInt(KEY, 4242), 800);
+    process.env[KEY] = '0';
+    assert.equal(mod.envInt(KEY, 4242), 0, 'zero is a legitimate override');
+  } finally {
+    if (restore === undefined) delete process.env[KEY]; else process.env[KEY] = restore;
+  }
+});
+
+
+test('the block budget is smaller than the job it runs inside', () => {
+  /*
+    Per-request patience and per-run patience are different budgets, and the
+    first must not be allowed to eat the second. A full pull is ~72 requests at
+    ~8s of pacing each (~10 min), and the workflow allows 45 minutes, so the
+    waiting has to leave room for the pull itself and for the run to report
+    what happened rather than dying on a timeout.
+  */
+  const JOB_MS = 45 * 60_000;
+  const PACING_MS = 72 * (mod.REQUEST_GAP_MS + mod.REQUEST_JITTER_MS / 2);
+  assert.ok(mod.BLOCK_BUDGET_MS + PACING_MS < JOB_MS,
+    `budget ${mod.BLOCK_BUDGET_MS / 60000}min + pacing ${(PACING_MS / 60000).toFixed(1)}min must fit in 45min`);
+});
+
+test('one blocked request cannot spend the whole run waiting', () => {
+  const e = new Error('Connect/idle timeout after 30000ms');
+  let single = 0;
+  for (let a = 0; a < mod.MAX_RETRIES; a++) single += mod.backoffFor(e, a);
+  assert.ok(single > mod.BLOCK_BUDGET_MS,
+    'the unclamped schedule should exceed the budget — otherwise the clamp is untested');
+  assert.equal(mod.blockBudgetLeft(), mod.BLOCK_BUDGET_MS, 'a fresh run starts with the full budget');
 });
 
 console.log(`\n${passed} passed`);
