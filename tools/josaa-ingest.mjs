@@ -43,40 +43,37 @@ const ARCHIVE = `${BASE}/applicant/seatmatrix/openingclosingrankarchieve.aspx`;
 /*
   Pacing.
 
-  Every run so far has failed the same way and it is not the postback contract.
-  Run #14 is the clearest record: the workflow's reachability check, the probe,
-  a Common.js fetch and the ingest's opening GET all succeeded inside eight
-  seconds, and then every single request after that connect-timed-out for four
-  minutes without exception.
+  This was written for a theory the measurement then killed, and the
+  numbers below are what survived.
 
-  A connect timeout happens before the request is written. The server cannot
-  know the method, the headers or the body yet — so nothing about *what* we
-  were sending can explain it, which retires the theory that JoSAA was
-  rejecting our postback. What changed between the request that worked and the
-  request that did not is only that the address had just made several requests.
-  Dropped SYNs rather than a refusal is what a WAF blackhole looks like, and it
-  explains the detail that made no sense for months: the first request of every
-  run succeeds, because every run gets a fresh runner and a fresh IP.
+  The theory was that JoSAA blocks the address after a handful of requests:
+  every run's first request succeeded and everything after it timed out, and
+  a rate block drops packets, which presents as a timeout rather than a
+  refusal. Run #16 tested it directly — eight identical GETs from a GitHub
+  runner, two of them back to back — and all eight returned in about 1.3
+  seconds. There is no block. The address is fine.
 
-  So the gap is now measured in seconds rather than milliseconds, and jittered.
-  A request exactly every 1500 ms is itself a signature — no human browses on a
-  metronome — and 1.5 s was in any case far too fast for a host that appears to
-  budget a handful of requests before it stops answering.
+  What was actually happening is in httpRequest below: the socket timeout
+  covers both a handshake that never completes and a server that has gone
+  quiet, the error string called it "Connect/idle", and reading that as a
+  connect failure ruled out the postback for four runs. Those timeouts were
+  JoSAA accepting the POST and then not answering.
+
+  So the gap stays, at a fraction of what a block would have needed. A
+  government site running a rank query for a whole institute type does not
+  benefit from being asked twelve times a second, and jitter costs nothing.
+  It is courtesy now rather than evasion, and priced accordingly: seventy-two
+  requests cost about four minutes of waiting instead of ten.
 */
-const REQUEST_GAP_MS = envInt('JOSAA_GAP_MS', 6000);
+const REQUEST_GAP_MS = envInt('JOSAA_GAP_MS', 2000);
 
 /* Full jitter on the gap: the wait is uniform in [gap, gap + jitter). */
-const REQUEST_JITTER_MS = envInt('JOSAA_JITTER_MS', 4000);
+const REQUEST_JITTER_MS = envInt('JOSAA_JITTER_MS', 2000);
 
 /*
-  What to wait after a connect timeout, as opposed to any other error.
-
-  These are the two failures that need different treatment. An HTTP 500 or a
-  torn connection is worth retrying in a few seconds. A connect timeout, on the
-  present reading, means the address is being dropped — and no amount of
-  retrying at two, four, eight and sixteen seconds gets through that, which is
-  exactly what runs #11 to #14 demonstrated at length. A block has a cooldown
-  measured in minutes, so the retry has to outlast it or not bother.
+  Kept for a connect timeout specifically, which now means what it says.
+  If the handshake itself stops completing, waiting minutes is the right
+  response and retrying in two seconds is not. It should rarely fire.
 */
 const BLOCK_BACKOFF_MS = envInt('JOSAA_BLOCK_BACKOFF_MS', 90_000);
 const MAX_RETRIES = envInt('JOSAA_MAX_RETRIES', 4);
@@ -115,23 +112,32 @@ function envInt(name, fallback) {
 /* JoSAA is a slow server on a good day and the cascade makes six requests per
    combination, so this is patient — but bounded, so a stall fails and retries instead
    of hanging the job for five minutes. */
-const REQUEST_TIMEOUT_MS = 60_000;
+const REQUEST_TIMEOUT_MS = envInt('JOSAA_REQUEST_TIMEOUT_MS', 180_000);
 
 /*
-  How long to wait for the TCP+TLS handshake specifically.
+  How long to wait for the TCP+TLS handshake, and only that.
 
-  This is the number that was actually failing. undici — which is what global
-  fetch is — applies its own connect timeout of 10 seconds and reaches it long
-  before any AbortSignal budget matters, so run #11 reported
-  "UND_ERR_CONNECT_TIMEOUT ... timeout: 10000ms" five times while curl, with
-  -m 30, had fetched the same page six seconds earlier. JoSAA is simply slow to
-  accept a connection.
-
-  undici's connect timeout is only reachable through a custom Agent, and this
-  project installs nothing for the ingest, so request() below uses node:https
-  instead of fetch and sets both timeouts itself.
+  undici — which is what global fetch is — applies its own connect timeout
+  of 10 seconds and reaches it long before any AbortSignal budget matters,
+  which is why run #11 reported UND_ERR_CONNECT_TIMEOUT at 10000ms while
+  curl had fetched the same page seconds earlier with -m 30. That is only
+  reachable through a custom Agent, and this project installs nothing for
+  the ingest, so request() uses node:https and sets its own.
 */
 const CONNECT_TIMEOUT_MS = 30_000;
+
+/*
+  How long to wait for JoSAA to say anything once the request is sent.
+
+  Separate from the connect timeout because it is a separate failure, and
+  much longer because it is a separate question. The archive query runs a
+  rank lookup across an entire institute type on a government server; the
+  GET of an empty form comes back in 1.3 seconds, and there is no reason to
+  assume the query does. Thirty seconds was the number that killed every
+  POST this pipeline has ever sent, and it was never chosen for this — it
+  was the handshake budget, applied to the wrong phase by accident.
+*/
+const RESPONSE_TIMEOUT_MS = envInt('JOSAA_RESPONSE_TIMEOUT_MS', 120_000);
 
 /*
   A fresh TCP connection for every request.
@@ -319,10 +325,14 @@ async function throttle() {
 /* A connect timeout is treated as a probable block rather than a slow server,
    and backed off for minutes instead of seconds. See BLOCK_BACKOFF_MS. */
 function isConnectTimeout(err) {
-  const msg = String((err && err.message) || '');
-  if (/Connect\/idle timeout/i.test(msg)) return true;
   const code = err && (err.code || (err.cause && err.cause.code));
-  return code === 'UND_ERR_CONNECT_TIMEOUT' || code === 'ETIMEDOUT' || code === 'ECONNREFUSED';
+  /* RESPONSE_TIMEOUT is deliberately not here. A server that accepted the
+     connection and then went quiet is a slow server, not an unreachable
+     address, and waiting ninety seconds to ask it again helps nobody. */
+  return code === 'CONNECT_TIMEOUT'
+      || code === 'UND_ERR_CONNECT_TIMEOUT'
+      || code === 'ETIMEDOUT'
+      || code === 'ECONNREFUSED';
 }
 
 /* Cumulative time spent waiting out suspected blocks, across the whole run. */
@@ -433,8 +443,9 @@ function httpRequest(url, { method, headers, body, redirectsLeft = 5 }) {
       method,
       headers,
       agent,
-      /* Node resolves this itself; ipv4first is set at the top of the file. */
-      timeout: CONNECT_TIMEOUT_MS,
+      /* Node resolves this itself; ipv4first is set at the top of the file.
+         The socket timeout is armed per phase in the 'socket' handler below
+         rather than here, because the two phases want different numbers. */
     });
 
     let settled = false;
@@ -446,11 +457,41 @@ function httpRequest(url, { method, headers, body, redirectsLeft = 5 }) {
       fail(err);
     }, REQUEST_TIMEOUT_MS);
 
-    /* `timeout` here is socket inactivity, which covers the handshake: nothing
-       arrives on a socket that never connects. */
+    /*
+      Two different failures, told apart.
+
+      A socket timeout is inactivity, and it fires for two completely
+      different reasons: nothing arrives on a socket that never connected,
+      and nothing arrives on a socket where the server is still thinking.
+      Reporting both as one thing cost this pipeline several runs — a single
+      error string reading "Connect/idle timeout" was read as a connect
+      failure, and a connect failure happens before the request is written,
+      which "proved" the postback could not be the cause. It was never a
+      connect failure. Every one of those was JoSAA accepting the POST and
+      then saying nothing.
+
+      So the phase is tracked and named. A run's log now says which of the
+      two happened, because they have opposite fixes: a connect timeout is
+      about reachability, and a silent connected socket is about a server
+      taking longer to answer than we are willing to wait.
+    */
+    let phase = 'connect';
+    req.on('socket', (socket) => {
+      socket.setTimeout(CONNECT_TIMEOUT_MS);
+      const connected = () => {
+        phase = 'response';
+        socket.setTimeout(RESPONSE_TIMEOUT_MS);
+      };
+      if (socket.connecting === false) connected();
+      else socket.once('secureConnect', connected);
+    });
+
     req.on('timeout', () => {
-      const err = new Error('Connect/idle timeout after ' + CONNECT_TIMEOUT_MS + 'ms');
-      err.code = 'CONNECT_TIMEOUT';
+      const err = phase === 'connect'
+        ? Object.assign(new Error('Connect timeout after ' + CONNECT_TIMEOUT_MS + 'ms'),
+                        { code: 'CONNECT_TIMEOUT' })
+        : Object.assign(new Error('Connected and sent, then silence for ' + RESPONSE_TIMEOUT_MS + 'ms'),
+                        { code: 'RESPONSE_TIMEOUT' });
       fail(err);
     });
     req.on('error', fail);
