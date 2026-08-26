@@ -85,6 +85,18 @@ const CONTEXT_FIELDS = {
 const INSTRUMENT_NAMES = Object.keys(INSTRUMENTS);
 const MAX_AGE = 100;
 
+/*
+  A cohort code ties a run to a school group, so the batch drafting in
+  Phase 2 knows which runs belong together. The student types it once,
+  from whatever the school handed out.
+
+  It is validated for shape only and never trusted to mean anything on
+  its own: /api/agent/cohort refuses to run for a code with no cohort
+  record, and the codes it mints carry a random tail precisely so a
+  stranger cannot guess their way into a school's roster.
+*/
+const COHORT_CODE = /^[A-Z0-9]{2,12}(-[A-Z0-9]{2,12}){0,3}$/;
+
 function newRunId(){
   // Time-ordered prefix so a plain string sort puts the newest run last,
   // and 8 random bytes so two runs saved in the same millisecond — the
@@ -178,6 +190,15 @@ function validate(input){
     cleanContext.age = Math.round(age);
   }
 
+  // Optional. A student taking the assessment on their own has none.
+  let cohort = null;
+  if(body.cohort != null && String(body.cohort).trim() !== ""){
+    cohort = String(body.cohort).trim().toUpperCase();
+    if(!COHORT_CODE.test(cohort)){
+      return { ok:false, error:"BAD_COHORT", message:"That group code doesn't look right — please check it with your school." };
+    }
+  }
+
   return {
     ok: true,
     doc: {
@@ -185,6 +206,7 @@ function validate(input){
       instrument: clampText(body.instrument, 40) || "student-full-v1",
       scores: cleanScores,
       context: cleanContext,
+      cohort: cohort,
       consent: true
     }
   };
@@ -226,6 +248,33 @@ async function listRuns(uid){
   snap.forEach(doc => rows.push(doc.data()));
 
   return rows.sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")));
+}
+
+/*
+  Every run tagged with a cohort code, oldest first.
+
+  One run per account: a student who re-takes the assessment should count
+  once in their school's cohort, as their most recent profile, not twice
+  with the earlier one dragging the averages around.
+*/
+async function listByCohort(cohort){
+  const firestore = db();
+  const code = String(cohort || "").trim().toUpperCase();
+  if(!code) return [];
+
+  const snap = await firestore.collection(COLLECTION).where("cohort", "==", code).get();
+
+  const newest = new Map();
+  snap.forEach(doc => {
+    const run = doc.data();
+    const seen = newest.get(run.uid);
+    if(!seen || String(run.createdAt || "") > String(seen.createdAt || "")){
+      newest.set(run.uid, run);
+    }
+  });
+
+  return Array.from(newest.values())
+    .sort((a, b) => String(a.createdAt || "").localeCompare(String(b.createdAt || "")));
 }
 
 // One run by id. Here rather than in the callers so `assessments` is
@@ -285,9 +334,11 @@ module.exports = {
   SCHEMA_VERSION,
   INSTRUMENTS,
   CONTEXT_FIELDS,
+  COHORT_CODE,
   validate,
   saveRun,
   listRuns,
+  listByCohort,
   getRun,
   latestRun,
   deleteRuns,

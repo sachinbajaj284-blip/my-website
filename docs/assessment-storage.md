@@ -57,6 +57,7 @@ a browser tab that was closed a month ago.
     "bigfive": { "E":22, "A":31, "C":29, "N":18, "O":34, "max":40 }
   },
   "context": { "stage":"Class 12 Science", "age":17, "city":"Rohtak" },
+  "cohort": "DAVPUBLIC-CLASS11-K7M4XQ",
   "createdAt": "2026-08-26T09:12:44.108Z",
   "updatedAt": "2026-08-26T09:12:44.108Z"
 }
@@ -72,6 +73,18 @@ shortcut.
 
 **Name, phone, email.** The account already holds them, verified. Copying
 them here would mean two places to honour a deletion request from.
+
+### The cohort code
+
+`cohort` is optional and is how a school group is drafted together — see
+`docs/cohort-agent.md`. A student doing this on their own has none. It is
+validated for shape and never trusted on its own: `/api/agent/cohort` refuses
+to run for a code with no cohort record, and minted codes carry a random tail
+so a stranger cannot guess their way onto a school's roster.
+
+A code can arrive as `assessment.html?group=CODE` from a link a school shares,
+but the field stays visible and editable — a code applied invisibly from a URL
+is not something anybody agreed to.
 
 **The wellbeing screener.** `lume-wellbeing-check.js` is a separate,
 on-demand modal, it is not part of the `saGenerate` flow, and it is the most

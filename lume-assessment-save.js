@@ -56,6 +56,10 @@
       "#" + CARD_ID + " .lsc-msg.ok{color:#0A6E6E;font-weight:600}",
       "#" + CARD_ID + " .lsc-msg.bad{color:#A0341E}",
       "#" + CARD_ID + " .lsc-fine{font-size:.78rem;color:#7A8899;margin-top:12px;line-height:1.5}",
+      "#" + CARD_ID + " .lsc-group{margin-top:14px}",
+      "#" + CARD_ID + " .lsc-group label{display:block;font-size:.8rem;font-weight:600;color:#4A5568;margin-bottom:5px}",
+      "#" + CARD_ID + " .lsc-group input{font:inherit;font-size:.86rem;letter-spacing:.06em;text-transform:uppercase;padding:8px 11px;border:1px solid #E2E8F0;border-radius:8px;width:100%;max-width:320px;background:#fff;color:#1A2C3D}",
+      "#" + CARD_ID + " .lsc-group .hint{font-size:.76rem;color:#7A8899;margin-top:5px}",
       "#" + CARD_ID + " a{color:#0A6E6E}"
     ].join("\n");
     document.head.appendChild(css);
@@ -90,6 +94,20 @@
       }
       return out;
     }catch(err){ return null; }
+  }
+
+  /*
+    A school hands out a link rather than asking thirty students to type
+    a code correctly: assessment.html?group=DAVPUBLIC-CLASS11-K7M4XQ
+    pre-fills the box. The box stays visible and editable either way, so
+    a student can see which group they are about to be counted in — a
+    code applied invisibly from a URL is not something they agreed to.
+  */
+  function groupFromUrl(){
+    try{
+      var value = new URLSearchParams(window.location.search).get("group");
+      return value ? value.trim().toUpperCase() : "";
+    }catch(err){ return ""; }
   }
 
   function signedIn(){
@@ -140,6 +158,22 @@
       "If I am under 18, I have my parent's or guardian's permission."));
     card.appendChild(label);
 
+    var group = el("div", "lsc-group");
+    var groupLabel = el("label", null, "School or group code (leave blank if you're doing this on your own)");
+    groupLabel.setAttribute("for", "lumeSaveGroup");
+    var groupInput = document.createElement("input");
+    groupInput.type = "text";
+    groupInput.id = "lumeSaveGroup";
+    groupInput.autocomplete = "off";
+    groupInput.spellcheck = false;
+    groupInput.placeholder = "e.g. DAVPUBLIC-CLASS11-K7M4XQ";
+    groupInput.value = groupFromUrl();
+    group.appendChild(groupLabel);
+    group.appendChild(groupInput);
+    var groupHint = el("div", "hint", "Your school gives you this. It lets your counsellor see the class together.");
+    group.appendChild(groupHint);
+    card.appendChild(group);
+
     var actions = el("div", "lsc-actions");
     var save = el("button", null, "Save to my account");
     save.type = "button";
@@ -169,6 +203,7 @@
 
     function showSaved(){
       box.disabled = true;
+      groupInput.disabled = true;
       save.remove();
       say("Saved. Your counsellor can see this before your session.", "ok");
 
@@ -185,6 +220,7 @@
             remove.remove();
             box.checked = false;
             box.disabled = false;
+            groupInput.disabled = false;
             say("Deleted. Nothing is stored on your account.", "ok");
           }else{
             remove.disabled = false;
@@ -215,12 +251,15 @@
           try{ window.lumeAccount.prompt("signin"); }catch(err){}
           return null;
         }
-        return post(API_SAVE, idToken, {
+        var payload = {
           instrument: "student-full-v1",
           consent: true,
           scores: profile.scores,
           context: profile.context || {}
-        });
+        };
+        var code = groupInput.value.trim().toUpperCase();
+        if(code) payload.cohort = code;
+        return post(API_SAVE, idToken, payload);
       }).then(function(res){
         if(!res) return;
 
