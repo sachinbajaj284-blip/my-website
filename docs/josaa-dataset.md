@@ -123,6 +123,53 @@ then never answers.
 **If three attempts fail, that is not a bug in this pipeline.** Re-run later, or use
 option B from a machine in India.
 
+---
+
+## Where this stands (26 August 2026)
+
+Run #7 on the branch reached JoSAA and dumped a full cascade attempt. Two things were
+settled and one is still open.
+
+**Settled: the cascade is the right shape.** The new onchange diagnostic shows each
+dropdown wired for AutoPostBack:
+
+```
+ddlroundno   -> javascript:setTimeout('__doPostBack('...$ddlroundno','')', 0)
+ddlInstype   -> javascript:setTimeout('__doPostBack('...$ddlInstype','')', 0)
+ddlInstitute -> ...
+ddlBranch    -> ...
+```
+
+An earlier dump reported `__doPostBack targets: ctl00$BtnCscLogin` and nothing else,
+which is what led to the idea that the dropdowns might be filled by client-side AJAX.
+They are not — the old regex simply did not match a `__doPostBack` wrapped in
+`setTimeout`. There are also no candidate JSON endpoints in the page, so postback is the
+only mechanism on offer.
+
+**Still open: the server rejects even a correctly-shaped postback.** The first cascade
+step — `__EVENTTARGET=ddlYear`, the served page's own `__VIEWSTATE` and
+`__EVENTVALIDATION`, every control echoed — comes back as the same 11,950-byte
+*"Not Available"* page with the entire form stripped out. So the request is not
+malformed; it is missing something the browser sends and we do not.
+
+Two candidates, and the **Inspect the postback contract** step in the workflow
+distinguishes them:
+
+1. **`ctl00$hdnSecKey`.** The form ships this hidden field empty and loads
+   `Scripts/Common.js`. That is the shape of an anti-automation token written by script
+   before any postback. If `Common.js` computes it, the ingest has to as well.
+2. **An UpdatePanel.** The page pulls two `WebResource.axd` bundles. If the dropdowns
+   sit inside an `UpdatePanel`, a browser posts `__ASYNCPOST=true` with a
+   `ScriptManager` target and receives a pipe-delimited delta rather than HTML — and a
+   full postback is refused in exactly this way.
+
+Read that step's output on the most recent run before writing any more code. If it is
+(1), the fix is to reproduce whatever `Common.js` puts in the field. If it is (2), the
+fix is to post the ScriptManager fields and parse the delta instead of the page.
+
+Everything upstream of that — discovery, the cascade, the button, the parser — is done
+and tested offline against a fixture built from the real dump.
+
 ## Prerequisites
 
 Node 18+. The ingest tools use only Node built-ins, so there is nothing to `npm install`.
