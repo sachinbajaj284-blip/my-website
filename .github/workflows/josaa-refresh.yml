@@ -116,6 +116,38 @@ jobs:
       - name: Probe the JoSAA form
         run: node tools/josaa-ingest.mjs --probe
 
+      # A correctly shaped postback still comes back as the 11,950-byte "Not Available"
+      # page, so something in the request contract is missing rather than malformed. The
+      # two candidates are an anti-automation token (the form ships an empty
+      # ctl00$hdnSecKey and loads Common.js) and an UpdatePanel expecting an async post.
+      # This step says which, and costs one extra request.
+      - name: Inspect the postback contract
+        run: |
+          echo "--- hidden fields on the served page ---"
+          grep -oE '<input[^>]*type="hidden"[^>]*>' /tmp/josaa-probe.html \
+            | grep -oE 'name="[^"]+"( value="[^"]{0,40})?' | head -20 || true
+
+          echo
+          echo "--- ASP.NET AJAX in play? ---"
+          for token in ScriptManager UpdatePanel __ASYNCPOST PageRequestManager Sys.WebForms; do
+            printf '%-22s %s\n' "$token" "$(grep -c "$token" /tmp/josaa-probe.html || echo 0)"
+          done
+
+          echo
+          echo "--- anything that writes hdnSecKey ---"
+          grep -oiE '.{80}hdnseckey.{80}' /tmp/josaa-probe.html | head -5 || echo "(not in the page)"
+
+          echo
+          echo "--- Common.js: does it set a security key? ---"
+          curl -sS -m 30 -A 'Mozilla/5.0' \
+            https://josaa.admissions.nic.in/applicant/Scripts/Common.js -o /tmp/common.js || true
+          if [ -s /tmp/common.js ]; then
+            echo "fetched $(wc -c < /tmp/common.js) bytes"
+            grep -oiE '.{100}seckey.{140}' /tmp/common.js | head -5 || echo "(no seckey reference)"
+          else
+            echo "(could not fetch Common.js)"
+          fi
+
       # A dump run is a diagnostic, not a pull: it saves what JoSAA actually returned and
       # is expected to produce no dataset, so it must not fail the job on empty output.
       - name: Dump raw exchanges
