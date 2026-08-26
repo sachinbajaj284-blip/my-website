@@ -65,6 +65,23 @@ const REQUEST_TIMEOUT_MS = 60_000;
 */
 const CONNECT_TIMEOUT_MS = 30_000;
 
+/*
+  A fresh TCP connection for every request.
+
+  Node has pooled sockets by default since v19, and the failure pattern across
+  runs #11, #12 and #13 fits socket reuse exactly: the opening GET succeeds,
+  and then every POST that follows it times out *at connect*, which is a
+  strange thing for a method to affect — because it is not the method. It is
+  the pooled socket. JoSAA drops idle connections quickly, the throttle leaves
+  1.5 s between requests, and Node hands the next request a socket the server
+  has already let go of, where it waits for a handshake that has in fact
+  already happened.
+
+  keepAlive:false costs one handshake per request. Against a crawl that is
+  rate-limited to one request every 1.5 s anyway, that is free.
+*/
+const agent = new https.Agent({ keepAlive: false, maxSockets: 1 });
+
 const INSTITUTE_TYPES = ['IIT', 'NIT', 'IIIT', 'Other-GFTI'];
 
 /* ------------------------------------------------------------------ args -- */
@@ -313,6 +330,7 @@ function httpRequest(url, { method, headers, body, redirectsLeft = 5 }) {
       path: target.pathname + target.search,
       method,
       headers,
+      agent,
       /* Node resolves this itself; ipv4first is set at the top of the file. */
       timeout: CONNECT_TIMEOUT_MS,
     });
