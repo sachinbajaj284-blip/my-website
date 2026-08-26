@@ -25,9 +25,9 @@
   code into the checkout box.
 */
 
-const { json, setCors } = require("../_lib/http");
-const { listPromotedCoupons, listUsableCoupons, discountFor } = require("../_lib/coupons");
-const { getProduct, SKU_PRICES } = require("../_lib/catalog");
+const { json, setCors } = require("../../http");
+const { listPromotedCoupons, listUsableCoupons, discountFor } = require("../../coupons");
+const { getProduct, SKU_PRICES } = require("../../catalog");
 
 module.exports = async function handler(req, res){
   setCors(req, res, "GET,OPTIONS");

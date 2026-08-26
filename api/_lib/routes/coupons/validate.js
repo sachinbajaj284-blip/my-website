@@ -40,9 +40,9 @@
   Cashfree for a rupee.
 */
 
-const { json, setCors, readBody } = require("../_lib/http");
-const { checkRateLimit, clientKey } = require("../_lib/rateLimit");
-const { quote } = require("../_lib/coupons");
+const { json, setCors, readBody } = require("../../http");
+const { checkRateLimit, clientKey } = require("../../rateLimit");
+const { quote } = require("../../coupons");
 
 module.exports = async function handler(req, res){
   setCors(req, res, "POST,OPTIONS");
