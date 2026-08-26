@@ -19,9 +19,9 @@
 */
 
 const crypto = require("crypto");
-const { json, setCors } = require("../_lib/http");
-const { checkRateLimit, clientKey } = require("../_lib/rateLimit");
-const { handleInbound } = require("../_lib/chatTurn");
+const { json, setCors } = require("../../http");
+const { checkRateLimit, clientKey } = require("../../rateLimit");
+const { handleInbound } = require("../../chatTurn");
 
 const MAX_BODY_BYTES = 128 * 1024;
 

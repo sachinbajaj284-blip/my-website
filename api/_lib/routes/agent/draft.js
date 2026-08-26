@@ -22,11 +22,11 @@
   differently from the real thing is a preview that lies.
 */
 
-const { json, setCors } = require("../_lib/http");
-const { checkRateLimit, clientKey } = require("../_lib/rateLimit");
-const { checkAdminToken } = require("../_lib/adminAuth");
-const { getReport, buildReportData, STATUS_SIGNED } = require("../_lib/reports");
-const { getRun } = require("../_lib/assessments");
+const { json, setCors } = require("../../http");
+const { checkRateLimit, clientKey } = require("../../rateLimit");
+const { checkAdminToken } = require("../../adminAuth");
+const { getReport, buildReportData, STATUS_SIGNED } = require("../../reports");
+const { getRun } = require("../../assessments");
 
 module.exports = async function handler(req, res){
   const gate = checkAdminToken(req, "AGENT_ADMIN_TOKEN", "agent");

@@ -18,10 +18,10 @@
       "whatsapp": "https://wa.me/917015671280?text=LINK%20K7M4XQ" }
 */
 
-const { json, setCors, readBody } = require("../_lib/http");
-const { checkRateLimit, clientKey } = require("../_lib/rateLimit");
-const { requireAccount } = require("../_lib/account");
-const { createLinkCode, unlinkAccount } = require("../_lib/conversations");
+const { json, setCors, readBody } = require("../../http");
+const { checkRateLimit, clientKey } = require("../../rateLimit");
+const { requireAccount } = require("../../account");
+const { createLinkCode, unlinkAccount } = require("../../conversations");
 
 const WA_NUMBER = "917015671280";
 

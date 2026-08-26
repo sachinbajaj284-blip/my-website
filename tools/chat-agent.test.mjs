@@ -28,7 +28,7 @@ const { definitions, run: runTool, OFFERABLE } = require("../api/_lib/agentTools
 const { systemBlocks, contextBlock, runTurn } = require("../api/_lib/chatAgent.js");
 const corpus = require("../api/_lib/careerCorpus.js");
 const conversations = require("../api/_lib/conversations.js");
-const webhook = require("../api/agent/webhook.js");
+const webhook = require("../api/_lib/routes/agent/webhook.js");
 
 let passed = 0, failed = 0;
 async function test(name, fn){

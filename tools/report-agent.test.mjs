@@ -23,9 +23,9 @@ const { buildSchema, buildUserMessage, validateDraft, draftReport } = require(".
 const { buildReportData, saveDraft, signReport, diffProse, getReport, listDrafts, releasedProse,
         STATUS_DRAFT, STATUS_SIGNED, COLLECTION } = require("../api/_lib/reports.js");
 const { RIASEC, ANCHORS, VARK, BIGFIVE } = require("../api/_lib/reportTables.js");
-const reportHandler = require("../api/agent/report.js");
-const signHandler = require("../api/agent/sign.js");
-const queueHandler = require("../api/agent/queue.js");
+const reportHandler = require("../api/_lib/routes/agent/report.js");
+const signHandler = require("../api/_lib/routes/agent/sign.js");
+const queueHandler = require("../api/_lib/routes/agent/queue.js");
 
 let passed = 0;
 let failed = 0;

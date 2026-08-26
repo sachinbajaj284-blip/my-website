@@ -31,10 +31,10 @@
   the verified token and this endpoint takes no parameters at all.
 */
 
-const { json, setCors } = require("../_lib/http");
-const { checkRateLimit, clientKey } = require("../_lib/rateLimit");
-const { requireAccount } = require("../_lib/account");
-const { latestRun, publicView } = require("../_lib/assessments");
+const { json, setCors } = require("../../http");
+const { checkRateLimit, clientKey } = require("../../rateLimit");
+const { requireAccount } = require("../../account");
+const { latestRun, publicView } = require("../../assessments");
 
 module.exports = async function handler(req, res){
   setCors(req, res, "GET,OPTIONS");
