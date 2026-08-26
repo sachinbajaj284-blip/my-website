@@ -297,6 +297,39 @@ await test("the cached prefix does not vary between two clients", async () => {
   assert.notDeepEqual(requests[0].messages, requests[1].messages);
 });
 
+await test("the counselling craft reaches the model, and is shared with the report agent", async () => {
+  const prefix = systemBlocks().map(b => b.text).join("\n");
+
+  // The Indian decision calendar.
+  assert.match(prefix, /Dropping Maths closes engineering/);
+  assert.match(prefix, /JoSAA allocates IITs/);
+  assert.match(prefix, /log kya kahenge/i);
+
+  // The counselling method.
+  assert.match(prefix, /Resist the righting reflex/);
+  assert.match(prefix, /A flat profile usually means limited exposure/);
+  assert.match(prefix, /Career guidance is not psychotherapy/);
+
+  // The same two blocks the report agent gets, byte for byte.
+  const craft = require("../api/_lib/counsellingCraft.js").craftBlocks();
+  const reportPrefix = require("../api/_lib/reportStyle.js").systemBlocks().map(b => b.text);
+  for(const block of craft){
+    assert.ok(prefix.includes(block.text), "the chat prefix is missing a craft block");
+    assert.ok(reportPrefix.includes(block.text), "the report prefix is missing the same craft block");
+  }
+});
+
+await test("expertise did not quietly widen the scope", async () => {
+  const prefix = systemBlocks().map(b => b.text).join("\n");
+  /* The risk in asking for a more expert agent is that it starts doing more
+     counselling rather than recognising the edge sooner. The prompt has to
+     keep saying the opposite. */
+  assert.match(prefix, /Do not counsel/);
+  assert.match(prefix, /referring sooner, not doing more/);
+  assert.match(prefix, /Refer without hesitating/);
+  assert.match(prefix, /never diagnose/i);
+});
+
 await test("every tool result for a round goes back in one message", async () => {
   let round = 0;
   const capture = async (req) => {

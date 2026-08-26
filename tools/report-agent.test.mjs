@@ -218,8 +218,18 @@ await test("the request pins the model, the schema and the cached prefix", async
   assert.equal(sent.thinking.type, "adaptive");
   assert.ok(!("budget_tokens" in sent.thinking), "budget_tokens is rejected on this model");
   assert.equal(sent.cache_control.type, "ephemeral");
-  assert.equal(sent.system.length, 2, "house style and exemplar are two cached blocks");
   assert.equal(sent.fallbacks, "default");
+
+  /* The count is not the point — the point is that the whole prefix is stable
+     text carrying the house style, the shared counselling craft and a worked
+     exemplar, with the exemplar last so a demonstrated voice is the most
+     recent thing read before writing. */
+  assert.ok(sent.system.length >= 3, "the cached prefix should carry style, craft and an exemplar");
+  assert.ok(sent.system.every(b => b.type === "text" && b.text.length > 0));
+  const prefix = sent.system.map(b => b.text).join("\n");
+  assert.match(prefix, /Holland, used properly/, "the interest-interpretation craft must be in the prefix");
+  assert.match(prefix, /Applied Maths/, "the Indian decision calendar must be in the prefix");
+  assert.match(sent.system[sent.system.length - 1].text, /## Exemplar/, "the exemplar goes last");
 });
 
 await test("the cached prefix does not vary between two different clients", async () => {
@@ -432,7 +442,7 @@ await test("dry_run shows the prompt and writes nothing", async () => {
   const res = await call(reportHandler, { token: ADMIN_TOKEN, body: { run_id: profile.runId, dry_run: true } });
   assert.equal(res.statusCode, 200);
   assert.equal(res.body.dry_run, true);
-  assert.equal(res.body.system.length, 2);
+  assert.ok(res.body.system.length >= 3);
   assert.match(res.body.user_message, /Class 12 Science/);
   assert.equal(await getReport(profile.runId), null, "a dry run must not write a draft");
 });

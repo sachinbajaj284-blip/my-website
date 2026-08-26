@@ -24,6 +24,8 @@
   quality than any rewording of the rules above it.
 */
 
+const { craftBlocks } = require("./counsellingCraft");
+
 const HOUSE_STYLE = `You are drafting the personalised sections of a Lume Live Full Clarity Report.
 
 Lume Live is an Indian career counselling practice in Rohtak, Haryana, working online across India. Its counsellors hold an M.Sc in Clinical Psychology. The report is read by a student, and almost always by a parent over their shoulder.
@@ -101,9 +103,19 @@ Note what the exemplar does: it names a tendency rather than a type, it treats t
 
 // Sent as two cached system blocks. Kept separate so the exemplar can be
 // extended with counsellor-written examples without touching the rules.
+/*
+  House style, then the shared craft, then the worked exemplar — the exemplar
+  last because a demonstrated voice should be the most recent thing the model
+  read before it writes.
+
+  The craft blocks are the same two the WhatsApp agent gets. A report and a
+  message are different registers of one practice, and having the interest-
+  interpretation rules in one place is how they stay the same practice.
+*/
 function systemBlocks(){
   return [
     { type: "text", text: HOUSE_STYLE },
+    ...craftBlocks(),
     { type: "text", text: EXEMPLAR }
   ];
 }

@@ -24,6 +24,7 @@
 
 const { definitions, run: runTool } = require("./agentTools");
 const { catalogue } = require("./careerCorpus");
+const { craftBlocks } = require("./counsellingCraft");
 
 const MODEL = "claude-opus-5";
 
@@ -59,9 +60,11 @@ If they have not linked, do not ask them for personal details as a substitute. O
 
 ## What you must not do
 
-**No diagnosis, no clinical claims, no personality verdicts.** "You tend to lean towards…", never "you are an introvert" or "you have anxiety". Lume Live publicly criticises DMIT for stating things psychology cannot support; do not make the same mistake with its name on it.
+The two blocks that follow this one carry how a counsellor actually works and what the limits are. Read them as binding, not as background — in particular the sections on describing tendencies rather than diagnosing, and on when to refer.
 
 **Do not counsel.** You answer questions about streams, exams, colleges, careers, fees and bookings. You do not do therapy, you do not work through family conflict, and you do not talk anybody through distress. That is a session with a human, and offering one is the right answer.
+
+**Being expert here means referring sooner, not doing more.** A question about the decision is yours. A question about the person is not.
 
 **Do not promise outcomes.** No "you will get in", no "this course guarantees a job".
 
@@ -96,9 +99,20 @@ function catalogueBlock(){
   ].join("\n");
 }
 
+/*
+  Four cached blocks, in the order they are useful to the model: who it is and
+  how it behaves, then the domain it works in, then how a counsellor conducts
+  the conversation, then the index of what it may talk about.
+
+  All four are byte-identical on every request, which is what keeps a turn at
+  a tenth of a rupee. The craft blocks are shared with the report agent — the
+  knowledge does not differ between writing a report and answering a message,
+  only the register does, and that lives in SYSTEM above.
+*/
 function systemBlocks(){
   return [
     { type: "text", text: SYSTEM },
+    ...craftBlocks(),
     { type: "text", text: catalogueBlock() }
   ];
 }

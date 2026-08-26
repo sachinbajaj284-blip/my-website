@@ -870,7 +870,23 @@ class FormSession {
 async function step(session, opts, { label, dump }) {
   const payload = session.buildPayload(opts);
   const body = payload.toString();
-  const html = await request(ARCHIVE, { method: 'POST', body, async: Boolean(session.ajax) });
+
+  let html;
+  try {
+    html = await request(ARCHIVE, { method: 'POST', body, async: Boolean(session.ajax) });
+  } catch (err) {
+    /* Run #12 lost the whole request because the dump was written only after a
+       successful response — five connect timeouts and nothing on disk to show
+       what we had been about to send. Record the attempt, then rethrow. */
+    if (dump) {
+      await dumper.write(label + '-FAILED', {
+        url: ARCHIVE, method: 'POST', payload: body,
+        html: '(no response — ' + describeError(err) + ')',
+      });
+    }
+    throw err;
+  }
+
   if (dump) await dumper.write(label, { url: ARCHIVE, method: 'POST', payload: body, html });
 
   if (looksLikeDelta(html)) {
