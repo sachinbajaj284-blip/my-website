@@ -20,9 +20,18 @@
  */
 
 import fs from 'node:fs/promises';
+import dns from 'node:dns';
+import https from 'node:https';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
+
+/*
+  Node has preferred IPv6 since v17. Several nic.in hosts publish an AAAA record that
+  accepts a connection and then never answers, which surfaces as a connect timeout that
+  curl — still IPv4-first on many builds — does not see. Ask for IPv4 first.
+*/
+dns.setDefaultResultOrder('ipv4first');
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CACHE = path.join(ROOT, 'tools', '.cache', 'josaa');
@@ -34,6 +43,44 @@ const ARCHIVE = `${BASE}/applicant/seatmatrix/openingclosingrankarchieve.aspx`;
 /* JoSAA rejects bursts. One request every REQUEST_GAP_MS, single-threaded, always. */
 const REQUEST_GAP_MS = 1500;
 const MAX_RETRIES = 4;
+
+/* JoSAA is a slow server on a good day and the cascade makes six requests per
+   combination, so this is patient — but bounded, so a stall fails and retries instead
+   of hanging the job for five minutes. */
+const REQUEST_TIMEOUT_MS = 60_000;
+
+/*
+  How long to wait for the TCP+TLS handshake specifically.
+
+  This is the number that was actually failing. undici — which is what global
+  fetch is — applies its own connect timeout of 10 seconds and reaches it long
+  before any AbortSignal budget matters, so run #11 reported
+  "UND_ERR_CONNECT_TIMEOUT ... timeout: 10000ms" five times while curl, with
+  -m 30, had fetched the same page six seconds earlier. JoSAA is simply slow to
+  accept a connection.
+
+  undici's connect timeout is only reachable through a custom Agent, and this
+  project installs nothing for the ingest, so request() below uses node:https
+  instead of fetch and sets both timeouts itself.
+*/
+const CONNECT_TIMEOUT_MS = 30_000;
+
+/*
+  A fresh TCP connection for every request.
+
+  Node has pooled sockets by default since v19, and the failure pattern across
+  runs #11, #12 and #13 fits socket reuse exactly: the opening GET succeeds,
+  and then every POST that follows it times out *at connect*, which is a
+  strange thing for a method to affect — because it is not the method. It is
+  the pooled socket. JoSAA drops idle connections quickly, the throttle leaves
+  1.5 s between requests, and Node hands the next request a socket the server
+  has already let go of, where it waits for a handshake that has in fact
+  already happened.
+
+  keepAlive:false costs one handshake per request. Against a crawl that is
+  rate-limited to one request every 1.5 s anyway, that is free.
+*/
+const agent = new https.Agent({ keepAlive: false, maxSockets: 1 });
 
 const INSTITUTE_TYPES = ['IIT', 'NIT', 'IIIT', 'Other-GFTI'];
 
@@ -139,6 +186,31 @@ function summarise(html) {
   const targets = new Set([...html.matchAll(/__doPostBack\((?:&#39;|['"])([^'"&]+)/g)].map(m => m[1]));
   lines.push('', `__doPostBack targets: ${targets.size ? [...targets].join(', ') : '(none)'}`);
 
+  /* If the dropdowns do not fire __doPostBack, something else fills them, and the whole
+     posting strategy depends on which. An onchange handler names it. */
+  lines.push('', 'select onchange handlers:');
+  const handlers = [...html.matchAll(/<select[^>]*name=["']([^"']+)["'][^>]*>/gi)]
+    .map(m => [m[1], m[0].match(/onchange=["']([^"']*)["']/i)?.[1]])
+    .filter(([, h]) => h);
+  handlers.forEach(([name, h]) => lines.push(`  ${name} -> ${h.slice(0, 160)}`));
+  if (!handlers.length) lines.push('  (none — the dropdowns are not wired in markup)');
+
+  /* Client-side population means a JSON endpoint somewhere. These are the shapes it
+     takes on ASP.NET pages: a PageMethod, a ScriptService, or a plain jQuery call. */
+  lines.push('', 'candidate data endpoints in inline script:');
+  const endpoints = new Set();
+  for (const [, u] of html.matchAll(/url\s*:\s*["']([^"']+)["']/gi)) endpoints.add(u);
+  for (const [, u] of html.matchAll(/(?:fetch|open)\s*\(\s*["']([^"']+\.(?:aspx|asmx|json|svc)[^"']*)["']/gi)) endpoints.add(u);
+  for (const [, u] of html.matchAll(/["'](\/[^"']*\/(?:[A-Za-z]+)\.(?:asmx|svc)(?:\/[A-Za-z]+)?)["']/g)) endpoints.add(u);
+  for (const [, m] of html.matchAll(/PageMethods\.([A-Za-z_]\w*)/g)) endpoints.add('PageMethods.' + m);
+  [...endpoints].slice(0, 20).forEach(u => lines.push(`  ${u}`));
+  if (!endpoints.size) lines.push('  (none found)');
+
+  lines.push('', 'external scripts:');
+  const srcs = [...html.matchAll(/<script[^>]*src=["']([^"']+)["']/gi)].map(m => m[1]);
+  srcs.slice(0, 15).forEach(u => lines.push(`  ${u}`));
+  if (!srcs.length) lines.push('  (none)');
+
   lines.push('', 'tables:');
   const tables = [...html.matchAll(/<table[\s\S]*?<\/table>/gi)].map(m => m[0]);
   tables.forEach((t, i) => {
@@ -177,8 +249,11 @@ function cookieHeader() {
   return [...cookieJar.entries()].map(([k, v]) => `${k}=${v}`).join('; ');
 }
 
-function absorbCookies(res) {
-  const raw = res.headers.getSetCookie?.() ?? [];
+/* node:https hands back a plain header bag, where set-cookie is already the
+   array form (it is the one header Node never folds into a single string). */
+function absorbCookies(headers) {
+  const value = headers && headers['set-cookie'];
+  const raw = Array.isArray(value) ? value : (value ? [value] : []);
   for (const line of raw) {
     const [pair] = line.split(';');
     const idx = pair.indexOf('=');
@@ -186,31 +261,167 @@ function absorbCookies(res) {
   }
 }
 
-async function request(url, { method = 'GET', body = null, referer = ARCHIVE } = {}) {
+/*
+  undici reports every transport failure as the bare string "fetch failed" and hides the
+  real reason on err.cause — which is how a run could fail five times in a row and tell
+  nobody whether it was DNS, a refused connection or a certificate the runner would not
+  verify. Walk the chain and print what actually happened.
+*/
+function describeError(err) {
+  const parts = [];
+  let node = err;
+  let depth = 0;
+  while (node && depth++ < 5) {
+    const bits = [node.code, node.errno, node.syscall, node.reason, node.message]
+      .filter(Boolean)
+      .filter((v, i, a) => a.indexOf(v) === i);
+    if (bits.length) parts.push(bits.join(' '));
+    node = node.cause;
+  }
+  return parts.join('  <-  ') || String(err);
+}
+
+/* Certificate failures are the one class worth naming out loud: Indian government sites
+   periodically renew with an incomplete chain, curl papers over it and Node does not,
+   which looks like an outage and is not one. */
+const TLS_CODES = new Set([
+  'UNABLE_TO_VERIFY_LEAF_SIGNATURE', 'SELF_SIGNED_CERT_IN_CHAIN',
+  'DEPTH_ZERO_SELF_SIGNED_CERT', 'CERT_HAS_EXPIRED', 'ERR_TLS_CERT_ALTNAME_INVALID',
+  'UNABLE_TO_GET_ISSUER_CERT_LOCALLY',
+]);
+
+function tlsHint(err) {
+  let node = err;
+  let depth = 0;
+  while (node && depth++ < 5) {
+    if (node.code && TLS_CODES.has(node.code)) {
+      return `\nThis is a TLS trust failure (${node.code}), not an outage — curl may well ` +
+             `still fetch the page.\nJoSAA has probably renewed with an incomplete chain. ` +
+             `Fetch the missing intermediate and\npoint NODE_EXTRA_CA_CERTS at it, rather ` +
+             `than disabling verification.`;
+    }
+    node = node.cause;
+  }
+  return '';
+}
+
+/*
+  One HTTP exchange, on node:https rather than fetch.
+
+  fetch is friendlier, but it hides the connect timeout behind undici and there
+  is no way to raise it without adding a dependency this workflow does not
+  install. Everything below is what fetch was giving us — redirects, cookies,
+  a body as text — with the two timeouts that matter made explicit:
+
+    connect  the handshake, which is what JoSAA is slow at
+    overall  the whole exchange, so a half-open socket cannot hang the job
+
+  Accept-Encoding is pinned to identity so there is no compressed body to
+  inflate; the pages are tens of kilobytes and the ingest is rate-limited
+  anyway, so the bandwidth is irrelevant next to the complexity.
+*/
+function httpRequest(url, { method, headers, body, redirectsLeft = 5 }) {
+  return new Promise((resolve, reject) => {
+    const target = new URL(url);
+    const req = https.request({
+      protocol: target.protocol,
+      hostname: target.hostname,
+      port: target.port || 443,
+      path: target.pathname + target.search,
+      method,
+      headers,
+      agent,
+      /* Node resolves this itself; ipv4first is set at the top of the file. */
+      timeout: CONNECT_TIMEOUT_MS,
+    });
+
+    let settled = false;
+    const fail = (err) => { if (!settled) { settled = true; req.destroy(); reject(err); } };
+
+    const overall = setTimeout(() => {
+      const err = new Error('Overall request timeout after ' + REQUEST_TIMEOUT_MS + 'ms');
+      err.code = 'REQUEST_TIMEOUT';
+      fail(err);
+    }, REQUEST_TIMEOUT_MS);
+
+    /* `timeout` here is socket inactivity, which covers the handshake: nothing
+       arrives on a socket that never connects. */
+    req.on('timeout', () => {
+      const err = new Error('Connect/idle timeout after ' + CONNECT_TIMEOUT_MS + 'ms');
+      err.code = 'CONNECT_TIMEOUT';
+      fail(err);
+    });
+    req.on('error', fail);
+
+    req.on('response', (res) => {
+      const location = res.headers.location;
+      if (location && res.statusCode >= 300 && res.statusCode < 400 && redirectsLeft > 0) {
+        res.resume();
+        clearTimeout(overall);
+        settled = true;
+        resolve(httpRequest(new URL(location, url).toString(), {
+          method: 'GET', headers, body: null, redirectsLeft: redirectsLeft - 1,
+        }));
+        return;
+      }
+
+      const chunks = [];
+      res.on('data', c => chunks.push(c));
+      res.on('end', () => {
+        clearTimeout(overall);
+        if (settled) return;
+        settled = true;
+        resolve({
+          status: res.statusCode,
+          headers: res.headers,
+          text: Buffer.concat(chunks).toString('utf8'),
+        });
+      });
+      res.on('error', fail);
+    });
+
+    if (body) req.write(body);
+    req.end();
+  });
+}
+
+async function request(url, { method = 'GET', body = null, referer = ARCHIVE, async: isAsync = false } = {}) {
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     await throttle();
     try {
-      const res = await fetch(url, {
+      const res = await httpRequest(url, {
         method,
         body,
-        redirect: 'follow',
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36',
           'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
           'Accept-Language': 'en-IN,en;q=0.9',
+          'Accept-Encoding': 'identity',
           'Referer': referer,
           ...(cookieJar.size ? { Cookie: cookieHeader() } : {}),
-          ...(method === 'POST' ? { 'Content-Type': 'application/x-www-form-urlencoded' } : {}),
+          ...(method === 'POST' ? {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Length': Buffer.byteLength(body || ''),
+          } : {}),
+          /* ASP.NET decides between a page and a delta on this header. Without it
+             a partial postback is answered with a full render. */
+          ...(isAsync ? { 'X-MicrosoftAjax': 'Delta=true', 'X-Requested-With': 'XMLHttpRequest' } : {}),
         },
       });
-      absorbCookies(res);
+
+      absorbCookies(res.headers);
+
       if (res.status === 429 || res.status >= 500) throw new Error(`HTTP ${res.status}`);
-      if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
-      return await res.text();
+      if (res.status < 200 || res.status >= 300) throw new Error(`HTTP ${res.status}`);
+      return res.text;
     } catch (err) {
-      if (attempt === MAX_RETRIES) throw new Error(`${url} failed after ${MAX_RETRIES + 1} tries: ${err.message}`);
+      if (attempt === MAX_RETRIES) {
+        throw new Error(
+          `${url} failed after ${MAX_RETRIES + 1} tries: ${describeError(err)}${tlsHint(err)}`
+        );
+      }
       const backoff = 2000 * Math.pow(2, attempt);
-      console.warn(`  ! ${err.message} — retrying in ${backoff / 1000}s`);
+      console.warn(`  ! ${describeError(err)} — retrying in ${backoff / 1000}s`);
       await sleep(backoff);
     }
   }
@@ -249,6 +460,51 @@ function extractSelects(html) {
     selects[name] = options;
   }
   return selects;
+}
+
+/*
+  The value each <select> currently carries, including the placeholder that
+  extractSelects() filters out of the option list. A postback has to echo back every
+  control on the form, not just the one that changed, so this is what the untouched ones
+  are set to.
+*/
+function extractSelectedValues(html) {
+  const values = {};
+  const re = /<select[^>]*name=["']([^"']+)["'][^>]*>([\s\S]*?)<\/select>/gi;
+  for (const [, name, inner] of html.matchAll(re)) {
+    /* Read the whole option tag, not the part before value=. `selected` sits on either
+       side of it depending on who generated the markup, and looking at only one side
+       means a selected year reads as the placeholder — which would post --Select-- and
+       get nothing back. */
+    const options = [...inner.matchAll(/<option\b([^>]*)>/gi)].map(m => ({
+      attrs: m[1],
+      value: decodeEntities(m[1].match(/value=["']([^"']*)["']/i)?.[1] ?? ''),
+    }));
+    const chosen = options.find(o => /\bselected\b/i.test(o.attrs));
+    values[name] = chosen ? chosen.value : (options[0] ? options[0].value : '');
+  }
+  return values;
+}
+
+/*
+  The button that actually runs the query.
+
+  ASP.NET renders a grid from a button's click handler. Posting the form without the
+  button's name means Page_Load runs and the handler never does, so the response is the
+  page with no grid on it — which is exactly the 11,950-byte "Not Available" page every
+  filter combination came back with on 13 August.
+*/
+function findSubmitButton(html) {
+  for (const [tag] of html.matchAll(/<input[^>]*type=["'](?:submit|button)["'][^>]*>/gi)) {
+    const name = tag.match(/name=["']([^"']+)["']/i)?.[1];
+    if (!name) continue;
+    const value = tag.match(/value=["']([^"']*)["']/i)?.[1] ?? '';
+    /* Skip the ones that navigate away rather than query: the CSC login on this page
+       is a submit input too. */
+    if (/login|logout|reset|clear|back/i.test(name + ' ' + value)) continue;
+    return { name, value: decodeEntities(value) };
+  }
+  return null;
 }
 
 /**
@@ -427,6 +683,266 @@ async function fetchArchiveForm() {
   return { html, fields: discoverFields(html), hidden: extractHiddenFields(html) };
 }
 
+/* --------------------------------------------------------- asp.net ajax -- */
+
+/*
+  The archive form's dropdowns live inside an UpdatePanel.
+
+  Run #10's contract inspection settled this: the served page contains
+  Sys.WebForms, PageRequestManager and UpdatePanel, and nothing anywhere writes
+  ctl00$hdnSecKey — it is an empty hidden field, not a token. So the reason a
+  well-formed full postback came back as the 11,950-byte "Not Available" page is
+  that the browser never sends one. It sends a PARTIAL postback:
+
+    <scriptManagerName> = <updatePanelId>|<eventTarget>
+    __ASYNCPOST         = true
+
+  and gets back a pipe-delimited delta rather than a page.
+
+  Both ids are read off the page rather than hardcoded, because they carry the
+  ASP.NET container prefix and that is exactly the thing that changes between
+  admission years.
+*/
+function discoverAjax(html) {
+  const init = /Sys\.WebForms\.PageRequestManager\._initialize\(\s*'([^']*)'\s*,\s*'([^']*)'\s*(?:,\s*\[([^\]]*)\])?/.exec(html);
+  if (!init) return null;
+
+  /* The panel list is rendered as ['tctl00$...$UpdatePanel1',''] — a leading 't'
+     or 'f' marks whether the panel always updates. Strip it. */
+  const panels = (init[3] || '')
+    .split(',')
+    .map(part => part.trim().replace(/^['"]|['"]$/g, ''))
+    .filter(Boolean)
+    .map(id => id.replace(/^[tf]/, ''));
+
+  return { scriptManager: init[1], formId: init[2], panels };
+}
+
+/*
+  A delta is a flat run of length-prefixed records:
+
+    <len>|<type>|<id>|<content of exactly len chars>|
+
+  The two that matter are `updatePanel`, whose content is the re-rendered HTML
+  for that panel, and `hiddenField`, which is how the server hands back the new
+  __VIEWSTATE and __EVENTVALIDATION. `error` carries a server-side exception,
+  which must surface rather than being read as an empty page.
+
+  Length is counted in characters, so the content is sliced rather than split —
+  a record whose HTML contains a pipe would otherwise tear the whole parse apart.
+*/
+function parseAsyncDelta(text) {
+  const out = { panels: {}, hidden: {}, error: null, records: 0 };
+  let i = 0;
+
+  while (i < text.length) {
+    const lenEnd = text.indexOf('|', i);
+    if (lenEnd < 0) break;
+    const len = Number(text.slice(i, lenEnd));
+    if (!Number.isFinite(len) || len < 0) break;
+
+    const typeEnd = text.indexOf('|', lenEnd + 1);
+    if (typeEnd < 0) break;
+    const type = text.slice(lenEnd + 1, typeEnd);
+
+    const idEnd = text.indexOf('|', typeEnd + 1);
+    if (idEnd < 0) break;
+    const id = text.slice(typeEnd + 1, idEnd);
+
+    const content = text.substr(idEnd + 1, len);
+    i = idEnd + 1 + len + 1;
+    out.records++;
+
+    if (type === 'updatePanel') out.panels[id] = content;
+    else if (type === 'hiddenField') out.hidden[id] = content;
+    else if (type === 'error') out.error = content;
+  }
+
+  return out;
+}
+
+/* A delta always opens with a length and a pipe; a page never does. */
+function looksLikeDelta(text) {
+  return /^\d+\|/.test(String(text || '').trimStart());
+}
+
+/* ------------------------------------------------------------ form session -- */
+
+/*
+  A conversation with the ASP.NET form, rather than a single shot at it.
+
+  The 13 August dump settled what the page is: ddlYear arrives with eleven options and
+  ddlroundno, ddlInstype, ddlInstitute, ddlBranch and ddlSeatType all arrive with none —
+  the server fills each one from the postback that follows the choice above it. It also
+  showed a submit control, ctl00$ContentPlaceHolder1$btnSubmit, that the ingest never
+  posted.
+
+  So the old approach could not have worked, and its failure mode was quiet: one POST
+  setting every field at once, carrying the GET's __VIEWSTATE, with no button and an
+  empty __EVENTTARGET. ASP.NET answered the only way it can — it rendered the page,
+  never ran the button's handler, and returned the same 11,950-byte "Not Available"
+  body for every filter. Twelve identical pages read as twelve failed parses.
+
+  This class does what a browser does:
+
+    - every request carries the hidden state from the LAST response, not the first.
+      __VIEWSTATE and __EVENTVALIDATION are per-response, and a stale __EVENTVALIDATION
+      is what rejects a value the server did not itself render.
+    - every request echoes back every control on the form, at whatever it is currently
+      set to, because that is what a browser submits.
+    - a change posts __EVENTTARGET naming the control that changed, so the server knows
+      which cascade step to run.
+    - the query posts the button, because that is the thing that builds the grid.
+*/
+class FormSession {
+  constructor(html) { this.load(html); }
+
+  load(html) {
+    this.html = html;
+    this.hidden = extractHiddenFields(html);
+    this.selects = extractSelects(html);
+    this.values = extractSelectedValues(html);
+    this.button = findSubmitButton(html) || this.button || null;
+    this.fields = discoverFields(html);
+    /* Only the full page carries the _initialize call, so keep the first one
+       seen: a delta re-renders the panel, not the script that set it up. */
+    this.ajax = discoverAjax(html) || this.ajax || null;
+    return this;
+  }
+
+  /*
+    Fold a partial-postback delta back in. The panel HTML replaces what we know
+    about the controls inside it; the hiddenField records replace __VIEWSTATE and
+    __EVENTVALIDATION, which is the whole reason the next request can succeed.
+  */
+  applyDelta(delta) {
+    const panelHtml = Object.values(delta.panels).join('\n');
+    if (panelHtml) {
+      const selects = extractSelects(panelHtml);
+      const values = extractSelectedValues(panelHtml);
+      Object.assign(this.selects, selects);
+      Object.assign(this.values, values);
+      this.html = panelHtml;
+      this.fields = discoverFields(this.renderedForm());
+      const button = findSubmitButton(panelHtml);
+      if (button) this.button = button;
+    }
+    for (const [name, value] of Object.entries(delta.hidden)) this.hidden[name] = value;
+    return this;
+  }
+
+  /*
+    discoverFields() wants markup, but after a delta what we hold is a set of
+    controls spread across the original page and one panel. Re-emit the current
+    controls as minimal markup so discovery keeps working off one view.
+  */
+  renderedForm() {
+    return Object.entries(this.selects).map(([name, options]) =>
+      '<select name="' + name + '">' +
+      options.map(o => '<option value="' + o.value + '">' + o.text + '</option>').join('') +
+      '</select>'
+    ).join('');
+  }
+
+  /** Options currently offered by a control, by its full posted name. */
+  optionsFor(name) { return this.selects[name] || []; }
+
+  /**
+   * One postback. `changed` is the control whose value we are setting, and becomes
+   * __EVENTTARGET; pass `submit: true` instead to press the query button.
+   */
+  buildPayload({ changed = null, value = null, submit = false }) {
+    const payload = new URLSearchParams();
+
+    for (const [k, v] of Object.entries(this.hidden)) payload.set(k, v);
+    for (const [name, current] of Object.entries(this.values)) payload.set(name, current);
+
+    if (changed) payload.set(changed, value == null ? '' : String(value));
+
+    payload.set('__EVENTTARGET', submit ? '' : (changed || ''));
+    payload.set('__EVENTARGUMENT', '');
+    payload.set('__LASTFOCUS', '');
+
+    /* A button posts as a normal field. Its presence is what tells ASP.NET to run the
+       click handler; __EVENTTARGET stays empty for a real button press. */
+    if (submit && this.button) payload.set(this.button.name, this.button.value);
+
+    /*
+      Inside an UpdatePanel every one of these is a partial postback, including
+      the button press. The ScriptManager field names which panel is being
+      updated and what triggered it; without it the server renders the whole page
+      and, on this form, refuses.
+    */
+    if (this.ajax && this.ajax.scriptManager) {
+      const panel = this.ajax.panels[0] || '';
+      const trigger = submit && this.button ? this.button.name : (changed || '');
+      payload.set(this.ajax.scriptManager, panel + '|' + trigger);
+      payload.set('__ASYNCPOST', 'true');
+    }
+
+    return payload;
+  }
+}
+
+/** Sends one step of the conversation and folds the response back into the session. */
+async function step(session, opts, { label, dump }) {
+  const payload = session.buildPayload(opts);
+  const body = payload.toString();
+
+  let html;
+  try {
+    html = await request(ARCHIVE, { method: 'POST', body, async: Boolean(session.ajax) });
+  } catch (err) {
+    /* Run #12 lost the whole request because the dump was written only after a
+       successful response — five connect timeouts and nothing on disk to show
+       what we had been about to send. Record the attempt, then rethrow. */
+    if (dump) {
+      await dumper.write(label + '-FAILED', {
+        url: ARCHIVE, method: 'POST', payload: body,
+        html: '(no response — ' + describeError(err) + ')',
+      });
+    }
+    throw err;
+  }
+
+  if (dump) await dumper.write(label, { url: ARCHIVE, method: 'POST', payload: body, html });
+
+  if (looksLikeDelta(html)) {
+    const delta = parseAsyncDelta(html);
+    if (delta.error) {
+      throw new Error('JoSAA returned a server error in the partial postback: ' + delta.error.slice(0, 300));
+    }
+    session.applyDelta(delta);
+  } else {
+    session.load(html);
+  }
+  /* Remember what we just chose: the response re-renders the control and, if the server
+     honoured the choice, marks it selected — but if it re-renders it empty we would
+     otherwise silently drop back to the placeholder on the next step. */
+  if (opts.changed) session.values[opts.changed] = opts.value == null ? '' : String(opts.value);
+  return html;
+}
+
+/*
+  Pick an option by what it says, and say so out loud when nothing matches.
+
+  The previous version fell back to `options[options.length - 1]`, which meant a failed
+  match silently selected whatever happened to sort last — asking for 2024 and being
+  handed some other year, with nothing in the log to say so. A pull that cannot select
+  what it was asked for has to stop, not improvise.
+*/
+function chooseOption(options, matcher, what) {
+  const hit = options.find(matcher);
+  if (hit) return hit;
+  const seen = options.slice(0, 8).map(o => o.text).join(', ') || '(none)';
+  throw new Error(`Could not find ${what} among the options the form offered: ${seen}`);
+}
+
+/** "All" where the form offers it, otherwise the first real option. */
+function chooseAll(options) {
+  return options.find(o => /^all\b/i.test(o.text.trim())) || options[0] || null;
+}
+
 /* The ingest only ever posts these three. gender is reported for visibility but JoSAA
    removed it from the archive form, and row gender comes from the results table, so a
    missing gender control must not fail the probe. */
@@ -498,10 +1014,10 @@ async function ingest(args) {
       .update(rows.map(r => `${r.institute}|${r.branch}|${r.seatType}|${r.openRank}|${r.closeRank}`).join('\n'))
       .digest('hex');
 
-  /* A dump is for reading, not for coverage. Three exchanges show whether the response
-     varies with the posted filter, which is the whole question; twelve just makes a
-     bigger artifact to scroll through. */
-  const DUMP_MAX_POSTS = 3;
+  /* A dump is for reading, not for coverage. One combination now traces six labelled
+     steps — year, round, type, the three "All" selections and the submit — which is the
+     whole conversation; a second copy of it just makes a bigger artifact to scroll. */
+  const DUMP_MAX_POSTS = 1;
   let dumpPosts = 0;
 
   for (const year of args.years) {
@@ -516,32 +1032,71 @@ async function ingest(args) {
 
       const html = await cached(key, async () => {
         if (!form) throw new Error('no cache and --from-cache set');
-        const payload = new URLSearchParams({ ...form.hidden });
-        /* `literal` is what to post when the control came back with no options to choose
-           from. Previously this fell through to `undefined` and set nothing, so the
-           postback quietly used whatever the form defaulted to and every year/type
-           combination returned the same page. Posting the literal is what the dropdown
-           would have carried anyway — JoSAA's option values for these are the year and
-           the institute-type string themselves. */
-        const set = (field, matcher, literal) => {
-          if (!field) return;
-          const opt = field.options.find(matcher) ?? field.options[field.options.length - 1];
-          if (opt) { payload.set(field.name, opt.value); return; }
-          if (literal != null) {
-            payload.set(field.name, String(literal));
-            if (args.verbose) console.log(`     ${field.name} has no options; posting literal ${literal}`);
+        if (args.verbose) console.log(`  -> ${year} ${instType} round=${round}`);
+
+        /*
+          A fresh form per combination. The query response does not carry the dropdowns
+          any more — the "Not Available" page had no <select> at all — so there is
+          nothing left to drive a second query from, and re-fetching is both simpler and
+          honest about that.
+        */
+        const session = new FormSession(await request(ARCHIVE));
+        const tag = `${year}-${instType}`.toLowerCase();
+
+        const nameOf = key => session.fields[key]?.name;
+
+        // 1. Year. The only control the served page fills in for us.
+        const yearName = nameOf('year');
+        if (!yearName) throw new Error('No year control on the form. Run --probe.');
+        const yearOpt = chooseOption(
+          session.optionsFor(yearName), o => o.text.trim() === String(year), `year ${year}`
+        );
+        await step(session, { changed: yearName, value: yearOpt.value },
+                   { label: `${tag}-1-year`, dump: args.dump });
+
+        // 2. Round. Populated by the year postback. Default to the last one, which is
+        //    the final round — the ranks people actually quote.
+        const roundName = nameOf('round');
+        if (roundName) {
+          const opts = session.optionsFor(roundName);
+          if (opts.length) {
+            const roundOpt = args.round != null
+              ? chooseOption(opts, o => o.text.trim() === String(args.round), `round ${args.round}`)
+              : opts[opts.length - 1];
+            await step(session, { changed: roundName, value: roundOpt.value },
+                       { label: `${tag}-2-round`, dump: args.dump });
           }
-        };
-        set(form.fields.year, o => o.text.trim() === String(year), year);
-        set(form.fields.instType, o => o.text.toLowerCase().includes(instType.split('-')[0].toLowerCase()), instType);
-        if (args.round != null) set(form.fields.round, o => o.text.trim() === String(args.round), args.round);
-        payload.set('__EVENTTARGET', '');
-        payload.set('__EVENTARGUMENT', '');
-        if (args.verbose) console.log(`  -> POST ${year} ${instType} round=${round}`);
-        const body = payload.toString();
-        const responseHtml = await request(ARCHIVE, { method: 'POST', body });
-        await dumper.write(`post-${year}-${instType}`, { url: ARCHIVE, method: 'POST', payload: body, html: responseHtml });
-        return responseHtml;
+        }
+
+        // 3. Institute type. Populated by the round postback.
+        const typeName = nameOf('instType');
+        if (!typeName) throw new Error('No institute-type control on the form. Run --probe.');
+        const needle = instType.split('-')[0].toLowerCase();
+        const typeOpt = chooseOption(
+          session.optionsFor(typeName),
+          o => o.text.toLowerCase().includes(needle),
+          `institute type ${instType}`
+        );
+        await step(session, { changed: typeName, value: typeOpt.value },
+                   { label: `${tag}-3-insttype`, dump: args.dump });
+
+        // 4. Institute, branch and seat type: take "All" so one query covers the type.
+        for (const [key, pattern] of [['institute', /ddl_?institute$/i], ['branch', /ddl_?branch$/i], ['seatType', /ddl_?seattype$/i]]) {
+          const found = findSelectByName(session.selects, pattern);
+          if (!found || !found.options.length) continue;
+          const all = chooseAll(found.options);
+          if (!all) continue;
+          await step(session, { changed: found.name, value: all.value },
+                     { label: `${tag}-4-${key}`, dump: args.dump });
+        }
+
+        // 5. Press Submit. This is the step that was missing entirely, and without it
+        //    ASP.NET never runs the handler that builds the grid.
+        if (!session.button) {
+          throw new Error('No submit button found on the form — the grid is built by one. Run --dump.');
+        }
+        if (args.verbose) console.log(`     pressing ${session.button.name}`);
+        return await step(session, { submit: true }, { label: `${tag}-5-submit`, dump: args.dump });
       }, args);
 
       if (!html) { problems.push(`${year}/${instType}: no cached page and network disabled`); continue; }

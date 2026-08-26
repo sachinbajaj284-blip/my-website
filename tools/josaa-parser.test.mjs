@@ -18,7 +18,7 @@ const src = await fs.readFile(path.join(ROOT, 'tools', 'josaa-ingest.mjs'), 'utf
 
 /* josaa-ingest.mjs runs on import, so lift the pure helpers out rather than importing it. */
 const lift = name => {
-  const re = new RegExp(`(?:^|\\n)(?:const|function)\\s+${name}\\b[\\s\\S]*?(?=\\n(?:const|function|async function|/\\*|let)\\s)`, 'm');
+  const re = new RegExp(`(?:^|\\n)(?:const|function|class)\\s+${name}\\b[\\s\\S]*?(?=\\n(?:const|function|async function|class|/\\*|let)\\s)`, 'm');
   const m = src.match(re);
   if (!m) throw new Error(`Could not lift ${name} from josaa-ingest.mjs`);
   return m[0];
@@ -37,7 +37,15 @@ ${lift('parseResultTable')}
 ${lift('parseRank')}
 ${lift('splitBranch')}
 ${lift('instituteType')}
-export { decodeEntities, stripTags, extractHiddenFields, extractSelects, discoverFields, parseResultTable, parseRank, splitBranch, instituteType };
+${lift('extractSelectedValues')}
+${lift('findSubmitButton')}
+${lift('discoverAjax')}
+${lift('parseAsyncDelta')}
+${lift('looksLikeDelta')}
+${lift('FormSession')}
+${lift('chooseOption')}
+${lift('chooseAll')}
+export { decodeEntities, stripTags, extractHiddenFields, extractSelects, discoverFields, parseResultTable, parseRank, splitBranch, instituteType, extractSelectedValues, findSubmitButton, discoverAjax, parseAsyncDelta, looksLikeDelta, FormSession, chooseOption, chooseAll };
 `)}`);
 
 const FIXTURE = `
@@ -229,6 +237,225 @@ test('classifies institute type from the name', () => {
 
 test('decodes entities in cell text', () => {
   assert.equal(mod.stripTags('<td>Metallurgical &amp; Materials&nbsp;Engg.</td>'), 'Metallurgical & Materials Engg.');
+});
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   The postback conversation.
+
+   The 13 August dump is the source for this fixture's shape: ddlYear arrives with
+   options, the other five arrive empty, and there is a btnSubmit the old ingest never
+   posted. That combination is why every filter returned the same "Not Available" page.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+const LIVE_SHAPE = `
+<html><body><form method="post">
+<input type="hidden" name="__VIEWSTATE" value="STATE-1" />
+<input type="hidden" name="__VIEWSTATEGENERATOR" value="AD19A6D0" />
+<input type="hidden" name="__EVENTVALIDATION" value="EV-1" />
+<input type="hidden" name="ctl00$hdnSecKey" value="" />
+<select name="ctl00$ContentPlaceHolder1$ddlYear">
+  <option value="0">--Select--</option>
+  <option value="2025">2025</option>
+  <option value="2024" selected="selected">2024</option>
+</select>
+<select name="ctl00$ContentPlaceHolder1$ddlroundno"></select>
+<select name="ctl00$ContentPlaceHolder1$ddlInstype"></select>
+<select name="ctl00$ContentPlaceHolder1$ddlInstitute"></select>
+<select name="ctl00$ContentPlaceHolder1$ddlBranch"></select>
+<select name="ctl00$ContentPlaceHolder1$ddlSeatType"></select>
+<input type="submit" name="ctl00$BtnCscLogin" value="CSC Login" />
+<input type="submit" name="ctl00$ContentPlaceHolder1$btnSubmit" value="Submit" />
+</form></body></html>`;
+
+test('reads the value a control is actually sitting on', () => {
+  const values = mod.extractSelectedValues(LIVE_SHAPE);
+  assert.equal(values['ctl00$ContentPlaceHolder1$ddlYear'], '2024');
+  /* An empty control still has to be echoed back, as empty. */
+  assert.equal(values['ctl00$ContentPlaceHolder1$ddlroundno'], '');
+});
+
+test('falls back to the first option when nothing is marked selected', () => {
+  const html = `<select name="x"><option value="0">--Select--</option><option value="9">Nine</option></select>`;
+  assert.equal(mod.extractSelectedValues(html).x, '0');
+});
+
+test('finds the query button and ignores the login button beside it', () => {
+  const button = mod.findSubmitButton(LIVE_SHAPE);
+  assert.equal(button.name, 'ctl00$ContentPlaceHolder1$btnSubmit');
+  assert.equal(button.value, 'Submit');
+});
+
+test('a page with no button at all reports none rather than guessing', () => {
+  assert.equal(mod.findSubmitButton('<html><form></form></html>'), null);
+});
+
+test('a postback carries the current hidden state, not the first page it ever saw', () => {
+  const session = new mod.FormSession(LIVE_SHAPE);
+  session.load(LIVE_SHAPE.replace('STATE-1', 'STATE-2').replace('EV-1', 'EV-2'));
+  const payload = session.buildPayload({ changed: 'ctl00$ContentPlaceHolder1$ddlYear', value: '2024' });
+  assert.equal(payload.get('__VIEWSTATE'), 'STATE-2');
+  assert.equal(payload.get('__EVENTVALIDATION'), 'EV-2');
+});
+
+test('a postback echoes every control on the form, not just the one that changed', () => {
+  const session = new mod.FormSession(LIVE_SHAPE);
+  const payload = session.buildPayload({ changed: 'ctl00$ContentPlaceHolder1$ddlYear', value: '2025' });
+  for (const name of ['ddlYear', 'ddlroundno', 'ddlInstype', 'ddlInstitute', 'ddlBranch', 'ddlSeatType']) {
+    assert.ok(payload.has('ctl00$ContentPlaceHolder1$' + name), name + ' was not echoed back');
+  }
+  assert.equal(payload.get('ctl00$ContentPlaceHolder1$ddlYear'), '2025');
+  assert.equal(payload.get('ctl00$hdnSecKey'), '');
+});
+
+test('changing a control names it as __EVENTTARGET so the server runs that cascade step', () => {
+  const session = new mod.FormSession(LIVE_SHAPE);
+  const payload = session.buildPayload({ changed: 'ctl00$ContentPlaceHolder1$ddlInstype', value: 'IIT' });
+  assert.equal(payload.get('__EVENTTARGET'), 'ctl00$ContentPlaceHolder1$ddlInstype');
+  assert.ok(!payload.has('ctl00$ContentPlaceHolder1$btnSubmit'), 'a cascade step must not press Submit');
+});
+
+test('the query presses the button — the step the old ingest never took', () => {
+  const session = new mod.FormSession(LIVE_SHAPE);
+  const payload = session.buildPayload({ submit: true });
+  assert.equal(payload.get('ctl00$ContentPlaceHolder1$btnSubmit'), 'Submit');
+  /* A real button press leaves __EVENTTARGET empty; ASP.NET runs the handler because
+     the button's name is present, and that is what builds the grid. */
+  assert.equal(payload.get('__EVENTTARGET'), '');
+});
+
+test('a submit never carries the login button', () => {
+  const session = new mod.FormSession(LIVE_SHAPE);
+  const payload = session.buildPayload({ submit: true });
+  assert.ok(!payload.has('ctl00$BtnCscLogin'));
+});
+
+test('an option that cannot be found stops the pull instead of picking something else', () => {
+  const options = [{ value: '2025', text: '2025' }, { value: '2024', text: '2024' }];
+  assert.equal(mod.chooseOption(options, o => o.text === '2024', 'year 2024').value, '2024');
+  /* The old code fell back to the last option here, which meant asking for 2019 and
+     silently recording 2024's ranks under it. */
+  assert.throws(() => mod.chooseOption(options, o => o.text === '2019', 'year 2019'), /2019/);
+});
+
+test('"All" is preferred where the form offers it', () => {
+  assert.equal(mod.chooseAll([{ value: '1', text: 'IIT Bombay' }, { value: 'ALL', text: 'All' }]).value, 'ALL');
+  assert.equal(mod.chooseAll([{ value: '1', text: 'IIT Bombay' }]).value, '1');
+  assert.equal(mod.chooseAll([]), null);
+});
+
+test('discovery still recognises the live form shape', () => {
+  const fields = mod.discoverFields(LIVE_SHAPE);
+  assert.equal(fields.year.name, 'ctl00$ContentPlaceHolder1$ddlYear');
+  assert.equal(fields.instType.name, 'ctl00$ContentPlaceHolder1$ddlInstype');
+  assert.equal(fields.round.name, 'ctl00$ContentPlaceHolder1$ddlroundno');
+});
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   The partial postback.
+
+   Run #10's contract inspection found Sys.WebForms, PageRequestManager and
+   UpdatePanel on the served page, and nothing writing ctl00$hdnSecKey. The
+   dropdowns are in an UpdatePanel, so the browser sends an async postback and
+   receives a delta — which is why a well-formed full postback was refused.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+const AJAX_PAGE = LIVE_SHAPE.replace('</form>', `
+<script>
+Sys.WebForms.PageRequestManager._initialize('ctl00$ScriptManager1', 'aspnetForm', ['tctl00$ContentPlaceHolder1$UpdatePanel1',''], [], [], 90, 'ctl00');
+</script></form>`);
+
+test('the ScriptManager and UpdatePanel ids are read off the page, not hardcoded', () => {
+  const ajax = mod.discoverAjax(AJAX_PAGE);
+  assert.equal(ajax.scriptManager, 'ctl00$ScriptManager1');
+  assert.equal(ajax.formId, 'aspnetForm');
+  // The 't'/'f' prefix marks always-update; it is not part of the id.
+  assert.deepEqual(ajax.panels, ['ctl00$ContentPlaceHolder1$UpdatePanel1']);
+});
+
+test('a page with no ScriptManager reports none rather than inventing one', () => {
+  assert.equal(mod.discoverAjax('<html><form></form></html>'), null);
+});
+
+test('an async postback names the panel and the trigger', () => {
+  const session = new mod.FormSession(AJAX_PAGE);
+  const payload = session.buildPayload({ changed: 'ctl00$ContentPlaceHolder1$ddlYear', value: '2024' });
+  assert.equal(payload.get('ctl00$ScriptManager1'),
+               'ctl00$ContentPlaceHolder1$UpdatePanel1|ctl00$ContentPlaceHolder1$ddlYear');
+  assert.equal(payload.get('__ASYNCPOST'), 'true');
+});
+
+test('the submit is a partial postback too, triggered by the button', () => {
+  const session = new mod.FormSession(AJAX_PAGE);
+  const payload = session.buildPayload({ submit: true });
+  assert.equal(payload.get('ctl00$ScriptManager1'),
+               'ctl00$ContentPlaceHolder1$UpdatePanel1|ctl00$ContentPlaceHolder1$btnSubmit');
+  assert.equal(payload.get('ctl00$ContentPlaceHolder1$btnSubmit'), 'Submit');
+});
+
+test('a form with no UpdatePanel posts normally', () => {
+  const session = new mod.FormSession(LIVE_SHAPE);
+  const payload = session.buildPayload({ submit: true });
+  assert.ok(!payload.has('__ASYNCPOST'));
+});
+
+test('a delta is recognised and a page is not', () => {
+  assert.equal(mod.looksLikeDelta('120|updatePanel|x|<div></div>|'), true);
+  assert.equal(mod.looksLikeDelta('<html><body>Not Available</body></html>'), false);
+  assert.equal(mod.looksLikeDelta(''), false);
+});
+
+test('a delta yields its panels and its refreshed hidden fields', () => {
+  const panel = '<select name="ctl00$ContentPlaceHolder1$ddlroundno"><option value="1">1</option><option value="6">6</option></select>';
+  const delta =
+    panel.length + '|updatePanel|ctl00$ContentPlaceHolder1$UpdatePanel1|' + panel + '|' +
+    '7|hiddenField|__VIEWSTATE|STATE-2|' +
+    '4|hiddenField|__EVENTVALIDATION|EV-2|';
+
+  const parsed = mod.parseAsyncDelta(delta);
+  assert.equal(parsed.panels['ctl00$ContentPlaceHolder1$UpdatePanel1'], panel);
+  assert.equal(parsed.hidden.__VIEWSTATE, 'STATE-2');
+  assert.equal(parsed.hidden.__EVENTVALIDATION, 'EV-2');
+  assert.equal(parsed.error, null);
+});
+
+test('content is sliced by its declared length, so a pipe inside HTML does not tear the parse', () => {
+  const panel = '<div title="a|b">x</div>';
+  const delta = panel.length + '|updatePanel|P1|' + panel + '|5|hiddenField|__VIEWSTATE|AFTER|';
+  const parsed = mod.parseAsyncDelta(delta);
+  assert.equal(parsed.panels.P1, panel);
+  assert.equal(parsed.hidden.__VIEWSTATE, 'AFTER');
+});
+
+test('a server error inside a delta is surfaced, not read as an empty page', () => {
+  const parsed = mod.parseAsyncDelta('27|error|500|Object reference not set|');
+  assert.match(parsed.error, /Object reference/);
+});
+
+test('applying a delta refreshes both the controls and the state', () => {
+  const session = new mod.FormSession(AJAX_PAGE);
+  assert.equal(session.optionsFor('ctl00$ContentPlaceHolder1$ddlroundno').length, 0);
+
+  const panel = '<select name="ctl00$ContentPlaceHolder1$ddlroundno"><option value="1">1</option><option value="6">6</option></select>';
+  session.applyDelta({
+    panels: { P1: panel },
+    hidden: { __VIEWSTATE: 'STATE-2', __EVENTVALIDATION: 'EV-2' },
+    error: null,
+  });
+
+  const options = session.optionsFor('ctl00$ContentPlaceHolder1$ddlroundno');
+  assert.deepEqual(options.map(o => o.text), ['1', '6']);
+  assert.equal(session.hidden.__VIEWSTATE, 'STATE-2');
+
+  // And the next request carries the refreshed state, not the page's original.
+  const payload = session.buildPayload({ changed: 'ctl00$ContentPlaceHolder1$ddlroundno', value: '6' });
+  assert.equal(payload.get('__VIEWSTATE'), 'STATE-2');
+  assert.equal(payload.get('ctl00$ContentPlaceHolder1$ddlroundno'), '6');
+});
+
+test('a delta keeps the ScriptManager wiring the full page established', () => {
+  const session = new mod.FormSession(AJAX_PAGE);
+  session.applyDelta({ panels: { P1: '<select name="x"></select>' }, hidden: {}, error: null });
+  assert.equal(session.ajax.scriptManager, 'ctl00$ScriptManager1');
 });
 
 console.log(`\n${passed} passed`);

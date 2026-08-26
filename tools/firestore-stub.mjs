@@ -9,10 +9,11 @@
   then assert the coupon is refused.
 
   It implements exactly the surface api/_lib uses and no more:
-    collection(name).doc(id).get() / .set(data, { merge })
+    collection(name).doc(id).get() / .set(data, { merge }) / .delete()
     collection(name).get()
     collection(name).where(field, "==", value).get()
     runTransaction(fn) with tx.get / tx.set
+    auth().verifyIdToken(token), against tokens registered with setIdToken()
 
   install() must be called before anything requires firebase-admin,
   because api/_lib/coupons.js caches "Firestore is unavailable" the
@@ -42,7 +43,8 @@ export function createStore(){
       set: async (value, options) => {
         const prev = options && options.merge ? (docs.get(key(collection, id)) || {}) : {};
         docs.set(key(collection, id), Object.assign({}, prev, value));
-      }
+      },
+      delete: async () => { docs.delete(key(collection, id)); }
     };
   }
 
@@ -100,7 +102,23 @@ export function install(){
   process.env.FIREBASE_CLIENT_EMAIL = process.env.FIREBASE_CLIENT_EMAIL || "test@example.com";
   process.env.FIREBASE_PRIVATE_KEY = process.env.FIREBASE_PRIVATE_KEY || "test-key";
 
-  const app = { firestore: () => store.firestore, auth: () => ({}) };
+  /*
+    Firebase Auth, to the extent api/_lib/account.js uses it: a registry
+    of ID tokens the test has decided are valid. An unregistered token
+    throws, which is exactly what verifyIdToken does for a forged one,
+    so requireAccount's 401 path gets exercised for real.
+  */
+  const idTokens = new Map();
+  const fakeAuth = {
+    verifyIdToken: async (token) => {
+      if(!idTokens.has(token)) throw new Error("Invalid ID token");
+      return idTokens.get(token);
+    }
+  };
+  store.setIdToken = (token, decoded) => { idTokens.set(token, decoded); };
+  store.clearIdTokens = () => { idTokens.clear(); };
+
+  const app = { firestore: () => store.firestore, auth: () => fakeAuth };
   const fake = {
     apps: [],
     credential: { cert: () => ({}) },

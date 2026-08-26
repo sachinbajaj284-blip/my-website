@@ -56,17 +56,62 @@ jobs:
         run: |
           set -e
           URL="https://josaa.admissions.nic.in/applicant/seatmatrix/openingclosingrankarchieve.aspx"
-          CODE=$(curl -sS -o /tmp/josaa-probe.html -w '%{http_code}' -m 45 \
-            -A 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36' \
-            "$URL" || echo "000")
-          echo "HTTP $CODE"
+          # JoSAA is intermittently unreachable from GitHub's IP ranges: on 26 August one
+          # run fetched it fine and the next timed out completely, four minutes apart.
+          # One timeout is not an outage, so try a few times before believing it.
+          # Measured behaviour on 26 August: run #7 fetched the page at 13:52, run #8
+          # timed out three times between 13:55 and 13:58, run #7's window had closed
+          # again by then. JoSAA flaps on a roughly three-minute cycle from GitHub's
+          # ranges, so the useful strategy is a short per-attempt timeout over a long
+          # wall-clock window rather than a few patient attempts. Eight tries spread over
+          # about ten minutes catches a window; three over four minutes does not.
+          CODE=000
+          ATTEMPTS=8
+          for attempt in $(seq 1 $ATTEMPTS); do
+            CODE=$(curl -sS -o /tmp/josaa-probe.html -w '%{http_code}' -m 30 \
+              -A 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36' \
+              "$URL" || echo "000")
+            echo "attempt $attempt/$ATTEMPTS: HTTP $CODE"
+            [ "$CODE" = "200" ] && break
+            [ "$attempt" -lt "$ATTEMPTS" ] && sleep 45
+          done
           if [ "$CODE" != "200" ]; then
-            echo "::error::Could not reach the JoSAA archive (HTTP $CODE)."
-            echo "If this is a geo-block, run the ingest from a machine in India instead:"
-            echo "  npm run josaa:probe && npm run josaa:refresh"
+            echo "::error::Could not reach the JoSAA archive after $ATTEMPTS attempts over ~10 minutes (last HTTP $CODE)."
+            echo "This is usually JoSAA refusing or throttling non-Indian traffic rather than"
+            echo "anything wrong with the ingest. Options, in order of least effort:"
+            echo "  1. Re-run this workflow later — it has come back on its own before."
+            echo "  2. Run it from a machine in India:  npm run josaa:probe && npm run josaa:refresh"
+            echo "  3. Run it from a self-hosted runner with an Indian egress IP."
             exit 1
           fi
           echo "Fetched $(wc -c < /tmp/josaa-probe.html) bytes"
+
+          # curl and Node do not trust the same things. curl succeeding tells us the host
+          # is up; it does not tell us the ingest can reach it, and a run has already
+          # failed in exactly that gap. Ask Node directly, and show the chain if it says no.
+          echo "--- Node fetch ---"
+          node -e "
+            const url = process.argv[1];
+            fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } })
+              .then(r => console.log('node fetch OK — HTTP ' + r.status))
+              .catch(e => {
+                console.log('node fetch FAILED');
+                let c = e, d = 0;
+                while (c && d++ < 5) { console.log('   ' + [c.code, c.errno, c.syscall, c.message].filter(Boolean).join(' ')); c = c.cause; }
+                process.exitCode = 3;
+              });
+          " "$URL" || NODE_FETCH_FAILED=1
+
+          if [ "${NODE_FETCH_FAILED:-0}" = "1" ]; then
+            echo "--- TLS chain (curl works, Node does not — usually a missing intermediate) ---"
+            echo | openssl s_client -connect josaa.admissions.nic.in:443 \
+              -servername josaa.admissions.nic.in 2>&1 \
+              | sed -n '/Certificate chain/,/Server certificate/p' | head -30 || true
+            echo | openssl s_client -connect josaa.admissions.nic.in:443 \
+              -servername josaa.admissions.nic.in 2>&1 \
+              | grep -iE 'verify (error|return code)' || true
+            echo "::warning::curl reached JoSAA but Node could not. The ingest uses Node."
+          fi
 
       # Parser unit tests need no network and catch a broken helper before we hit the
       # government server thousands of times.
@@ -77,6 +122,38 @@ jobs:
       # whether field discovery still matches the live page.
       - name: Probe the JoSAA form
         run: node tools/josaa-ingest.mjs --probe
+
+      # A correctly shaped postback still comes back as the 11,950-byte "Not Available"
+      # page, so something in the request contract is missing rather than malformed. The
+      # two candidates are an anti-automation token (the form ships an empty
+      # ctl00$hdnSecKey and loads Common.js) and an UpdatePanel expecting an async post.
+      # This step says which, and costs one extra request.
+      - name: Inspect the postback contract
+        run: |
+          echo "--- hidden fields on the served page ---"
+          grep -oE '<input[^>]*type="hidden"[^>]*>' /tmp/josaa-probe.html \
+            | grep -oE 'name="[^"]+"( value="[^"]{0,40})?' | head -20 || true
+
+          echo
+          echo "--- ASP.NET AJAX in play? ---"
+          for token in ScriptManager UpdatePanel __ASYNCPOST PageRequestManager Sys.WebForms; do
+            printf '%-22s %s\n' "$token" "$(grep -c "$token" /tmp/josaa-probe.html || echo 0)"
+          done
+
+          echo
+          echo "--- anything that writes hdnSecKey ---"
+          grep -oiE '.{80}hdnseckey.{80}' /tmp/josaa-probe.html | head -5 || echo "(not in the page)"
+
+          echo
+          echo "--- Common.js: does it set a security key? ---"
+          curl -sS -m 30 -A 'Mozilla/5.0' \
+            https://josaa.admissions.nic.in/applicant/Scripts/Common.js -o /tmp/common.js || true
+          if [ -s /tmp/common.js ]; then
+            echo "fetched $(wc -c < /tmp/common.js) bytes"
+            grep -oiE '.{100}seckey.{140}' /tmp/common.js | head -5 || echo "(no seckey reference)"
+          else
+            echo "(could not fetch Common.js)"
+          fi
 
       # A dump run is a diagnostic, not a pull: it saves what JoSAA actually returned and
       # is expected to produce no dataset, so it must not fail the job on empty output.
@@ -105,7 +182,10 @@ jobs:
         with:
           name: josaa-raw-dump
           path: work/dump/
-          if-no-files-found: error
+          # A dump run that never reached JoSAA writes nothing, and that is a
+          # network result rather than a broken job. Run #11 failed here purely
+          # because the directory was empty, which buried the actual finding.
+          if-no-files-found: warn
           retention-days: 14
 
       - name: Ingest cutoffs
