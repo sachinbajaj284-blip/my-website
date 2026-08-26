@@ -59,17 +59,24 @@ jobs:
           # JoSAA is intermittently unreachable from GitHub's IP ranges: on 26 August one
           # run fetched it fine and the next timed out completely, four minutes apart.
           # One timeout is not an outage, so try a few times before believing it.
+          # Measured behaviour on 26 August: run #7 fetched the page at 13:52, run #8
+          # timed out three times between 13:55 and 13:58, run #7's window had closed
+          # again by then. JoSAA flaps on a roughly three-minute cycle from GitHub's
+          # ranges, so the useful strategy is a short per-attempt timeout over a long
+          # wall-clock window rather than a few patient attempts. Eight tries spread over
+          # about ten minutes catches a window; three over four minutes does not.
           CODE=000
-          for attempt in 1 2 3; do
-            CODE=$(curl -sS -o /tmp/josaa-probe.html -w '%{http_code}' -m 60 \
+          ATTEMPTS=8
+          for attempt in $(seq 1 $ATTEMPTS); do
+            CODE=$(curl -sS -o /tmp/josaa-probe.html -w '%{http_code}' -m 30 \
               -A 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36' \
               "$URL" || echo "000")
-            echo "attempt $attempt: HTTP $CODE"
+            echo "attempt $attempt/$ATTEMPTS: HTTP $CODE"
             [ "$CODE" = "200" ] && break
-            [ "$attempt" -lt 3 ] && sleep 20
+            [ "$attempt" -lt "$ATTEMPTS" ] && sleep 45
           done
           if [ "$CODE" != "200" ]; then
-            echo "::error::Could not reach the JoSAA archive after 3 attempts (last HTTP $CODE)."
+            echo "::error::Could not reach the JoSAA archive after $ATTEMPTS attempts over ~10 minutes (last HTTP $CODE)."
             echo "This is usually JoSAA refusing or throttling non-Indian traffic rather than"
             echo "anything wrong with the ingest. Options, in order of least effort:"
             echo "  1. Re-run this workflow later — it has come back on its own before."
