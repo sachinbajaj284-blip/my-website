@@ -15,6 +15,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const src = await fs.readFile(path.join(ROOT, 'tools', 'josaa-ingest.mjs'), 'utf8');
+const fsSrc = src;
 
 /* josaa-ingest.mjs runs on import, so lift the pure helpers out rather than importing it. */
 const lift = name => {
@@ -690,6 +691,67 @@ test('a session knows whether it still holds the institute control', () => {
   const gone = new mod.FormSession('<html><body><p>Not Available</p></body></html>');
   assert.equal(gone.hasControl(/ddl_?institute$/i), false,
     'a results page with no form must report the control as gone');
+});
+
+
+/* --------------------------------------------------------- the probes -- */
+
+test('the probes measure rather than retry', () => {
+  /*
+    Both probes exist because five theories died from being argued rather
+    than measured. What makes them measurements is that they use requestOnce
+    — one attempt — instead of request(), which retries. A retry would wait
+    out the very thing being measured and turn a reading into a shrug, so
+    this pins the distinction at the source level.
+  */
+  const src = fsSrc;
+  const postProbe = src.slice(src.indexOf('async function postProbe'),
+                              src.indexOf('/* ---', src.indexOf('async function postProbe') + 10));
+  const pacing = src.slice(src.indexOf('async function pacingProbe'),
+                           src.indexOf('/* ---', src.indexOf('async function pacingProbe') + 10));
+
+  for (const [name, body] of [['postProbe', postProbe], ['pacingProbe', pacing]]) {
+    assert.ok(body.includes('requestOnce('), `${name} should make bare attempts`);
+    assert.ok(!/[^e]\brequest\(ARCHIVE/.test(body),
+      `${name} must not call the retrying request()`);
+  }
+});
+
+test('the POST probe varies one thing at a time', () => {
+  const src = fsSrc;
+  const body = src.slice(src.indexOf('async function postProbe'), src.indexOf('async function postProbe') + 4000);
+
+  // The pair that isolates the async marker: same payload, header differs.
+  assert.ok(body.includes("method: 'POST', body }"), 'needs a real-payload POST without the async header');
+  assert.ok(body.includes("method: 'POST', body, async: true }"), 'needs the same payload with it');
+
+  // The pair that isolates the method itself: nothing in the body at all.
+  assert.ok(body.includes("method: 'POST', body: '' }"), 'needs an empty POST');
+
+  // A GET before and after, or "did the POSTs cost us the address" is unanswerable.
+  assert.ok((body.match(/requestOnce\(ARCHIVE\)/g) || []).length >= 2,
+    'needs a control GET and a GET afterwards');
+});
+
+
+test('every cascade POST carries the partial-postback header', () => {
+  /*
+    Run #19, same payload one request apart on the same address:
+
+      no X-MicrosoftAjax header   FAIL  126663ms  ECONNRESET
+      with it                     ok       976ms  130 bytes
+
+    The 126-second hang was a full postback sent to a form that only answers
+    partial ones, and it was gated on discoverAjax finding a ScriptManager id
+    that the live page does not literally contain. Regating it on anything
+    discoverable is how this comes back, so the source is pinned: step() must
+    not make the header conditional.
+  */
+  const step = fsSrc.slice(fsSrc.indexOf('async function step('),
+                           fsSrc.indexOf('async function step(') + 2500);
+  assert.ok(/async:\s*true/.test(step), 'step() must always request the partial postback');
+  assert.ok(!/async:\s*Boolean\(/.test(step), 'the header must not be gated on discoverAjax');
+  assert.ok(!/async:\s*session\.ajax/.test(step), 'nor on the session carrying an ajax record');
 });
 
 console.log(`\n${passed} passed`);

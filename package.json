@@ -13,17 +13,11 @@
     "sitemap": "node tools/sitemap.mjs",
     "sitemap:check": "node tools/sitemap.mjs --check",
     "og:images": "node tools/og-images.mjs",
-    "test": "npm run checkout:test && npm run account:test && npm run coupons:test && npm run assessment:test && npm run report:test && npm run cohort:test && npm run chat:test && npm run web:test && npm run dispatch:test && npm run josaa:test",
+    "test": "npm run checkout:test && npm run account:test && npm run coupons:test && npm run dispatch:test && npm run josaa:test",
     "checkout:test": "node tools/checkout.test.mjs",
     "account:test": "node tools/account.test.mjs",
     "coupons:test": "node tools/coupons.test.mjs",
-    "assessment:test": "node tools/assessment.test.mjs",
-    "report:test": "node tools/report-agent.test.mjs",
-    "cohort:test": "node tools/cohort.test.mjs",
-    "chat:test": "node tools/chat-agent.test.mjs",
     "dispatch:test": "node tools/dispatch.test.mjs",
-    "web:test": "node tools/web-agent.test.mjs",
-    "safety:check": "node tools/safety/check.mjs",
     "entitlements:test": "node tools/entitlements.test.mjs",
     "coupons:list": "node tools/seed-coupons.mjs --dry-run",
     "coupons:seed": "node tools/seed-coupons.mjs",
@@ -33,7 +27,6 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.120.0",
     "firebase-admin": "^12.7.0"
   }
 }
