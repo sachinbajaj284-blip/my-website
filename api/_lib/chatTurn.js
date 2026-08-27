@@ -163,7 +163,7 @@ async function runInbound({ thread, uid, text, phone, channel }, deps){
     result = await agent({
       message: message,
       history: conversations.recentTurns(thread).slice(0, -1),
-      context: { uid: uid, phone: phone, threadId: thread.threadId, profileTaken, entitlementHint }
+      context: { uid: uid, phone: phone, threadId: thread.threadId, profileTaken, entitlementHint, channel }
     });
   }catch(err){
     console.error("[lume agent] turn failed:", err && err.message);

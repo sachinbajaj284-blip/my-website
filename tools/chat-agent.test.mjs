@@ -335,6 +335,47 @@ await test("the agent is told to do the asking, and told where to stop", async (
   assert.match(prefix, /one question at a time/i);
 });
 
+await test("the agent is allowed to be useful, and still may not invent a number", async () => {
+  /*
+    "It answers nothing" and "it invents cut-offs" are the two ways this
+    prompt fails, and they pull in opposite directions. The first version
+    said every factual claim about a career had to come from a tool, which
+    made it refuse study advice, exam questions and anything the 97-career
+    library did not happen to hold — useless in a way that reads as broken.
+
+    Loosening that is the change most likely to erode the guarantee that
+    actually matters, so both edges are pinned here.
+  */
+  const prefix = systemBlocks().map(b => b.text).join("\n");
+
+  // It may think.
+  assert.match(prefix, /Answer freely from your own knowledge/);
+  assert.match(prefix, /unhelpfulness wearing caution's coat/);
+
+  // It may not make up the things somebody acts on.
+  assert.match(prefix, /Look up, every time, no exceptions/);
+  assert.match(prefix, /a number, date, cut-off or price that somebody could act on must be looked up/);
+  assert.match(prefix, /predict_colleges/);
+  assert.match(prefix, /plausible invention is the most damaging thing you can produce/);
+
+  // Prices still come from the catalogue, not from recollection.
+  assert.match(prefix, /only figures returned by validate_coupon or create_checkout/);
+});
+
+await test("the channel reaches the agent, because register depends on it", async () => {
+  const web = contextBlock({ uid: null, channel: "web" });
+  const wa  = contextBlock({ uid: null, channel: "whatsapp" });
+
+  assert.match(web, /website chat panel/);
+  assert.match(web, /do not clip a real question into two sentences/);
+  assert.match(wa,  /two or three sentences/);
+  assert.notEqual(web, wa, "the two channels must not read identically");
+
+  // On the web a sign-in is the whole linking step; there is no code.
+  assert.match(contextBlock({ uid: null, channel: "web" }), /no code to send here/);
+  assert.match(contextBlock({ uid: null, channel: "whatsapp" }), /linking step/);
+});
+
 await test("the counselling craft reaches the model, and is shared with the report agent", async () => {
   const prefix = systemBlocks().map(b => b.text).join("\n");
 
