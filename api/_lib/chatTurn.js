@@ -30,6 +30,10 @@ const conversations = require("./conversations");
 const { notifyOwner } = require("./notify");
 const { latestRun } = require("./assessments");
 
+function channelName(channel){
+  return channel === "web" ? "the website" : "WhatsApp";
+}
+
 const LOCKED_REPLY =
   "A counsellor from Lume Live is picking this up personally — they'll message you here shortly. " +
   "I'll stay out of the way until then.";
@@ -46,14 +50,43 @@ const FAILED_REPLY =
   `deps` exists so the whole flow can be tested without an API key, a
   network, or Firestore: { screen, agent, notify }.
 */
+/*
+  WhatsApp. Resolves who this is from the number, then runs the shared
+  order of operations below.
+*/
 async function handleInbound({ phone, text }, deps){
+  const thread = await conversations.getThread(phone);
+  const uid = await conversations.linkedAccount(phone);
+  return runInbound({ thread, uid, text, phone, channel: "whatsapp" }, deps);
+}
+
+/*
+  The website. A browser has no phone number and no linking step, so
+  identity comes from a verified Firebase session or not at all — an
+  anonymous visitor gets a good general answer and nothing personal.
+
+  Note what this function does NOT do: it does not re-implement the four
+  steps. There is one copy of that order and both channels go through it.
+  A second copy would be a second thing to keep in step with the first,
+  and the first thing to drift would be the screen.
+*/
+async function handleWeb({ sessionId, text, uid }, deps){
+  const thread = await conversations.getWebThread(sessionId);
+  return runInbound({ thread, uid: uid || null, text, phone: null, channel: "web" }, deps);
+}
+
+/*
+  One inbound message on any channel.
+
+  `phone` is passed only so an owner notification can say who to call
+  back; it is null on the web and nothing below depends on having it.
+*/
+async function runInbound({ thread, uid, text, phone, channel }, deps){
   const d = deps || {};
   const screen = d.screen || screenMessage;
   const agent = d.agent || runTurn;
   const notify = d.notify || notifyOwner;
 
-  const thread = await conversations.getThread(phone);
-  const uid = await conversations.linkedAccount(phone);
   const message = String(text || "").trim();
 
   conversations.appendTurn(thread, { role: "user", text: message.slice(0, 4000) });
@@ -76,10 +109,10 @@ async function handleInbound({ phone, text }, deps){
 
     try{
       await notify({
-        type: "whatsapp-agent-URGENT",
+        type: channel + "-agent-URGENT",
         phone: String(phone || ""),
-        summary: "URGENT: a client on WhatsApp may be at risk. The agent has stopped and this thread is locked to a human.",
-        details: { thread: thread.threadId, reason: verdict.reason || "", degraded: Boolean(verdict.degraded) }
+        summary: "URGENT: a client on " + channelName(channel) + " may be at risk. The agent has stopped and this thread is locked to a human.",
+        details: { thread: thread.threadId, channel, reason: verdict.reason || "", degraded: Boolean(verdict.degraded) }
       });
     }catch(err){
       // The client already has the helpline numbers. A failed notification
@@ -97,7 +130,7 @@ async function handleInbound({ phone, text }, deps){
     await conversations.saveThread(thread);
     try{
       await notify({
-        type: "whatsapp-agent-handoff",
+        type: channel + "-agent-handoff",
         phone: String(phone || ""),
         summary: "Daily agent cap reached — conversation handed to a human.",
         details: { thread: thread.threadId }
@@ -138,7 +171,7 @@ async function handleInbound({ phone, text }, deps){
     conversations.lockToHuman(thread, "agent error: " + (err && err.code || "unknown"));
     await conversations.saveThread(thread);
     try{
-      await notify({ type:"whatsapp-agent-handoff", phone:String(phone || ""),
+      await notify({ type: channel + "-agent-handoff", phone:String(phone || ""),
         summary:"The agent errored and the thread was handed to a human.",
         details:{ thread: thread.threadId, error: String(err && err.message || "").slice(0, 300) } });
     }catch(e){ /* already logged above */ }
@@ -157,7 +190,7 @@ async function handleInbound({ phone, text }, deps){
     conversations.chargeMessage(thread, result.usage);
     await conversations.saveThread(thread);
     try{
-      await notify({ type:"whatsapp-agent-handoff", phone:String(phone || ""),
+      await notify({ type: channel + "-agent-handoff", phone:String(phone || ""),
         summary:"The agent could not settle on an answer and handed over.",
         details:{ thread: thread.threadId, rounds: result.rounds } });
     }catch(e){ /* logged by notify */ }
@@ -185,4 +218,4 @@ async function handleInbound({ phone, text }, deps){
   };
 }
 
-module.exports = { handleInbound, LOCKED_REPLY, OVER_BUDGET_REPLY, FAILED_REPLY };
+module.exports = { handleInbound, handleWeb, runInbound, LOCKED_REPLY, OVER_BUDGET_REPLY, FAILED_REPLY };

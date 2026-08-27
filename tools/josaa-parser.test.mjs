@@ -54,9 +54,11 @@ ${lift('nextGap')}
 ${lift('isConnectTimeout')}
 ${lift('backoffFor')}
 ${lift('BLOCK_BUDGET_MS')}
+${lift('RESPONSE_TIMEOUT_MS')}
+${lift('REQUEST_TIMEOUT_MS')}
 ${lift('blockedWaitMs')}
 ${lift('blockBudgetLeft')}
-export { decodeEntities, stripTags, extractHiddenFields, extractSelects, discoverFields, parseResultTable, parseRank, splitBranch, instituteType, extractSelectedValues, findSubmitButton, discoverAjax, parseAsyncDelta, looksLikeDelta, FormSession, chooseOption, chooseAll, envInt, nextGap, isConnectTimeout, backoffFor, REQUEST_GAP_MS, REQUEST_JITTER_MS, BLOCK_BACKOFF_MS, MAX_RETRIES, BLOCK_BUDGET_MS, blockBudgetLeft };
+export { decodeEntities, stripTags, extractHiddenFields, extractSelects, discoverFields, parseResultTable, parseRank, splitBranch, instituteType, extractSelectedValues, findSubmitButton, discoverAjax, parseAsyncDelta, looksLikeDelta, FormSession, chooseOption, chooseAll, envInt, nextGap, isConnectTimeout, backoffFor, REQUEST_GAP_MS, REQUEST_JITTER_MS, BLOCK_BACKOFF_MS, MAX_RETRIES, BLOCK_BUDGET_MS, blockBudgetLeft, RESPONSE_TIMEOUT_MS, REQUEST_TIMEOUT_MS };
 `)}`);
 
 const FIXTURE = `
@@ -481,7 +483,7 @@ test('a delta keeps the ScriptManager wiring the full page established', () => {
 */
 
 test('a connect timeout is recognised however it is reported', () => {
-  assert.equal(mod.isConnectTimeout(new Error('Connect/idle timeout after 30000ms')), true);
+  assert.equal(mod.isConnectTimeout(Object.assign(new Error('Connect timeout after 30000ms'), { code: 'CONNECT_TIMEOUT' })), true);
   assert.equal(mod.isConnectTimeout(Object.assign(new Error('x'), { code: 'UND_ERR_CONNECT_TIMEOUT' })), true);
   assert.equal(mod.isConnectTimeout(Object.assign(new Error('x'), { code: 'ETIMEDOUT' })), true);
   // undici buries the real code on the cause.
@@ -493,10 +495,18 @@ test('an ordinary server error is not mistaken for a block', () => {
   assert.equal(mod.isConnectTimeout(new Error('HTTP 429')), false);
   assert.equal(mod.isConnectTimeout(new Error('socket hang up')), false);
   assert.equal(mod.isConnectTimeout(null), false);
+  /* The distinction run #16 forced. A connected socket that goes quiet is a
+     slow server; treating it as an unreachable address is what hid the real
+     failure for four runs. */
+  assert.equal(
+    mod.isConnectTimeout(Object.assign(new Error('Connected and sent, then silence for 120000ms'),
+                                       { code: 'RESPONSE_TIMEOUT' })),
+    false,
+    'a silent connected socket must not be read as a block');
 });
 
 test('a connect timeout backs off in minutes, an HTTP error in seconds', () => {
-  const blocked = mod.backoffFor(new Error('Connect/idle timeout after 30000ms'), 0);
+  const blocked = mod.backoffFor(Object.assign(new Error('Connect timeout'), { code: 'CONNECT_TIMEOUT' }), 0);
   const server  = mod.backoffFor(new Error('HTTP 500'), 0);
   assert.ok(blocked >= 60_000, `expected a minutes-long wait, got ${blocked}ms`);
   assert.ok(server <= 5_000, `expected a seconds-long wait, got ${server}ms`);
@@ -504,7 +514,7 @@ test('a connect timeout backs off in minutes, an HTTP error in seconds', () => {
 });
 
 test('the block backoff grows linearly, not exponentially', () => {
-  const e = new Error('Connect/idle timeout after 30000ms');
+  const e = Object.assign(new Error('Connect timeout'), { code: 'CONNECT_TIMEOUT' });
   const waits = [0, 1, 2, 3].map(a => mod.backoffFor(e, a));
   assert.deepEqual(waits, waits.map((_, i) => mod.BLOCK_BACKOFF_MS * (i + 1)));
   // Doubling a 90s wait four times overruns the job without testing anything new.
@@ -518,7 +528,7 @@ test('the retry schedule outlasts a block measured in minutes', () => {
     which is why every run spent its retries inside the block and reported an
     outage.
   */
-  const e = new Error('Connect/idle timeout after 30000ms');
+  const e = Object.assign(new Error('Connect timeout'), { code: 'CONNECT_TIMEOUT' });
   let total = 0;
   for (let attempt = 0; attempt < mod.MAX_RETRIES; attempt++) total += mod.backoffFor(e, attempt);
   assert.ok(total >= 5 * 60_000, `retries only cover ${Math.round(total / 1000)}s; run #14 blocked for 240s`);
@@ -538,9 +548,35 @@ test('the gap actually varies — a metronome is a signature', () => {
   assert.ok(seen.size > 20, `only ${seen.size} distinct gaps in 200 draws`);
 });
 
-test('the pace is slow enough to be plausible, not the old 1.5s burst', () => {
-  assert.ok(mod.REQUEST_GAP_MS >= 5000,
-    `gap is ${mod.REQUEST_GAP_MS}ms; the pace that got blocked was 1500ms`);
+test('the pace is courteous but not glacial', () => {
+  /*
+    Run #16 showed there is no rate block, so the six-to-ten second gap
+    written for that theory is no longer buying anything — at seventy-two
+    requests it was ten minutes of pure waiting. It stays slower than the
+    original burst because a government server running rank queries should
+    not be hammered, and bounded because waiting is not free.
+  */
+  assert.ok(mod.REQUEST_GAP_MS > 1500, 'should still be slower than the original burst');
+  assert.ok(mod.REQUEST_GAP_MS + mod.REQUEST_JITTER_MS <= 6000, 'but not a ten-minute crawl');
+});
+
+test('a slow server gets seconds, an unreachable one gets minutes', () => {
+  const slow = mod.backoffFor(Object.assign(new Error('silence'), { code: 'RESPONSE_TIMEOUT' }), 0);
+  const gone = mod.backoffFor(Object.assign(new Error('connect'), { code: 'CONNECT_TIMEOUT' }), 0);
+  assert.ok(slow <= 5000, `a slow server should be retried soon, got ${slow}ms`);
+  assert.ok(gone >= 60_000, `an unreachable address should wait, got ${gone}ms`);
+});
+
+test('the response budget outlasts a slow query, and the overall budget outlasts it', () => {
+  /*
+    The bug this replaces: the 30s handshake budget was being applied to the
+    wait for a response, so every POST was abandoned at 30 seconds. The
+    overall timer has to sit outside the response wait or it fires first and
+    the log says the wrong thing again.
+  */
+  assert.ok(mod.RESPONSE_TIMEOUT_MS >= 90_000, 'a rank query needs longer than a form fetch');
+  assert.ok(mod.REQUEST_TIMEOUT_MS > mod.RESPONSE_TIMEOUT_MS,
+    'the overall budget must not pre-empt the response wait');
 });
 
 test('envInt falls back on anything that is not a non-negative integer', () => {
@@ -576,7 +612,7 @@ test('the block budget is smaller than the job it runs inside', () => {
 });
 
 test('one blocked request cannot spend the whole run waiting', () => {
-  const e = new Error('Connect/idle timeout after 30000ms');
+  const e = Object.assign(new Error('Connect timeout'), { code: 'CONNECT_TIMEOUT' });
   let single = 0;
   for (let a = 0; a < mod.MAX_RETRIES; a++) single += mod.backoffFor(e, a);
   assert.ok(single > mod.BLOCK_BUDGET_MS,
