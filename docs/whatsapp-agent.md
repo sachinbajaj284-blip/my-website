@@ -307,3 +307,56 @@ fixtures include three Hinglish cases, but nothing verifies the agent's
 **Cost is estimated, not measured.** ₹15–25 per conversation assumes ten turns
 and a warm cache. `usage` is accumulated per turn and stored on the thread —
 read the real numbers before trusting the estimate.
+
+---
+
+## The same agent on the website
+
+`POST /api/agent/web` is the assistant in a chat panel on lumelive.co.in
+(`lume-buddy.js`, mounted on `index.html` and `buddy.html`).
+
+It went live on the site before WhatsApp for one reason: it needs
+`ANTHROPIC_API_KEY` and nothing else. No Meta app, no number registration,
+no webhook handshake.
+
+**It is not a second agent.** `chatTurn` exports one `runInbound` and both
+channels go through it, so the four steps — locked, screened, budgeted,
+answered — exist in exactly one place. A second copy of that order would
+be a second thing to keep in step, and the first thing to drift would be
+the screen.
+
+What differs is identity and money.
+
+**Identity.** A phone number arrives proven by an HMAC. A browser arrives
+as nobody, so the session id is issued by the route rather than chosen by
+the caller: 24 random bytes, `^[A-Za-z0-9_-]{32}$`, refused if it does not
+match. It is a bearer token for one transcript and never becomes an
+account — a session id is not upgradeable into an identity, which is the
+hole `restore-access.js` was written to close and this is a wider door.
+Web threads hash under `lume-web-thread:`, a separate namespace from phone
+threads, because a collision would hand a website visitor somebody's
+WhatsApp transcript.
+
+Personal answers need a real sign-in. A verified Firebase token produces a
+uid and the agent can read that client's assessment; without one it
+answers well in general and reads nothing. **No linking code is needed on
+the web** — the sign-in is the proof. Codes exist only because a phone
+number is not.
+
+**Money.** This is a public endpoint calling a frontier model, so there are
+three ceilings, checked cheapest-first: per IP (240/hour — loose, because a
+school computer lab is one address and thirty students), per session
+(40/hour), and a site-wide daily cap (`AGENT_WEB_DAILY_CAP`, default 2000).
+The daily cap is the one that matters at 3am. It answers 200 with a
+handover message rather than an error, because a visitor who has done
+nothing wrong should not be shown a 429.
+
+```
+ANTHROPIC_API_KEY        required
+AGENT_WEB_DAILY_CAP      optional, default 2000
+```
+
+Tests: `npm run web:test` — 18 assertions, no API calls. The route takes an
+injectable `deps` for the same reason `chatTurn` does; without it the route
+tests would run the real SDK, fail on the missing key, and pass by
+asserting against the handoff message.

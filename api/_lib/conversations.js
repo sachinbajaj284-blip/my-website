@@ -57,6 +57,60 @@ function threadId(phone){
   return crypto.createHash("sha256").update("lume-thread:" + p).digest("hex").slice(0, 32);
 }
 
+/*
+  A browser has no phone number, so a web conversation is keyed by a
+  session id the server issues and the browser stores.
+
+  Hashed into a separate namespace from phone threads, and deliberately
+  so: the two must never be able to collide, because a collision would
+  hand a website visitor somebody's WhatsApp transcript. The namespace
+  string is the whole guard, so it is not a detail to tidy away.
+*/
+function webSessionId(){
+  return crypto.randomBytes(24).toString("base64url");
+}
+
+/*
+  A session id is a bearer token for one transcript, so it has to look
+  like one: server-issued, long, and unguessable. Anything that does not
+  match what webSessionId() produces is refused rather than normalised
+  into a thread of its own — otherwise a caller could pick "1" and share
+  a conversation with whoever picked "1" before them.
+*/
+const WEB_SESSION = /^[A-Za-z0-9_-]{32}$/;
+
+function validWebSession(id){
+  return WEB_SESSION.test(String(id || ""));
+}
+
+function webThreadId(sessionId){
+  return crypto.createHash("sha256")
+    .update("lume-web-thread:" + String(sessionId))
+    .digest("hex").slice(0, 32);
+}
+
+async function getWebThread(sessionId){
+  const firestore = db();
+  const id = webThreadId(sessionId);
+  const snap = await firestore.collection(THREADS).doc(id).get();
+  if(snap.exists) return snap.data();
+
+  return {
+    threadId: id,
+    channel: "web",
+    /* No phone. A web thread has no phone number and must not grow one:
+       the field exists on WhatsApp threads and its absence here is what
+       keeps the two kinds of transcript distinguishable in Firestore. */
+    turns: [],
+    humanLocked: false,
+    lockReason: null,
+    riskFlags: [],
+    spend: {},
+    createdAt: new Date().toISOString(),
+    updatedAt: null
+  };
+}
+
 function today(){
   return new Date().toISOString().slice(0, 10);
 }
@@ -248,6 +302,7 @@ module.exports = {
   THREADS, LINKS, LINK_CODES,
   DAILY_MESSAGE_CAP, HISTORY_TURNS,
   threadId,
+  webSessionId, validWebSession, webThreadId, getWebThread,
   newLinkCode, createLinkCode, redeemLinkCode, linkedAccount, unlinkAccount,
   getThread, saveThread, recentTurns, appendTurn,
   lockToHuman, unlockThread, flagRisk,

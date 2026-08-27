@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' www.gstatic.com www.googletagmanager.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com; img-src 'self' data: www.google-analytics.com www.googletagmanager.com; connect-src 'self' *.googleapis.com *.firebaseio.com *.firebaseapp.com www.gstatic.com www.googletagmanager.com *.google-analytics.com *.analytics.google.com; object-src 'none'; base-uri 'self';">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Buddy &mdash; Career Questions Answered on WhatsApp | Lume Live</title>
-<meta name="description" content="Career questions answered on WhatsApp — streams, courses, entrance exams and government routes — from Lume Live's own career library. Buddy, our assistant, is in testing; a counsellor answers today.">
+<title>Buddy &mdash; Ask a Career Question | Lume Live</title>
+<meta name="description" content="Ask Buddy about streams, courses, entrance exams and government routes — answered from Lume Live's own career library, and from your own assessment once you sign in. Free, no sign-up to start.">
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
 <meta http-equiv="content-language" content="en-IN">
 <link rel="canonical" href="https://lumelive.co.in/buddy.html">
@@ -15,30 +15,31 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Lume Live">
 <meta property="og:title" content="Buddy — career questions answered on WhatsApp">
-<meta property="og:description" content="Ask about streams, courses, entrance exams and government routes, answered from our own career library. Buddy, our WhatsApp assistant, is in testing.">
+<meta property="og:description" content="Ask about streams, courses, entrance exams and government routes, answered from our own career library — and from your own assessment once you sign in.">
 <meta property="og:url" content="https://lumelive.co.in/buddy.html">
 <meta property="og:image" content="https://lumelive.co.in/og/home.png">
 <meta property="og:locale" content="en_IN">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Buddy — career questions answered on WhatsApp">
-<meta name="twitter:description" content="Ask about streams, courses and entrance routes on WhatsApp, answered from our own career library. Buddy, our assistant, is in testing.">
+<meta name="twitter:description" content="Ask about streams, courses and entrance routes, answered from our own career library.">
 <meta name="twitter:image" content="https://lumelive.co.in/og/home.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="library.css">
 <!--
-  BUDDY IS NOT ANSWERING YET.
+  Buddy answers here, on the website, through /api/agent/web. That route
+  needs ANTHROPIC_API_KEY and nothing else — no Meta setup — which is why
+  the site is where it went live first.
 
-  The webhook stays 404 until WHATSAPP_APP_SECRET is set (see
-  docs/whatsapp-agent.md, "What a deploy needs"), so a message to the
-  number reaches a person, not the agent. Everything below is written for
-  that state and says so.
+  WhatsApp is the part still waiting: the webhook 404s until
+  WHATSAPP_APP_SECRET is set (docs/whatsapp-agent.md, "What a deploy
+  needs"), so a message to the number reaches a person. The three places
+  that say so are marked WHATSAPP-PENDING, and the linking widget stays
+  closed because link codes are redeemed on that side.
 
-  To go live, after the Vercel variables are set and Meta's webhook points
-  at /api/agent/webhook, change the four things marked WHEN-LIVE in this
-  file and the one in index.html. They are the only places that promise a
-  reply from Buddy rather than from a counsellor.
+  A signed-in visitor needs no code here — the browser sends a Firebase
+  token and the agent reads their assessment directly.
 -->
 <style>
   .la-status{background:rgba(232,185,90,.14);border:1px solid rgba(232,185,90,.40);border-radius:16px;padding:14px 18px;margin-top:22px;max-width:56ch;font-size:.88rem;color:#F2E6CC;line-height:1.6}
@@ -119,18 +120,17 @@
 
 <div class="la-hero">
   <div class="wrap-wide">
-    <!-- WHEN-LIVE: drop " · in testing" -->
-    <span class="la-badge">Buddy &middot; in testing</span>
+    <span class="la-badge">Buddy &middot; new</span>
     <h1>You don&rsquo;t have to know what to ask.</h1>
-    <p class="la-sub">Most people message us worried, not with a tidy question. So we do the asking &mdash; your class, your subjects, your state, what&rsquo;s actually bothering you &mdash; one thing at a time on WhatsApp. Buddy is the assistant we are building to take the first reply; here is what it will do.</p>
+    <p class="la-sub">Most people arrive worried, not with a tidy question. So Buddy does the asking &mdash; your class, your subjects, your state, what&rsquo;s actually bothering you &mdash; one thing at a time, and answers from the same career library our counsellors work from.</p>
 
-    <!-- WHEN-LIVE: delete this whole notice -->
-    <p class="la-status"><b>Buddy is still in testing.</b> Message us today and a counsellor answers &mdash; usually within a few hours, not instantly. We would rather tell you that than have a page promise a robot that is not there yet.</p>
+    <!-- WHATSAPP-PENDING: delete when the webhook is wired -->
+    <p class="la-status"><b>Buddy answers here on the site.</b> On WhatsApp you still reach a person &mdash; we are wiring Buddy up there next.</p>
     <div class="la-ctas">
-      <a class="la-btn la-btn-wa" id="la-wa" href="https://wa.me/917015671280?text=Hi%20Lume%20AI%20%E2%80%94%20I%20have%20a%20career%20question">Ask on WhatsApp</a>
-      <a class="la-btn la-btn-ghost" href="#connect">Connect your assessment</a>
+      <button type="button" class="la-btn la-btn-wa" data-buddy-open>Chat with Buddy</button>
+      <a class="la-btn la-btn-ghost" href="https://wa.me/917015671280?text=Hi%20Lume%20Live%20%E2%80%94%20I%20have%20a%20career%20question">Message a counsellor</a>
     </div>
-    <p class="la-note">Free to ask. No app, no login to start.</p>
+    <p class="la-note">Free to ask. No sign-up to start &mdash; sign in and it answers from your own assessment.</p>
   </div>
 </div>
 
@@ -139,7 +139,7 @@
     <div class="la-split">
       <div>
         <span class="la-eyebrow">What it actually knows</span>
-        <h2 class="la-h">It will ask. You just reply.</h2>
+        <h2 class="la-h">It asks. You just reply.</h2>
         <p class="la-lede">A general-purpose chatbot answers whatever you happen to ask, from whatever it read on the internet. Buddy asks you what it needs to know, one question per message, and answers from a fixed library our counsellors maintain &mdash; saying so plainly when it doesn&rsquo;t know.</p>
         <ul class="la-list">
           <li><b>One question at a time, never a form</b> &mdash; it asks what actually changes the answer: which class, which subjects, which state. It won&rsquo;t make you fill anything in, and it won&rsquo;t ask for your name, school or marks.</li>
@@ -183,27 +183,28 @@
   <div class="wrap-wide">
     <span class="la-eyebrow">Make it personal</span>
     <h2 class="la-h">Connect your assessment</h2>
-    <p class="la-lede">If you've taken the free career test, linking your WhatsApp number will let Buddy answer from your actual interest profile rather than in general.</p>
+    <p class="la-lede">If you've taken the free career test, Buddy can answer from your actual interest profile rather than in general &mdash; your RIASEC interests, work anchors and Big Five, not students in the abstract.</p>
 
     <div class="la-link">
       <div class="la-step"><span class="la-num">1</span><p><b>Sign in</b> to the account you saved your assessment under.</p></div>
-      <div class="la-step"><span class="la-num">2</span><p><b>Get a code</b> — it's good for fifteen minutes and works once.</p></div>
-      <div class="la-step"><span class="la-num">3</span><p><b>Send it on WhatsApp.</b> That's what proves the number is yours.</p></div>
+      <div class="la-step"><span class="la-num">2</span><p><b>Open the chat</b> and ask. That's all &mdash; on the website your sign-in is the proof, so there is no code to send.</p></div>
+
+      <button type="button" class="la-btn la-btn-solid" data-buddy-open style="width:100%;justify-content:center">Chat with Buddy</button>
 
       <!--
-        WHEN-LIVE: delete this notice and un-hide the block below it. The
-        endpoint works today and will happily mint a code — but the code is
-        redeemed inside the WhatsApp handler, which is off, so a client who
-        followed this now would send a code into silence. Better to say so.
+        WHATSAPP-PENDING: linking is only needed on WhatsApp, where a
+        phone number is not proof of anything. The endpoint works and will
+        mint a real code, but codes are redeemed inside the WhatsApp
+        handler, which is off — so a client who followed it now would send
+        a code into silence. Un-hide #la-live when that side is wired.
       -->
-      <p class="la-soon"><b>Not open yet.</b> Linking works from the WhatsApp side, and that side is still in testing &mdash; a code minted today would have nothing to redeem it. It opens when Buddy does. Your assessment is saved and waiting either way.</p>
+      <p class="la-soon" style="margin-top:16px"><b>On WhatsApp it needs a code.</b> A phone number isn't proof of identity the way a sign-in is, so linking there takes an extra step &mdash; and that side is still being wired up. Your assessment is saved and waiting either way.</p>
 
       <div id="la-live" hidden>
         <div id="la-out" hidden>
           <div class="la-code" id="la-code-val">------</div>
           <a class="la-btn la-btn-wa" id="la-code-wa" href="#" style="width:100%;justify-content:center">Send this code on WhatsApp</a>
         </div>
-
         <button class="la-btn la-btn-solid" id="la-get" style="width:100%;justify-content:center">Get my linking code</button>
         <p class="la-status2" id="la-status" role="status" aria-live="polite"></p>
       </div>
@@ -222,8 +223,8 @@
     <details class="la-faq"><summary>Is this replacing your counsellors?</summary>
       <p>No, and it's built so it can't. It drafts and it answers; it doesn't sign anything. Every written report still goes to a qualified counsellor who edits and signs it before you see a word of it — the AI's draft is never what gets sent.</p></details>
 
-    <details class="la-faq"><summary>Can it see my assessment without me linking it?</summary>
-      <p>No. Nothing it can do carries your identity — it's given an account only after you sign in and send the code yourself. Until then it will discuss careers all day and read nothing personal about you.</p></details>
+    <details class="la-faq"><summary>Can it see my assessment without me signing in?</summary>
+      <p>No. Nothing it can do carries your identity on its own — on the website it reads your scores only once you're signed in, and on WhatsApp only after you send a linking code from a signed-in session. Until then it will discuss careers all day and read nothing personal about you.</p></details>
 
     <details class="la-faq"><summary>What if I'm not okay?</summary>
       <p>Say so. The conversation goes to a person, and you'll get numbers that are answered by trained people: Tele-MANAS <b>14416</b>, KIRAN <b>1800-599-0019</b>, AASRA <b>+91 98204 66726</b>. If it's an emergency, please call one of those now rather than message us.</p></details>
@@ -235,9 +236,9 @@
 
 <section>
   <div class="wrap-wide" style="text-align:center">
-    <h2 class="la-h" style="margin-bottom:14px">Ask us something you're stuck on</h2>
-    <p class="la-lede" style="margin:0 auto 22px">Stream choice, a course you've never heard of, whether a rank is worth repeating a year for. A counsellor answers today; Buddy takes the first reply soon.</p>
-    <a class="la-btn la-btn-wa" href="https://wa.me/917015671280?text=Hi%20Lume%20AI%20%E2%80%94%20I%20have%20a%20career%20question">Ask on WhatsApp</a>
+    <h2 class="la-h" style="margin-bottom:14px">Ask it something you're stuck on</h2>
+    <p class="la-lede" style="margin:0 auto 22px">Stream choice, a course you've never heard of, whether a rank is worth repeating a year for. It will tell you when the question needs a person instead.</p>
+    <button type="button" class="la-btn la-btn-wa" data-buddy-open>Chat with Buddy</button>
   </div>
 </section>
 
@@ -247,6 +248,7 @@
 </footer>
 
 <script src="lume-auth.js" defer></script>
+<script src="lume-buddy.js" defer></script>
 <script>
 (function(){
   "use strict";

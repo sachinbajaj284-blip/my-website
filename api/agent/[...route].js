@@ -13,6 +13,7 @@ const routes = {
   "queue":            require("../_lib/routes/agent/queue.js"),
   "report":           require("../_lib/routes/agent/report.js"),
   "sign":             require("../_lib/routes/agent/sign.js"),
+  "web":              require("../_lib/routes/agent/web.js"),
   "webhook":          require("../_lib/routes/agent/webhook.js")
 };
 
