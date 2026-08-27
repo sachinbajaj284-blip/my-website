@@ -31,6 +31,10 @@ on:
       max_institutes:
         description: 'Stop after N institutes per type. Blank = all of them. 2 for a quick check.'
         default: ''
+      post_probe:
+        description: 'Walk GET / empty POST / real POST and report which the host refuses. Six requests, pulls nothing.'
+        type: boolean
+        default: false
       pacing_probe:
         description: 'Only measure how many plain GETs JoSAA answers before it stops. Makes no POSTs, pulls nothing.'
         type: boolean
@@ -69,7 +73,7 @@ jobs:
       - name: Check JoSAA is reachable
         # Skipped for a pacing probe: that run is measuring how many requests a fresh
         # address gets, and this step would spend the first one before counting starts.
-        if: ${{ !inputs.pacing_probe }}
+        if: ${{ !inputs.pacing_probe && !inputs.post_probe }}
         run: |
           set -e
           URL="https://josaa.admissions.nic.in/applicant/seatmatrix/openingclosingrankarchieve.aspx"
@@ -146,7 +150,7 @@ jobs:
       # Costs a request, so it is not run ahead of a real pull: the ingest fetches the
       # same form itself and discovers the same fields from it.
       - name: Probe the JoSAA form
-        if: ${{ inputs.dump && !inputs.pacing_probe }}
+        if: ${{ inputs.dump && !inputs.pacing_probe && !inputs.post_probe }}
         run: node tools/josaa-ingest.mjs --probe
 
       # A correctly shaped postback still comes back as the 11,950-byte "Not Available"
@@ -158,7 +162,7 @@ jobs:
       # now a diagnostic kept for the next time the contract changes, not a per-run cost.
       # It fetches Common.js, and requests are the scarce resource here.
       - name: Inspect the postback contract
-        if: ${{ inputs.dump && !inputs.pacing_probe }}
+        if: ${{ inputs.dump && !inputs.pacing_probe && !inputs.post_probe }}
         run: |
           echo "--- hidden fields on the served page ---"
           grep -oE '<input[^>]*type="hidden"[^>]*>' /tmp/josaa-probe.html \
@@ -188,6 +192,13 @@ jobs:
       # Does the address get blocked, or is the postback being rejected? Identical GETs,
       # no POSTs: if a plain GET that worked stops working, nothing about the request
       # shape is responsible and pacing is the only lever left.
+      # Which layer refuses the POST? Six requests, no retries, on an address
+      # nothing else has touched — the reachability check and form probe are
+      # skipped for it so the control GET is genuinely the first request.
+      - name: Probe the POST
+        if: ${{ inputs.post_probe }}
+        run: node tools/josaa-ingest.mjs --post-probe --years "${{ inputs.years || '2024' }}"
+
       - name: Measure the request budget
         if: ${{ inputs.pacing_probe }}
         run: node tools/josaa-ingest.mjs --pacing-probe
@@ -234,13 +245,13 @@ jobs:
       # is starting it on an address that has just spent its allowance, which is a fair
       # description of every failed run so far.
       - name: Let the rate limit recover
-        if: ${{ !inputs.pacing_probe }}
+        if: ${{ !inputs.pacing_probe && !inputs.post_probe }}
         run: |
           echo "Idling 120s so the pre-flight requests age out before the pull starts."
           sleep 120
 
       - name: Ingest cutoffs
-        if: ${{ inputs.dump != true && !inputs.pacing_probe }}
+        if: ${{ inputs.dump != true && !inputs.pacing_probe && !inputs.post_probe }}
         env:
           YEARS: ${{ inputs.years || '2024,2025,2026' }}
           INST_TYPE: ${{ inputs.inst_type }}
@@ -268,11 +279,11 @@ jobs:
           node tools/josaa-ingest.mjs $ARGS
 
       - name: Validate dataset
-        if: ${{ inputs.dump != true && !inputs.pacing_probe }}
+        if: ${{ inputs.dump != true && !inputs.pacing_probe && !inputs.post_probe }}
         run: node tools/josaa-validate.mjs
 
       - name: Generate browse pages
-        if: ${{ inputs.dump != true && !inputs.pacing_probe }}
+        if: ${{ inputs.dump != true && !inputs.pacing_probe && !inputs.post_probe }}
         run: node tools/josaa-pages.mjs
 
       # Always publish the result as an artifact, so a smoke test — or a run you choose not

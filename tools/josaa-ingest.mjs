@@ -163,7 +163,7 @@ const INSTITUTE_TYPES = ['IIT', 'NIT', 'IIIT', 'Other-GFTI'];
 function parseArgs(argv) {
   const a = {
     years: [], round: null, limit: Infinity,
-    fromCache: false, probe: false, verbose: false, dump: null, pacingProbe: false,
+    fromCache: false, probe: false, verbose: false, dump: null, pacingProbe: false, postProbe: false,
     maxInstitutes: Infinity, instTypes: null,
   };
   for (let i = 2; i < argv.length; i++) {
@@ -174,6 +174,7 @@ function parseArgs(argv) {
     else if (k === '--from-cache') a.fromCache = true;
     else if (k === '--probe') a.probe = true;
     else if (k === '--pacing-probe') a.pacingProbe = true;
+    else if (k === '--post-probe') a.postProbe = true;
     else if (k === '--max-institutes') a.maxInstitutes = parseInt(argv[++i], 10);
     else if (k === '--inst-type') a.instTypes = argv[++i].split(',').map(s => s.trim()).filter(Boolean);
     else if (k === '--dump') a.dump = (argv[i + 1] && !argv[i + 1].startsWith('--')) ? argv[++i] : path.join(ROOT, 'work', 'dump');
@@ -196,6 +197,9 @@ josaa-ingest — build data/josaa/* from the official JoSAA archive.
   --probe                  Fetch the form, print discovered fields, exit
   --inst-type IIT,NIT      Only these institute types (default: all four)
   --max-institutes N       Stop after N institutes per type — smoke testing
+  --post-probe             Walk GET / empty POST / real POST, with and without the
+                           async header, and report which one the host refuses.
+                           Six requests, no retries, no dataset.
   --pacing-probe           Fetch the same page repeatedly and report where it stops
                            answering. Distinguishes a rate block from a rejected
                            postback; makes no POSTs at all.
@@ -1075,7 +1079,34 @@ async function step(session, opts, { label, dump }) {
 
   let html;
   try {
-    html = await request(ARCHIVE, { method: 'POST', body, async: Boolean(session.ajax) });
+    /*
+      Always the partial-postback header. Never the full postback.
+
+      Run #19 measured the two against each other, same payload, one request
+      apart, on the same address:
+
+        POST, real payload, no X-MicrosoftAjax header   FAIL  126663ms  ECONNRESET
+        POST, real payload, with the header             ok       976ms  130 bytes
+
+      That is the 126-second hang this pipeline has been chasing since run
+      #7, and it is a full postback being sent to a form that only answers
+      partial ones. Everything else — the flapping, the sockets, the rate
+      block, the over-large query — was a theory about why a request that
+      was simply the wrong shape did not come back.
+
+      It was gated on Boolean(session.ajax), and on the live page
+      discoverAjax comes back null: the contract inspection in run #14 found
+      PageRequestManager and UpdatePanel present but no literal
+      "ScriptManager", so the _initialize regex does not match and the gate
+      falls open to the full postback every time.
+
+      The header does not depend on finding the ScriptManager id. Case 5
+      succeeded carrying whatever buildPayload produced without it. So the
+      header is unconditional now, and the ScriptManager target stays a
+      refinement applied when discoverAjax can find it rather than the thing
+      the whole request hinges on.
+    */
+    html = await request(ARCHIVE, { method: 'POST', body, async: true });
   } catch (err) {
     /* Run #12 lost the whole request because the dump was written only after a
        successful response — five connect timeouts and nothing on disk to show
@@ -1327,21 +1358,24 @@ async function ingest(args) {
         /*
           4. Institute by institute, rather than "All".
 
-          Run #17 is why. With All institutes × All branches × All seat
-          types, JoSAA accepted the POST, held it for about 127 seconds
-          and then reset the connection — four times, to the second. That
-          is not a network fault and not our request shape; it is their
-          server giving up on a query it cannot finish. Asking an entire
-          institute type in one go is asking a government database for
-          tens of thousands of rows in one statement.
+          Written on a reading that run #18 then falsified, and kept anyway.
 
-          So the query is cut along the axis that divides it most evenly.
-          One institute, all its branches, all its seat types: a few
-          hundred rows, which is a question the same server answers in a
-          second and a half for the plain form fetch.
+          The reading was that run #17's 127-second stall was JoSAA giving up
+          on an over-large query — All institutes x All branches x All seat
+          types is tens of thousands of rows in one statement, which is a
+          fair thing for a government database to abandon. Run #18 shows the
+          request that actually hangs is the FIRST post of the cascade, the
+          year dropdown, which returns a short list of rounds. The walk never
+          reaches an institute, so splitting the query cannot have been the
+          fix, and this comment should not pretend otherwise.
 
-          It costs requests. That is the trade, and it is the right way
-          round — many answerable questions beat one that times out.
+          It stays because smaller queries are the right shape regardless:
+          if the cascade is ever unblocked, a few hundred rows per request is
+          a question this server can answer and tens of thousands is not. It
+          costs nothing while the cascade is blocked at step one.
+
+          What is actually wrong is still open. See --post-probe, which walks
+          the layers one at a time instead of guessing at a fifth theory.
         */
         const instituteSel = findSelectByName(session.selects, /ddl_?institute$/i);
         if (!instituteSel || !instituteSel.options.length) {
@@ -1609,12 +1643,126 @@ async function pacingProbe() {
   console.log('postback can explain a GET that worked once and then did not. Pacing is the lever.');
 }
 
+/* ------------------------------------------------------------ post probe -- */
+
+/*
+  Which layer is refusing the POST?
+
+  Five theories have now died against this pipeline — flapping availability,
+  pooled sockets, IP rate-blocking, an over-large query — and every one of
+  them was argued from an absence rather than measured. The single thing
+  measured directly (run #16: eight GETs, all ~1.3s) is also the only thing
+  that has held up.
+
+  What run #18 actually shows is narrower than any of those theories: the
+  request that hangs is the FIRST post of the cascade, selecting a year in a
+  dropdown, which returns a short list of rounds. Not an expensive query.
+  Not the address. Just: this host answers our GETs and hangs on our POSTs,
+  for about 170 seconds, then resets.
+
+  "POST" is still a whole stack of possible culprits — the method, the
+  headers, the body size, the async marker, an inspecting proxy. So this
+  walks them one at a time and prints what each does. No retries: a retry
+  would wait out the very thing being measured.
+*/
+async function postProbe(args) {
+  console.log('POST probe: one request at a time, no retries, no dataset.\n');
+
+  const results = [];
+  async function attempt(label, fn) {
+    await throttle();
+    const t0 = Date.now();
+    try {
+      const out = await fn();
+      const ms = Date.now() - t0;
+      results.push({ label, ok: true, ms, bytes: out.length });
+      console.log(`  ok    ${String(ms).padStart(6)}ms  ${String(out.length).padStart(6)} bytes  ${label}`);
+      return out;
+    } catch (err) {
+      const ms = Date.now() - t0;
+      results.push({ label, ok: false, ms, err: describeError(err) });
+      console.log(`  FAIL  ${String(ms).padStart(6)}ms  ${describeError(err)}  ${label}`);
+      return null;
+    }
+  }
+
+  // 1. The control. Known to work; proves the host is answering right now.
+  const form = await attempt('1. GET the archive form', () => requestOnce(ARCHIVE));
+
+  // 2 and 3. A POST carrying nothing at all. If these hang, no payload we
+  //          could construct is responsible and the method itself is the
+  //          thing being refused.
+  await attempt('2. POST, empty body, no async header',
+    () => requestOnce(ARCHIVE, { method: 'POST', body: '' }));
+  await attempt('3. POST, empty body, X-MicrosoftAjax: Delta=true',
+    () => requestOnce(ARCHIVE, { method: 'POST', body: '', async: true }));
+
+  // 4 and 5. The real thing the cascade sends, with the async marker as the
+  //          only difference between them. This is the pair that says
+  //          whether the UpdatePanel contract is implicated at all.
+  if (form) {
+    let body = null;
+    try {
+      const session = new FormSession(form);
+      const yearName = session.fields.year?.name;
+      if (yearName) {
+        const year = args.years[0];
+        const opt = chooseOption(session.optionsFor(yearName),
+          o => o.text.trim() === String(year), `year ${year}`);
+        body = session.buildPayload({ changed: yearName, value: opt.value }).toString();
+        console.log(`\n  (real payload built: ${body.length} bytes, year ${year})\n`);
+      }
+    } catch (err) {
+      console.log(`\n  (could not build the real payload: ${err.message})\n`);
+    }
+
+    if (body) {
+      await attempt('4. POST, real year payload, no async header  <- what the cascade sent',
+        () => requestOnce(ARCHIVE, { method: 'POST', body }));
+      await attempt('5. POST, real year payload, with async header',
+        () => requestOnce(ARCHIVE, { method: 'POST', body, async: true }));
+    }
+  }
+
+  // 6. Did the POSTs poison the address, or is it still answering?
+  await attempt('6. GET again', () => requestOnce(ARCHIVE));
+
+  console.log('\n--- what this says ---');
+  const get1 = results[0];
+  const bare = results.find(r => r.label.startsWith('2.'));
+  const real = results.find(r => r.label.startsWith('5.'));
+  const get2 = results[results.length - 1];
+
+  if (get1 && !get1.ok) {
+    console.log('  The control GET failed, so nothing below is interpretable.');
+    console.log('  JoSAA is not answering this runner at all right now. Re-run later.');
+  } else if (bare && !bare.ok) {
+    console.log('  A POST carrying nothing at all fails while a GET succeeds.');
+    console.log('  Nothing about our payload, headers or the UpdatePanel contract is');
+    console.log('  responsible — this host refuses POSTs from here. No amount of');
+    console.log('  protocol work will fix that; run the ingest from an Indian IP:');
+    console.log('    JOSAA_GAP_MS=800 npm run josaa:refresh');
+  } else if (bare && bare.ok && real && !real.ok) {
+    console.log('  An empty POST succeeds and the real one does not, so it IS the');
+    console.log('  request we are building. Compare 4 against 5: if only 5 fails the');
+    console.log('  async marker is the problem, and if both fail it is the body.');
+  } else if (get2 && !get2.ok && get1.ok) {
+    console.log('  GETs worked before the POSTs and not after, so the POSTs cost us');
+    console.log('  the address. That is a rate block after all — but measured this');
+    console.log('  time, and specific to POST.');
+  } else {
+    console.log('  Everything answered. The cascade should be re-run now, because');
+    console.log('  whatever was refusing it is not refusing it at this moment.');
+  }
+}
+
 /* -------------------------------------------------------------------- main -- */
 
 const args = parseArgs(process.argv);
 try {
   await dumper.init(args.dump);
-  if (args.pacingProbe) await pacingProbe();
+  if (args.postProbe) await postProbe(args);
+  else if (args.pacingProbe) await pacingProbe();
   else if (args.probe) await probe();
   else await ingest(args);
 } catch (err) {
