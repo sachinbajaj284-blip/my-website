@@ -56,12 +56,40 @@
     var css = document.createElement("style");
     css.id = "lume-buddy-css";
     css.textContent = [
-      ".lb-launch{position:fixed;right:20px;bottom:20px;z-index:9998;display:inline-flex;align-items:center;gap:9px;",
-      "background:linear-gradient(135deg,#0D1B40,#1A2E5E);color:#fff;border:0;border-radius:999px;padding:13px 20px;",
-      "font:800 .92rem/1 'Inter',system-ui,sans-serif;cursor:pointer;box-shadow:0 12px 32px rgba(13,27,64,.32)}",
-      ".lb-launch:hover{filter:brightness(1.12)}",
-      ".lb-launch .lb-dot{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#C9933A,#E8B95A);",
-      "display:grid;place-items:center;color:#0D1B40;font-weight:900;font-size:.78rem}",
+      /*
+        A quiet circle, not a second call to action.
+
+        The bottom-right corner already belongs to "Book ₹249" — the first
+        version of this sat at the same bottom:20px right:20px and covered
+        it outright. So the launcher stacks above that button rather than
+        competing with it, and is styled down to match: white, a hairline
+        border, the same 52px as the WhatsApp float on the left. The one
+        saturated thing on it is the brandmark, which is how the assistant
+        is identified everywhere else.
+
+        The label expands on hover because a bare initial is a riddle, and
+        because that is the site's own pattern — .float-wa does exactly the
+        same thing.
+      */
+      ".lb-launch{position:fixed;right:20px;bottom:20px;z-index:998;display:flex;align-items:center;",
+      "height:52px;width:52px;padding:0 13px;overflow:hidden;background:#fff;color:#0D1B40;",
+      "border:1px solid rgba(13,27,64,.10);border-radius:26px;cursor:pointer;",
+      "font:800 .82rem/1 'Inter',system-ui,sans-serif;box-shadow:0 4px 18px rgba(13,27,64,.14);",
+      "transition:width .35s cubic-bezier(.25,.46,.45,.94),box-shadow .3s}",
+      /* Stacked above the booking CTA when the page has one. */
+      ".lb-launch.lb-stacked{bottom:84px}",
+      "@media(hover:hover){.lb-launch:hover{width:158px;box-shadow:0 8px 26px rgba(13,27,64,.20)}",
+      ".lb-launch:hover .lb-label{max-width:110px;opacity:1;margin-left:9px}}",
+      ".lb-launch:focus-visible{outline:2px solid #0A6E6E;outline-offset:2px}",
+      ".lb-launch .lb-dot{width:26px;height:26px;flex:none;border-radius:50%;",
+      "background:linear-gradient(135deg,#C9933A,#E8B95A);",
+      "display:grid;place-items:center;color:#0D1B40;font-weight:900;font-size:.8rem}",
+      ".lb-label{max-width:0;opacity:0;white-space:nowrap;overflow:hidden;",
+      "transition:max-width .35s cubic-bezier(.25,.46,.45,.94),opacity .25s,margin-left .35s}",
+      /* The assessment report takes over the screen; the site hides its own
+         floats for it and this is one of them now. */
+      "body.sa-report-visible .lb-launch,body.seasonal-active .lb-launch{display:none!important}",
+      "@media(max-width:768px){.lb-launch.lb-stacked{bottom:68px;right:14px}}",
       ".lb-panel{position:fixed;right:20px;bottom:20px;z-index:9999;width:min(390px,calc(100vw - 32px));",
       "height:min(600px,calc(100vh - 40px));background:#fff;border-radius:22px;display:none;flex-direction:column;",
       "overflow:hidden;box-shadow:0 28px 70px rgba(13,27,64,.34);font:400 .92rem/1.6 'Inter',system-ui,sans-serif;color:#1A2C2C}",
@@ -134,7 +162,15 @@
     el.launch = el_("button", "lb-launch");
     el.launch.type = "button";
     el.launch.setAttribute("aria-label", "Ask Buddy a career question");
-    el.launch.innerHTML = '<span class="lb-dot">B</span><span>Ask Buddy</span>';
+    el.launch.title = "Ask Buddy";
+    el.launch.innerHTML = '<span class="lb-dot">B</span><span class="lb-label">Ask Buddy</span>';
+
+    /*
+      Sit above the booking CTA where there is one. Asked of the DOM rather
+      than hardcoded, because index.html has that button and buddy.html does
+      not — and a fixed offset would leave a gap on one of them.
+    */
+    if(document.querySelector(".float-cta")) el.launch.classList.add("lb-stacked");
 
     el.panel = el_("div", "lb-panel");
     el.panel.setAttribute("role", "dialog");
