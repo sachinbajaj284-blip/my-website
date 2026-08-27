@@ -25,6 +25,12 @@ on:
         description: 'Save the raw request/response of a few exchanges as an artifact. Use when a pull returns no rows. Never commits.'
         type: boolean
         default: false
+      inst_type:
+        description: 'Only these institute types, comma separated (IIT,NIT,IIIT,Other-GFTI). Blank = all four.'
+        default: ''
+      max_institutes:
+        description: 'Stop after N institutes per type. Blank = all of them. 2 for a quick check.'
+        default: ''
       pacing_probe:
         description: 'Only measure how many plain GETs JoSAA answers before it stops. Makes no POSTs, pulls nothing.'
         type: boolean
@@ -44,7 +50,11 @@ permissions:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    # A per-institute walk is many more requests than the old one-query-per-type
+    # pull, each with a 2-4s courtesy gap: roughly 24 minutes for one year across
+    # all four types, or 42 if JoSAA drops the form after every submit and the
+    # cascade has to be re-walked. 45 minutes could not finish a single year.
+    timeout-minutes: 330
 
     steps:
       - uses: actions/checkout@v4
@@ -231,12 +241,31 @@ jobs:
 
       - name: Ingest cutoffs
         if: ${{ inputs.dump != true && !inputs.pacing_probe }}
+        env:
+          YEARS: ${{ inputs.years || '2024,2025,2026' }}
+          INST_TYPE: ${{ inputs.inst_type }}
+          MAX_INSTITUTES: ${{ inputs.max_institutes }}
+          SMOKE: ${{ inputs.smoke_test }}
         run: |
-          if [ "${{ inputs.smoke_test }}" = "true" ]; then
-            node tools/josaa-ingest.mjs --years "${{ inputs.years || '2024,2025,2026' }}" --limit 300 --verbose
-          else
-            node tools/josaa-ingest.mjs --years "${{ inputs.years || '2024,2025,2026' }}"
+          ARGS="--years $YEARS"
+          [ -n "$INST_TYPE" ]      && ARGS="$ARGS --inst-type $INST_TYPE"
+          [ -n "$MAX_INSTITUTES" ] && ARGS="$ARGS --max-institutes $MAX_INSTITUTES"
+
+          # A smoke test answers "does one query come back with rows", not
+          # "can we walk a hundred institutes". Two institutes is enough: the
+          # first proves the cascade, the second proves the session survived
+          # a submit — which is the difference between four requests each and
+          # seven.
+          if [ "$SMOKE" = "true" ]; then
+            case "$ARGS" in
+              *--max-institutes*) ;;
+              *) ARGS="$ARGS --max-institutes 2" ;;
+            esac
+            ARGS="$ARGS --limit 300 --verbose"
           fi
+
+          echo "josaa-ingest $ARGS"
+          node tools/josaa-ingest.mjs $ARGS
 
       - name: Validate dataset
         if: ${{ inputs.dump != true && !inputs.pacing_probe }}

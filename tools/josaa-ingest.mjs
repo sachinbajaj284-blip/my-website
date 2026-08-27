@@ -164,6 +164,7 @@ function parseArgs(argv) {
   const a = {
     years: [], round: null, limit: Infinity,
     fromCache: false, probe: false, verbose: false, dump: null, pacingProbe: false,
+    maxInstitutes: Infinity, instTypes: null,
   };
   for (let i = 2; i < argv.length; i++) {
     const k = argv[i];
@@ -173,6 +174,8 @@ function parseArgs(argv) {
     else if (k === '--from-cache') a.fromCache = true;
     else if (k === '--probe') a.probe = true;
     else if (k === '--pacing-probe') a.pacingProbe = true;
+    else if (k === '--max-institutes') a.maxInstitutes = parseInt(argv[++i], 10);
+    else if (k === '--inst-type') a.instTypes = argv[++i].split(',').map(s => s.trim()).filter(Boolean);
     else if (k === '--dump') a.dump = (argv[i + 1] && !argv[i + 1].startsWith('--')) ? argv[++i] : path.join(ROOT, 'work', 'dump');
     else if (k === '--verbose' || k === '-v') a.verbose = true;
     else if (k === '--help' || k === '-h') { printHelp(); process.exit(0); }
@@ -191,6 +194,8 @@ josaa-ingest — build data/josaa/* from the official JoSAA archive.
   --limit N                Stop after N result rows — smoke testing
   --from-cache             Re-parse cached HTML, make no network calls
   --probe                  Fetch the form, print discovered fields, exit
+  --inst-type IIT,NIT      Only these institute types (default: all four)
+  --max-institutes N       Stop after N institutes per type — smoke testing
   --pacing-probe           Fetch the same page repeatedly and report where it stops
                            answering. Distinguishes a rate block from a rejected
                            postback; makes no POSTs at all.
@@ -1016,6 +1021,14 @@ class FormSession {
   }
 
   /** Options currently offered by a control, by its full posted name. */
+  /* Does the page we are holding still carry this control, with options?
+     After a submit the answer decides whether the next query can reuse
+     this session or has to start from a fresh form. */
+  hasControl(pattern) {
+    const found = findSelectByName(this.selects, pattern);
+    return Boolean(found && found.options && found.options.length);
+  }
+
   optionsFor(name) { return this.selects[name] || []; }
 
   /**
@@ -1110,6 +1123,25 @@ function chooseOption(options, matcher, what) {
 }
 
 /** "All" where the form offers it, otherwise the first real option. */
+/*
+  The entries that name a real thing.
+
+  A JoSAA dropdown carries a placeholder ("--Select--", "Select
+  Institute") and often an "All" entry, and neither is an institute. The
+  value is checked as well as the text because a placeholder is usually
+  the one with an empty value, which is the more reliable signal.
+*/
+function realOptions(options) {
+  return (options || []).filter(o => {
+    const text = String(o.text || '').trim();
+    const value = String(o.value || '').trim();
+    if (!text || !value) return false;
+    if (/^-{0,2}\s*select/i.test(text)) return false;
+    if (/^all$/i.test(text)) return false;
+    return true;
+  });
+}
+
 function chooseAll(options) {
   return options.find(o => /^all\b/i.test(o.text.trim())) || options[0] || null;
 }
@@ -1164,6 +1196,44 @@ async function probe() {
   }
 }
 
+/*
+  A form walked back down to the institute list.
+
+  Needed when a submit returns a page with no usable dropdowns: there is
+  nothing left to drive the next query from, so the conversation starts
+  again. Three requests to get back to where we were, which is the cost
+  of JoSAA not keeping the form on its results page — and exactly why the
+  caller only pays it when it has checked that the form is really gone.
+*/
+async function freshSession({ year, instType, round, tag, dump }) {
+  const session = new FormSession(await request(ARCHIVE));
+  const nameOf = key => session.fields[key]?.name;
+
+  const yearName = nameOf('year');
+  const yearOpt = chooseOption(session.optionsFor(yearName),
+    o => o.text.trim() === String(year), `year ${year}`);
+  await step(session, { changed: yearName, value: yearOpt.value }, { label: `${tag}-r1-year`, dump });
+
+  const roundName = nameOf('round');
+  if (roundName) {
+    const opts = session.optionsFor(roundName);
+    if (opts.length) {
+      const roundOpt = round != null
+        ? chooseOption(opts, o => o.text.trim() === String(round), `round ${round}`)
+        : opts[opts.length - 1];
+      await step(session, { changed: roundName, value: roundOpt.value }, { label: `${tag}-r2-round`, dump });
+    }
+  }
+
+  const typeName = nameOf('instType');
+  const needle = instType.split('-')[0].toLowerCase();
+  const typeOpt = chooseOption(session.optionsFor(typeName),
+    o => o.text.toLowerCase().includes(needle), `institute type ${instType}`);
+  await step(session, { changed: typeName, value: typeOpt.value }, { label: `${tag}-r3-insttype`, dump });
+
+  return session;
+}
+
 async function ingest(args) {
   console.log(`Ingesting JoSAA cutoffs for ${args.years.join(', ')}\n`);
 
@@ -1192,14 +1262,17 @@ async function ingest(args) {
   let dumpPosts = 0;
 
   for (const year of args.years) {
-    for (const instType of INSTITUTE_TYPES) {
+    for (const instType of (args.instTypes || INSTITUTE_TYPES)) {
       if (args.dump && dumpPosts >= DUMP_MAX_POSTS) {
         console.log(`\nDump limit reached (${DUMP_MAX_POSTS} posts) — stopping early.`);
         return;
       }
       if (args.dump) dumpPosts++;
       const round = args.round ?? 'final';
-      const key = cacheKey(['orcr', year, instType, round]);
+      /* v2: the cached value is now a JSON array of per-institute pages, not one
+         page for the whole type. A new key rather than a migration, because a
+         stale entry here would quietly look like a successful pull. */
+      const key = cacheKey(['orcr-v2', year, instType, round, String(args.maxInstitutes)]);
 
       const html = await cached(key, async () => {
         if (!form) throw new Error('no cache and --from-cache set');
@@ -1211,7 +1284,7 @@ async function ingest(args) {
           nothing left to drive a second query from, and re-fetching is both simpler and
           honest about that.
         */
-        const session = new FormSession(await request(ARCHIVE));
+        let session = new FormSession(await request(ARCHIVE));
         const tag = `${year}-${instType}`.toLowerCase();
 
         const nameOf = key => session.fields[key]?.name;
@@ -1251,49 +1324,129 @@ async function ingest(args) {
         await step(session, { changed: typeName, value: typeOpt.value },
                    { label: `${tag}-3-insttype`, dump: args.dump });
 
-        // 4. Institute, branch and seat type: take "All" so one query covers the type.
-        for (const [key, pattern] of [['institute', /ddl_?institute$/i], ['branch', /ddl_?branch$/i], ['seatType', /ddl_?seattype$/i]]) {
-          const found = findSelectByName(session.selects, pattern);
-          if (!found || !found.options.length) continue;
-          const all = chooseAll(found.options);
-          if (!all) continue;
-          await step(session, { changed: found.name, value: all.value },
-                     { label: `${tag}-4-${key}`, dump: args.dump });
+        /*
+          4. Institute by institute, rather than "All".
+
+          Run #17 is why. With All institutes × All branches × All seat
+          types, JoSAA accepted the POST, held it for about 127 seconds
+          and then reset the connection — four times, to the second. That
+          is not a network fault and not our request shape; it is their
+          server giving up on a query it cannot finish. Asking an entire
+          institute type in one go is asking a government database for
+          tens of thousands of rows in one statement.
+
+          So the query is cut along the axis that divides it most evenly.
+          One institute, all its branches, all its seat types: a few
+          hundred rows, which is a question the same server answers in a
+          second and a half for the plain form fetch.
+
+          It costs requests. That is the trade, and it is the right way
+          round — many answerable questions beat one that times out.
+        */
+        const instituteSel = findSelectByName(session.selects, /ddl_?institute$/i);
+        if (!instituteSel || !instituteSel.options.length) {
+          throw new Error('The institute list is empty after choosing a type — the cascade did not fill it. Run --dump.');
         }
 
-        // 5. Press Submit. This is the step that was missing entirely, and without it
-        //    ASP.NET never runs the handler that builds the grid.
-        if (!session.button) {
-          throw new Error('No submit button found on the form — the grid is built by one. Run --dump.');
+        const institutes = realOptions(instituteSel.options);
+        if (!institutes.length) {
+          throw new Error('The institute list has only placeholder entries. Run --dump.');
         }
-        if (args.verbose) console.log(`     pressing ${session.button.name}`);
-        return await step(session, { submit: true }, { label: `${tag}-5-submit`, dump: args.dump });
+        if (args.verbose) console.log(`     ${institutes.length} institutes to walk`);
+
+        const pages = [];
+        const budget = Number.isFinite(args.maxInstitutes) ? args.maxInstitutes : institutes.length;
+
+        for (let i = 0; i < Math.min(institutes.length, budget); i++) {
+          const inst = institutes[i];
+          const slug = `${tag}-inst${String(i + 1).padStart(3, '0')}`;
+
+          /*
+            After a submit the page is a results grid, and whether it
+            still carries a usable form is a question about JoSAA rather
+            than about us. When it does, the next institute costs two
+            requests; when it does not, the walk has to start again from
+            a fresh form. Both are handled because guessing which one it
+            is has already cost this pipeline several runs.
+          */
+          if (i > 0 && !session.hasControl(/ddl_?institute$/i)) {
+            session = await freshSession({ year, instType, round: args.round, tag: slug, dump: args.dump });
+          }
+
+          const sel = findSelectByName(session.selects, /ddl_?institute$/i);
+          const opt = sel && chooseOption(sel.options, o => o.text === inst.text, `institute ${inst.text}`);
+          if (!opt) throw new Error(`Institute "${inst.text}" vanished from the list between steps.`);
+
+          await step(session, { changed: sel.name, value: opt.value },
+                     { label: `${slug}-4-institute`, dump: args.dump });
+
+          // Everything below the institute stays "All": branch and seat type
+          // divide the remaining rows finely enough that the server copes.
+          for (const [key, pattern] of [['branch', /ddl_?branch$/i], ['seatType', /ddl_?seattype$/i]]) {
+            const found = findSelectByName(session.selects, pattern);
+            if (!found || !found.options.length) continue;
+            const all = chooseAll(found.options);
+            if (!all) continue;
+            await step(session, { changed: found.name, value: all.value },
+                       { label: `${slug}-5-${key}`, dump: args.dump });
+          }
+
+          if (!session.button) {
+            throw new Error('No submit button found on the form — the grid is built by one. Run --dump.');
+          }
+          const page = await step(session, { submit: true }, { label: `${slug}-6-submit`, dump: args.dump });
+          pages.push({ institute: inst.text, html: page });
+
+          if (args.verbose) console.log(`     ${i + 1}/${institutes.length} ${inst.text}`);
+        }
+
+        return JSON.stringify(pages);
       }, args);
 
       if (!html) { problems.push(`${year}/${instType}: no cached page and network disabled`); continue; }
 
-      const rows = parseResultTable(html);
-      if (!rows.length) { problems.push(`${year}/${instType}: no result rows parsed`); continue; }
-
-      const fp = fingerprint(rows);
-      const clash = seenPages.get(fp);
-      if (clash) {
-        problems.push(
-          `${year}/${instType} returned exactly the same rows as ${clash} — the posted filter ` +
-          `was ignored, so this data is not what it claims to be. Re-probe before trusting any of it.`
-        );
-        continue;
+      /* The cascade now returns one page per institute rather than one page
+         for the whole type, so the cache holds a JSON array. Older cache
+         entries are a bare HTML string; treat those as a single unnamed page
+         rather than throwing on somebody's stale work directory. */
+      let pages;
+      try {
+        const parsed = JSON.parse(html);
+        pages = Array.isArray(parsed) ? parsed : [{ institute: null, html }];
+      } catch {
+        pages = [{ institute: null, html }];
       }
-      seenPages.set(fp, `${year}/${instType}`);
 
-      for (const r of rows) {
-        const close = parseRank(r.closeRank);
-        const open = parseRank(r.openRank);
-        if (close == null) continue;
-        records.push({ year, instType, ...r, openRank: open ?? close, closeRank: close });
+      let typeRows = 0;
+      for (const page of pages) {
+        const rows = parseResultTable(page.html);
+        const where = `${year}/${instType}/${page.institute || 'all'}`;
+
+        if (!rows.length) { problems.push(`${where}: no result rows parsed`); continue; }
+
+        const fp = fingerprint(rows);
+        const clash = seenPages.get(fp);
+        if (clash) {
+          problems.push(
+            `${where} returned exactly the same rows as ${clash} — the posted filter ` +
+            `was ignored, so this data is not what it claims to be. Re-probe before trusting any of it.`
+          );
+          continue;
+        }
+        seenPages.set(fp, where);
+
+        for (const r of rows) {
+          const close = parseRank(r.closeRank);
+          const open = parseRank(r.openRank);
+          if (close == null) continue;
+          records.push({ year, instType, ...r, openRank: open ?? close, closeRank: close });
+          if (records.length >= args.limit) break;
+        }
+        typeRows += rows.length;
         if (records.length >= args.limit) break;
       }
-      console.log(`  ${year} ${instType.padEnd(10)} ${rows.length} rows`);
+
+      console.log(`  ${year} ${instType.padEnd(10)} ${typeRows} rows from ${pages.length} institute(s)`);
       if (records.length >= args.limit) break;
     }
     if (records.length >= args.limit) break;

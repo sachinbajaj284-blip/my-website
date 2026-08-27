@@ -45,6 +45,7 @@ ${lift('looksLikeDelta')}
 ${lift('FormSession')}
 ${lift('chooseOption')}
 ${lift('chooseAll')}
+${lift('realOptions')}
 ${lift('envInt')}
 ${lift('REQUEST_GAP_MS')}
 ${lift('REQUEST_JITTER_MS')}
@@ -58,7 +59,7 @@ ${lift('RESPONSE_TIMEOUT_MS')}
 ${lift('REQUEST_TIMEOUT_MS')}
 ${lift('blockedWaitMs')}
 ${lift('blockBudgetLeft')}
-export { decodeEntities, stripTags, extractHiddenFields, extractSelects, discoverFields, parseResultTable, parseRank, splitBranch, instituteType, extractSelectedValues, findSubmitButton, discoverAjax, parseAsyncDelta, looksLikeDelta, FormSession, chooseOption, chooseAll, envInt, nextGap, isConnectTimeout, backoffFor, REQUEST_GAP_MS, REQUEST_JITTER_MS, BLOCK_BACKOFF_MS, MAX_RETRIES, BLOCK_BUDGET_MS, blockBudgetLeft, RESPONSE_TIMEOUT_MS, REQUEST_TIMEOUT_MS };
+export { decodeEntities, stripTags, extractHiddenFields, extractSelects, discoverFields, parseResultTable, parseRank, splitBranch, instituteType, extractSelectedValues, findSubmitButton, discoverAjax, parseAsyncDelta, looksLikeDelta, FormSession, chooseOption, chooseAll, realOptions, envInt, nextGap, isConnectTimeout, backoffFor, REQUEST_GAP_MS, REQUEST_JITTER_MS, BLOCK_BACKOFF_MS, MAX_RETRIES, BLOCK_BUDGET_MS, blockBudgetLeft, RESPONSE_TIMEOUT_MS, REQUEST_TIMEOUT_MS };
 `)}`);
 
 const FIXTURE = `
@@ -618,6 +619,77 @@ test('one blocked request cannot spend the whole run waiting', () => {
   assert.ok(single > mod.BLOCK_BUDGET_MS,
     'the unclamped schedule should exceed the budget — otherwise the clamp is untested');
   assert.equal(mod.blockBudgetLeft(), mod.BLOCK_BUDGET_MS, 'a fresh run starts with the full budget');
+});
+
+
+/* ------------------------------------------------- institute walking -- */
+
+/*
+  Run #17: with All institutes x All branches x All seat types, JoSAA
+  accepted the POST, held it ~127s and reset the connection, four times to
+  the second. That is their server abandoning a query it cannot finish, so
+  the query is cut per institute. These pin the part of that which can be
+  tested without the live site: picking out the entries that name a real
+  institute.
+*/
+
+test('placeholders and "All" are not institutes', () => {
+  const opts = [
+    { value: '',    text: '--Select Institute--' },
+    { value: 'ALL', text: 'All' },
+    { value: '101', text: 'Indian Institute of Technology Bombay' },
+    { value: '102', text: 'Indian Institute of Technology Delhi' }
+  ];
+  const real = mod.realOptions(opts);
+  assert.deepEqual(real.map(o => o.value), ['101', '102']);
+});
+
+test('an option with no value is a placeholder however it is worded', () => {
+  const opts = [
+    { value: '',    text: 'Select' },
+    { value: '   ', text: 'Choose one' },
+    { value: '55',  text: 'National Institute of Technology Kurukshetra' }
+  ];
+  assert.deepEqual(mod.realOptions(opts).map(o => o.text),
+    ['National Institute of Technology Kurukshetra']);
+});
+
+test('an institute whose name starts with "All" is kept', () => {
+  /*
+    "All" is excluded on an exact match, not a prefix. The first version of
+    this test used a name ending in "Allahabad", which an unanchored regex
+    would also have kept — so it passed with the anchor removed and proved
+    nothing. All India Institute of Medical Sciences is the case that
+    actually distinguishes them.
+  */
+  const opts = [
+    { value: 'ALL', text: 'All' },
+    { value: '90',  text: 'All India Institute of Medical Sciences' },
+    { value: '77',  text: 'Motilal Nehru National Institute of Technology Allahabad' }
+  ];
+  const real = mod.realOptions(opts);
+  assert.deepEqual(real.map(o => o.value), ['90', '77'],
+    'only the bare "All" entry is a filter; the rest are institutions');
+});
+
+test('an empty or missing list yields nothing rather than throwing', () => {
+  assert.deepEqual(mod.realOptions([]), []);
+  assert.deepEqual(mod.realOptions(undefined), []);
+  assert.deepEqual(mod.realOptions([{ value:'', text:'' }]), []);
+});
+
+test('a session knows whether it still holds the institute control', () => {
+  /*
+    This is the check that decides whether the next institute costs two
+    requests or five. Getting it wrong in the optimistic direction posts a
+    form that is not there; the pessimistic direction just re-fetches.
+  */
+  const withForm = new mod.FormSession(AJAX_PAGE);
+  assert.equal(typeof withForm.hasControl, 'function');
+
+  const gone = new mod.FormSession('<html><body><p>Not Available</p></body></html>');
+  assert.equal(gone.hasControl(/ddl_?institute$/i), false,
+    'a results page with no form must report the control as gone');
 });
 
 console.log(`\n${passed} passed`);

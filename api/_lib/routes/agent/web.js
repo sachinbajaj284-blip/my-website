@@ -74,11 +74,54 @@ function today(){
   path, which is a test that agrees with itself.
 */
 module.exports = async function handler(req, res, deps){
-  setCors(req, res, "POST,OPTIONS");
+  setCors(req, res, "GET,POST,OPTIONS");
   if(req.method === "OPTIONS"){
     res.statusCode = 204;
     return res.end();
   }
+  /*
+    GET is a config health check, not a way in.
+
+    Booleans and nothing else — never a value, never a length that could
+    narrow a secret. It exists because "the assistant isn't answering" has
+    several causes that look identical from a browser, and guessing
+    between them from the outside wasted a working afternoon on the JoSAA
+    pipeline. One curl should say which.
+  */
+  if(req.method === "GET"){
+    const hasKey = Boolean(process.env.ANTHROPIC_API_KEY);
+    const firebase = Boolean(process.env.FIREBASE_PROJECT_ID)
+                  && Boolean(process.env.FIREBASE_CLIENT_EMAIL)
+                  && Boolean(process.env.FIREBASE_PRIVATE_KEY);
+
+    let store = false;
+    let storeError = null;
+    if(firebase){
+      try{
+        await checkRateLimit({ key: "agent-web-health", limit: 10_000, windowMs: 60_000 });
+        store = true;
+      }catch(err){
+        storeError = String(err && err.message || "").slice(0, 200);
+      }
+    }
+
+    return json(res, 200, {
+      ok: true,
+      route: "agent/web",
+      deployed: true,
+      anthropic_key: hasKey,
+      firebase_configured: firebase,
+      firestore_reachable: store,
+      firestore_error: storeError,
+      daily_cap: SITE_DAILY_LIMIT,
+      answering: hasKey && firebase && store,
+      missing: [
+        hasKey ? null : "ANTHROPIC_API_KEY",
+        firebase ? null : "FIREBASE_PROJECT_ID / FIREBASE_CLIENT_EMAIL / FIREBASE_PRIVATE_KEY"
+      ].filter(Boolean)
+    });
+  }
+
   if(req.method !== "POST"){
     return json(res, 405, { ok:false, error:"Method not allowed" });
   }
@@ -160,8 +203,20 @@ module.exports = async function handler(req, res, deps){
       personalised: Boolean(uid)
     });
   }catch(err){
-    console.error("[lume agent] web turn failed:", err && err.message);
-    return json(res, 503, { ok:false, session: sessionId,
-      error:"Something went wrong at my end. Please message us on WhatsApp at +91 70156 71280 and a counsellor will help." });
+    /*
+      Name the cause in the log. The two that actually happen are a
+      missing ANTHROPIC_API_KEY and unconfigured Firebase, and from the
+      browser they are the same shrug — which is exactly how a config
+      problem gets mistaken for a broken agent.
+    */
+    const msg = String(err && err.message || "");
+    let cause = "unknown";
+    if(/authentication method|api[_ -]?key/i.test(msg)) cause = "ANTHROPIC_API_KEY is not set";
+    else if(/FIREBASE|credential|Could not load the default/i.test(msg)) cause = "Firebase Admin is not configured";
+    console.error("[lume agent] web turn failed (" + cause + "):", msg);
+
+    return json(res, 503, { ok:false, session: sessionId, cause,
+      reply:"I can't answer right now — something's not set up at my end. Message us on WhatsApp at +91 70156 71280 and a counsellor will pick it up.",
+      error:"Assistant unavailable." });
   }
 };

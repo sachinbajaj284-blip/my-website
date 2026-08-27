@@ -202,9 +202,45 @@ await test("an overlong message is refused rather than truncated and answered", 
   assert.match(res.body.error, /shorten/i);
 });
 
-await test("a GET is not a way in", async () => {
-  const res = await post({ method: "GET", body: {} });
-  assert.equal(res.statusCode, 405);
+await test("a GET reports config and never a secret", async () => {
+  const KEY = "ANTHROPIC_API_KEY";
+  const had = process.env[KEY];
+  process.env[KEY] = "sk-ant-this-must-never-be-echoed";
+  try{
+    const res = await post({ method: "GET", body: {} });
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.body.route, "agent/web");
+    assert.equal(res.body.anthropic_key, true, "should report the key as present");
+
+    const wire = JSON.stringify(res.body);
+    assert.ok(!wire.includes("sk-ant"), "the health check must never echo a secret");
+    assert.ok(!/[0-9]{2,}\s*chars|length/i.test(wire), "not even a length");
+  } finally {
+    if(had === undefined) delete process.env[KEY]; else process.env[KEY] = had;
+  }
+});
+
+await test("a GET says what is missing rather than shrugging", async () => {
+  const KEY = "ANTHROPIC_API_KEY";
+  const had = process.env[KEY];
+  delete process.env[KEY];
+  try{
+    const res = await post({ method: "GET", body: {} });
+    assert.equal(res.body.anthropic_key, false);
+    assert.equal(res.body.answering, false);
+    assert.ok(res.body.missing.includes("ANTHROPIC_API_KEY"),
+      "the whole point is that it names the missing variable");
+  } finally {
+    if(had === undefined) delete process.env[KEY]; else process.env[KEY] = had;
+  }
+});
+
+await test("a GET cannot send a message", async () => {
+  let called = false;
+  const res = await post({ method: "GET", body: { message: "answer me" },
+    agent: async () => { called = true; return { reply:"x", toolCalls:[], usage:{}, rounds:1 }; } });
+  assert.equal(called, false, "a GET must not reach the agent");
+  assert.equal(res.body.reply, undefined);
 });
 
 await test("the first reply issues a session and says it is new", async () => {
