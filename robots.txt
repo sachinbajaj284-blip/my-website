@@ -9,6 +9,7 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /api/
+Disallow: /docs/
 Disallow: /*?*utm_
 Disallow: /*?*fbclid
 
@@ -28,6 +29,7 @@ User-agent: Bingbot
 Allow: /
 Disallow: /admin/
 Disallow: /api/
+Disallow: /docs/
 Disallow: /*?*utm_
 Disallow: /*?*fbclid
 
@@ -41,6 +43,7 @@ User-agent: meta-externalagent
 Allow: /
 Disallow: /admin/
 Disallow: /api/
+Disallow: /docs/
 Disallow: /*?*utm_
 Disallow: /*?*fbclid
 

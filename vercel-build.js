@@ -11,6 +11,12 @@ const skipDirs = new Set([
   // published the schedule and steps of every CI job to anyone who
   // guessed the path.
   ".github",
+  // Engineering and operations notes, same category as .github above. Nothing
+  // on the site links to them, but they were being copied into public/ and
+  // served, so lumelive.co.in/docs/coupons.md, /docs/manual-entitlements.md
+  // and the rest were readable by anyone who guessed the path — including the
+  // mental health growth plan, which opens by saying enquiries are down.
+  "docs",
   ".vercel",
   "api",
   "godaddy-cashfree-node-app",
