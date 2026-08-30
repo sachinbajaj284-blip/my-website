@@ -105,13 +105,24 @@ who the counsellor is, what it costs, confidentiality, what it is *not* (not a d
 emergency care), how to book. Then re-point the ~30 inbound links currently going to the Rohtak
 page: city pages keep linking to Rohtak, everything else goes to the hub.
 
-### 3.3 Programmatic city pages (reuse the career template)
+### 3.3 Programmatic city pages — *shipped*
 
-The 24-city career template already exists and works. Clone it for mental health in the top 10
-metros first — Delhi, Gurugram, Noida, Mumbai, Bangalore, Hyderabad, Pune, Jaipur, Chandigarh,
-Lucknow. Each must carry genuinely local content (local pressures, local helplines, local
-institutions), not a find-and-replace of the city name — thin duplicates get filtered and will
-drag the whole cluster.
+Ten cities, generated from `tools/build-mh-pages.mjs`: Delhi, Gurugram, Noida, Mumbai,
+Bengaluru, Hyderabad, Pune, Jaipur, Chandigarh, Lucknow.
+
+Deliberately **not** cloned from the career template. Measured on article body, two career
+city pages still share 64% of their text, the worst pair 76%, and none of the 24 names a
+single local institution. The mental health pages share at most **38%** with each other, and
+each carries its own pressure profile, concerns, FAQ answers and account of what is already
+available locally.
+
+The rule for an eleventh city: if it cannot be given real local content, it should not be
+added. A cluster of near-duplicates does not just fail to rank — it drags down the pages
+around it.
+
+**On numbers:** Tele-MANAS (14416) is the only helpline quoted on any of these pages. Local
+institutions are named because those names are stable; no local phone number is published
+from memory, because a wrong crisis number on a mental health page does real harm.
 
 ### 3.4 Situational / seasonal content
 
@@ -248,17 +259,22 @@ Still open:
 enquiry form, and we can see every step of that in GA4.
 
 ### Block 2 (Days 31–60) — Build the traffic engine
-- Remaining 4 screener pages + `wellbeing-check.html` hub
-- 5 mental health city pages (Delhi, Gurugram, Noida, Mumbai, Bangalore)
-- Start Reels: 4–5/week off screener page content
-- 2 school seminars booked
-- Empanel first additional counsellor
-- 24h/72h WhatsApp follow-up live
+
+Shipped:
+- [x] Remaining 4 screener pages + `wellbeing-check.html` hub
+- [x] 10 city pages — Delhi, Gurugram, Noida, Mumbai, Bengaluru, Hyderabad, Pune, Jaipur,
+      Chandigarh, Lucknow (Block 3's five brought forward)
+
+Still open — none of these are code:
+- [ ] Start Reels: 4–5/week off screener page content
+- [ ] 2 school seminars booked
+- [ ] Empanel first additional counsellor
+- [ ] 24h/72h WhatsApp follow-up live
 
 **Exit criteria:** organic mental health sessions per week is a number that moves, not zero.
 
 ### Block 3 (Days 61–90) — Scale what proved out
-- 5 more city pages; situational pages built ahead of the season
+- Situational pages built ahead of the season (city pages shipped in Block 2)
 - Turn on paid at Rs 300–500/day to screener pages only
 - Weekly YouTube explainer + clip repurposing
 - Review: which screener converts best → double down there, cut what doesn't
