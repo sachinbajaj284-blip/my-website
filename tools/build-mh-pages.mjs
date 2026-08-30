@@ -71,6 +71,13 @@ function buildCity(c) {
     ['for-parents.html', 'For parents: spotting the signs early'],
   ];
 
+  /* Every city page links to every other one. Without this each hangs off a single
+     link from the hub, which is not enough for any of them to be found. */
+  const others = CITIES.filter(o => o.slug !== c.slug)
+    .map(o => `<a href="${o.slug}">${o.city}</a>`)
+    .concat('<a href="mental-health-counselling-rohtak.html">Rohtak</a>')
+    .join(' &middot;\n      ');
+
   const body = `<h2>Talking to someone qualified in ${c.city} &mdash; without the awkwardness</h2>
     ${c.pressure}
 
@@ -128,7 +135,13 @@ ${c.why.split('\n').map(l => '    ' + l.trim()).join('\n')}
         <a class="btn" href="book-session.html">Pick a slot &rarr;</a>
         <a class="btn wa" href="https://wa.me/917015671280?text=${encodeURIComponent(`Hello Lume Live! I would like to book a mental health session in ${c.city}. 💛`)}" target="_blank" rel="noopener">Ask on WhatsApp</a>
       </div>
-    </div>`;
+    </div>
+
+    <h2>Counselling in other cities</h2>
+    <p>Sessions are online, so these pages differ in what the local pressure looks like rather than in who you would be talking to.</p>
+    <p class="citylist">
+      ${others}
+    </p>`;
 
   return page({
     slug: c.slug,
