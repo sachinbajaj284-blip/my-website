@@ -1,0 +1,62 @@
+/* Lume Live — wellbeing check styles.
+   index.css and assessment.css carried byte-identical copies of this block, and
+   for-working-professionals.html a third inline one that had already drifted. It
+   now lives in one file every screener page shares, alongside lume-wellbeing-check.js.
+
+   The rules below read the site's brand variables. Pages that don't define them
+   (standalone screener landing pages) inherit the fallbacks declared here. */
+:root{
+  --ll-navy:#0D1B40; --ll-teal:#0A6E6E; --ll-gold:#C9933A;
+  --ll-dark:#1A2C2C; --ll-mid:#4A6060;
+}
+.ll-check-btn{margin-top:14px;border:1px solid rgba(10,110,110,.2);background:#F7FBFA;color:var(--teal,var(--ll-teal));border-radius:8px;padding:9px 12px;font-size:.74rem;font-weight:800;cursor:pointer;transition:all .22s;display:inline-flex;align-items:center;justify-content:center;gap:6px;line-height:1.2;}
+.ll-check-btn:hover,.ll-check-btn:focus{background:var(--teal,var(--ll-teal));color:#fff;box-shadow:0 8px 22px rgba(10,110,110,.18);transform:translateY(-1px);outline:none;}
+.ll-check-row,.svc-check-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.ll-check-note{margin:10px 0 0;font-size:.72rem;line-height:1.55;opacity:.75;max-width:60ch;}
+.svc-check-row .ll-check-btn{background:#fff;margin-top:0;}
+.ll-check-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(13,27,64,.58);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);}
+.ll-check-modal.open{display:flex;}
+.ll-check-dialog{width:min(680px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:12px;box-shadow:0 28px 80px rgba(0,0,0,.28);position:relative;border:1px solid rgba(255,255,255,.5);}
+.ll-check-head{padding:22px 24px 15px;border-bottom:1px solid #E6EDEC;}
+.ll-check-head small{display:block;font-size:.68rem;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold,var(--ll-gold));margin-bottom:5px;}
+.ll-check-head h3{font-family:'Playfair Display',serif;color:var(--navy,var(--ll-navy));font-size:1.35rem;line-height:1.2;margin:0 36px 7px 0;}
+.ll-check-head p{font-size:.8rem;color:var(--mid,var(--ll-mid));line-height:1.6;margin:0;}
+.ll-check-x{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;border:1px solid #E1E8E7;background:#fff;color:var(--dark,var(--ll-dark));font-size:1.1rem;cursor:pointer;}
+.ll-check-body{padding:20px 24px 24px;}
+.ll-progress{height:7px;background:#E9F0EF;border-radius:999px;overflow:hidden;margin:0 0 18px;}
+.ll-progress span{display:block;height:100%;background:linear-gradient(90deg,var(--teal,var(--ll-teal)),var(--gold,var(--ll-gold)));width:0;transition:width .25s;}
+.ll-q-count{font-size:.72rem;color:var(--mid,var(--ll-mid));font-weight:800;text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;}
+.ll-question{font-size:1rem;font-weight:800;color:var(--dark,var(--ll-dark));line-height:1.45;margin-bottom:14px;}
+.ll-options{display:grid;gap:8px;}
+.ll-option{border:1px solid #DDE7E5;background:#fff;border-radius:8px;padding:11px 13px;text-align:left;cursor:pointer;color:var(--dark,var(--ll-dark));font-size:.84rem;line-height:1.35;transition:all .2s;}
+.ll-option.selected{border-color:var(--teal,var(--ll-teal));background:#ECF7F6;box-shadow:0 0 0 3px rgba(10,110,110,.08);}
+.ll-nav{display:flex;justify-content:space-between;gap:10px;margin-top:18px;}
+.ll-nav button,.ll-result-actions button,.ll-result-actions a{border:none;border-radius:8px;padding:11px 15px;font-size:.78rem;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;}
+.ll-secondary{background:#EEF3F2;color:var(--dark,var(--ll-dark));}
+.ll-primary{background:var(--teal,var(--ll-teal));color:#fff;}
+.ll-gold{background:var(--gold,var(--ll-gold));color:#fff;}
+.ll-error{min-height:18px;color:#B3442E;font-size:.75rem;font-weight:700;margin-top:8px;}
+.ll-result-band{border-left:4px solid var(--teal,var(--ll-teal));background:#F7FBFA;border-radius:8px;padding:14px 16px;margin:12px 0;}
+.ll-result-band b{display:block;color:var(--navy,var(--ll-navy));font-size:1.05rem;margin-bottom:4px;}
+.ll-result-band span{display:block;color:var(--mid,var(--ll-mid));font-size:.82rem;line-height:1.55;}
+.ll-result-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+.ll-note{width:100%;min-height:78px;border:1px solid #DDE7E5;border-radius:8px;padding:11px;font:inherit;font-size:.82rem;resize:vertical;margin-top:12px;}
+.ll-menu{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.ll-menu button{border:1px solid #DDE7E5;background:#fff;border-radius:8px;padding:16px;text-align:left;cursor:pointer;}
+.ll-menu b{display:block;color:var(--navy,var(--ll-navy));margin-bottom:4px;}
+.ll-menu span{font-size:.78rem;color:var(--mid,var(--ll-mid));line-height:1.5;}
+@media(max-width:640px){
+  .ll-check-dialog{max-height:95vh;border-radius:10px;}
+  .ll-check-head,.ll-check-body{padding-left:18px;padding-right:18px;}
+  .ll-menu{grid-template-columns:1fr;}
+  .ll-nav{position:sticky;bottom:0;background:#fff;padding-top:10px;}
+}
+
+/* Touch targets — index.css and assessment.css apply these via a shared rule that
+   new screener pages don't load, so the screener carries its own copy. */
+.ll-check-btn,.ll-option{touch-action:manipulation;}
+@media(max-width:640px){
+  .ll-check-btn,.ll-option{min-height:44px;}
+  .ll-check-dialog{max-height:calc(100dvh - 28px);}
+  .ll-check-modal{padding-top:max(18px,env(safe-area-inset-top));padding-bottom:max(18px,env(safe-area-inset-bottom));}
+}
