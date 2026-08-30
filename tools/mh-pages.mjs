@@ -36,9 +36,9 @@ const esc = s => String(s).replace(/&(?!#?\w+;)/g, '&amp;').replace(/</g, '&lt;'
 const wa = t => `https://wa.me/${WA}?text=${encodeURIComponent(t)}`;
 
 /* ── the crisis box, identical everywhere on purpose ───────────────────── */
-const CRISIS = `<div class="crisis"><b>If this is an emergency:</b> counselling is not a crisis service. If you or someone near you is in immediate distress or having thoughts of self-harm, call <b>Tele-MANAS 14416</b> (the Government of India's free, 24&times;7 mental health helpline) or go to the nearest hospital emergency department right away. Please don't wait for a session.</div>`;
+const CRISIS = `<div class="crisis"><b>If this is an emergency:</b> counselling isn't a crisis service. If you or someone near you is in immediate danger, or having thoughts of self-harm, call <b>Tele-MANAS on 14416</b> now. It's free, it's 24&times;7, and it's run by the Government of India. Or go straight to the nearest hospital emergency department. Please don't sit and wait for a session.</div>`;
 
-const NOT_A_DIAGNOSIS = `<p class="ll-check-note" style="margin-top:14px">These are reflection tools for self-awareness and counselling discussion. They are not a diagnosis, and no questionnaire can give you one.</p>`;
+const NOT_A_DIAGNOSIS = `<p class="ll-check-note" style="margin-top:14px">These are reflection tools, meant for thinking with and for talking through with a counsellor. None of them is a diagnosis, and no questionnaire anywhere can hand you one.</p>`;
 
 /* ── shared page shell ─────────────────────────────────────────────────── */
 function page(o) {
