@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 176" role="img" aria-labelledby="hcTitle" preserveAspectRatio="xMidYMid meet">
+  <title id="hcTitle">A slow breath drawn as widening rings</title>
+  <defs>
+    <radialGradient id="hcGlow" cx="50%" cy="88%" r="56%">
+      <stop offset="0%" stop-color="#E8B84E" stop-opacity=".30"/>
+      <stop offset="45%" stop-color="#0A6E6E" stop-opacity=".14"/>
+      <stop offset="100%" stop-color="#0A6E6E" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="hcFade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#FFE2A3" stop-opacity="0"/>
+      <stop offset="24%" stop-color="#FFE2A3" stop-opacity="1"/>
+      <stop offset="76%" stop-color="#FFE2A3" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#FFE2A3" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="hcFloor" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#FFE2A3" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#FFE2A3" stop-opacity=".30"/>
+      <stop offset="100%" stop-color="#FFE2A3" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <ellipse cx="200" cy="162" rx="168" ry="88" fill="url(#hcGlow)"/>
+
+  <!-- the out-breath is longer than the in-breath, so each ring sits further from the last -->
+  <g fill="none" stroke="url(#hcFade)" stroke-linecap="round">
+    <path d="M174 158 A26 26 0 0 1 226 158"   stroke-width="2.6" stroke-opacity=".92"/>
+    <path d="M150 158 A50 50 0 0 1 250 158"   stroke-width="2.3" stroke-opacity=".70"/>
+    <path d="M122 158 A78 78 0 0 1 278 158"   stroke-width="2.0" stroke-opacity=".50"/>
+    <path d="M90 158 A110 110 0 0 1 310 158"  stroke-width="1.8" stroke-opacity=".33"/>
+    <path d="M54 158 A146 146 0 0 1 346 158"  stroke-width="1.6" stroke-opacity=".18"/>
+  </g>
+
+  <circle cx="200" cy="158" r="4.2" fill="#FFE2A3" fill-opacity=".95"/>
+  <path d="M40 158 L360 158" stroke="url(#hcFloor)" stroke-width="1.4" fill="none"/>
+</svg>

@@ -333,6 +333,7 @@ a:active{transform:scale(.985)}
       var status = String(data.order_status || "").toUpperCase();
       if(status === "PAID"){
         grantAccess({cf_order_id:data.cf_order_id||"",amount:data.order_amount||"",customer:data.customer||{}});
+        if(window.gtag) gtag('event','booking_paid',{event_category:'booking',event_label:sku,value:Number(data.order_amount)||0,currency:'INR'});
         if(skuTargets[sku]){
           returnTitle.textContent = skuTargets[sku].title;
           continueLink.textContent = skuTargets[sku].label;

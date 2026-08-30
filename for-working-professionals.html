@@ -228,6 +228,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lume-wellbeing-check.css">
 <style>
 :root{
   --navy:#0D1B40;--navy2:#1A2E5E;--teal:#0A6E6E;--teal2:#0E8C8C;
@@ -709,47 +710,6 @@ section{padding:80px 20px;}
 .ewb-card:hover .ewb-card-icon{transform:scale(1.2);}
 .ewb-card h4{font-size:.88rem;font-weight:700;color:var(--dark);margin-bottom:8px;}
 .ewb-card p{font-size:.78rem;color:var(--mid);line-height:1.65;}
-.ll-check-btn{margin-top:14px;border:1px solid rgba(10,110,110,.2);background:#F7FBFA;color:var(--teal);border-radius:8px;padding:9px 12px;font-size:.74rem;font-weight:800;cursor:pointer;transition:all .22s;display:inline-flex;align-items:center;justify-content:center;gap:6px;line-height:1.2;}
-.ll-check-btn:hover,.ll-check-btn:focus{background:var(--teal);color:#fff;box-shadow:0 8px 22px rgba(10,110,110,.18);transform:translateY(-1px);outline:none;}
-.ll-check-row,.svc-check-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
-.svc-check-row .ll-check-btn{background:#fff;margin-top:0;}
-.ll-check-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(13,27,64,.58);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);}
-.ll-check-modal.open{display:flex;}
-.ll-check-dialog{width:min(680px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:12px;box-shadow:0 28px 80px rgba(0,0,0,.28);position:relative;border:1px solid rgba(255,255,255,.5);}
-.ll-check-head{padding:22px 24px 15px;border-bottom:1px solid #E6EDEC;}
-.ll-check-head small{display:block;font-size:.68rem;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:5px;}
-.ll-check-head h3{font-family:'Playfair Display',serif;color:var(--navy);font-size:1.35rem;line-height:1.2;margin:0 36px 7px 0;}
-.ll-check-head p{font-size:.8rem;color:var(--mid);line-height:1.6;margin:0;}
-.ll-check-x{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;border:1px solid #E1E8E7;background:#fff;color:var(--dark);font-size:1.1rem;cursor:pointer;}
-.ll-check-body{padding:20px 24px 24px;}
-.ll-progress{height:7px;background:#E9F0EF;border-radius:999px;overflow:hidden;margin:0 0 18px;}
-.ll-progress span{display:block;height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));width:0;transition:width .25s;}
-.ll-q-count{font-size:.72rem;color:var(--mid);font-weight:800;text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;}
-.ll-question{font-size:1rem;font-weight:800;color:var(--dark);line-height:1.45;margin-bottom:14px;}
-.ll-options{display:grid;gap:8px;}
-.ll-option{border:1px solid #DDE7E5;background:#fff;border-radius:8px;padding:11px 13px;text-align:left;cursor:pointer;color:var(--dark);font-size:.84rem;line-height:1.35;transition:all .2s;}
-.ll-option.selected{border-color:var(--teal);background:#ECF7F6;box-shadow:0 0 0 3px rgba(10,110,110,.08);}
-.ll-nav{display:flex;justify-content:space-between;gap:10px;margin-top:18px;}
-.ll-nav button,.ll-result-actions button,.ll-result-actions a{border:none;border-radius:8px;padding:11px 15px;font-size:.78rem;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;}
-.ll-secondary{background:#EEF3F2;color:var(--dark);}
-.ll-primary{background:var(--teal);color:#fff;}
-.ll-gold{background:var(--gold);color:#fff;}
-.ll-error{min-height:18px;color:#B3442E;font-size:.75rem;font-weight:700;margin-top:8px;}
-.ll-result-band{border-left:4px solid var(--teal);background:#F7FBFA;border-radius:8px;padding:14px 16px;margin:12px 0;}
-.ll-result-band b{display:block;color:var(--navy);font-size:1.05rem;margin-bottom:4px;}
-.ll-result-band span{display:block;color:var(--mid);font-size:.82rem;line-height:1.55;}
-.ll-result-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
-.ll-note{width:100%;min-height:78px;border:1px solid #DDE7E5;border-radius:8px;padding:11px;font:inherit;font-size:.82rem;resize:vertical;margin-top:12px;}
-.ll-menu{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.ll-menu button{border:1px solid #DDE7E5;background:#fff;border-radius:8px;padding:16px;text-align:left;cursor:pointer;}
-.ll-menu b{display:block;color:var(--navy);margin-bottom:4px;}
-.ll-menu span{font-size:.78rem;color:var(--mid);line-height:1.5;}
-@media(max-width:640px){
-  .ll-check-dialog{max-height:95vh;border-radius:10px;}
-  .ll-check-head,.ll-check-body{padding-left:18px;padding-right:18px;}
-  .ll-menu{grid-template-columns:1fr;}
-  .ll-nav{position:sticky;bottom:0;background:#fff;padding-top:10px;}
-}
 .ewb-why{background:#fff;border-radius:16px;padding:36px 32px;box-shadow:0 2px 20px rgba(0,0,0,.04);margin-bottom:40px;}
 .ewb-why-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
 .ewb-why-item{display:flex;align-items:flex-start;gap:14px;padding:16px;background:var(--gray);border-radius:10px;transition:all 0.35s ease;position:relative;overflow:hidden;}
@@ -1632,6 +1592,13 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
         <a class="primary" href="#self-assessments">Begin Lume Lens &rarr;</a>
         <a class="secondary" href="#" onclick="openAuth('signup');return false;">Sign Up / Save Progress</a>
       </div>
+      <div class="ll-check-row" aria-label="Free wellbeing self-checks">
+        <button type="button" class="ll-check-btn" data-ll-open="workStress">&#129504; Work stress check &middot; 2 min</button>
+        <a class="ll-check-btn" href="work-stress-burnout-test.html">About the burnout check</a>
+        <button type="button" class="ll-check-btn" data-ll-open="phq4Anxiety">Anxiety &amp; low mood check</button>
+        <button type="button" class="ll-check-btn" data-ll-open="wellbeingMenu">More wellbeing checks</button>
+      </div>
+      <p class="ll-check-note">Free, anonymous and not stored &mdash; your answers stay in your browser. These are reflection tools, not a diagnosis.</p>
     </div>
     <div class="assessment-flow-card anim scale">
       <h2>How Lume Lens works</h2>
@@ -5276,152 +5243,6 @@ function setMode(el, mode){
   updateSessionWA();
 }
 </script>
-<script>
-(function(){
-  var WA_PHONE="917015671280";
-  var modal,state,currentResult;
-  var commonDisclaimer="This is a brief self-check for reflection and counselling discussion. It is not a diagnosis, emergency service, or replacement for professional care.";
-  var freq4=[[0,"Not at all"],[1,"Several days"],[2,"More than half the days"],[3,"Nearly every day"]];
-  var agree4=[[0,"Strongly disagree"],[1,"Disagree"],[2,"Agree"],[3,"Strongly agree"]];
-  var agree7=[[1,"Strongly disagree"],[2,"Disagree"],[3,"Slightly disagree"],[4,"Neutral"],[5,"Slightly agree"],[6,"Agree"],[7,"Strongly agree"]];
-  function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];});}
-  function band(score,bands){for(var i=0;i<bands.length;i++){if(score<=bands[i].max)return bands[i];}return bands[bands.length-1];}
-  function sum(arr){return arr.reduce(function(a,b){return a+Number(b||0);},0);}
-  function ensureModal(){
-    if(modal)return modal;
-    modal=document.createElement("div");
-    modal.className="ll-check-modal";
-    modal.innerHTML='<div class="ll-check-dialog" role="dialog" aria-modal="true" aria-labelledby="llCheckTitle">'+
-      '<button class="ll-check-x" type="button" data-ll-close aria-label="Close">&times;</button>'+
-      '<div class="ll-check-head"><small id="llCheckKicker">Self-check</small><h3 id="llCheckTitle"></h3><p id="llCheckDesc"></p></div>'+
-      '<div class="ll-check-body" id="llCheckBody"></div></div>';
-    document.body.appendChild(modal);
-    modal.addEventListener("click",function(e){if(e.target===modal||e.target.closest("[data-ll-close]"))close();});
-    document.addEventListener("keydown",function(e){if(e.key==="Escape"&&modal.classList.contains("open"))close();});
-    return modal;
-  }
-  function setHead(title,desc,kicker){
-    ensureModal();
-    document.getElementById("llCheckTitle").textContent=title;
-    document.getElementById("llCheckDesc").textContent=desc||commonDisclaimer;
-    document.getElementById("llCheckKicker").textContent=kicker||"Free self-check";
-  }
-  function open(id){
-    ensureModal();
-    if(id==="wellbeingMenu"){renderMenu();return;}
-    state={id:id,index:0,answers:[]};
-    currentResult=null;
-    modal.classList.add("open");
-    document.body.style.overflow="hidden";
-    renderQuestion();
-  }
-  function close(){
-    if(!modal)return;
-    modal.classList.remove("open");
-    document.body.style.overflow="";
-    state=null;
-  }
-  function renderMenu(){
-    setHead("Wellbeing & Life Satisfaction Checks","Choose one short reflection. These tools are for self-awareness and counselling discussion, not diagnosis.","Free wellbeing checks");
-    document.getElementById("llCheckBody").innerHTML='<div class="ll-menu">'+
-      '<button type="button" data-ll-open="lifeSat"><b>Satisfaction With Life Check</b><span>Five questions about overall life satisfaction.</span></button>'+
-      '<button type="button" data-ll-open="flourishing"><b>Flourishing Check</b><span>Eight questions about meaning, relationships, competence and optimism.</span></button>'+
-      '</div>';
-    modal.classList.add("open");
-    document.body.style.overflow="hidden";
-  }
-  var tests={
-    phq4Anxiety:{title:"PHQ-4: Anxiety + Low Mood Quick Check",desc:"A 2-minute screening/reflection. It flags anxiety and low mood symptoms over the last two weeks, but it does not diagnose.",items:["Feeling nervous, anxious or on edge","Not being able to stop or control worrying","Little interest or pleasure in doing things","Feeling down, depressed or hopeless"],scale:freq4,next:"gad7",focus:"anxiety",score:scorePhq4},
-    phq4Mood:{title:"PHQ-4: Low Mood Quick Check",desc:"A brief screening/reflection for anxiety and low mood symptoms over the last two weeks. It is not a diagnosis.",items:["Feeling nervous, anxious or on edge","Not being able to stop or control worrying","Little interest or pleasure in doing things","Feeling down, depressed or hopeless"],scale:freq4,focus:"mood",score:scorePhq4},
-    gad7:{title:"GAD-7: Anxiety Self-Check",desc:"A short anxiety screening/reflection for the last two weeks. Use the result as a starting point for support, not as a diagnosis.",items:["Feeling nervous, anxious or on edge","Not being able to stop or control worrying","Worrying too much about different things","Trouble relaxing","Being so restless that it is hard to sit still","Becoming easily annoyed or irritable","Feeling afraid as if something awful might happen"],scale:freq4,score:function(a){var total=sum(a),b=band(total,[{max:4,name:"Minimal anxiety range"},{max:9,name:"Mild anxiety range"},{max:14,name:"Moderate anxiety range"},{max:21,name:"Severe anxiety range"}]);return {scoreLabel:total+" / 21",band:b.name,summary:"Your answers fall in the "+b.name.toLowerCase()+".",detail:"If worry is affecting sleep, study, work, relationships or daily choices, a counselling conversation can help you make a practical next plan."};}},
-    selfEsteem:{title:"Rosenberg Self-Esteem Scale",desc:"A confidence and self-worth reflection. Scores can shift with stress, context and support.",items:["On the whole, I feel satisfied with myself.","I feel that I have a number of good qualities.","At times I feel I do not have much to be proud of.","I am able to do things as well as most other people.","I sometimes feel useless.","I feel I am a person of worth, at least equal to others.","I take a positive attitude toward myself.","I wish I could have more respect for myself.","I tend to feel that I am not good at anything.","I sometimes think my self-view is too negative."],scale:agree4,reverse:[2,4,7,8,9],score:function(a,t){var total=a.reduce(function(s,v,i){v=Number(v);return s+(t.reverse.indexOf(i)>-1?3-v:v);},0),b=band(total,[{max:14,name:"Lower self-esteem range"},{max:25,name:"Typical self-esteem range"},{max:30,name:"Higher self-esteem range"}]);return {scoreLabel:total+" / 30",band:b.name,summary:"Your responses fall in the "+b.name.toLowerCase()+".",detail:"This is best read as a snapshot. If self-criticism is limiting your choices, counselling can help build a kinder and more accurate self-view."};}},
-    lifeSat:{title:"Satisfaction With Life Check",desc:"A five-question life satisfaction reflection using common wellbeing domains. It is not a diagnosis.",items:["In most ways, my life feels close to what I want it to be.","My current life conditions feel good enough for me right now.","I feel satisfied with my life overall.","So far, I have been able to reach many things that matter to me.","If I could start again, I would keep many major parts of my life."],scale:agree7,score:function(a){var total=sum(a),b=band(total,[{max:9,name:"Very dissatisfied range"},{max:14,name:"Dissatisfied range"},{max:19,name:"Slightly dissatisfied range"},{max:20,name:"Neutral range"},{max:25,name:"Slightly satisfied range"},{max:30,name:"Satisfied range"},{max:35,name:"Highly satisfied range"}]);return {scoreLabel:total+" / 35",band:b.name,summary:"Your responses fall in the "+b.name.toLowerCase()+".",detail:"Life satisfaction can change as stress, support, health and relationships change. Use this as a reflection point, not a fixed label."};}},
-    flourishing:{title:"Flourishing Check",desc:"A wellbeing reflection across meaning, relationships, engagement, competence and optimism. It is not a clinical scale.",items:["I lead a purposeful and meaningful life.","My relationships feel supportive and rewarding.","I am engaged and interested in my daily activities.","I contribute to other people's wellbeing in some way.","I feel competent in responsibilities that matter to me.","I am generally optimistic about my future.","People usually respect me for who I am.","I have enough direction to keep growing."],scale:agree7,score:function(a){var total=sum(a),b=band(total,[{max:31,name:"Needs support / rebuilding range"},{max:43,name:"Mixed flourishing range"},{max:56,name:"Strong flourishing range"}]);return {scoreLabel:total+" / 56",band:b.name,summary:"Your responses suggest a "+b.name.toLowerCase()+".",detail:"There are no diagnostic cutoffs here. Look at which areas feel low and bring those themes into a counselling or mentoring conversation."};}},
-    workStress:{title:"COPSOQ III Workplace / Study Stress Reflection",desc:"A short psychosocial stress reflection inspired by work-stress domains. It is not a diagnosis and is not a full COPSOQ III administration.",items:["My workload or study load feels too heavy.","I feel rushed or under time pressure most days.","I have too little control over how I complete my work or study tasks.","Expectations from others feel unclear or conflicting.","I do not receive enough support when demands are high.","My effort often feels unnoticed or unrewarded.","Work or study pressure spills into sleep, health or family time.","I feel emotionally drained by work, classes or responsibilities.","I worry about making mistakes because the consequences feel heavy.","I struggle to recover energy after demanding days."],scale:freq4,score:function(a){var total=sum(a),b=band(total,[{max:8,name:"Lower strain range"},{max:15,name:"Moderate strain range"},{max:22,name:"High strain range"},{max:30,name:"Very high strain range"}]);return {scoreLabel:total+" / 30",band:b.name,summary:"Your answers fall in the "+b.name.toLowerCase()+".",detail:"Higher strain suggests it may help to review workload, boundaries, support and recovery. If symptoms feel intense or persistent, seek professional support."};}},
-    careerValues:{title:"Career Values & Work Drivers Preview",desc:"A short preview of the paid suite's original career values tool. The full paid report gives a broader combined picture.",type:"dimensions",items:[
-      {q:"When choosing a future role, I would most want to protect:",options:driverOptions("deep expertise","a chance to lead","freedom in how I work","a secure path","building something new","useful impact","stretch goals","fit with my whole life")},
-      {q:"The opportunity that would energise me most includes:",options:driverOptions("becoming highly skilled","guiding people","working independently","clear stability","creating a venture","helping a cause","hard problems","healthy balance")},
-      {q:"I would feel frustrated if my work had too little:",options:driverOptions("room to improve craft","influence on decisions","personal choice","predictability","space for new ideas","meaningful contribution","challenge","time outside work")},
-      {q:"Success would feel most real when I can say:",options:driverOptions("I became excellent","I shaped direction","I stayed self-directed","I built security","I made my idea real","I helped people","I grew through difficulty","I lived sustainably")},
-      {q:"A counsellor should especially understand that I value:",options:driverOptions("mastery","influence","autonomy","stability","enterprise","service","challenge","work-life fit")}
-    ],score:scoreDimension},
-    learningPrefs:{title:"Learning Preferences Preview",desc:"A short preview of the paid suite's original learning preferences tool. It describes useful study supports, not ability or limits.",type:"dimensions",items:[
-      {q:"When a topic is new, I prefer to start with:",options:learningOptions("a diagram or overview","a spoken explanation","a written summary","a practical example")},
-      {q:"For revision, I usually trust:",options:learningOptions("charts and visual maps","discussion or teaching aloud","notes and lists","practice questions")},
-      {q:"Feedback is clearest when it is:",options:learningOptions("shown with marked examples","talked through calmly","written in specific points","applied in another attempt")},
-      {q:"I remember best after:",options:learningOptions("seeing structure","hearing or saying it","writing it in my words","doing a task with it")},
-      {q:"A strong study plan for me should include:",options:learningOptions("visual organisers","discussion time","written checklists","mock practice")}
-    ],score:scoreDimension}
-  };
-  function driverOptions(a,b,c,d,e,f,g,h){var keys=["Mastery","Influence","Autonomy","Stability","Enterprise","Service","Challenge","Work-Life Fit"],texts=[a,b,c,d,e,f,g,h];return keys.map(function(k,i){return {key:k,text:texts[i]};});}
-  function learningOptions(a,b,c,d){var keys=["Visual Structure","Spoken Discussion","Written Notes","Hands-On Practice"],texts=[a,b,c,d];return keys.map(function(k,i){return {key:k,text:texts[i]};});}
-  function scorePhq4(a,t){
-    var anxiety=Number(a[0])+Number(a[1]),mood=Number(a[2])+Number(a[3]),total=anxiety+mood;
-    var b=band(total,[{max:2,name:"Normal range"},{max:5,name:"Mild range"},{max:8,name:"Moderate range"},{max:12,name:"Severe range"}]);
-    var focus=t.focus==="mood"?"low mood subscore: "+mood+" / 6":"anxiety subscore: "+anxiety+" / 6";
-    return {scoreLabel:total+" / 12",band:b.name,summary:"Your PHQ-4 total is in the "+b.name.toLowerCase()+"; "+focus+".",detail:"A subscore of 3 or more on anxiety or low mood can be a useful signal to discuss support, especially if symptoms affect daily life.",next:t.next};
-  }
-  function scoreDimension(a,t){
-    var counts={},top;
-    t.items[0].options.forEach(function(o){counts[o.key]=0;});
-    a.forEach(function(k){counts[k]=(counts[k]||0)+1;});
-    top=Object.keys(counts).map(function(k){return {name:k,score:counts[k]};}).sort(function(x,y){return y.score-x.score;});
-    return {scoreLabel:top[0].score+" selections",band:top[0].name,summary:"Your strongest preview theme is "+top[0].name+".",detail:"This preview is intentionally short. The paid suite combines this with interests, personality, values and a fuller report."};
-  }
-  function answeredCount(){return state.answers.filter(function(v){return v!==undefined&&v!==null&&v!=="";}).length;}
-  function renderQuestion(){
-    var t=tests[state.id],item=t.items[state.index],total=t.items.length,ans=state.answers[state.index];
-    setHead(t.title,t.desc,"Free self-check");
-    var options=(item.options||t.scale.map(function(s){return {key:String(s[0]),text:s[1]};})).map(function(o){
-      var selected=String(ans)===String(o.key)?" selected":"";
-      return '<button class="ll-option'+selected+'" type="button" data-ll-answer="'+esc(o.key)+'">'+esc(o.text)+'</button>';
-    }).join("");
-    document.getElementById("llCheckBody").innerHTML='<div class="ll-progress"><span style="width:'+Math.round(answeredCount()/total*100)+'%"></span></div>'+
-      '<div class="ll-q-count">Question '+(state.index+1)+' of '+total+'</div>'+
-      '<div class="ll-question">'+esc(item.q||item)+'</div><div class="ll-options">'+options+'</div>'+
-      '<div class="ll-error" id="llCheckError"></div>'+
-      '<div class="ll-nav"><button class="ll-secondary" type="button" data-ll-back '+(state.index===0?"disabled":"")+'>Back</button>'+
-      '<button class="ll-primary" type="button" data-ll-next>'+(state.index===total-1?"See Result":"Next")+'</button></div>';
-  }
-  function renderResult(){
-    var t=tests[state.id],result=t.score(state.answers,t);
-    currentResult={test:t.title,result:result};
-    setHead(t.title,"Your result is a reflection snapshot. It is not a diagnosis, and it is not stored by this page.","Result");
-    document.getElementById("llCheckBody").innerHTML='<div class="ll-progress"><span style="width:100%"></span></div>'+
-      '<div class="ll-result-band"><b>'+esc(result.band)+'</b><span>Score: '+esc(result.scoreLabel)+'</span></div>'+
-      '<p style="color:var(--dark);font-size:.9rem;line-height:1.65;margin:0 0 8px;">'+esc(result.summary)+'</p>'+
-      '<p style="color:var(--mid);font-size:.82rem;line-height:1.65;margin:0;">'+esc(result.detail)+'</p>'+
-      '<textarea class="ll-note" id="llCheckNote" placeholder="Optional message for the counsellor"></textarea>'+
-      '<div class="ll-result-actions">'+
-      '<button class="ll-gold" type="button" data-ll-book>Book Rs 249 first session</button>'+
-      (result.next?'<button class="ll-primary" type="button" data-ll-open="'+esc(result.next)+'">Continue to GAD-7</button>':'')+
-      '<button class="ll-secondary" type="button" data-ll-retake>Retake</button></div>';
-  }
-  function book(){
-    if(!currentResult)return;
-    var note=document.getElementById("llCheckNote");
-    var msg=["Hello Lume Live!","","I completed a Lume Live self-check and would like to book the ₹249 first session. 💛","","My Self-Check","• Test: "+currentResult.test,"• Result band: "+currentResult.result.band,"• Score: "+currentResult.result.scoreLabel];
-    if(note&&note.value.trim())msg.push("Message: "+note.value.trim());
-    window.open("https://wa.me/"+WA_PHONE+"?text="+encodeURIComponent(msg.join("\n")),"_blank","noopener");
-  }
-  document.addEventListener("click",function(e){
-    var opener=e.target.closest("[data-ll-open]");
-    if(opener){e.preventDefault();e.stopPropagation();open(opener.getAttribute("data-ll-open"));return;}
-    if(!state)return;
-    var answer=e.target.closest("[data-ll-answer]");
-    if(answer){state.answers[state.index]=answer.getAttribute("data-ll-answer");renderQuestion();return;}
-    if(e.target.closest("[data-ll-back]")){if(state.index>0){state.index--;renderQuestion();}return;}
-    if(e.target.closest("[data-ll-next]")){
-      if(state.answers[state.index]===undefined){var err=document.getElementById("llCheckError");if(err)err.textContent="Please choose an option to continue.";return;}
-      if(state.index<tests[state.id].items.length-1){state.index++;renderQuestion();}else{renderResult();}
-      return;
-    }
-    if(e.target.closest("[data-ll-retake]")){state.index=0;state.answers=[];currentResult=null;renderQuestion();return;}
-    if(e.target.closest("[data-ll-book]")){book();}
-  },true);
-  window.lumeOpenSelfCheck=open;
-})();
-</script>
 <!-- ══ FLOATING CTA ══ -->
 
 
@@ -5651,6 +5472,7 @@ function setMode(el, mode){
 <script src="lume-coupons.js" defer></script>
 <script src="lume-auth.js" defer></script>
 <script src="cashfree-payments.js" defer></script>
+<script src="lume-wellbeing-check.js" defer></script>
 <script src="site-anim.js" defer></script>
   <script src="lume-capture.js" defer></script>
 </body>
