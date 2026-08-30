@@ -24,19 +24,26 @@ assets Lume Live already owns.
 
 ### Gaps that are capping growth
 
-1. **The mental health offer has no published price and no direct booking.**
-   `services-pricing.html` lists *"1:1 Career and Mental Health Support — Custom, based on need"*
-   with a **"Send Support Enquiry"** button, while the self-check modal promises **Rs 249**.
-   Two contradictory prices, and the only mental-health-specific path is an enquiry form.
-   Career counselling can be bought in one click; mental health cannot. This is the biggest
-   single conversion leak.
+1. **Every option that *names* mental health is priceless.** `services-pricing.html` lists
+   *"1:1 Career and Mental Health Support — Custom, based on need"* behind a
+   **"Send Support Enquiry"** button, and `book-session.html` marks its mental health and
+   parent sessions `as per plan`. Mental health *was* buyable — but only through the generic
+   "First 1:1 Session" at Rs 249. So a visitor arriving with a mental health concern saw no
+   price on the one option matching their need, and got routed to a form, while career
+   counselling could be bought in one click. Biggest single conversion leak.
 
-2. **The self-checks load on only two pages** — `index.html` and `assessment.html`.
+2. **The screener has almost no entry points.** It is reachable only from `index.html`.
+   `assessment.html` and `for-working-professionals.html` both *download* it and offer nothing
+   that can open it — no trigger in their markup at all. The `data-ll-open` attributes that
+   look like buttons on the working-professionals page live inside the script's own submenu
+   markup, which renders only after a check is already open. Working professionals could not
+   reach the workplace-strain screener, the most relevant one for them, though the page
+   shipped it.
 
-3. **Live bug:** `for-working-professionals.html` contains **5 self-check buttons**
-   (`lifeSat`, `flourishing`) but never loads `lume-wellbeing-check.js`. Every one of those
-   buttons is dead. This is our highest-intent adult page and its lead magnet does nothing.
-   The `workStress` check — the most relevant screener for that audience — is not on the page at all.
+3. **The screener is implemented four times over** — `lume-wellbeing-check.js`, identical CSS
+   blocks in `index.css` and `assessment.css`, and a second full copy of both the logic and
+   the styles inlined in `for-working-professionals.html`. Four copies is four things to
+   drift.
 
 4. **Content asymmetry:** 24 career city pages vs **1** mental health city page (Rohtak).
 
@@ -52,6 +59,12 @@ assets Lume Live already owns.
    that satisfies that intent. We rank for none of it.
 
 ---
+
+> **Correction (implementation pass).** Two findings above were first written from a partial
+> read and are corrected in place: mental health was never entirely unbuyable, and the
+> working-professionals page had no dead buttons — it had no buttons. The conclusions held
+> and the fixes were the same, but the shape of each defect was different from the first
+> description.
 
 ## 2. Strategy in one line
 
@@ -218,13 +231,18 @@ health session does more brand damage than a missed career session.
 ## 7. 90-day sequencing
 
 ### Block 1 (Days 1–30) — Fix the leaks, don't add traffic yet
-- Publish mental health pricing: Rs 499 / Rs 249 first, direct checkout
-- Fix `for-working-professionals.html` self-check bug; add `workStress`
-- Build `mental-health-counselling.html` national hub; re-point internal links
-- Add GA4 conversion events
-- Ship 2 screener pages: `free-anxiety-test.html`, `exam-stress-test.html`
-- Add confidentiality copy near every mental health CTA
-- Decide the capacity model (Section 6)
+
+Shipped:
+- [x] Mental health pricing published: Rs 499 / Rs 249 first, bookable directly
+- [x] Screener surfaced on `for-working-professionals.html` (incl. `workStress`) and `assessment.html`
+- [x] Screener consolidated into one shared `lume-wellbeing-check.js` + `.css`
+- [x] `mental-health-counselling.html` national hub built; generic inbound links re-pointed
+- [x] GA4 events: `selfcheck_start`, `selfcheck_complete` (with band), `whatsapp_click`, `booking_paid`
+- [x] Screener pages: `free-anxiety-test.html`, `exam-stress-test.html`
+- [x] Confidentiality copy near every mental health CTA
+
+Still open:
+- [ ] **Decide the capacity model (Section 6)** — a business call, not a code change
 
 **Exit criteria:** a visitor can go search → screener → result → paid booking without one
 enquiry form, and we can see every step of that in GA4.
