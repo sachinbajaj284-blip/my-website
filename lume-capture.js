@@ -83,12 +83,26 @@
     return out;
   }
 
+  /* Self-check results are deliberately never captured.
+     The wellbeing checks promise, on the page and inside the modal, that answers
+     are not stored and never leave the browser. The booking message a result
+     builds carries the test, the band and the score - "Severe range", "Very high
+     strain range" - and mirroring that to the server the instant someone taps the
+     button, before they have sent anything, would contradict the promise the page
+     just made them, using health information, at the moment they are most
+     vulnerable. GA4 records that the click happened, which is all the funnel
+     actually needs; the message itself reaches us only if the person chooses to
+     send it in WhatsApp. If this is ever revisited, the copy has to change first
+     and the sharing has to be something the person opts into. */
+  var SELF_CHECK_RE = /\bMy Self-Check\b/;
+
   function captureWaUrl(url){
     try{
       var u = new URL(url, location.href);
       if(!WA_RE.test(u.href)) return;
       var text = u.searchParams.get("text") || "";
       if(!text) return;
+      if(SELF_CHECK_RE.test(text)) return;
       var f = fieldsFrom(text);
       window.lumeCapture({
         type: "whatsapp",
