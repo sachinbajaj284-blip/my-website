@@ -107,6 +107,7 @@ ${o.actions.join('\n')}
       <p class="hero-note">${o.heroNote}</p>
 ${o.stats ? `      <div class="stats">\n${o.stats.map(([b, s]) => `        <div class="stat"><b>${b}</b><span>${s}</span></div>`).join('\n')}\n      </div>\n` : ''}    </div>
     <aside class="hero-card">
+      <img class="hero-card-art" src="hero-conversation.svg" alt="" width="400" height="176" decoding="async">
       <p class="hero-card-line">${o.heroCard}</p>
       <ul class="hero-card-facts">
         <li><b>45 minutes</b><span>Video, voice or chat &mdash; your choice</span></li>
