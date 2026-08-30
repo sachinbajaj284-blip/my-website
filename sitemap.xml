@@ -3,25 +3,25 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://lumelive.co.in/assessment.html</loc>
-    <lastmod>2026-08-26</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
   <url>
     <loc>https://lumelive.co.in/board-exam-stress-guide.html</loc>
-    <lastmod>2026-08-13</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://lumelive.co.in/board-results-help.html</loc>
-    <lastmod>2026-08-13</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://lumelive.co.in/book-session.html</loc>
-    <lastmod>2026-08-13</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -356,6 +356,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://lumelive.co.in/exam-stress-test.html</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
     <loc>https://lumelive.co.in/for-parents.html</loc>
     <lastmod>2026-08-14</lastmod>
     <changefreq>monthly</changefreq>
@@ -363,9 +369,15 @@
   </url>
   <url>
     <loc>https://lumelive.co.in/for-working-professionals.html</loc>
-    <lastmod>2026-08-14</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://lumelive.co.in/free-anxiety-test.html</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://lumelive.co.in/holland-riasec-test-explained.html</loc>
@@ -375,7 +387,7 @@
   </url>
   <url>
     <loc>https://lumelive.co.in/how-to-deal-with-exam-anxiety.html</loc>
-    <lastmod>2026-08-13</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
   </url>
@@ -396,7 +408,7 @@
   </url>
   <url>
     <loc>https://lumelive.co.in/</loc>
-    <lastmod>2026-08-27</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en-in" href="https://lumelive.co.in/"/>
@@ -452,6 +464,12 @@
     <priority>0.85</priority>
   </url>
   <url>
+    <loc>https://lumelive.co.in/mental-health-counselling.html</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://lumelive.co.in/parents-stream-checklist.html</loc>
     <lastmod>2026-08-13</lastmod>
     <changefreq>monthly</changefreq>
@@ -471,7 +489,7 @@
   </url>
   <url>
     <loc>https://lumelive.co.in/privacy-policy.html</loc>
-    <lastmod>2026-08-26</lastmod>
+    <lastmod>2026-08-27</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
@@ -495,7 +513,7 @@
   </url>
   <url>
     <loc>https://lumelive.co.in/services-pricing.html</loc>
-    <lastmod>2026-08-13</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -543,7 +561,7 @@
   </url>
   <url>
     <loc>https://lumelive.co.in/student-mental-health-india.html</loc>
-    <lastmod>2026-08-13</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
   </url>

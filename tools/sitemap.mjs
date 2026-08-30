@@ -28,6 +28,8 @@ const PRIORITY = [
   [/^(book-session|start)\.html$/,     '0.9',  'weekly'],
   [/^career-intelligence\.html$/,      '0.92', 'weekly'],
   [/^for-working-professionals\.html$/,'0.9',  'weekly'],
+  [/^mental-health-counselling\.html$/,'0.9',  'weekly'],
+  [/^(free-anxiety|exam-stress)-test\.html$/, '0.85', 'monthly'],
   [/^career-counselling-in-/,          '0.85', 'monthly'],
   [/^career-counselling-/,             '0.85', 'monthly'],
   [/^mental-health-counselling-/,      '0.85', 'monthly'],
