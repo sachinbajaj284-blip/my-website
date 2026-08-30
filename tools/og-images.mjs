@@ -23,6 +23,27 @@ const OUT = path.join(ROOT, 'og');
 
 // slug -> { eyebrow, title }. slug is the og/<slug>.png filename.
 const PAGES = {
+  /* mental health cluster — these pages carry no photograph, so the share card is
+     the only image they have. */
+  'mental-health-counselling':                        { eyebrow: 'Mental Health', title: "Online Counselling You Can Actually Afford" },
+  'mental-health-counselling-delhi':                  { eyebrow: 'Mental Health · Delhi', title: "Confidential Counselling In Delhi" },
+  'mental-health-counselling-gurugram':               { eyebrow: 'Mental Health · Gurugram', title: "Confidential Counselling In Gurugram" },
+  'mental-health-counselling-noida':                  { eyebrow: 'Mental Health · Noida', title: "Confidential Counselling In Noida" },
+  'mental-health-counselling-mumbai':                 { eyebrow: 'Mental Health · Mumbai', title: "Confidential Counselling In Mumbai" },
+  'mental-health-counselling-bangalore':              { eyebrow: 'Mental Health · Bengaluru', title: "Confidential Counselling In Bengaluru" },
+  'mental-health-counselling-hyderabad':              { eyebrow: 'Mental Health · Hyderabad', title: "Confidential Counselling In Hyderabad" },
+  'mental-health-counselling-pune':                   { eyebrow: 'Mental Health · Pune', title: "Confidential Counselling In Pune" },
+  'mental-health-counselling-jaipur':                 { eyebrow: 'Mental Health · Jaipur', title: "Confidential Counselling In Jaipur" },
+  'mental-health-counselling-chandigarh':             { eyebrow: 'Mental Health · Chandigarh', title: "Confidential Counselling In Chandigarh" },
+  'mental-health-counselling-lucknow':                { eyebrow: 'Mental Health · Lucknow', title: "Confidential Counselling In Lucknow" },
+  'mental-health-counselling-rohtak':                 { eyebrow: 'Mental Health · Rohtak', title: "Confidential Counselling In Rohtak" },
+  'student-mental-health-india':                      { eyebrow: 'Student Guide', title: "Student Mental Health In India" },
+  'wellbeing-check':                                  { eyebrow: 'Free Self-Checks', title: "Seven Free, Private Mental Health Checks" },
+  'free-anxiety-test':                                { eyebrow: 'Free Self-Check', title: "Free Anxiety Test, In Three Minutes" },
+  'free-depression-test':                             { eyebrow: 'Free Self-Check', title: "Free Low Mood Check, In Two Minutes" },
+  'self-esteem-test':                                 { eyebrow: 'Free Self-Check', title: "Free Self-Esteem Check, In Three Minutes" },
+  'work-stress-burnout-test':                         { eyebrow: 'Free Self-Check', title: "Free Burnout And Work Stress Check" },
+  'exam-stress-test':                                 { eyebrow: 'Free Self-Check', title: "Free Exam Stress Check For Students" },
   home:                             { eyebrow: 'From ₹249 a session', title: "India's Most Affordable Career Counselling" },
   'college-predictor':              { eyebrow: 'JoSAA Tools',        title: 'What Can You Get With Your JEE Rank?' },
   'choice-list':                    { eyebrow: 'JoSAA Tools',        title: 'Get Your Choice List In The Right Order' },
@@ -128,7 +149,9 @@ if (!targets.length) {
 }
 
 fs.mkdirSync(OUT, { recursive: true });
-const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+// CHROMIUM_PATH lets this run where Playwright's browser lives somewhere else
+// (CI, a container); the default is the local install.
+const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || '/opt/pw-browsers/chromium' });
 const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 });
 
 for (const [slug, spec] of targets) {

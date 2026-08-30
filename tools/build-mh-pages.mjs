@@ -49,6 +49,7 @@ function buildScreener(s) {
     ],
     waNav: 'Hello Lume Live! I took a self-check and would like to talk.',
     kicker: s.kicker, h1: s.h1, lede: s.lede, heroNote: s.heroNote,
+    heroCard: s.heroCard || 'You don’t have to be in crisis to talk to someone. Most people who book are just tired of carrying it alone.',
     actions: [
       `        <button type="button" class="btn" data-ll-open="${s.check}">${s.menu ? 'Choose a check' : 'Start the check'} &rarr;</button>`,
       `        <a class="btn secondary" href="#book">Book a &#8377;249 first session</a>`,
@@ -158,7 +159,7 @@ ${c.why.split('\n').map(l => '    ' + l.trim()).join('\n')}
         name: `Lume Live Mental Health Counselling — ${c.city}`,
         url: `${SITE}/${c.slug}`,
         description: `Confidential, non-diagnostic online mental health counselling for ${c.city} by a counsellor with an M.Sc in Clinical Psychology. Support for anxiety, stress, low mood, burnout and self-esteem for students, parents and working professionals.`,
-        image: `${SITE}/sachin.jpeg`,
+        image: `${SITE}/og/${c.slug.replace(/\.html$/, '')}.png`,
         logo: `${SITE}/logo.png`,
         telephone: '+91-7015671280',
         email: 'hello@lumelive.co.in',
@@ -188,15 +189,12 @@ ${c.why.split('\n').map(l => '    ' + l.trim()).join('\n')}
     kicker: `&#128205; ${c.city} &middot; Confidential &middot; Non-Diagnostic Support`,
     h1: `Mental Health Counselling in ${c.city}`,
     lede: c.lede, hindi: c.hindi,
+    heroCard: c.heroCard || 'You don’t have to be in crisis to talk to someone.',
     actions: [
       `        <button type="button" class="btn" data-ll-open="phq4Anxiety">Take the free 2-minute check</button>`,
       `        <a class="btn secondary" href="#book">Book a &#8377;249 first session</a>`,
     ],
     heroNote: 'The check is free, anonymous and not stored &mdash; your answers never leave your browser.',
-    stats: [
-      ['100%', 'Confidential'], ['M.Sc', 'Clinical Psychology'],
-      ['&#8377;249', 'First Session'], ['&#2361;&#2367;&#2306;&#2342;&#2368; + EN', 'Both Languages'],
-    ],
     crumb: `<a href="index.html">Home</a> &rsaquo; <a href="${HUB}">Mental Health Counselling</a> &rsaquo; ${c.city}`,
     body, faq: c.faq, related,
     stickyCheck: 'phq4Anxiety',

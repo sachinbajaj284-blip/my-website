@@ -69,12 +69,12 @@ ${geo}<meta http-equiv="content-language" content="en-IN">
 <meta property="og:title" content="${esc(o.ogTitle || o.title)}">
 <meta property="og:description" content="${esc(o.ogDesc || o.desc)}">
 <meta property="og:url" content="${url}">
-<meta property="og:image" content="${SITE}/sachin.jpeg">
+<meta property="og:image" content="${SITE}/og/${o.slug.replace(/\.html$/, "")}.png">
 <meta property="og:locale" content="en_IN">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(o.ogTitle || o.title)}">
 <meta name="twitter:description" content="${esc(o.ogDesc || o.desc)}">
-<meta name="twitter:image" content="${SITE}/sachin.jpeg">
+<meta name="twitter:image" content="${SITE}/og/${o.slug.replace(/\.html$/, "")}.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -106,7 +106,16 @@ ${o.actions.join('\n')}
       </div>
       <p class="hero-note">${o.heroNote}</p>
 ${o.stats ? `      <div class="stats">\n${o.stats.map(([b, s]) => `        <div class="stat"><b>${b}</b><span>${s}</span></div>`).join('\n')}\n      </div>\n` : ''}    </div>
-    <div class="photo-frame"><img src="sachin.jpeg" alt="Sachin Bajaj, Lume Live mental health counsellor, M.Sc Clinical Psychology" decoding="async" loading="lazy"></div>
+    <aside class="hero-card">
+      <p class="hero-card-line">${o.heroCard}</p>
+      <ul class="hero-card-facts">
+        <li><b>45 minutes</b><span>Video, voice or chat &mdash; your choice</span></li>
+        <li><b>Hindi or English</b><span>Whichever you actually think in</span></li>
+        <li><b>Nobody is told</b><span>Not your family, school or employer</span></li>
+        <li><b>&#8377;249 first session</b><span>&#8377;499 after that. No packages.</span></li>
+      </ul>
+      <p class="hero-card-who">Sachin Bajaj &middot; M.Sc Clinical Psychology (Gurugram University) &middot; PGDGC, Jamia Millia Islamia</p>
+    </aside>
   </div>
 </header>
 

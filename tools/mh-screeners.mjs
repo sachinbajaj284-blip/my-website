@@ -24,6 +24,7 @@ const PRICE = `<p>A session is a private 1:1 conversation with Sachin Bajaj, who
 export const SCREENERS = [
   {
     slug: 'free-depression-test.html',
+    heroCard: 'Flat is not the same as sad, and it is much easier to miss. That is what this check is for.',
     check: 'phq4Mood', nQ: 4,
     title: 'Free Depression Test Online (PHQ-4) | Lume Live',
     desc: 'Take a free, private low-mood and depression self-check in 2 minutes. No sign-up, nothing stored. Understand your result and what actually helps next. India.',
@@ -93,6 +94,7 @@ export const SCREENERS = [
   },
   {
     slug: 'work-stress-burnout-test.html',
+    heroCard: 'Burnout tells you that you have got bad at your job. Usually you have just run out of road.',
     check: 'workStress', nQ: 10,
     title: 'Free Burnout & Work Stress Test | Lume Live',
     desc: 'A free, private 4-minute burnout and work stress self-check for professionals in India. No sign-up, nothing stored. Understand your strain level and what helps.',
@@ -159,6 +161,7 @@ export const SCREENERS = [
 
   {
     slug: 'self-esteem-test.html',
+    heroCard: 'Achievement doesn’t fix low self-esteem. People who have plenty of the first still score low here.',
     check: 'selfEsteem', nQ: 10,
     title: 'Free Self-Esteem Test (Rosenberg Scale) | Lume Live',
     desc: 'Take the Rosenberg self-esteem scale free and privately in 3 minutes. No sign-up, nothing stored. Understand your result and what actually builds self-worth.',
@@ -227,6 +230,7 @@ export const SCREENERS = [
 
   {
     slug: 'wellbeing-check.html',
+    heroCard: 'No account, no email, no saved result. Most free tests online are lead-capture forms in a lab coat.',
     check: 'wellbeingMenu', nQ: 0, menu: true,
     title: 'Free Mental Health Self-Checks | Lume Live',
     desc: 'Seven free, private mental health self-checks — anxiety, low mood, self-esteem, work stress, life satisfaction and flourishing. No sign-up, nothing stored.',
