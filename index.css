@@ -168,7 +168,7 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .hero-particles{position:absolute;inset:0;pointer-events:none;}
 .particle{position:absolute;border-radius:50%;animation:float var(--d,6s) ease-in-out infinite var(--delay,0s);}
 .hero-gold-bar{position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,transparent,var(--gold),var(--gold2),var(--gold),transparent);animation:shimmer 3s linear infinite;background-size:200% 100%;}
-.hero-inner{width:100%;max-width:1240px;margin:0 auto;padding:clamp(34px,4.5vw,58px) clamp(18px,3vw,34px) clamp(42px,5vw,64px);display:grid;grid-template-columns:minmax(0,1.28fr) minmax(300px,.62fr);gap:clamp(26px,4vw,48px);align-items:center;position:relative;z-index:1;}
+.hero-inner{width:100%;max-width:1240px;margin:0 auto;padding:clamp(34px,4.5vw,58px) clamp(18px,3vw,34px) clamp(42px,5vw,64px);display:grid;grid-template-columns:minmax(0,1.28fr) minmax(300px,.62fr);gap:clamp(26px,4vw,48px);align-items:stretch;position:relative;z-index:1;}
 .hero-copy-panel{position:relative;padding:clamp(20px,2.4vw,28px);border:1px solid rgba(255,255,255,.14);border-radius:28px;background:linear-gradient(135deg,rgba(255,255,255,.11),rgba(255,255,255,.045));-webkit-backdrop-filter:blur(24px) saturate(1.28);backdrop-filter:blur(24px) saturate(1.28);box-shadow:0 26px 78px rgba(0,0,0,.24),inset 1px 1px 0 rgba(255,255,255,.28),inset -1px -1px 0 rgba(0,0,0,.22),inset 0 0 60px rgba(255,255,255,.04);overflow:hidden;}
 /* specular highlight sweep — the detail that makes glass read as real glass */
 .hero-copy-panel::after{content:"";position:absolute;top:0;left:0;right:0;height:42%;background:linear-gradient(180deg,rgba(255,255,255,.10),transparent);pointer-events:none;border-radius:28px 28px 0 0;}
@@ -279,7 +279,7 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .hero-stat:hover .num{transform:scale(1.15);color:var(--gold2);}
 .hero-stat .lbl{font-size:.68rem;color:rgba(255,255,255,.55);font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
 /* Hero coin */
-.hero-right{display:flex;flex-direction:column;align-items:center;gap:16px;animation:fadeRight .9s ease .6s both;position:relative;padding:24px;border-radius:30px;background:linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.045));border:1px solid rgba(255,255,255,.15);box-shadow:0 28px 80px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.18);-webkit-backdrop-filter:blur(28px) saturate(1.24);backdrop-filter:blur(28px) saturate(1.24);overflow:hidden;}
+.hero-right{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;animation:fadeRight .9s ease .6s both;position:relative;padding:24px;border-radius:30px;background:linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.045));border:1px solid rgba(255,255,255,.15);box-shadow:0 28px 80px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.18);-webkit-backdrop-filter:blur(28px) saturate(1.24);backdrop-filter:blur(28px) saturate(1.24);overflow:hidden;}
 .hero-right::before{content:'';position:absolute;inset:0;background:linear-gradient(145deg,rgba(232,185,90,.16),transparent 42%,rgba(255,255,255,.10));pointer-events:none;}
 .hero-right>*{position:relative;z-index:1;}
 .hero-coin{width:190px;height:190px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 8px rgba(255,255,255,.09),0 0 0 12px rgba(201,147,58,.18),0 28px 70px rgba(0,0,0,.48);animation:coinSpin 5s ease-in-out infinite;flex-shrink:0;transition:transform .4s;}
