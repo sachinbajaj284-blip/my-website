@@ -673,7 +673,7 @@ section { padding: 56px 16px; }
           </ul>
           <button type="button" class="hero-track-cta" onclick="openSessionModal('career-intro')">
             <span class="htc-main">Book a Career Session</span>
-            <span class="htc-sub">From &#8377;249 &middot; Pick your own slot</span>
+            <span class="htc-sub">&#8377;499 &middot; 45 min &middot; Pick your own slot</span>
           </button>
         </div>
 
@@ -2559,8 +2559,44 @@ function toggleTrack(key){
   if(target){target.hidden=false;
     /* let the [hidden] removal paint before the entrance runs */
     requestAnimationFrame(function(){target.classList.add("open");});}
-  if(window.gtag){gtag("event","hero_track_open",{event_category:"hero",event_label:key});}
+  trackBooking("hero_track_open",key);
 }
+/* ── Booking funnel instrumentation ──
+   cashfree-payments.js already reports the payment half as "payment_funnel"
+   (payment_initiated -> payment_account_required -> payment_success). Nothing
+   reported the half before it, so the steps where people actually leave were
+   invisible: which track they opened, which service they picked, and whether
+   they abandoned at the account screen.
+
+   These fill that in under "booking_funnel", so the whole journey reads as
+   one report:
+
+     hero_track_open -> hero_service_click -> booking_modal_opened
+       -> booking_account_required -> booking_account_completed
+                                   \-> booking_account_abandoned
+       -> (payment_funnel takes over)
+
+   booking_account_abandoned is the one to watch: it counts the people the
+   account step costs you.  */
+function trackBooking(name,label,extra){
+  if(!window.gtag){return;}
+  var payload={event_category:"booking_funnel",event_label:label||""};
+  if(extra){for(var k in extra){if(Object.prototype.hasOwnProperty.call(extra,k)){payload[k]=extra[k];}}}
+  try{gtag("event",name,payload);}catch(err){}
+}
+/* One delegated listener rather than an onclick on every row, so a row added
+   later is measured without anyone remembering to wire it up. Capture phase,
+   so the click is reported before the handler it triggers opens the modal —
+   otherwise the funnel reads in the wrong order. */
+document.addEventListener("click",function(ev){
+  var row=ev.target.closest?ev.target.closest(".hero-track-rows a, .hero-track-rows button"):null;
+  if(!row){return;}
+  var panel=row.closest(".hero-track-panel");
+  var name=row.querySelector("span");
+  trackBooking("hero_service_click",(name?name.textContent:row.textContent).trim(),
+    {track:panel&&panel.classList.contains("htp-mind")?"mind":"career",
+     destination:row.tagName==="A"?(row.getAttribute("href")||""):"booking"});
+},true);
 /* ── Account before booking ──
    Booking used to open the details form, take the name, the number and the
    consent tick, and only then — on Pay — reveal that an account was needed.
@@ -2577,7 +2613,7 @@ function toggleTrack(key){
    booking form, exactly as before. api/_lib/account.js is the real gate and
    still refuses an unauthenticated order with a 401.  */
 var pendingBookingPlan=null,bookingResumeArmed=false;
-function openSessionModalDirect(e){applySessionPlan(e),document.getElementById("modal-session").classList.add("open"),document.body.style.overflow="hidden"}
+function openSessionModalDirect(e){applySessionPlan(e),document.getElementById("modal-session").classList.add("open"),document.body.style.overflow="hidden";var p=SESSION_PLANS[e]||SESSION_PLANS.intro;trackBooking("booking_modal_opened",e||"intro",{value:Number(p.amount||0),currency:"INR"});}
 function setAuthBookingContext(plan){
   var note=document.getElementById("authBookingNote"),item=document.getElementById("authBookingItem"),
       title=document.getElementById("authTitle"),sub=document.getElementById("authSubtitle");
@@ -2596,6 +2632,7 @@ function clearAuthBookingContext(){
 function resumeBookingAfterAuth(){
   if(!pendingBookingPlan){return;}
   var plan=pendingBookingPlan;pendingBookingPlan=null;
+  trackBooking("booking_account_completed",plan);
   clearAuthBookingContext();
   closeModal("auth");
   /* let the auth modal finish closing before the booking one opens, so the
@@ -2615,7 +2652,7 @@ function openSessionModal(e){
       bookingResumeArmed=true;
       window.lumeAccount.onSignIn(function(){bookingResumeArmed=false;resumeBookingAfterAuth();});
     }
-    if(window.gtag){gtag("event","booking_account_required",{event_category:"booking",event_label:plan});}
+    trackBooking("booking_account_required",plan);
     openAuth("signup");
   };
   /* An auth layer that never answers must not strand someone on a dead
@@ -2626,7 +2663,7 @@ function openSessionModal(e){
                                    function(){clearTimeout(timer);done(true);});
   }catch(err){clearTimeout(timer);done(true);}
 }
-function openModal(e){"session"===e?openSessionModal("intro"):(document.getElementById("modal-"+e).classList.add("open"),document.body.style.overflow="hidden")}function closeModal(e){"auth"===e&&!window.currentFirebaseUser&&(pendingBookingPlan=null,clearAuthBookingContext()),document.getElementById("modal-"+e).classList.remove("open"),document.body.style.overflow=""}document.querySelectorAll(".modal-overlay").forEach(e=>{e.addEventListener("click",function(e){e.target===this&&(this.classList.remove("open"),document.body.style.overflow="")})});let scrollEndPromptShown=!1;function checkScrollEndPrompt(){window.authStateReady&&window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-80&&openScrollEndPopup()}function openScrollEndPopup(){const e=document.getElementById("scrollEndPopup");!e||scrollEndPromptShown||window.currentFirebaseUser||document.querySelector(".modal-overlay.open")||(scrollEndPromptShown=!0,e.classList.add("open"),document.body.style.overflow="hidden")}function closeScrollEndPopup(){const e=document.getElementById("scrollEndPopup");e&&(e.classList.remove("open"),document.body.style.overflow="")}function openComingSoon(e){document.getElementById("comingTitle").textContent=e,openModal("coming")}function submitNotify(){const e=document.getElementById("csName").value.trim(),t=document.getElementById("csPhone").value.trim();if(!t)return void showToast("Please enter your WhatsApp number");const o=waMessage(["Hello Lume Live!","","Please notify me when this Lume Live service is available.","","Contact Details","• Name: "+(e||"Not given"),"• WhatsApp: "+t,"","🧾 Service","• "+document.getElementById("comingTitle").textContent,"","Thank you."]);window.open(waLink(o),"_blank"),closeModal("coming"),showToast("Your notification message is ready in WhatsApp.")}function openPDF(){openModal("pdf")}function startPdfCashfree(e){e&&e.preventDefault(),"function"==typeof window.lumeCashfreePay?window.lumeCashfreePay({sku:"parents-handbook",amount:199,label:"Parents Career Handbook"}):showToast("Cashfree checkout is still loading. Please wait a few seconds and tap Pay Securely with Cashfree again.")}function startSessionCashfree(e){e&&e.preventDefault();const n=(document.getElementById("sessionName").value||"").trim(),s=(document.getElementById("sessionPhone").value||"").replace(/\D/g,"").slice(-10);if(s.length<10){showToast("Please enter a valid 10-digit WhatsApp number so we can confirm your session.");var a=document.getElementById("sessionPhone");a&&a.focus()}else{var i=document.getElementById("sessionConsent");if(i&&!i.checked)return showToast("Please agree to the Privacy Policy and Terms, and confirm parental consent if under 18, to continue."),void i.focus();if("function"==typeof window.lumeCashfreePay){
+function openModal(e){"session"===e?openSessionModal("intro"):(document.getElementById("modal-"+e).classList.add("open"),document.body.style.overflow="hidden")}function closeModal(e){"auth"===e&&!window.currentFirebaseUser&&(pendingBookingPlan&&trackBooking("booking_account_abandoned",pendingBookingPlan),pendingBookingPlan=null,clearAuthBookingContext()),document.getElementById("modal-"+e).classList.remove("open"),document.body.style.overflow=""}document.querySelectorAll(".modal-overlay").forEach(e=>{e.addEventListener("click",function(e){e.target===this&&(this.classList.remove("open"),document.body.style.overflow="")})});let scrollEndPromptShown=!1;function checkScrollEndPrompt(){window.authStateReady&&window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-80&&openScrollEndPopup()}function openScrollEndPopup(){const e=document.getElementById("scrollEndPopup");!e||scrollEndPromptShown||window.currentFirebaseUser||document.querySelector(".modal-overlay.open")||(scrollEndPromptShown=!0,e.classList.add("open"),document.body.style.overflow="hidden")}function closeScrollEndPopup(){const e=document.getElementById("scrollEndPopup");e&&(e.classList.remove("open"),document.body.style.overflow="")}function openComingSoon(e){document.getElementById("comingTitle").textContent=e,openModal("coming")}function submitNotify(){const e=document.getElementById("csName").value.trim(),t=document.getElementById("csPhone").value.trim();if(!t)return void showToast("Please enter your WhatsApp number");const o=waMessage(["Hello Lume Live!","","Please notify me when this Lume Live service is available.","","Contact Details","• Name: "+(e||"Not given"),"• WhatsApp: "+t,"","🧾 Service","• "+document.getElementById("comingTitle").textContent,"","Thank you."]);window.open(waLink(o),"_blank"),closeModal("coming"),showToast("Your notification message is ready in WhatsApp.")}function openPDF(){openModal("pdf")}function startPdfCashfree(e){e&&e.preventDefault(),"function"==typeof window.lumeCashfreePay?window.lumeCashfreePay({sku:"parents-handbook",amount:199,label:"Parents Career Handbook"}):showToast("Cashfree checkout is still loading. Please wait a few seconds and tap Pay Securely with Cashfree again.")}function startSessionCashfree(e){e&&e.preventDefault();const n=(document.getElementById("sessionName").value||"").trim(),s=(document.getElementById("sessionPhone").value||"").replace(/\D/g,"").slice(-10);if(s.length<10){showToast("Please enter a valid 10-digit WhatsApp number so we can confirm your session.");var a=document.getElementById("sessionPhone");a&&a.focus()}else{var i=document.getElementById("sessionConsent");if(i&&!i.checked)return showToast("Please agree to the Privacy Policy and Terms, and confirm parental consent if under 18, to continue."),void i.focus();if("function"==typeof window.lumeCashfreePay){
       var l=currentSessionPlan||SESSION_PLANS.intro;
       var couponState=sessionCoupon?sessionCoupon.getState():null;
       window.lumeCashfreePay({
