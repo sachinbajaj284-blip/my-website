@@ -183,6 +183,54 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .hero-h1 .h1-l{display:block;}
 .hero-h1 .h1-l+.h1-l{margin-top:.08em;}
 .hero-sub{max-width:680px;font-size:.96rem;color:rgba(255,255,255,.83);line-height:1.68;margin-bottom:18px;animation:fadeUp .8s ease .7s both;text-wrap:pretty;}
+/* ── HERO TRACK CARDS ──
+   The two service tracks, named and bookable above the fold. Deliberately
+   reuses the .hero-assessment-card glass treatment rather than inventing a
+   second one, so the hero still reads as a single surface. Gold accent for
+   career, teal for mental health — the same pairing .svc-card .cc / .ew
+   already uses further down the page. */
+.hero-tracks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:780px;margin:0 0 16px;}
+.hero-track-career{animation:fadeUp .72s ease .58s both;}
+.hero-track-mind{animation:fadeUp .72s ease .68s both;}
+.hero-track{position:relative;display:flex;flex-direction:column;gap:10px;padding:15px 16px;border-radius:20px;background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.055));border:1px solid rgba(255,255,255,.16);box-shadow:0 20px 54px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.16);-webkit-backdrop-filter:blur(22px) saturate(1.2);backdrop-filter:blur(22px) saturate(1.2);overflow:hidden;transition:transform var(--dur) var(--ease),border-color var(--dur) var(--ease);}
+.hero-track::before{content:'';position:absolute;inset:0;border-left:4px solid var(--gold2);pointer-events:none;border-radius:20px 0 0 20px;}
+.hero-track-mind::before{border-left-color:var(--teal2);}
+.hero-track::after{content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent);transform:skewX(-18deg);pointer-events:none;transition:left .75s var(--ease);}
+.hero-track:hover::after{left:130%;}
+.hero-track:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.3);}
+.hero-track>*{position:relative;z-index:1;}
+.hero-track-head h2{font-family:'Playfair Display',serif;font-size:1.16rem;font-weight:800;color:#fff;line-height:1.16;margin:0 0 4px;letter-spacing:0;}
+.hero-track-head p{color:rgba(255,255,255,.68);font-size:.75rem;line-height:1.5;margin:0;}
+/* Icon. Colour comes from the card, so one SVG serves both tracks. */
+.hero-track-icon{display:block;width:34px;height:34px;margin-bottom:9px;color:var(--gold2);animation:trackFloat 6s ease-in-out infinite;}
+.hero-track-mind .hero-track-icon{color:#5fd4d4;animation-delay:-3s;}
+.hero-track-icon svg{width:100%;height:100%;display:block;overflow:visible;}
+/* Compass: the ring draws itself in once, the needle settles on hover. */
+.htk-ring{stroke-dasharray:120;stroke-dashoffset:120;animation:trackDraw 1.5s var(--ease) .9s forwards;}
+.htk-needle{transform-origin:24px 24px;transition:transform .55s var(--ease);}
+.hero-track-career:hover .htk-needle{transform:rotate(32deg);}
+/* Breath: two arcs widening over a steady heart. */
+.htk-pulse-a,.htk-pulse-b{transform-origin:24px 27px;animation:trackBreathe 4.4s ease-in-out infinite;}
+.htk-pulse-b{animation-delay:.5s;}
+.htk-heart{transform-origin:24px 28px;transition:transform .45s var(--ease);}
+.hero-track-mind:hover .htk-heart{transform:scale(1.09);}
+@keyframes trackFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+@keyframes trackDraw{to{stroke-dashoffset:0;}}
+@keyframes trackBreathe{0%,100%{transform:scale(.9);opacity:.28;}50%{transform:scale(1.06);opacity:.7;}}
+.hero-track-rows{list-style:none;display:flex;flex-direction:column;gap:4px;margin:0;padding:0;}
+.hero-track-rows li{display:flex;}
+.hero-track-rows button,.hero-track-rows a{flex:1;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:34px;width:100%;padding:6px 9px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.86);font-family:inherit;font-size:.73rem;font-weight:700;line-height:1.3;text-align:left;text-decoration:none;cursor:pointer;transition:background var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease),color var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease);}
+.hero-track-rows button:hover,.hero-track-rows a:hover{background:rgba(255,255,255,.13);border-color:rgba(232,185,90,.42);color:#fff;transform:translateX(3px);}
+.hero-track-mind .hero-track-rows button:hover,.hero-track-mind .hero-track-rows a:hover{border-color:rgba(14,140,140,.55);}
+.hero-track-rows b{flex:none;color:var(--gold2);font-size:.72rem;font-weight:900;letter-spacing:.2px;}
+.hero-track-mind .hero-track-rows b{color:#5fd4d4;}
+.hero-track-rows button:focus-visible,.hero-track-rows a:focus-visible,.hero-track-cta:focus-visible{outline:2px solid var(--gold2);outline-offset:2px;}
+.hero-track-cta{margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:46px;padding:9px 12px;border:none;border-radius:12px;background:linear-gradient(135deg,#c9933a,#e8b84e);color:#102650;font-family:inherit;text-align:center;cursor:pointer;box-shadow:0 10px 24px rgba(201,147,58,.34);transition:transform var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease);}
+.hero-track-mind .hero-track-cta{background:linear-gradient(135deg,var(--teal),var(--teal2));color:#fff;box-shadow:0 10px 24px rgba(10,110,110,.38);}
+.hero-track-cta:hover{transform:translateY(-2px);background:linear-gradient(135deg,#d4a044,#f0c860);}
+.hero-track-mind .hero-track-cta:hover{background:linear-gradient(135deg,#0c7f7f,#12a0a0);}
+.hero-track-cta .htc-main{font-size:.78rem;font-weight:900;line-height:1.2;}
+.hero-track-cta .htc-sub{font-size:.63rem;font-weight:700;opacity:.82;line-height:1.25;}
 .hero-assurance{display:flex;flex-wrap:wrap;gap:9px;margin:0 0 16px;animation:fadeUp .8s ease .8s both;}
 .hero-assurance span{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:7px 12px;color:rgba(255,255,255,.9);font-size:.7rem;font-weight:800;letter-spacing:.2px;white-space:nowrap;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);}
 .hero-assurance span:first-child{background:rgba(34,197,94,.13);border-color:rgba(34,197,94,.4);color:var(--green2);}
@@ -912,6 +960,7 @@ body.js-ready .anim.scale{transform:scale(.9);}
   .nav-links{display:none;}
   .hamburger{display:flex;}
   .hero-right{display:none;}
+  .hero-tracks{max-width:none;}
   .hero-live-m{display:inline-flex;margin-bottom:14px;}
   .lead-inner{grid-template-columns:1fr;}
   .gallery-grid{grid-template-columns:1fr 1fr;}
@@ -952,6 +1001,12 @@ body.js-ready .anim.scale{transform:scale(.9);}
   .hero-sub{font-size:.88rem;line-height:1.55;margin-bottom:14px;}
   .hero-assurance{gap:7px;margin-bottom:13px;}
   .hero-assurance span{flex:1 1 auto;justify-content:center;text-align:center;white-space:normal;padding:6px 8px;font-size:.64rem;}
+  .hero-tracks{grid-template-columns:1fr;gap:10px;margin-bottom:13px;}
+  .hero-track{padding:14px;border-radius:18px;gap:9px;}
+  .hero-track-head h2{font-size:1.08rem;}
+  .hero-track-icon{width:30px;height:30px;margin-bottom:7px;}
+  .hero-track-rows button,.hero-track-rows a{min-height:42px;font-size:.75rem;}
+  .hero-track-cta{min-height:48px;}
   .hero-assessment-card{grid-template-columns:1fr;gap:11px;margin-top:0;margin-bottom:12px;padding:14px;border-radius:18px;}
   .hero-assessment-actions,.hero-assessment-btn{width:100%;}
   .hero-assessment-btn{min-height:48px;font-size:.68rem;line-height:1.18;padding:8px 7px;}
