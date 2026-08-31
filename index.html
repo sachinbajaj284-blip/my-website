@@ -331,15 +331,6 @@ body.js-ready .jr-steps::before { transform: scaleY(0); }
 * { margin: 0px; padding: 0px; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body { font-family: Montserrat, sans-serif; color: var(--dark); background: var(--white); overflow-x: hidden; }
-.countdown-bar { background: linear-gradient(135deg, rgb(127, 29, 29) 0%, rgb(220, 38, 38) 42%, rgb(245, 158, 11) 100%); padding: 0px 16px; height: var(--countdown-h); text-align: center; font-size: 0.78rem; font-weight: 700; color: rgb(255, 255, 255); position: fixed; top: calc(var(--safe-top) + var(--ann-h)); left: 0px; right: 0px; z-index: 1001; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: nowrap; overflow: hidden; box-shadow: rgba(220, 38, 38, 0.34) 0px 4px 18px; }
-.countdown-bar::before { content: ""; position: absolute; inset: 0px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent); transform: translateX(-100%); animation: 3.8s linear 0s infinite normal none running shimmer; pointer-events: none; }
-.countdown-bar .cd-label { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; white-space: nowrap; flex-shrink: 0; }
-.countdown-bar .cd-label .pulse-dot { width: 7px; height: 7px; background: rgb(255, 255, 255); border-radius: 50%; animation: 1.5s ease 0s infinite normal none running livePulse; }
-.countdown-timer { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
-.cd-unit { background: rgba(255, 255, 255, 0.2); border-radius: 8px; padding: 4px 9px; min-width: 38px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.28); box-shadow: rgba(255, 255, 255, 0.18) 0px 1px 0px inset; }
-.cd-unit .cd-num { font-size: 0.88rem; font-weight: 800; color: rgb(255, 255, 255); display: block; line-height: 1; }
-.cd-unit .cd-lbl { font-size: 0.48rem; font-weight: 600; color: rgba(255, 255, 255, 0.75); text-transform: uppercase; letter-spacing: 0.4px; margin-top: 1px; display: block; }
-.cd-sep { font-size: 0.9rem; font-weight: 800; color: rgba(255, 255, 255, 0.5); }
 nav { position: fixed; top: var(--top-bars-h); left: 0px; right: 0px; z-index: 1000; background: linear-gradient(rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.64)); backdrop-filter: blur(24px) saturate(1.35); box-shadow: rgba(13, 27, 64, 0.1) 0px 10px 34px, rgba(255, 255, 255, 0.85) 0px 1px 0px inset; border-bottom: 1px solid rgba(255, 255, 255, 0.58); transition: 0.3s; }
 .nav-inner { max-width: 1280px; margin: 0px auto; padding: 0px clamp(16px, 2vw, 28px); height: var(--nav-h); display: flex; align-items: center; justify-content: space-between; gap: 16px; min-width: 0px; }
 .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
@@ -371,6 +362,30 @@ nav { position: fixed; top: var(--top-bars-h); left: 0px; right: 0px; z-index: 1
 .hero-h1 .h1-l { display: block; }
 .hero-h1 .h1-l + .h1-l { margin-top: 0.08em; }
 .hero-sub { max-width: 680px; font-size: 0.96rem; color: rgba(255, 255, 255, 0.83); line-height: 1.68; margin-bottom: 18px; animation: 0.8s ease 0.7s 1 normal both running fadeUp; text-wrap: pretty; }
+.hero-tracks { max-width: 780px; margin: 0px 0px 16px; animation: 0.72s ease 0.58s 1 normal both running fadeUp; }
+.hero-track-picker { display: grid; grid-template-columns: repeat(2, minmax(0px, 1fr)); gap: 10px; }
+.hero-track-btn { position: relative; display: flex; align-items: center; gap: 11px; width: 100%; padding: 13px 14px; border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 18px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.055)); box-shadow: rgba(0, 0, 0, 0.18) 0px 20px 54px, rgba(255, 255, 255, 0.16) 0px 1px 0px inset; backdrop-filter: blur(22px) saturate(1.2); color: rgb(255, 255, 255); font-family: inherit; text-align: left; cursor: pointer; overflow: hidden; transition: transform var(--dur) var(--ease),border-color var(--dur) var(--ease),background var(--dur) var(--ease); }
+.hero-track-btn::before { content: ""; position: absolute; inset: 0px; border-left: 4px solid var(--gold2); border-radius: 18px 0px 0px 18px; pointer-events: none; }
+.htb-mind::before { border-left-color: var(--teal2); }
+.hero-track-btn::after { content: ""; position: absolute; top: 0px; left: -60%; width: 45%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent); transform: skewX(-18deg); pointer-events: none; transition: left .75s var(--ease); }
+.hero-track-btn:hover::after { left: 130%; }
+.hero-track-btn:hover { transform: translateY(-3px); border-color: rgba(255, 255, 255, 0.32); }
+.hero-track-btn > * { position: relative; z-index: 1; }
+.htb-text { display: flex; flex-direction: column; gap: 2px; min-width: 0px; flex: 1 1 0%; }
+.htb-text b { font-family: "Playfair Display", serif; font-size: 1.02rem; font-weight: 800; line-height: 1.15; color: rgb(255, 255, 255); }
+.htb-text small { font-size: 0.68rem; font-weight: 600; line-height: 1.35; color: rgba(255, 255, 255, 0.66); }
+.htb-chev { flex: 0 0 auto; width: 9px; height: 9px; border-right: 2px solid var(--gold2); border-bottom: 2px solid var(--gold2); transform: rotate(45deg); transition: transform var(--dur) var(--ease); }
+.htb-mind .htb-chev { border-color: rgb(95, 212, 212); }
+.hero-track-icon { flex: 0 0 auto; display: block; width: 32px; height: 32px; color: var(--gold2); animation: 6s ease-in-out 0s infinite normal none running trackFloat; }
+.htb-mind .hero-track-icon { color: rgb(95, 212, 212); animation-delay: -3s; }
+.hero-track-icon svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.htk-ring { stroke-dasharray: 120; stroke-dashoffset: 120; animation: trackDraw 1.5s var(--ease) .9s forwards; }
+.htk-needle { transform-origin: 24px 24px; transition: transform .55s var(--ease); }
+.htb-career:hover .htk-needle, .htb-career[aria-expanded="true"] .htk-needle { transform: rotate(32deg); }
+.htk-pulse-a, .htk-pulse-b { transform-origin: 24px 27px; animation: 4.4s ease-in-out 0s infinite normal none running trackBreathe; }
+.htk-pulse-b { animation-delay: 0.5s; }
+.htk-heart { transform-origin: 24px 28px; transition: transform .45s var(--ease); }
+.htb-mind:hover .htk-heart, .htb-mind[aria-expanded="true"] .htk-heart { transform: scale(1.09); }
 .hero-assurance { display: flex; flex-wrap: wrap; gap: 9px; margin: 0px 0px 16px; animation: 0.8s ease 0.8s 1 normal both running fadeUp; }
 .hero-assurance span { display: inline-flex; align-items: center; gap: 6px; background: rgba(255, 255, 255, 0.09); border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 999px; padding: 7px 12px; color: rgba(255, 255, 255, 0.9); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.2px; white-space: nowrap; backdrop-filter: blur(12px); }
 .hero-assurance span:first-child { background: rgba(34, 197, 94, 0.13); border-color: rgba(34, 197, 94, 0.4); color: var(--green2); }
@@ -401,8 +416,6 @@ button, a, .btn-cta, .btn-gold, .btn-ghost, .sa-btn, .ll-check-btn, .ll-option {
 section { position: relative; }
 section::after { content: ""; position: absolute; bottom: 0px; left: 50%; transform: translateX(-50%); width: 60px; height: 3px; background: linear-gradient(90deg,transparent,var(--gold),transparent); border-radius: 2px; opacity: 0.3; }
 #hero::after, #gallery::after, #questionnaire::after, #school-partnerships::after { display: none; }
-.cd-num { display: inline-block; }
-.cd-num.tick { animation: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s 1 normal none running cdTick; }
 .tilt-active { transition: transform 0.18s ease-out; transform-style: preserve-3d; will-change: transform; }
 .tilt-glare { position: absolute; inset: 0px; border-radius: inherit; background: radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.16),transparent 55%); opacity: 0; transition: opacity 0.25s; pointer-events: none; z-index: 2; }
 .tilt-active:hover .tilt-glare { opacity: 1; }
@@ -411,7 +424,6 @@ a, button, [role="button"] { -webkit-tap-highlight-color: rgba(0, 0, 0, 0.06); }
 *, ::before, ::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
 .particle, .morph-blob, .mouse-glow { display: none !important; }
 html { scroll-behavior: auto; }
-.cd-num.tick { animation: auto ease 0s 1 normal none running none !important; }
 .tilt-active { transition: none !important; transform: none !important; }
 }
 @media (max-width: 960px){
@@ -419,6 +431,7 @@ html { scroll-behavior: auto; }
 .hero-inner { max-width: 760px; }
 .hero-copy-panel { border-radius: 24px; }
 .hamburger { display: flex; }
+.hero-tracks { max-width: none; }
 }
 @media (max-width: 1280px) and (min-width: 961px){
 .nav-inner { padding: 0px 10px; gap: 8px; }
@@ -429,20 +442,21 @@ html { scroll-behavior: auto; }
 }
 @media (max-width: 640px){
 section { padding: 56px 16px; }
-.countdown-bar { padding: 0px 8px; gap: 7px; }
-.countdown-bar .cd-label { font-size: 0.62rem; letter-spacing: 0.3px; }
-.countdown-timer { gap: 3px; }
-.cd-unit { min-width: 32px; padding: 3px 6px; }
-.cd-sep { font-size: 0.75rem; }
 #hero { align-items: flex-start; }
 .hero-inner { padding: 36px 14px 58px; }
 .hero-copy-panel { padding: 18px 16px; border-radius: 22px; }
 .hero-badge { max-width: 100%; align-items: flex-start; padding: 6px 11px; margin-bottom: 13px; }
 .hero-badge span { font-size: 0.62rem; line-height: 1.35; }
 .hero-h1 { font-size: clamp(1.78rem, 7.2vw, 2.12rem); line-height: 1.06; margin-bottom: 12px; }
-.hero-sub { font-size: 0.88rem; line-height: 1.55; margin-bottom: 14px; }
+.hero-sub { font-size: 0.88rem; line-height: 1.55; margin-bottom: 14px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .hero-assurance { gap: 7px; margin-bottom: 13px; }
 .hero-assurance span { flex: 1 1 auto; justify-content: center; text-align: center; white-space: normal; padding: 6px 8px; font-size: 0.64rem; }
+.hero-tracks { margin-bottom: 13px; }
+.hero-track-picker { grid-template-columns: 1fr; gap: 8px; }
+.hero-track-btn { padding: 12px 13px; gap: 10px; min-height: 56px; }
+.htb-text b { font-size: 0.96rem; }
+.htb-text small { font-size: 0.65rem; }
+.hero-track-icon { width: 28px; height: 28px; }
 .hero-assessment-card { grid-template-columns: 1fr; gap: 11px; margin-top: 0px; margin-bottom: 12px; padding: 14px; border-radius: 18px; }
 .hero-assessment-actions, .hero-assessment-btn { width: 100%; }
 .hero-assessment-btn { min-height: 48px; font-size: 0.68rem; line-height: 1.18; padding: 8px 7px; }
@@ -455,16 +469,9 @@ section { padding: 56px 16px; }
 #hero { min-height: 100dvh; }
 }
 @media (max-width: 480px){
-.cd-lbl { font-size: 11px !important; letter-spacing: 0.04em; }
 .nav-logo-sub { font-size: 11px; }
 .hero-assessment-btn { font-size: 13px; }
 .hero-badge > span, .hero-assurance > span, .hero-assessment-copy > small { font-size: 12px; }
-.countdown-bar { justify-content: space-between; gap: 8px; }
-.countdown-bar .cd-label { flex-shrink: 1; min-width: 0px; font-size: 10.5px; letter-spacing: 0.2px; }
-.countdown-bar .cd-label > span:last-child { min-width: 0px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.countdown-bar .cd-label .pulse-dot { flex-shrink: 0; }
-.countdown-timer { flex-shrink: 0; }
-.cd-unit .cd-lbl { font-size: 9.5px !important; }
 .hamburger { min-width: 44px; min-height: 44px; }
 .hero-assessment-links a, .hero-links a { display: inline-flex; align-items: center; min-height: 44px; padding-block: 6px; font-size: 12.5px; }
 }
@@ -601,6 +608,88 @@ section { padding: 56px 16px; }
       <div class="hero-badge"><div class="dot"></div><span>100% Confidential | Qualified 1:1 Guidance</span></div>
       <h1 class="hero-h1"><span class="h1-l">Your Mind Deserves <em>Clarity.</em></span><span class="h1-l">Your Future Deserves <em>Direction.</em></span></h1>
       <p class="hero-sub">Professional online career counselling, psychometric career assessment and mental health counselling for students, parents and young adults across Delhi-NCR and India - including stream selection guidance for Class 10 &amp; 12 - blending empathy with evidence so families choose with clarity, not pressure.</p>
+      <!--
+        The two things Lume Live actually does, as two buttons. Picking one
+        reveals that track's services and its booking CTA — which keeps the
+        first screen short enough that both choices are visible on a phone,
+        instead of the second one starting below the fold.
+
+        Real <button>s with aria-expanded/aria-controls over panels that are
+        genuinely [hidden], so the disclosure is announced rather than merely
+        drawn, and the hero stays usable from a keyboard. The .svc-card blocks
+        further down the page still use the old div-with-onclick pattern.
+
+        The icons are inline SVG drawn for this page: no request, no external
+        origin for the CSP, no licence to track. Motion is decorative and the
+        global prefers-reduced-motion rule in index.css switches it off.
+
+        Prices are copy only; the browser sends a sku and the amount comes
+        from api/_lib/catalog.js.
+      -->
+      <div class="hero-tracks">
+        <div class="hero-track-picker" role="group" aria-label="Choose what you need help with">
+          <button type="button" class="hero-track-btn htb-career" data-track="career"
+                  aria-expanded="false" aria-controls="trackPanelCareer" onclick="toggleTrack('career')">
+            <span class="hero-track-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none">
+                <circle cx="24" cy="24" r="19" stroke="currentColor" stroke-width="2" opacity=".38"/>
+                <circle class="htk-ring" cx="24" cy="24" r="19" stroke="currentColor" stroke-width="2" opacity=".9" stroke-linecap="round"/>
+                <g class="htk-needle">
+                  <path d="M24 10 L29 24 L24 21 Z" fill="currentColor"/>
+                  <path d="M24 38 L19 24 L24 27 Z" fill="currentColor" opacity=".42"/>
+                </g>
+                <circle cx="24" cy="24" r="2.4" fill="currentColor"/>
+              </svg>
+            </span>
+            <span class="htb-text">
+              <b>Career Counselling</b>
+              <small>Stream, course and direction</small>
+            </span>
+            <span class="htb-chev" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="hero-track-btn htb-mind" data-track="mind"
+                  aria-expanded="false" aria-controls="trackPanelMind" onclick="toggleTrack('mind')">
+            <span class="hero-track-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none">
+                <path class="htk-pulse-a" d="M9 24a15 15 0 0 1 30 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".3"/>
+                <path class="htk-pulse-b" d="M14 27a10 10 0 0 1 20 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".5"/>
+                <path class="htk-heart" d="M24 38c-7-4.6-11-9-11-13.6a5.6 5.6 0 0 1 11-2.1 5.6 5.6 0 0 1 11 2.1C35 29 31 33.4 24 38Z" fill="currentColor"/>
+              </svg>
+            </span>
+            <span class="htb-text">
+              <b>Mental Health Sessions</b>
+              <small>Confidential 1:1 support</small>
+            </span>
+            <span class="htb-chev" aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <div class="hero-track-panel htp-career" id="trackPanelCareer" role="region" aria-label="Career counselling options" hidden>
+          <ul class="hero-track-rows">
+            <li><button type="button" onclick="openSessionModal('stream-clarity')"><span>Stream Clarity Session</span><b>&#8377;999</b></button></li>
+            <li><button type="button" onclick="openSessionModal('career-direction')"><span>Career Direction Session</span><b>&#8377;1,499</b></button></li>
+            <li><a href="assessment.html#free-test"><span>Career Snapshot</span><b>Free</b></a></li>
+            <li><a href="career-intelligence.html"><span>Career Intelligence</span><b>Explore</b></a></li>
+          </ul>
+          <button type="button" class="hero-track-cta" onclick="openSessionModal('career-intro')">
+            <span class="htc-main">Book a Career Session</span>
+            <span class="htc-sub">From &#8377;249 &middot; Pick your own slot</span>
+          </button>
+        </div>
+
+        <div class="hero-track-panel htp-mind" id="trackPanelMind" role="region" aria-label="Mental health options" hidden>
+          <ul class="hero-track-rows">
+            <li><button type="button" onclick="openSessionModal('wellness')"><span>1:1 Counselling Session</span><b>&#8377;499</b></button></li>
+            <li><a href="wellbeing-check.html"><span>Wellbeing Check</span><b>Free</b></a></li>
+            <li><a href="free-anxiety-test.html"><span>Anxiety &amp; Mood Screeners</span><b>Free</b></a></li>
+            <li><a href="mental-health-counselling.html"><span>All Services</span><b>Explore</b></a></li>
+          </ul>
+          <button type="button" class="hero-track-cta" onclick="openSessionModal('wellness')">
+            <span class="htc-main">Book a Mental Health Session</span>
+            <span class="htc-sub">&#8377;499 &middot; 45 min &middot; Pick your own slot</span>
+          </button>
+        </div>
+      </div>
       <div class="hero-assurance" aria-label="Counselling session assurances">
         <span>Private & Confidential</span>
         <span>Qualified 1:1</span>
@@ -2195,10 +2284,17 @@ section { padding: 56px 16px; }
     <button class="modal-x" onclick="closeModal('auth')" aria-label="Close account dialog">&times;</button>
     <div class="modal-hdr">
       <div class="modal-hdr-logo"><img loading="lazy" width="400" height="218" src="logo.png" alt="Lume Live" decoding="async"></div>
-      <h2>Client Account</h2>
-      <p>Sign in securely or create your Lume Live account.</p>
+      <h2 id="authTitle">Client Account</h2>
+      <p id="authSubtitle">Sign in securely or create your Lume Live account.</p>
     </div>
     <div class="modal-body">
+      <!-- Shown only when the account step was reached on the way to a booking,
+           so the ask is explained rather than sprung. setAuthBookingContext()
+           fills it in and hides it again once the booking has resumed. -->
+      <div class="auth-booking-note" id="authBookingNote" hidden>
+        <b id="authBookingItem">Your session</b>
+        <span>Your session details, video-call link and receipt live in your account, so you can reach them from any device. It takes about 30 seconds — we'll bring you straight back to your booking.</span>
+      </div>
       <div id="authSignedOut">
         <div class="auth-tabs" role="tablist" aria-label="Account access options">
           <button class="auth-tab active" id="authSignInTab" type="button" role="tab" aria-selected="true" onclick="setAuthMode('signin')">Sign In</button>
@@ -2349,7 +2445,7 @@ section { padding: 56px 16px; }
   ₹49 "intro-session" they used to point at is retired; FIRST50 is the
   first-session offer now, and it applies to both.
 */
-SESSION_PLANS={intro:{sku:"wellness-session",amount:499,regular:null,title:"Book Your First 1:1 Session",sub:"For parents, students & families · Online across India",detail:"1:1 counselling session · 45 minutes",label:"1:1 Counselling Session",offer:!1,suggestCoupon:"FIRST50"},wellness:{sku:"wellness-session",amount:499,regular:null,title:"Book Your Emotional Wellness Session",sub:"1:1 confidential support · Online across India",detail:"1:1 counselling session · 45 minutes",label:"1:1 Counselling Session",offer:!1,suggestCoupon:"FIRST50"},"stream-clarity":{sku:"stream-clarity-session",amount:999,regular:null,returnUrl:"https://lumelive.co.in/payment-return.html?order_id={order_id}&sku=stream-clarity-session&continue=%2Fassessment.html%23self-assessments",continueUrl:"assessment.html#self-assessments",title:"Book Your Stream Clarity Session",sub:"For parents of Grade 9–12 students · Online across India",detail:"Career Confusion & Stream Clarity session",label:"Career Confusion & Stream Clarity Session",offer:!1},"career-direction":{sku:"career-direction-session",amount:1499,regular:null,title:"Book Your Career Direction Session",sub:"For older students & young adults · Online across India",detail:"Career Direction & First-Job Readiness session",label:"Career Direction & First-Job Readiness Session",offer:!1}},currentSessionPlan=SESSION_PLANS.intro;function fmtINR(e){return"₹"+Number(e||0).toLocaleString("en-IN")}/*
+SESSION_PLANS={"career-intro":{sku:"wellness-session",amount:499,regular:null,title:"Book Your Career Counselling Session",sub:"Stream, course and career direction · Online across India",detail:"1:1 counselling session · 45 minutes",label:"1:1 Counselling Session",offer:!1,suggestCoupon:"FIRST50"},intro:{sku:"wellness-session",amount:499,regular:null,title:"Book Your First 1:1 Session",sub:"For parents, students & families · Online across India",detail:"1:1 counselling session · 45 minutes",label:"1:1 Counselling Session",offer:!1,suggestCoupon:"FIRST50"},wellness:{sku:"wellness-session",amount:499,regular:null,title:"Book Your Emotional Wellness Session",sub:"1:1 confidential support · Online across India",detail:"1:1 counselling session · 45 minutes",label:"1:1 Counselling Session",offer:!1,suggestCoupon:"FIRST50"},"stream-clarity":{sku:"stream-clarity-session",amount:999,regular:null,returnUrl:"https://lumelive.co.in/payment-return.html?order_id={order_id}&sku=stream-clarity-session&continue=%2Fassessment.html%23self-assessments",continueUrl:"assessment.html#self-assessments",title:"Book Your Stream Clarity Session",sub:"For parents of Grade 9–12 students · Online across India",detail:"Career Confusion & Stream Clarity session",label:"Career Confusion & Stream Clarity Session",offer:!1},"career-direction":{sku:"career-direction-session",amount:1499,regular:null,title:"Book Your Career Direction Session",sub:"For older students & young adults · Online across India",detail:"Career Direction & First-Job Readiness session",label:"Career Direction & First-Job Readiness Session",offer:!1}},currentSessionPlan=SESSION_PLANS.intro;function fmtINR(e){return"₹"+Number(e||0).toLocaleString("en-IN")}/*
   Coupons on the session modal.
 
   sessionCoupon holds the widget mounted into #sessCoupon by
@@ -2442,7 +2538,95 @@ function applySessionPlan(e){
   else if(!justMounted)renderSessionPrice();
   var n=document.querySelector("#modal-session .offer-countdown");
   n&&(t.offer?n.removeAttribute("hidden"):n.setAttribute("hidden",""))
-}function openModal(e){"session"===e&&applySessionPlan("intro"),document.getElementById("modal-"+e).classList.add("open"),document.body.style.overflow="hidden"}function openSessionModal(e){applySessionPlan(e),document.getElementById("modal-session").classList.add("open"),document.body.style.overflow="hidden"}function closeModal(e){document.getElementById("modal-"+e).classList.remove("open"),document.body.style.overflow=""}document.querySelectorAll(".modal-overlay").forEach(e=>{e.addEventListener("click",function(e){e.target===this&&(this.classList.remove("open"),document.body.style.overflow="")})});let scrollEndPromptShown=!1;function checkScrollEndPrompt(){window.authStateReady&&window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-80&&openScrollEndPopup()}function openScrollEndPopup(){const e=document.getElementById("scrollEndPopup");!e||scrollEndPromptShown||window.currentFirebaseUser||document.querySelector(".modal-overlay.open")||(scrollEndPromptShown=!0,e.classList.add("open"),document.body.style.overflow="hidden")}function closeScrollEndPopup(){const e=document.getElementById("scrollEndPopup");e&&(e.classList.remove("open"),document.body.style.overflow="")}function openComingSoon(e){document.getElementById("comingTitle").textContent=e,openModal("coming")}function submitNotify(){const e=document.getElementById("csName").value.trim(),t=document.getElementById("csPhone").value.trim();if(!t)return void showToast("Please enter your WhatsApp number");const o=waMessage(["Hello Lume Live!","","Please notify me when this Lume Live service is available.","","Contact Details","• Name: "+(e||"Not given"),"• WhatsApp: "+t,"","🧾 Service","• "+document.getElementById("comingTitle").textContent,"","Thank you."]);window.open(waLink(o),"_blank"),closeModal("coming"),showToast("Your notification message is ready in WhatsApp.")}function openPDF(){openModal("pdf")}function startPdfCashfree(e){e&&e.preventDefault(),"function"==typeof window.lumeCashfreePay?window.lumeCashfreePay({sku:"parents-handbook",amount:199,label:"Parents Career Handbook"}):showToast("Cashfree checkout is still loading. Please wait a few seconds and tap Pay Securely with Cashfree again.")}function startSessionCashfree(e){e&&e.preventDefault();const n=(document.getElementById("sessionName").value||"").trim(),s=(document.getElementById("sessionPhone").value||"").replace(/\D/g,"").slice(-10);if(s.length<10){showToast("Please enter a valid 10-digit WhatsApp number so we can confirm your session.");var a=document.getElementById("sessionPhone");a&&a.focus()}else{var i=document.getElementById("sessionConsent");if(i&&!i.checked)return showToast("Please agree to the Privacy Policy and Terms, and confirm parental consent if under 18, to continue."),void i.focus();if("function"==typeof window.lumeCashfreePay){
+}/* Hero track picker. One panel open at a time: picking the other track
+   swaps to it, picking the open one closes it. The panels are really
+   [hidden] rather than visually collapsed, so what is not on screen is
+   also not in the tab order or read out. */
+function toggleTrack(key){
+  var wasOpen=false;
+  document.querySelectorAll(".hero-track-btn").forEach(function(btn){
+    var panel=document.getElementById(btn.getAttribute("aria-controls"));
+    var isTarget=btn.getAttribute("data-track")===key;
+    if(isTarget && btn.getAttribute("aria-expanded")==="true"){wasOpen=true;}
+    btn.setAttribute("aria-expanded","false");
+    if(panel){panel.hidden=true;panel.classList.remove("open");}
+  });
+  if(wasOpen){return;}
+  var open=document.querySelector('.hero-track-btn[data-track="'+key+'"]');
+  if(!open){return;}
+  var target=document.getElementById(open.getAttribute("aria-controls"));
+  open.setAttribute("aria-expanded","true");
+  if(target){target.hidden=false;
+    /* let the [hidden] removal paint before the entrance runs */
+    requestAnimationFrame(function(){target.classList.add("open");});}
+  if(window.gtag){gtag("event","hero_track_open",{event_category:"hero",event_label:key});}
+}
+/* ── Account before booking ──
+   Booking used to open the details form, take the name, the number and the
+   consent tick, and only then — on Pay — reveal that an account was needed.
+   The account is asked for first now, so nobody fills a form to reach a wall.
+
+   The gate lives in openSessionModal/openModal("session") rather than at the
+   call sites, so every way into a booking inherits it: the hero picker, the
+   service cards, the nav and mobile buttons, the wellness CTA.
+
+   It deliberately FAILS OPEN. docs/accounts-and-checkout.md is explicit that
+   the page layer must never be able to block a payment on its own — that is
+   how the August outage worked. So a missing lume-auth.js, a rejected
+   ready(), or an auth layer that simply never answers all fall through to the
+   booking form, exactly as before. api/_lib/account.js is the real gate and
+   still refuses an unauthenticated order with a 401.  */
+var pendingBookingPlan=null,bookingResumeArmed=false;
+function openSessionModalDirect(e){applySessionPlan(e),document.getElementById("modal-session").classList.add("open"),document.body.style.overflow="hidden"}
+function setAuthBookingContext(plan){
+  var note=document.getElementById("authBookingNote"),item=document.getElementById("authBookingItem"),
+      title=document.getElementById("authTitle"),sub=document.getElementById("authSubtitle");
+  var p=SESSION_PLANS[plan]||SESSION_PLANS.intro;
+  if(note){note.hidden=false;}
+  if(item){item.textContent=p.label||"Your session";}
+  if(title){title.textContent="First, create your account";}
+  if(sub){sub.textContent="One step before you pick your slot.";}
+}
+function clearAuthBookingContext(){
+  var note=document.getElementById("authBookingNote"),title=document.getElementById("authTitle"),sub=document.getElementById("authSubtitle");
+  if(note){note.hidden=true;}
+  if(title){title.textContent="Client Account";}
+  if(sub){sub.textContent="Sign in securely or create your Lume Live account.";}
+}
+function resumeBookingAfterAuth(){
+  if(!pendingBookingPlan){return;}
+  var plan=pendingBookingPlan;pendingBookingPlan=null;
+  clearAuthBookingContext();
+  closeModal("auth");
+  /* let the auth modal finish closing before the booking one opens, so the
+     two overlays never fight over document.body.style.overflow */
+  setTimeout(function(){openSessionModalDirect(plan);},260);
+}
+function openSessionModal(e){
+  var plan=e||"intro";
+  var proceed=function(){openSessionModalDirect(plan);};
+  if(!window.lumeAccount||typeof window.lumeAccount.ready!=="function"){return proceed();}
+  var settled=false,done=function(signedIn){
+    if(settled){return;}settled=true;
+    if(signedIn){return proceed();}
+    pendingBookingPlan=plan;
+    setAuthBookingContext(plan);
+    if(!bookingResumeArmed&&typeof window.lumeAccount.onSignIn==="function"){
+      bookingResumeArmed=true;
+      window.lumeAccount.onSignIn(function(){bookingResumeArmed=false;resumeBookingAfterAuth();});
+    }
+    if(window.gtag){gtag("event","booking_account_required",{event_category:"booking",event_label:plan});}
+    openAuth("signup");
+  };
+  /* An auth layer that never answers must not strand someone on a dead
+     button, so the wait is bounded and the timeout opens the booking form. */
+  var timer=setTimeout(function(){done(true);},2500);
+  try{
+    window.lumeAccount.ready().then(function(user){clearTimeout(timer);done(Boolean(user));},
+                                   function(){clearTimeout(timer);done(true);});
+  }catch(err){clearTimeout(timer);done(true);}
+}
+function openModal(e){"session"===e?openSessionModal("intro"):(document.getElementById("modal-"+e).classList.add("open"),document.body.style.overflow="hidden")}function closeModal(e){"auth"===e&&!window.currentFirebaseUser&&(pendingBookingPlan=null,clearAuthBookingContext()),document.getElementById("modal-"+e).classList.remove("open"),document.body.style.overflow=""}document.querySelectorAll(".modal-overlay").forEach(e=>{e.addEventListener("click",function(e){e.target===this&&(this.classList.remove("open"),document.body.style.overflow="")})});let scrollEndPromptShown=!1;function checkScrollEndPrompt(){window.authStateReady&&window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-80&&openScrollEndPopup()}function openScrollEndPopup(){const e=document.getElementById("scrollEndPopup");!e||scrollEndPromptShown||window.currentFirebaseUser||document.querySelector(".modal-overlay.open")||(scrollEndPromptShown=!0,e.classList.add("open"),document.body.style.overflow="hidden")}function closeScrollEndPopup(){const e=document.getElementById("scrollEndPopup");e&&(e.classList.remove("open"),document.body.style.overflow="")}function openComingSoon(e){document.getElementById("comingTitle").textContent=e,openModal("coming")}function submitNotify(){const e=document.getElementById("csName").value.trim(),t=document.getElementById("csPhone").value.trim();if(!t)return void showToast("Please enter your WhatsApp number");const o=waMessage(["Hello Lume Live!","","Please notify me when this Lume Live service is available.","","Contact Details","• Name: "+(e||"Not given"),"• WhatsApp: "+t,"","🧾 Service","• "+document.getElementById("comingTitle").textContent,"","Thank you."]);window.open(waLink(o),"_blank"),closeModal("coming"),showToast("Your notification message is ready in WhatsApp.")}function openPDF(){openModal("pdf")}function startPdfCashfree(e){e&&e.preventDefault(),"function"==typeof window.lumeCashfreePay?window.lumeCashfreePay({sku:"parents-handbook",amount:199,label:"Parents Career Handbook"}):showToast("Cashfree checkout is still loading. Please wait a few seconds and tap Pay Securely with Cashfree again.")}function startSessionCashfree(e){e&&e.preventDefault();const n=(document.getElementById("sessionName").value||"").trim(),s=(document.getElementById("sessionPhone").value||"").replace(/\D/g,"").slice(-10);if(s.length<10){showToast("Please enter a valid 10-digit WhatsApp number so we can confirm your session.");var a=document.getElementById("sessionPhone");a&&a.focus()}else{var i=document.getElementById("sessionConsent");if(i&&!i.checked)return showToast("Please agree to the Privacy Policy and Terms, and confirm parental consent if under 18, to continue."),void i.focus();if("function"==typeof window.lumeCashfreePay){
       var l=currentSessionPlan||SESSION_PLANS.intro;
       var couponState=sessionCoupon?sessionCoupon.getState():null;
       window.lumeCashfreePay({
