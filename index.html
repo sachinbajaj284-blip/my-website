@@ -362,30 +362,47 @@ nav { position: fixed; top: var(--top-bars-h); left: 0px; right: 0px; z-index: 1
 .hero-h1 .h1-l { display: block; }
 .hero-h1 .h1-l + .h1-l { margin-top: 0.08em; }
 .hero-sub { max-width: 680px; font-size: 0.96rem; color: rgba(255, 255, 255, 0.83); line-height: 1.68; margin-bottom: 18px; animation: 0.8s ease 0.7s 1 normal both running fadeUp; text-wrap: pretty; }
-.hero-tracks { display: grid; grid-template-columns: repeat(2, minmax(0px, 1fr)); gap: 12px; max-width: 780px; margin: 0px 0px 16px; }
-.hero-track-career { animation: 0.72s ease 0.58s 1 normal both running fadeUp; }
-.hero-track { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 15px 16px; border-radius: 20px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.055)); border: 1px solid rgba(255, 255, 255, 0.16); box-shadow: rgba(0, 0, 0, 0.18) 0px 20px 54px, rgba(255, 255, 255, 0.16) 0px 1px 0px inset; backdrop-filter: blur(22px) saturate(1.2); overflow: hidden; transition: transform var(--dur) var(--ease),border-color var(--dur) var(--ease); }
-.hero-track::before { content: ""; position: absolute; inset: 0px; border-left: 4px solid var(--gold2); pointer-events: none; border-radius: 20px 0px 0px 20px; }
-.hero-track::after { content: ""; position: absolute; top: 0px; left: -60%; width: 45%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent); transform: skewX(-18deg); pointer-events: none; transition: left .75s var(--ease); }
-.hero-track:hover::after { left: 130%; }
-.hero-track:hover { transform: translateY(-3px); border-color: rgba(255, 255, 255, 0.3); }
-.hero-track > * { position: relative; z-index: 1; }
-.hero-track-head h2 { font-family: "Playfair Display", serif; font-size: 1.16rem; font-weight: 800; color: rgb(255, 255, 255); line-height: 1.16; margin: 0px 0px 4px; letter-spacing: 0px; }
-.hero-track-head p { color: rgba(255, 255, 255, 0.68); font-size: 0.75rem; line-height: 1.5; margin: 0px; }
-.hero-track-icon { display: block; width: 34px; height: 34px; margin-bottom: 9px; color: var(--gold2); animation: 6s ease-in-out 0s infinite normal none running trackFloat; }
+.hero-tracks { max-width: 780px; margin: 0px 0px 16px; animation: 0.72s ease 0.58s 1 normal both running fadeUp; }
+.hero-track-picker { display: grid; grid-template-columns: repeat(2, minmax(0px, 1fr)); gap: 10px; }
+.hero-track-btn { position: relative; display: flex; align-items: center; gap: 11px; width: 100%; padding: 13px 14px; border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 18px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.055)); box-shadow: rgba(0, 0, 0, 0.18) 0px 20px 54px, rgba(255, 255, 255, 0.16) 0px 1px 0px inset; backdrop-filter: blur(22px) saturate(1.2); color: rgb(255, 255, 255); font-family: inherit; text-align: left; cursor: pointer; overflow: hidden; transition: transform var(--dur) var(--ease),border-color var(--dur) var(--ease),background var(--dur) var(--ease); }
+.hero-track-btn::before { content: ""; position: absolute; inset: 0px; border-left: 4px solid var(--gold2); border-radius: 18px 0px 0px 18px; pointer-events: none; }
+.htb-mind::before { border-left-color: var(--teal2); }
+.hero-track-btn::after { content: ""; position: absolute; top: 0px; left: -60%; width: 45%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent); transform: skewX(-18deg); pointer-events: none; transition: left .75s var(--ease); }
+.hero-track-btn:hover::after { left: 130%; }
+.hero-track-btn:hover { transform: translateY(-3px); border-color: rgba(255, 255, 255, 0.32); }
+.hero-track-btn > * { position: relative; z-index: 1; }
+.htb-text { display: flex; flex-direction: column; gap: 2px; min-width: 0px; flex: 1 1 0%; }
+.htb-text b { font-family: "Playfair Display", serif; font-size: 1.02rem; font-weight: 800; line-height: 1.15; color: rgb(255, 255, 255); }
+.htb-text small { font-size: 0.68rem; font-weight: 600; line-height: 1.35; color: rgba(255, 255, 255, 0.66); }
+.htb-chev { flex: 0 0 auto; width: 9px; height: 9px; border-right: 2px solid var(--gold2); border-bottom: 2px solid var(--gold2); transform: rotate(45deg); transition: transform var(--dur) var(--ease); }
+.htb-mind .htb-chev { border-color: rgb(95, 212, 212); }
+.hero-track-icon { flex: 0 0 auto; display: block; width: 32px; height: 32px; color: var(--gold2); animation: 6s ease-in-out 0s infinite normal none running trackFloat; }
+.htb-mind .hero-track-icon { color: rgb(95, 212, 212); animation-delay: -3s; }
 .hero-track-icon svg { width: 100%; height: 100%; display: block; overflow: visible; }
 .htk-ring { stroke-dasharray: 120; stroke-dashoffset: 120; animation: trackDraw 1.5s var(--ease) .9s forwards; }
 .htk-needle { transform-origin: 24px 24px; transition: transform .55s var(--ease); }
-.hero-track-career:hover .htk-needle { transform: rotate(32deg); }
-.hero-track-rows { list-style: none; display: flex; flex-direction: column; gap: 4px; margin: 0px; padding: 0px; }
-.hero-track-rows li { display: flex; }
-.hero-track-rows button, .hero-track-rows a { flex: 1 1 0%; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 34px; width: 100%; padding: 6px 9px; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; background: rgba(255, 255, 255, 0.06); color: rgba(255, 255, 255, 0.86); font-family: inherit; font-size: 0.73rem; font-weight: 700; line-height: 1.3; text-align: left; text-decoration: none; cursor: pointer; transition: background var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease),color var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease); }
-.hero-track-rows button:hover, .hero-track-rows a:hover { background: rgba(255, 255, 255, 0.13); border-color: rgba(232, 185, 90, 0.42); color: rgb(255, 255, 255); transform: translateX(3px); }
-.hero-track-rows b { flex: 0 0 auto; color: var(--gold2); font-size: 0.72rem; font-weight: 900; letter-spacing: 0.2px; }
-.hero-track-cta { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 46px; padding: 9px 12px; border: none; border-radius: 12px; background: linear-gradient(135deg, rgb(201, 147, 58), rgb(232, 184, 78)); color: rgb(16, 38, 80); font-family: inherit; text-align: center; cursor: pointer; box-shadow: rgba(201, 147, 58, 0.34) 0px 10px 24px; transition: transform var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease); }
-.hero-track-cta:hover { transform: translateY(-2px); background: linear-gradient(135deg, rgb(212, 160, 68), rgb(240, 200, 96)); }
-.hero-track-cta .htc-main { font-size: 0.78rem; font-weight: 900; line-height: 1.2; }
-.hero-track-cta .htc-sub { font-size: 0.63rem; font-weight: 700; opacity: 0.82; line-height: 1.25; }
+.htb-career:hover .htk-needle, .htb-career[aria-expanded="true"] .htk-needle { transform: rotate(32deg); }
+.htk-pulse-a, .htk-pulse-b { transform-origin: 24px 27px; animation: 4.4s ease-in-out 0s infinite normal none running trackBreathe; }
+.htk-pulse-b { animation-delay: 0.5s; }
+.htk-heart { transform-origin: 24px 28px; transition: transform .45s var(--ease); }
+.htb-mind:hover .htk-heart, .htb-mind[aria-expanded="true"] .htk-heart { transform: scale(1.09); }
+.hero-assurance { display: flex; flex-wrap: wrap; gap: 9px; margin: 0px 0px 16px; animation: 0.8s ease 0.8s 1 normal both running fadeUp; }
+.hero-assurance span { display: inline-flex; align-items: center; gap: 6px; background: rgba(255, 255, 255, 0.09); border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 999px; padding: 7px 12px; color: rgba(255, 255, 255, 0.9); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.2px; white-space: nowrap; backdrop-filter: blur(12px); }
+.hero-assurance span:first-child { background: rgba(34, 197, 94, 0.13); border-color: rgba(34, 197, 94, 0.4); color: var(--green2); }
+.hero-assessment-card { display: grid; grid-template-columns: minmax(0px, 0.95fr) minmax(300px, 1fr); align-items: center; gap: 14px; max-width: 780px; margin: 0px 0px 14px; padding: 15px 16px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.055)); border: 1px solid rgba(232, 185, 90, 0.32); border-radius: 20px; box-shadow: rgba(0, 0, 0, 0.18) 0px 20px 54px, rgba(255, 255, 255, 0.16) 0px 1px 0px inset; backdrop-filter: blur(22px) saturate(1.2); animation: 0.72s ease 0.62s 1 normal both running fadeUp; position: relative; overflow: hidden; }
+.hero-assessment-card::before { content: ""; position: absolute; inset: 0px; border-left: 4px solid var(--gold2); pointer-events: none; }
+.hero-assessment-copy small { display: block; color: var(--gold2); font-size: 0.64rem; font-weight: 900; letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 4px; }
+.hero-assessment-copy b { display: block; color: rgb(255, 255, 255); font-family: "Playfair Display", serif; font-size: 1.08rem; line-height: 1.2; margin-bottom: 3px; }
+.hero-assessment-copy span { display: block; color: rgba(255, 255, 255, 0.68); font-size: 0.76rem; line-height: 1.5; }
+.hero-assessment-actions { display: flex; flex-direction: column; gap: 10px; min-width: 0px; }
+.hero-assessment-primary { font-weight: 900; box-shadow: rgba(201, 147, 58, 0.34) 0px 10px 24px; background: linear-gradient(135deg, rgb(201, 147, 58), rgb(232, 184, 78)) !important; color: rgb(16, 38, 80) !important; }
+.hero-assessment-primary:hover { transform: translateY(-2px); background: linear-gradient(135deg, rgb(212, 160, 68), rgb(240, 200, 96)) !important; color: rgb(16, 38, 80) !important; }
+.hero-assessment-links { display: flex; flex-wrap: wrap; gap: 5px 16px; }
+.hero-assessment-links a { display: inline-flex; align-items: center; gap: 5px; color: rgba(255, 255, 255, 0.74); font-size: 0.72rem; font-weight: 700; text-decoration: none; letter-spacing: 0.2px; transition: color 0.2s; }
+.hero-assessment-links a::before { content: "›"; color: var(--gold2); font-weight: 900; }
+.hero-assessment-links a:hover { color: var(--gold2); }
+.hero-assessment-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 9px 11px; border-radius: 12px; background: rgb(255, 255, 255); color: var(--navy); font-size: 0.72rem; font-weight: 900; text-decoration: none; text-align: center; box-shadow: rgba(0, 0, 0, 0.18) 0px 8px 20px; transition: 0.22s; line-height: 1.22; }
+.hero-assessment-btn:hover { transform: translateY(-2px); background: var(--gold2); color: rgb(16, 38, 80); }
 section { padding: 80px 20px; }
 .toast { position: fixed; bottom: 88px; left: 24px; background: var(--navy); color: rgb(255, 255, 255); padding: 12px 18px; border-radius: 10px; font-size: 0.83rem; font-weight: 600; z-index: 9999; transform: translateX(-120%); transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); box-shadow: rgba(0, 0, 0, 0.2) 0px 8px 24px; border-left: 3px solid var(--gold); }
 .mouse-glow { position: fixed; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(201, 147, 58, 0.08) 0%, transparent 70%); pointer-events: none; z-index: 0; transform: translate(-50%, -50%); transition: opacity 0.3s; opacity: 0; }
@@ -399,11 +416,15 @@ button, a, .btn-cta, .btn-gold, .btn-ghost, .sa-btn, .ll-check-btn, .ll-option {
 section { position: relative; }
 section::after { content: ""; position: absolute; bottom: 0px; left: 50%; transform: translateX(-50%); width: 60px; height: 3px; background: linear-gradient(90deg,transparent,var(--gold),transparent); border-radius: 2px; opacity: 0.3; }
 #hero::after, #gallery::after, #questionnaire::after, #school-partnerships::after { display: none; }
+.tilt-active { transition: transform 0.18s ease-out; transform-style: preserve-3d; will-change: transform; }
+.tilt-glare { position: absolute; inset: 0px; border-radius: inherit; background: radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.16),transparent 55%); opacity: 0; transition: opacity 0.25s; pointer-events: none; z-index: 2; }
+.tilt-active:hover .tilt-glare { opacity: 1; }
 a, button, [role="button"] { -webkit-tap-highlight-color: rgba(0, 0, 0, 0.06); }
 @media (prefers-reduced-motion: reduce){
 *, ::before, ::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
 .particle, .morph-blob, .mouse-glow { display: none !important; }
 html { scroll-behavior: auto; }
+.tilt-active { transition: none !important; transform: none !important; }
 }
 @media (max-width: 960px){
 .hero-inner, .approach-grid, .about-grid, .rec-inner, .cpdf-inner, .contact-grid, .experience-grid { grid-template-columns: 1fr; }
@@ -427,13 +448,18 @@ section { padding: 56px 16px; }
 .hero-badge { max-width: 100%; align-items: flex-start; padding: 6px 11px; margin-bottom: 13px; }
 .hero-badge span { font-size: 0.62rem; line-height: 1.35; }
 .hero-h1 { font-size: clamp(1.78rem, 7.2vw, 2.12rem); line-height: 1.06; margin-bottom: 12px; }
-.hero-sub { font-size: 0.88rem; line-height: 1.55; margin-bottom: 14px; }
-.hero-tracks { grid-template-columns: 1fr; gap: 10px; margin-bottom: 13px; }
-.hero-track { padding: 14px; border-radius: 18px; gap: 9px; }
-.hero-track-head h2 { font-size: 1.08rem; }
-.hero-track-icon { width: 30px; height: 30px; margin-bottom: 7px; }
-.hero-track-rows button, .hero-track-rows a { min-height: 42px; font-size: 0.75rem; }
-.hero-track-cta { min-height: 48px; }
+.hero-sub { font-size: 0.88rem; line-height: 1.55; margin-bottom: 14px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.hero-assurance { gap: 7px; margin-bottom: 13px; }
+.hero-assurance span { flex: 1 1 auto; justify-content: center; text-align: center; white-space: normal; padding: 6px 8px; font-size: 0.64rem; }
+.hero-tracks { margin-bottom: 13px; }
+.hero-track-picker { grid-template-columns: 1fr; gap: 8px; }
+.hero-track-btn { padding: 12px 13px; gap: 10px; min-height: 56px; }
+.htb-text b { font-size: 0.96rem; }
+.htb-text small { font-size: 0.65rem; }
+.hero-track-icon { width: 28px; height: 28px; }
+.hero-assessment-card { grid-template-columns: 1fr; gap: 11px; margin-top: 0px; margin-bottom: 12px; padding: 14px; border-radius: 18px; }
+.hero-assessment-actions, .hero-assessment-btn { width: 100%; }
+.hero-assessment-btn { min-height: 48px; font-size: 0.68rem; line-height: 1.18; padding: 8px 7px; }
 }
 @media (max-width: 400px){
 .hero-h1 { font-size: 1.76rem; }
@@ -444,8 +470,10 @@ section { padding: 56px 16px; }
 }
 @media (max-width: 480px){
 .nav-logo-sub { font-size: 11px; }
+.hero-assessment-btn { font-size: 13px; }
 .hero-badge > span, .hero-assurance > span, .hero-assessment-copy > small { font-size: 12px; }
 .hamburger { min-width: 44px; min-height: 44px; }
+.hero-assessment-links a, .hero-links a { display: inline-flex; align-items: center; min-height: 44px; padding-block: 6px; font-size: 12.5px; }
 }
 </style>
 <link rel="preload" href="index.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -581,22 +609,27 @@ section { padding: 56px 16px; }
       <h1 class="hero-h1"><span class="h1-l">Your Mind Deserves <em>Clarity.</em></span><span class="h1-l">Your Future Deserves <em>Direction.</em></span></h1>
       <p class="hero-sub">Professional online career counselling, psychometric career assessment and mental health counselling for students, parents and young adults across Delhi-NCR and India - including stream selection guidance for Class 10 &amp; 12 - blending empathy with evidence so families choose with clarity, not pressure.</p>
       <!--
-        The two things Lume Live actually does, named, priced and bookable
-        without scrolling. Every row is a real button or link rather than a
-        div with an onclick, so the hero stays keyboard-reachable — the
-        .svc-card blocks further down the page still use the old pattern.
+        The two things Lume Live actually does, as two buttons. Picking one
+        reveals that track's services and its booking CTA — which keeps the
+        first screen short enough that both choices are visible on a phone,
+        instead of the second one starting below the fold.
+
+        Real <button>s with aria-expanded/aria-controls over panels that are
+        genuinely [hidden], so the disclosure is announced rather than merely
+        drawn, and the hero stays usable from a keyboard. The .svc-card blocks
+        further down the page still use the old div-with-onclick pattern.
 
         The icons are inline SVG drawn for this page: no request, no external
-        origin to add to the CSP, no licence to track, and they inherit the
-        card's colour. Motion is decorative only and the global
-        prefers-reduced-motion rule in index.css already switches it off.
+        origin for the CSP, no licence to track. Motion is decorative and the
+        global prefers-reduced-motion rule in index.css switches it off.
 
-        Prices here are copy only; the browser sends a sku and the amount
-        comes from api/_lib/catalog.js.
+        Prices are copy only; the browser sends a sku and the amount comes
+        from api/_lib/catalog.js.
       -->
       <div class="hero-tracks">
-        <section class="hero-track hero-track-career" aria-labelledby="trackCareerTitle">
-          <div class="hero-track-head">
+        <div class="hero-track-picker" role="group" aria-label="Choose what you need help with">
+          <button type="button" class="hero-track-btn htb-career" data-track="career"
+                  aria-expanded="false" aria-controls="trackPanelCareer" onclick="toggleTrack('career')">
             <span class="hero-track-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48" fill="none">
                 <circle cx="24" cy="24" r="19" stroke="currentColor" stroke-width="2" opacity=".38"/>
@@ -608,9 +641,30 @@ section { padding: 56px 16px; }
                 <circle cx="24" cy="24" r="2.4" fill="currentColor"/>
               </svg>
             </span>
-            <h2 id="trackCareerTitle">Career Counselling</h2>
-            <p>Stream, course and career direction.</p>
-          </div>
+            <span class="htb-text">
+              <b>Career Counselling</b>
+              <small>Stream, course and direction</small>
+            </span>
+            <span class="htb-chev" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="hero-track-btn htb-mind" data-track="mind"
+                  aria-expanded="false" aria-controls="trackPanelMind" onclick="toggleTrack('mind')">
+            <span class="hero-track-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none">
+                <path class="htk-pulse-a" d="M9 24a15 15 0 0 1 30 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".3"/>
+                <path class="htk-pulse-b" d="M14 27a10 10 0 0 1 20 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".5"/>
+                <path class="htk-heart" d="M24 38c-7-4.6-11-9-11-13.6a5.6 5.6 0 0 1 11-2.1 5.6 5.6 0 0 1 11 2.1C35 29 31 33.4 24 38Z" fill="currentColor"/>
+              </svg>
+            </span>
+            <span class="htb-text">
+              <b>Mental Health Sessions</b>
+              <small>Confidential 1:1 support</small>
+            </span>
+            <span class="htb-chev" aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <div class="hero-track-panel htp-career" id="trackPanelCareer" role="region" aria-label="Career counselling options" hidden>
           <ul class="hero-track-rows">
             <li><button type="button" onclick="openSessionModal('stream-clarity')"><span>Stream Clarity Session</span><b>&#8377;999</b></button></li>
             <li><button type="button" onclick="openSessionModal('career-direction')"><span>Career Direction Session</span><b>&#8377;1,499</b></button></li>
@@ -621,20 +675,9 @@ section { padding: 56px 16px; }
             <span class="htc-main">Book a Career Session</span>
             <span class="htc-sub">From &#8377;249 &middot; Pick your own slot</span>
           </button>
-        </section>
+        </div>
 
-        <section class="hero-track hero-track-mind" aria-labelledby="trackMindTitle">
-          <div class="hero-track-head">
-            <span class="hero-track-icon" aria-hidden="true">
-              <svg viewBox="0 0 48 48" fill="none">
-                <path class="htk-pulse-a" d="M9 24a15 15 0 0 1 30 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".3"/>
-                <path class="htk-pulse-b" d="M14 27a10 10 0 0 1 20 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".5"/>
-                <path class="htk-heart" d="M24 38c-7-4.6-11-9-11-13.6a5.6 5.6 0 0 1 11-2.1 5.6 5.6 0 0 1 11 2.1C35 29 31 33.4 24 38Z" fill="currentColor"/>
-              </svg>
-            </span>
-            <h2 id="trackMindTitle">Mental Health Sessions</h2>
-            <p>Confidential 1:1 support, judgement-free.</p>
-          </div>
+        <div class="hero-track-panel htp-mind" id="trackPanelMind" role="region" aria-label="Mental health options" hidden>
           <ul class="hero-track-rows">
             <li><button type="button" onclick="openSessionModal('wellness')"><span>1:1 Counselling Session</span><b>&#8377;499</b></button></li>
             <li><a href="wellbeing-check.html"><span>Wellbeing Check</span><b>Free</b></a></li>
@@ -645,7 +688,7 @@ section { padding: 56px 16px; }
             <span class="htc-main">Book a Mental Health Session</span>
             <span class="htc-sub">&#8377;499 &middot; 45 min &middot; Pick your own slot</span>
           </button>
-        </section>
+        </div>
       </div>
       <div class="hero-assurance" aria-label="Counselling session assurances">
         <span>Private & Confidential</span>
@@ -2488,7 +2531,30 @@ function applySessionPlan(e){
   else if(!justMounted)renderSessionPrice();
   var n=document.querySelector("#modal-session .offer-countdown");
   n&&(t.offer?n.removeAttribute("hidden"):n.setAttribute("hidden",""))
-}function openModal(e){"session"===e&&applySessionPlan("intro"),document.getElementById("modal-"+e).classList.add("open"),document.body.style.overflow="hidden"}function openSessionModal(e){applySessionPlan(e),document.getElementById("modal-session").classList.add("open"),document.body.style.overflow="hidden"}function closeModal(e){document.getElementById("modal-"+e).classList.remove("open"),document.body.style.overflow=""}document.querySelectorAll(".modal-overlay").forEach(e=>{e.addEventListener("click",function(e){e.target===this&&(this.classList.remove("open"),document.body.style.overflow="")})});let scrollEndPromptShown=!1;function checkScrollEndPrompt(){window.authStateReady&&window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-80&&openScrollEndPopup()}function openScrollEndPopup(){const e=document.getElementById("scrollEndPopup");!e||scrollEndPromptShown||window.currentFirebaseUser||document.querySelector(".modal-overlay.open")||(scrollEndPromptShown=!0,e.classList.add("open"),document.body.style.overflow="hidden")}function closeScrollEndPopup(){const e=document.getElementById("scrollEndPopup");e&&(e.classList.remove("open"),document.body.style.overflow="")}function openComingSoon(e){document.getElementById("comingTitle").textContent=e,openModal("coming")}function submitNotify(){const e=document.getElementById("csName").value.trim(),t=document.getElementById("csPhone").value.trim();if(!t)return void showToast("Please enter your WhatsApp number");const o=waMessage(["Hello Lume Live!","","Please notify me when this Lume Live service is available.","","Contact Details","• Name: "+(e||"Not given"),"• WhatsApp: "+t,"","🧾 Service","• "+document.getElementById("comingTitle").textContent,"","Thank you."]);window.open(waLink(o),"_blank"),closeModal("coming"),showToast("Your notification message is ready in WhatsApp.")}function openPDF(){openModal("pdf")}function startPdfCashfree(e){e&&e.preventDefault(),"function"==typeof window.lumeCashfreePay?window.lumeCashfreePay({sku:"parents-handbook",amount:199,label:"Parents Career Handbook"}):showToast("Cashfree checkout is still loading. Please wait a few seconds and tap Pay Securely with Cashfree again.")}function startSessionCashfree(e){e&&e.preventDefault();const n=(document.getElementById("sessionName").value||"").trim(),s=(document.getElementById("sessionPhone").value||"").replace(/\D/g,"").slice(-10);if(s.length<10){showToast("Please enter a valid 10-digit WhatsApp number so we can confirm your session.");var a=document.getElementById("sessionPhone");a&&a.focus()}else{var i=document.getElementById("sessionConsent");if(i&&!i.checked)return showToast("Please agree to the Privacy Policy and Terms, and confirm parental consent if under 18, to continue."),void i.focus();if("function"==typeof window.lumeCashfreePay){
+}/* Hero track picker. One panel open at a time: picking the other track
+   swaps to it, picking the open one closes it. The panels are really
+   [hidden] rather than visually collapsed, so what is not on screen is
+   also not in the tab order or read out. */
+function toggleTrack(key){
+  var wasOpen=false;
+  document.querySelectorAll(".hero-track-btn").forEach(function(btn){
+    var panel=document.getElementById(btn.getAttribute("aria-controls"));
+    var isTarget=btn.getAttribute("data-track")===key;
+    if(isTarget && btn.getAttribute("aria-expanded")==="true"){wasOpen=true;}
+    btn.setAttribute("aria-expanded","false");
+    if(panel){panel.hidden=true;panel.classList.remove("open");}
+  });
+  if(wasOpen){return;}
+  var open=document.querySelector('.hero-track-btn[data-track="'+key+'"]');
+  if(!open){return;}
+  var target=document.getElementById(open.getAttribute("aria-controls"));
+  open.setAttribute("aria-expanded","true");
+  if(target){target.hidden=false;
+    /* let the [hidden] removal paint before the entrance runs */
+    requestAnimationFrame(function(){target.classList.add("open");});}
+  if(window.gtag){gtag("event","hero_track_open",{event_category:"hero",event_label:key});}
+}
+function openModal(e){"session"===e&&applySessionPlan("intro"),document.getElementById("modal-"+e).classList.add("open"),document.body.style.overflow="hidden"}function openSessionModal(e){applySessionPlan(e),document.getElementById("modal-session").classList.add("open"),document.body.style.overflow="hidden"}function closeModal(e){document.getElementById("modal-"+e).classList.remove("open"),document.body.style.overflow=""}document.querySelectorAll(".modal-overlay").forEach(e=>{e.addEventListener("click",function(e){e.target===this&&(this.classList.remove("open"),document.body.style.overflow="")})});let scrollEndPromptShown=!1;function checkScrollEndPrompt(){window.authStateReady&&window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-80&&openScrollEndPopup()}function openScrollEndPopup(){const e=document.getElementById("scrollEndPopup");!e||scrollEndPromptShown||window.currentFirebaseUser||document.querySelector(".modal-overlay.open")||(scrollEndPromptShown=!0,e.classList.add("open"),document.body.style.overflow="hidden")}function closeScrollEndPopup(){const e=document.getElementById("scrollEndPopup");e&&(e.classList.remove("open"),document.body.style.overflow="")}function openComingSoon(e){document.getElementById("comingTitle").textContent=e,openModal("coming")}function submitNotify(){const e=document.getElementById("csName").value.trim(),t=document.getElementById("csPhone").value.trim();if(!t)return void showToast("Please enter your WhatsApp number");const o=waMessage(["Hello Lume Live!","","Please notify me when this Lume Live service is available.","","Contact Details","• Name: "+(e||"Not given"),"• WhatsApp: "+t,"","🧾 Service","• "+document.getElementById("comingTitle").textContent,"","Thank you."]);window.open(waLink(o),"_blank"),closeModal("coming"),showToast("Your notification message is ready in WhatsApp.")}function openPDF(){openModal("pdf")}function startPdfCashfree(e){e&&e.preventDefault(),"function"==typeof window.lumeCashfreePay?window.lumeCashfreePay({sku:"parents-handbook",amount:199,label:"Parents Career Handbook"}):showToast("Cashfree checkout is still loading. Please wait a few seconds and tap Pay Securely with Cashfree again.")}function startSessionCashfree(e){e&&e.preventDefault();const n=(document.getElementById("sessionName").value||"").trim(),s=(document.getElementById("sessionPhone").value||"").replace(/\D/g,"").slice(-10);if(s.length<10){showToast("Please enter a valid 10-digit WhatsApp number so we can confirm your session.");var a=document.getElementById("sessionPhone");a&&a.focus()}else{var i=document.getElementById("sessionConsent");if(i&&!i.checked)return showToast("Please agree to the Privacy Policy and Terms, and confirm parental consent if under 18, to continue."),void i.focus();if("function"==typeof window.lumeCashfreePay){
       var l=currentSessionPlan||SESSION_PLANS.intro;
       var couponState=sessionCoupon?sessionCoupon.getState():null;
       window.lumeCashfreePay({
