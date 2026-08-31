@@ -47,8 +47,10 @@ jobs:
       - name: Install Playwright
         run: npm install --no-audit --no-fund
 
-      # The tool finds whatever Chromium is present — including the one this
-      # puts in ~/.cache/ms-playwright — so no path needs configuring here.
+      # This is the build the tool prefers, so the runner and a contributor who
+      # has run the same command measure the page with the same browser. That
+      # matters: Chromium builds serialise cssText differently, and the check
+      # was unsatisfiable while the runner and a local machine disagreed.
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
