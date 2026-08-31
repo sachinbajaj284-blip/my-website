@@ -52,10 +52,41 @@ a{color:inherit}
 h1{font-family:'Fraunces','Noto Sans Devanagari',serif;font-size:clamp(2rem,5vw,4rem);line-height:1.08;letter-spacing:0;margin-bottom:16px}
 h1 em{color:var(--gold2);font-style:italic}
 .hero p{font-size:1rem;color:rgba(255,255,255,.78);max-width:650px}
-.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
 .btn{display:inline-flex;align-items:center;justify-content:center;min-height:46px;border-radius:999px;padding:13px 20px;text-decoration:none;font-weight:900;font-size:.88rem}
 .btn.gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);box-shadow:0 12px 28px rgba(201,147,58,.34)}
 .btn.ghost{border:1px solid rgba(255,255,255,.28);color:#fff}
+/* Hero track cards. English homepage ke picker jaisa hi, par bina modal ke —
+   yahan ye sirf link karte hain. Page ke apne tokens use karte hain. */
+.tracks{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.track{position:relative;display:flex;flex-direction:column;gap:9px;padding:16px 17px;border-radius:var(--radius);background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.055));border:1px solid rgba(255,255,255,.16);box-shadow:0 20px 54px rgba(0,0,0,.2),var(--glass-highlight);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);overflow:hidden;transition:transform var(--dur) var(--ease),border-color var(--dur) var(--ease)}
+.track::before{content:'';position:absolute;inset:0;border-left:4px solid var(--gold2);border-radius:var(--radius) 0 0 var(--radius);pointer-events:none}
+.track-mind::before{border-left-color:#5fd4d4}
+.track:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.3)}
+.track>*{position:relative;z-index:1}
+.track-ic{display:block;width:32px;height:32px;color:var(--gold2);animation:trackFloat 6s ease-in-out infinite}
+.track-mind .track-ic{color:#5fd4d4;animation-delay:-3s}
+.track-ic svg{width:100%;height:100%;display:block;overflow:visible}
+.tk-ring{stroke-dasharray:120;stroke-dashoffset:120;animation:trackDraw 1.5s var(--ease) .9s forwards}
+.tk-needle{transform-origin:24px 24px;transition:transform .55s var(--ease)}
+.track-career:hover .tk-needle{transform:rotate(32deg)}
+.tk-pulse-a,.tk-pulse-b{transform-origin:24px 27px;animation:trackBreathe 4.4s ease-in-out infinite}
+.tk-pulse-b{animation-delay:.5s}
+.tk-heart{transform-origin:24px 28px;transition:transform .45s var(--ease)}
+.track-mind:hover .tk-heart{transform:scale(1.09)}
+@keyframes trackFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes trackDraw{to{stroke-dashoffset:0}}
+@keyframes trackBreathe{0%,100%{transform:scale(.9);opacity:.28}50%{transform:scale(1.06);opacity:.7}}
+.track h2{font-family:'Fraunces','Noto Sans Devanagari',serif;font-size:1.16rem;line-height:1.2;color:#fff;margin:0}
+.track>p{font-size:.8rem;line-height:1.55;color:rgba(255,255,255,.7);margin:0;max-width:none}
+.track-links{list-style:none;display:flex;flex-direction:column;gap:5px;margin:0;padding:0}
+.track-links a{display:block;padding:7px 10px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.88);font-size:.78rem;font-weight:700;line-height:1.35;text-decoration:none;transition:background var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease)}
+.track-links a:hover{background:rgba(255,255,255,.13);border-color:rgba(232,185,90,.42);color:#fff;transform:translateX(3px)}
+.track-mind .track-links a:hover{border-color:rgba(14,140,140,.55)}
+.track-cta{margin-top:auto;display:flex;align-items:center;justify-content:center;min-height:46px;padding:11px 14px;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-size:.82rem;font-weight:900;text-align:center;text-decoration:none;box-shadow:0 10px 24px rgba(201,147,58,.34);transition:transform var(--dur-fast) var(--ease),filter var(--dur-fast) var(--ease)}
+.track-mind .track-cta{background:linear-gradient(135deg,var(--teal),#0E8C8C);color:#fff;box-shadow:0 10px 24px rgba(10,110,110,.38)}
+.track-cta:hover{transform:translateY(-2px);filter:brightness(1.06)}
+.track-links a:focus-visible,.track-cta:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}
 .visual{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:22px;padding:18px;box-shadow:0 24px 70px rgba(0,0,0,.22)}
 .visual img{width:100%;display:block;border-radius:16px}
 .band{padding:64px 18px;background:var(--paper)}
@@ -93,7 +124,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.72);padding:28px 18px;text
 .faq summary::after{content:'+';float:right;color:var(--gold);font-weight:900}
 .faq details[open] summary::after{content:'\2212'}
 .faq p{font-size:.88rem;color:var(--muted);padding:0 0 16px}
-@media(max-width:780px){.hero-inner,.grid,.svc-grid,.stats,.quotes{grid-template-columns:1fr}.links{font-size:.76rem;gap:8px}.links a:not(.lang){display:none}.hero{padding-top:56px}.actions .btn{width:100%}.visual{order:-1}}
+@media(max-width:780px){.hero-inner,.grid,.svc-grid,.stats,.quotes,.tracks{grid-template-columns:1fr}.links{font-size:.76rem;gap:8px}.links a:not(.lang){display:none}.hero{padding-top:56px}.actions .btn{width:100%}.visual{order:-1}}
 </style>
 <link rel="stylesheet" href="site-anim.css">
 <meta name="twitter:card" content="summary">
@@ -120,9 +151,68 @@ footer{background:var(--navy);color:rgba(255,255,255,.72);padding:28px 18px;text
         <span class="eyebrow">Delhi-NCR focus · India-wide online</span>
         <h1>बच्चे का करियर <em>guesswork</em> से नहीं, clarity से चुनें।</h1>
         <p>Lume Live दिल्ली, गुरुग्राम, नोएडा, फरीदाबाद, गाजियाबाद, रोहतक और पूरे भारत के परिवारों के लिए online career counselling, psychometric assessment और parent guidance देता है।</p>
+        <!--
+          Lume Live jo do cheezen karta hai, dono upar hi dikhti hain.
+
+          English homepage par ye cards ek modal kholte hain; is page par woh
+          machinery hai hi nahi (na SESSION_PLANS, na Cashfree, na auth), isliye
+          yahan cards sirf link karte hain — index.html#hero par, jahan asli
+          picker aur checkout rehta hai. Checkout ki dusri copy banane se money
+          path do jagah maintain karna padta, jo api/_lib/catalog.js khud mana
+          karta hai.
+
+          Price yahan jaan-boojh kar nahi hai: neeche services section apni
+          keemat khud batata hai, aur ek hi session ke do alag numbers ek hi
+          screen par galat lagte hain.
+
+          Icons inline SVG hain — koi request nahi, CSP mein koi naya origin
+          nahi. Motion sirf sajavat hai; upar wala prefers-reduced-motion block
+          use apne aap band kar deta hai.
+        -->
+        <div class="tracks">
+          <section class="track track-career">
+            <span class="track-ic" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none">
+                <circle cx="24" cy="24" r="19" stroke="currentColor" stroke-width="2" opacity=".38"/>
+                <circle class="tk-ring" cx="24" cy="24" r="19" stroke="currentColor" stroke-width="2" opacity=".9" stroke-linecap="round"/>
+                <g class="tk-needle">
+                  <path d="M24 10 L29 24 L24 21 Z" fill="currentColor"/>
+                  <path d="M24 38 L19 24 L24 27 Z" fill="currentColor" opacity=".42"/>
+                </g>
+                <circle cx="24" cy="24" r="2.4" fill="currentColor"/>
+              </svg>
+            </span>
+            <h2>करियर काउंसलिंग</h2>
+            <p>Stream, course aur career direction — Class 9–12 aur young adults ke liye.</p>
+            <ul class="track-links">
+              <li><a href="index.html#services">Stream Clarity &amp; Career Direction sessions</a></li>
+              <li><a href="index.html#free-test">फ्री करियर स्नैपशॉट</a></li>
+              <li><a href="career-intelligence.html">Career Intelligence</a></li>
+            </ul>
+            <a class="track-cta" href="index.html#hero">करियर सेशन बुक करें</a>
+          </section>
+
+          <section class="track track-mind">
+            <span class="track-ic" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none">
+                <path class="tk-pulse-a" d="M9 24a15 15 0 0 1 30 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".3"/>
+                <path class="tk-pulse-b" d="M14 27a10 10 0 0 1 20 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".5"/>
+                <path class="tk-heart" d="M24 38c-7-4.6-11-9-11-13.6a5.6 5.6 0 0 1 11-2.1 5.6 5.6 0 0 1 11 2.1C35 29 31 33.4 24 38Z" fill="currentColor"/>
+              </svg>
+            </span>
+            <h2>मेंटल हेल्थ सेशन</h2>
+            <p>Exam stress, anxiety, low mood aur family pressure — confidential 1:1.</p>
+            <ul class="track-links">
+              <li><a href="mental-health-counselling.html">1:1 काउंसलिंग सेशन</a></li>
+              <li><a href="wellbeing-check.html">फ्री वेलबीइंग चेक</a></li>
+              <li><a href="free-anxiety-test.html">Anxiety &amp; mood self-checks</a></li>
+            </ul>
+            <a class="track-cta" href="index.html#hero">मेंटल हेल्थ सेशन बुक करें</a>
+          </section>
         <div class="actions">
           <a class="btn gold" href="index.html#free-test">फ्री 60-सेकंड करियर टेस्ट शुरू करें</a>
           <a class="btn ghost" href="index.html#education-cost-calculator">गलत stream का cost calculator देखें</a>
+        </div>
         </div>
       </div>
       <div class="visual">
