@@ -183,6 +183,11 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .hero-h1 .h1-l{display:block;}
 .hero-h1 .h1-l+.h1-l{margin-top:.08em;}
 .hero-sub{max-width:680px;font-size:.96rem;color:rgba(255,255,255,.83);line-height:1.68;margin-bottom:18px;animation:fadeUp .8s ease .7s both;text-wrap:pretty;}
+/* Why an account is being asked for, shown only on the way to a booking. */
+.auth-booking-note{display:flex;flex-direction:column;gap:4px;margin:0 0 14px;padding:12px 14px;border:1px solid rgba(201,147,58,.32);border-left:4px solid var(--gold);border-radius:12px;background:linear-gradient(135deg,rgba(232,185,90,.14),rgba(232,185,90,.05));}
+.auth-booking-note b{color:var(--navy);font-size:.86rem;font-weight:800;line-height:1.25;}
+.auth-booking-note span{color:var(--mid);font-size:.76rem;line-height:1.55;}
+
 /* ── HERO TRACK PICKER ──
    Two buttons for the two things we do; picking one reveals its services
    and its booking CTA. Deliberately reuses the .hero-assessment-card glass

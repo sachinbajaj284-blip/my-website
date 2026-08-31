@@ -2284,10 +2284,17 @@ section { padding: 56px 16px; }
     <button class="modal-x" onclick="closeModal('auth')" aria-label="Close account dialog">&times;</button>
     <div class="modal-hdr">
       <div class="modal-hdr-logo"><img loading="lazy" width="400" height="218" src="logo.png" alt="Lume Live" decoding="async"></div>
-      <h2>Client Account</h2>
-      <p>Sign in securely or create your Lume Live account.</p>
+      <h2 id="authTitle">Client Account</h2>
+      <p id="authSubtitle">Sign in securely or create your Lume Live account.</p>
     </div>
     <div class="modal-body">
+      <!-- Shown only when the account step was reached on the way to a booking,
+           so the ask is explained rather than sprung. setAuthBookingContext()
+           fills it in and hides it again once the booking has resumed. -->
+      <div class="auth-booking-note" id="authBookingNote" hidden>
+        <b id="authBookingItem">Your session</b>
+        <span>Your session details, video-call link and receipt live in your account, so you can reach them from any device. It takes about 30 seconds — we'll bring you straight back to your booking.</span>
+      </div>
       <div id="authSignedOut">
         <div class="auth-tabs" role="tablist" aria-label="Account access options">
           <button class="auth-tab active" id="authSignInTab" type="button" role="tab" aria-selected="true" onclick="setAuthMode('signin')">Sign In</button>
@@ -2554,7 +2561,72 @@ function toggleTrack(key){
     requestAnimationFrame(function(){target.classList.add("open");});}
   if(window.gtag){gtag("event","hero_track_open",{event_category:"hero",event_label:key});}
 }
-function openModal(e){"session"===e&&applySessionPlan("intro"),document.getElementById("modal-"+e).classList.add("open"),document.body.style.overflow="hidden"}function openSessionModal(e){applySessionPlan(e),document.getElementById("modal-session").classList.add("open"),document.body.style.overflow="hidden"}function closeModal(e){document.getElementById("modal-"+e).classList.remove("open"),document.body.style.overflow=""}document.querySelectorAll(".modal-overlay").forEach(e=>{e.addEventListener("click",function(e){e.target===this&&(this.classList.remove("open"),document.body.style.overflow="")})});let scrollEndPromptShown=!1;function checkScrollEndPrompt(){window.authStateReady&&window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-80&&openScrollEndPopup()}function openScrollEndPopup(){const e=document.getElementById("scrollEndPopup");!e||scrollEndPromptShown||window.currentFirebaseUser||document.querySelector(".modal-overlay.open")||(scrollEndPromptShown=!0,e.classList.add("open"),document.body.style.overflow="hidden")}function closeScrollEndPopup(){const e=document.getElementById("scrollEndPopup");e&&(e.classList.remove("open"),document.body.style.overflow="")}function openComingSoon(e){document.getElementById("comingTitle").textContent=e,openModal("coming")}function submitNotify(){const e=document.getElementById("csName").value.trim(),t=document.getElementById("csPhone").value.trim();if(!t)return void showToast("Please enter your WhatsApp number");const o=waMessage(["Hello Lume Live!","","Please notify me when this Lume Live service is available.","","Contact Details","• Name: "+(e||"Not given"),"• WhatsApp: "+t,"","🧾 Service","• "+document.getElementById("comingTitle").textContent,"","Thank you."]);window.open(waLink(o),"_blank"),closeModal("coming"),showToast("Your notification message is ready in WhatsApp.")}function openPDF(){openModal("pdf")}function startPdfCashfree(e){e&&e.preventDefault(),"function"==typeof window.lumeCashfreePay?window.lumeCashfreePay({sku:"parents-handbook",amount:199,label:"Parents Career Handbook"}):showToast("Cashfree checkout is still loading. Please wait a few seconds and tap Pay Securely with Cashfree again.")}function startSessionCashfree(e){e&&e.preventDefault();const n=(document.getElementById("sessionName").value||"").trim(),s=(document.getElementById("sessionPhone").value||"").replace(/\D/g,"").slice(-10);if(s.length<10){showToast("Please enter a valid 10-digit WhatsApp number so we can confirm your session.");var a=document.getElementById("sessionPhone");a&&a.focus()}else{var i=document.getElementById("sessionConsent");if(i&&!i.checked)return showToast("Please agree to the Privacy Policy and Terms, and confirm parental consent if under 18, to continue."),void i.focus();if("function"==typeof window.lumeCashfreePay){
+/* ── Account before booking ──
+   Booking used to open the details form, take the name, the number and the
+   consent tick, and only then — on Pay — reveal that an account was needed.
+   The account is asked for first now, so nobody fills a form to reach a wall.
+
+   The gate lives in openSessionModal/openModal("session") rather than at the
+   call sites, so every way into a booking inherits it: the hero picker, the
+   service cards, the nav and mobile buttons, the wellness CTA.
+
+   It deliberately FAILS OPEN. docs/accounts-and-checkout.md is explicit that
+   the page layer must never be able to block a payment on its own — that is
+   how the August outage worked. So a missing lume-auth.js, a rejected
+   ready(), or an auth layer that simply never answers all fall through to the
+   booking form, exactly as before. api/_lib/account.js is the real gate and
+   still refuses an unauthenticated order with a 401.  */
+var pendingBookingPlan=null,bookingResumeArmed=false;
+function openSessionModalDirect(e){applySessionPlan(e),document.getElementById("modal-session").classList.add("open"),document.body.style.overflow="hidden"}
+function setAuthBookingContext(plan){
+  var note=document.getElementById("authBookingNote"),item=document.getElementById("authBookingItem"),
+      title=document.getElementById("authTitle"),sub=document.getElementById("authSubtitle");
+  var p=SESSION_PLANS[plan]||SESSION_PLANS.intro;
+  if(note){note.hidden=false;}
+  if(item){item.textContent=p.label||"Your session";}
+  if(title){title.textContent="First, create your account";}
+  if(sub){sub.textContent="One step before you pick your slot.";}
+}
+function clearAuthBookingContext(){
+  var note=document.getElementById("authBookingNote"),title=document.getElementById("authTitle"),sub=document.getElementById("authSubtitle");
+  if(note){note.hidden=true;}
+  if(title){title.textContent="Client Account";}
+  if(sub){sub.textContent="Sign in securely or create your Lume Live account.";}
+}
+function resumeBookingAfterAuth(){
+  if(!pendingBookingPlan){return;}
+  var plan=pendingBookingPlan;pendingBookingPlan=null;
+  clearAuthBookingContext();
+  closeModal("auth");
+  /* let the auth modal finish closing before the booking one opens, so the
+     two overlays never fight over document.body.style.overflow */
+  setTimeout(function(){openSessionModalDirect(plan);},260);
+}
+function openSessionModal(e){
+  var plan=e||"intro";
+  var proceed=function(){openSessionModalDirect(plan);};
+  if(!window.lumeAccount||typeof window.lumeAccount.ready!=="function"){return proceed();}
+  var settled=false,done=function(signedIn){
+    if(settled){return;}settled=true;
+    if(signedIn){return proceed();}
+    pendingBookingPlan=plan;
+    setAuthBookingContext(plan);
+    if(!bookingResumeArmed&&typeof window.lumeAccount.onSignIn==="function"){
+      bookingResumeArmed=true;
+      window.lumeAccount.onSignIn(function(){bookingResumeArmed=false;resumeBookingAfterAuth();});
+    }
+    if(window.gtag){gtag("event","booking_account_required",{event_category:"booking",event_label:plan});}
+    openAuth("signup");
+  };
+  /* An auth layer that never answers must not strand someone on a dead
+     button, so the wait is bounded and the timeout opens the booking form. */
+  var timer=setTimeout(function(){done(true);},2500);
+  try{
+    window.lumeAccount.ready().then(function(user){clearTimeout(timer);done(Boolean(user));},
+                                   function(){clearTimeout(timer);done(true);});
+  }catch(err){clearTimeout(timer);done(true);}
+}
+function openModal(e){"session"===e?openSessionModal("intro"):(document.getElementById("modal-"+e).classList.add("open"),document.body.style.overflow="hidden")}function closeModal(e){"auth"===e&&!window.currentFirebaseUser&&(pendingBookingPlan=null,clearAuthBookingContext()),document.getElementById("modal-"+e).classList.remove("open"),document.body.style.overflow=""}document.querySelectorAll(".modal-overlay").forEach(e=>{e.addEventListener("click",function(e){e.target===this&&(this.classList.remove("open"),document.body.style.overflow="")})});let scrollEndPromptShown=!1;function checkScrollEndPrompt(){window.authStateReady&&window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-80&&openScrollEndPopup()}function openScrollEndPopup(){const e=document.getElementById("scrollEndPopup");!e||scrollEndPromptShown||window.currentFirebaseUser||document.querySelector(".modal-overlay.open")||(scrollEndPromptShown=!0,e.classList.add("open"),document.body.style.overflow="hidden")}function closeScrollEndPopup(){const e=document.getElementById("scrollEndPopup");e&&(e.classList.remove("open"),document.body.style.overflow="")}function openComingSoon(e){document.getElementById("comingTitle").textContent=e,openModal("coming")}function submitNotify(){const e=document.getElementById("csName").value.trim(),t=document.getElementById("csPhone").value.trim();if(!t)return void showToast("Please enter your WhatsApp number");const o=waMessage(["Hello Lume Live!","","Please notify me when this Lume Live service is available.","","Contact Details","• Name: "+(e||"Not given"),"• WhatsApp: "+t,"","🧾 Service","• "+document.getElementById("comingTitle").textContent,"","Thank you."]);window.open(waLink(o),"_blank"),closeModal("coming"),showToast("Your notification message is ready in WhatsApp.")}function openPDF(){openModal("pdf")}function startPdfCashfree(e){e&&e.preventDefault(),"function"==typeof window.lumeCashfreePay?window.lumeCashfreePay({sku:"parents-handbook",amount:199,label:"Parents Career Handbook"}):showToast("Cashfree checkout is still loading. Please wait a few seconds and tap Pay Securely with Cashfree again.")}function startSessionCashfree(e){e&&e.preventDefault();const n=(document.getElementById("sessionName").value||"").trim(),s=(document.getElementById("sessionPhone").value||"").replace(/\D/g,"").slice(-10);if(s.length<10){showToast("Please enter a valid 10-digit WhatsApp number so we can confirm your session.");var a=document.getElementById("sessionPhone");a&&a.focus()}else{var i=document.getElementById("sessionConsent");if(i&&!i.checked)return showToast("Please agree to the Privacy Policy and Terms, and confirm parental consent if under 18, to continue."),void i.focus();if("function"==typeof window.lumeCashfreePay){
       var l=currentSessionPlan||SESSION_PLANS.intro;
       var couponState=sessionCoupon?sessionCoupon.getState():null;
       window.lumeCashfreePay({
