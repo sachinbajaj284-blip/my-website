@@ -157,9 +157,27 @@ async function findChromium() {
   return null;
 }
 
+/* Which Chromium is used is not a detail: cssText serialisation differs between
+   builds, so a block generated with one and checked with another reads as
+   "stale" when nothing has actually changed. That made the --check in CI
+   impossible to satisfy — the runner resolved a headless-shell build while a
+   contributor had a full Chromium, same rules, different bytes.
+
+   So prefer the build Playwright itself pins, which CI and anyone who has run
+   `npx playwright install chromium` both have, and fall back to whatever is
+   lying around only when that one is genuinely absent. Bumping the playwright
+   dependency changes the pinned build and will need one regeneration. */
+async function pinnedChromium() {
+  try {
+    const p = chromium.executablePath();
+    await fs.access(p);
+    return p;
+  } catch { return null; }
+}
+
 let out;
 try {
-  const executablePath = await findChromium();
+  const executablePath = (await pinnedChromium()) || (await findChromium());
   const browser = await chromium.launch(executablePath ? { executablePath } : {});
   const page = await (await browser.newContext({ viewport: VIEWPORT })).newPage();
   await page.goto(`http://127.0.0.1:${PORT}/${EXTRACT}`, { waitUntil: 'networkidle' });
@@ -187,9 +205,17 @@ try {
 
 const current = html.match(/<style id="critical-css">([\s\S]*?)<\/style>/)?.[1] ?? null;
 
+/* Compared with whitespace flattened rather than character for character.
+   Chromium builds serialise cssText with small formatting differences, so an
+   exact comparison reports "stale" for a block that is the same CSS — which is
+   what made this check impossible to satisfy in CI, where the runner's build
+   differs from whatever a contributor happens to have. Any real change still
+   differs after flattening; only spacing is forgiven. */
+const flatten = css => css.replace(/\s+/g, ' ').replace(/\s*([{};:,])\s*/g, '$1').trim();
+
 if (CHECK) {
   if (current === null) { console.error('No <style id="critical-css"> block in index.html.'); process.exit(1); }
-  if (current.trim() !== out.trim()) {
+  if (flatten(current) !== flatten(out)) {
     console.error('Critical CSS is stale. Run: node tools/build-critical-css.mjs');
     process.exit(1);
   }
