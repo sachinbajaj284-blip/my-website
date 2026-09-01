@@ -28,6 +28,48 @@
   --ease:cubic-bezier(.22,.61,.36,1);
   --dur-fast:.18s;--dur:.32s;--dur-slow:.5s;
   --radius:20px;--radius-lg:28px;
+  /* ── HERO TRACK IDENTITY ──
+     The two things we do, as two colour temperatures. Career is the warm,
+     approaching side of the pair — aspiration, a decision to be made. Mental
+     health is the cool, settling side — safety, restoration. The accents used
+     to be gold against a bright #5fd4d4 cyan, but cyan is a high-arousal,
+     clinical hue: it read as alerting, which is the opposite of what a
+     confidential 1:1 session should promise. --track-mind keeps that cyan's
+     lightness (so contrast on the navy glass does not regress) at much lower
+     chroma, shifted toward green.
+
+     These wash the card DARKER, which is the counterintuitive part. The first
+     attempt layered a light amber over the navy and measured [84,87,94] — a
+     flat neutral grey. Tinting a dark blue with a light warm colour mostly
+     raises the red channel toward the blue one, so it arrives at achromatic
+     before it ever arrives at warm, and the alpha needed to overcome that
+     blows the text contrast. A dark warm wash under the glass instead pulls
+     the BLUE channel down, which is what actually reads as warm, and it
+     darkens the card, so contrast improves rather than degrades.
+
+     Two strengths per track. --fill dresses the button; --tint dresses the
+     revealed panel, kept lighter because it carries .72rem bold gold price
+     text at a 4.5:1 bar, where the button's gold is only a decorative chevron
+     and chip at 3:1.
+
+     Measured against the rendered pixels, not estimated:
+       subtitle on career / mind button ....... 5.09 / 6.68
+       title #fff on career button ............ 7.67
+       gold chevron + chip on career button ... 4.21  (non-text, 3:1)
+       mind accent on mind button ............. 5.95  (non-text, 3:1)
+       gold price text on a career row ........ 5.76
+       teal price text on a mind row .......... 6.21
+     Re-measure if you touch any of these alphas. */
+  --track-career:#E8B95A;
+  --track-career-fill:rgba(132,78,16,.44);
+  --track-career-fill-soft:rgba(132,78,16,.34);
+  --track-career-tint:rgba(132,78,16,.4);
+  --track-career-tint-soft:rgba(132,78,16,.32);
+  --track-mind:#7ED0C3;
+  --track-mind-fill:rgba(8,96,84,.5);
+  --track-mind-fill-soft:rgba(8,96,84,.4);
+  --track-mind-tint:rgba(8,96,84,.34);
+  --track-mind-tint-soft:rgba(8,96,84,.24);
 }
 /* Respect users who prefer reduced motion (accessibility + battery) */
 @media(prefers-reduced-motion:reduce){
@@ -163,7 +205,13 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .side-icon:hover .tip{opacity:1;}
 
 /* ── HERO ── */
-#hero{min-height:100vh;background:linear-gradient(135deg,#07162E 0%,var(--navy) 42%,#0A5E66 115%);background-size:200% 200%;animation:heroGradient 15s ease infinite;position:relative;display:flex;align-items:center;overflow:hidden;padding-top:var(--header-stack-h);isolation:isolate;}
+/* The navy is written out rather than var(--navy) on purpose. A shorthand that
+   mixes literals with a custom property cannot be re-serialised by the engine —
+   tools/build-critical-css.mjs reads rule.cssText and got back
+   "background-image: ;", so the hero's gradient silently never made it into the
+   inlined critical block and the first paint was a white page. Every other use
+   of the token is unaffected; only this shorthand needs the literal. */
+#hero{min-height:100vh;background:linear-gradient(135deg,#07162E 0%,#0D1B40 42%,#0A5E66 115%);background-size:200% 200%;animation:heroGradient 15s ease infinite;position:relative;display:flex;align-items:center;overflow:hidden;padding-top:var(--header-stack-h);isolation:isolate;}
 #hero::before{content:'';position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:72px 72px;mask-image:linear-gradient(180deg,rgba(0,0,0,.85),rgba(0,0,0,.18));pointer-events:none;z-index:0;}
 .hero-particles{position:absolute;inset:0;pointer-events:none;}
 .particle{position:absolute;border-radius:50%;animation:float var(--d,6s) ease-in-out infinite var(--delay,0s);}
@@ -192,53 +240,96 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
    Two buttons for the two things we do; picking one reveals its services
    and its booking CTA. Deliberately reuses the .hero-assessment-card glass
    treatment rather than inventing a second one, so the hero still reads as
-   a single surface. Gold for career, teal for mental health — the pairing
-   .svc-card .cc / .ew already uses further down the page. */
+   a single surface.
+
+   Each card then tints that shared glass with its own track colour (see
+   --track-* in :root). Before, the only things separating the two were a 4px
+   rail, the icon and the chevron — nowhere near enough coloured area to
+   signal anything, so the pair read as one undifferentiated choice. The tint,
+   the icon chip and the rail give the colour enough surface to actually carry
+   the difference, while the blur, radius and shadow stay identical so the
+   hero is still one sheet of glass rather than two pasted-on blocks.
+
+   Note the .svc-card blocks further down do NOT yet follow this: there
+   Stream Clarity is teal, Career Direction gold and Emotional Wellness
+   indigo, so "career" is two different colours on one page. Worth unifying,
+   but deliberately out of scope here. */
 .hero-tracks{max-width:780px;margin:0 0 16px;animation:fadeUp .72s ease .58s both;}
 .hero-track-picker{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
-.hero-track-btn{position:relative;display:flex;align-items:center;gap:11px;width:100%;padding:13px 14px;border:1px solid rgba(255,255,255,.16);border-radius:18px;background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.055));box-shadow:0 20px 54px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.16);-webkit-backdrop-filter:blur(22px) saturate(1.2);backdrop-filter:blur(22px) saturate(1.2);color:#fff;font-family:inherit;text-align:left;cursor:pointer;overflow:hidden;transition:transform var(--dur) var(--ease),border-color var(--dur) var(--ease),background var(--dur) var(--ease);}
-.hero-track-btn::before{content:'';position:absolute;inset:0;border-left:4px solid var(--gold2);border-radius:18px 0 0 18px;pointer-events:none;}
-.htb-mind::before{border-left-color:var(--teal2);}
+.hero-track-btn{position:relative;display:flex;align-items:center;gap:11px;width:100%;padding:13px 14px;border:1px solid rgba(255,255,255,.16);border-radius:18px;background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.055));box-shadow:0 20px 54px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.16);-webkit-backdrop-filter:blur(22px) saturate(1.2);backdrop-filter:blur(22px) saturate(1.2);color:#fff;font-family:inherit;text-align:left;cursor:pointer;overflow:hidden;transition:transform var(--dur) var(--ease),border-color var(--dur) var(--ease),background var(--dur) var(--ease),box-shadow var(--dur) var(--ease),opacity var(--dur) var(--ease);}
+/* The wash sits UNDER the white glass, not over it, so the specular sheen and
+   the inset highlight still read as glass — only the temperature underneath
+   them changes. Both cards keep the identical material. */
+.htb-career{background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.055)),linear-gradient(135deg,var(--track-career-fill),var(--track-career-fill-soft));}
+.htb-mind{background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.055)),linear-gradient(135deg,var(--track-mind-fill),var(--track-mind-fill-soft));}
+/* Rail. A gradient rather than a flat border-left: more area at the top where
+   the eye lands, fading out down the card so the edge stays soft. */
+.hero-track-btn::before{content:'';position:absolute;top:0;bottom:0;left:0;width:5px;background:linear-gradient(180deg,var(--track-career),rgba(232,185,90,.35));pointer-events:none;}
+.htb-mind::before{background:linear-gradient(180deg,var(--track-mind),rgba(126,208,195,.35));}
 .hero-track-btn::after{content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent);transform:skewX(-18deg);pointer-events:none;transition:left .75s var(--ease);}
 .hero-track-btn:hover::after{left:130%;}
 .hero-track-btn:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.32);}
 .hero-track-btn>*{position:relative;z-index:1;}
-.hero-track-btn[aria-expanded="true"]{background:linear-gradient(135deg,rgba(255,255,255,.22),rgba(255,255,255,.09));border-color:rgba(232,185,90,.5);}
-.htb-mind[aria-expanded="true"]{border-color:rgba(14,140,140,.62);}
+/* Open state. It used to be a white lift plus a border-colour swap, which made
+   an open career card and an open mind card look very nearly the same. Now the
+   card deepens its own tint and glows in its own accent, so the choice you made
+   is legible without reading the label. */
+.htb-career[aria-expanded="true"]{background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.08)),linear-gradient(135deg,rgba(132,78,16,.56),rgba(132,78,16,.44));border-color:rgba(232,185,90,.6);box-shadow:0 0 0 1px rgba(232,185,90,.28),0 18px 44px rgba(201,147,58,.24),inset 0 1px 0 rgba(255,255,255,.18);}
+.htb-mind[aria-expanded="true"]{background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.08)),linear-gradient(135deg,rgba(8,96,84,.6),rgba(8,96,84,.48));border-color:rgba(126,208,195,.6);box-shadow:0 0 0 1px rgba(126,208,195,.28),0 18px 44px rgba(14,140,140,.26),inset 0 1px 0 rgba(255,255,255,.18);}
+/* The path not taken recedes. Browsers without :has() simply get no dimming,
+   which costs nothing — the open card is already the emphasised one. */
+.hero-track-picker:has([aria-expanded="true"]) .hero-track-btn[aria-expanded="false"]{opacity:.68;}
+.hero-track-picker:has([aria-expanded="true"]) .hero-track-btn[aria-expanded="false"]:hover,
+.hero-track-picker:has([aria-expanded="true"]) .hero-track-btn[aria-expanded="false"]:focus-visible{opacity:1;}
 .htb-text{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;}
 .htb-text b{font-family:'Playfair Display',serif;font-size:1.02rem;font-weight:800;line-height:1.15;color:#fff;}
-.htb-text small{font-size:.68rem;font-weight:600;line-height:1.35;color:rgba(255,255,255,.66);}
+/* .74, not .66. The warm wash is the darker card of the two, and .66 left this
+   the tightest text on either — .74 measures 5.09:1 there and 6.68:1 on the
+   mind card, so both keep real headroom rather than sitting on the AA line. */
+.htb-text small{font-size:.68rem;font-weight:600;line-height:1.35;color:rgba(255,255,255,.74);}
 /* Chevron drawn in CSS — it rotates to point at the panel it opened. */
-.htb-chev{flex:none;width:9px;height:9px;border-right:2px solid var(--gold2);border-bottom:2px solid var(--gold2);transform:rotate(45deg);transition:transform var(--dur) var(--ease);}
-.htb-mind .htb-chev{border-color:#5fd4d4;}
+.htb-chev{flex:none;width:9px;height:9px;border-right:2px solid var(--track-career);border-bottom:2px solid var(--track-career);transform:rotate(45deg);transition:transform var(--dur) var(--ease);}
+.htb-mind .htb-chev{border-color:var(--track-mind);}
 .hero-track-btn[aria-expanded="true"] .htb-chev{transform:rotate(-135deg);}
-/* Icon. Colour comes from the button, so one SVG serves both tracks. */
-.hero-track-icon{flex:none;display:block;width:32px;height:32px;color:var(--gold2);animation:trackFloat 6s ease-in-out infinite;}
-.htb-mind .hero-track-icon{color:#5fd4d4;animation-delay:-3s;}
-.hero-track-icon svg{width:100%;height:100%;display:block;overflow:visible;}
+/* Icon, on a chip. Colour comes from the button, so one SVG serves both tracks.
+   The chip is the change that actually makes the temperature readable at a
+   glance — a 32px glyph is too little area for a hue to register, a 38px filled
+   square is not. Same idiom as .svc-icon further down the page. */
+.hero-track-icon{flex:none;display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:11px;border:1px solid rgba(232,185,90,.4);background:linear-gradient(135deg,rgba(232,185,90,.26),rgba(232,185,90,.09));color:var(--track-career);animation:trackFloat 6s ease-in-out infinite;}
+.htb-mind .hero-track-icon{border-color:rgba(126,208,195,.4);background:linear-gradient(135deg,rgba(126,208,195,.24),rgba(126,208,195,.08));color:var(--track-mind);animation-duration:7.5s;animation-delay:-3.4s;}
+.hero-track-icon svg{width:32px;height:32px;display:block;overflow:visible;}
 /* Compass: the ring draws itself in once, the needle settles on hover. */
 .htk-ring{stroke-dasharray:120;stroke-dashoffset:120;animation:trackDraw 1.5s var(--ease) .9s forwards;}
 .htk-needle{transform-origin:24px 24px;transition:transform .55s var(--ease);}
 .htb-career:hover .htk-needle,.htb-career[aria-expanded="true"] .htk-needle{transform:rotate(32deg);}
-/* Breath: two arcs widening over a steady heart. */
-.htk-pulse-a,.htk-pulse-b{transform-origin:24px 27px;animation:trackBreathe 4.4s ease-in-out infinite;}
-.htk-pulse-b{animation-delay:.5s;}
+/* Breath: two arcs widening over a steady heart. Slower and shallower than the
+   career card's float — a resting respiratory rate rather than a pulse, so the
+   calmer of the two tracks also moves like the calmer of the two. */
+.htk-pulse-a,.htk-pulse-b{transform-origin:24px 27px;animation:trackBreathe 5.5s ease-in-out infinite;}
+.htk-pulse-b{animation-delay:.6s;}
 .htk-heart{transform-origin:24px 28px;transition:transform .45s var(--ease);}
 .htb-mind:hover .htk-heart,.htb-mind[aria-expanded="true"] .htk-heart{transform:scale(1.09);}
 @keyframes trackFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
 @keyframes trackDraw{to{stroke-dashoffset:0;}}
-@keyframes trackBreathe{0%,100%{transform:scale(.9);opacity:.28;}50%{transform:scale(1.06);opacity:.7;}}
-/* Revealed panel */
-.hero-track-panel{margin-top:10px;padding:13px 14px;border:1px solid rgba(255,255,255,.16);border-left:4px solid var(--gold2);border-radius:18px;background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,.05));box-shadow:0 20px 54px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.14);-webkit-backdrop-filter:blur(22px) saturate(1.2);backdrop-filter:blur(22px) saturate(1.2);opacity:0;transform:translateY(-6px);transition:opacity .34s var(--ease),transform .34s var(--ease);}
-.htp-mind{border-left-color:var(--teal2);}
+@keyframes trackBreathe{0%,100%{transform:scale(.93);opacity:.3;}50%{transform:scale(1.03);opacity:.66;}}
+/* Revealed panel. It carries the same wash as the button that opened it, so
+   the reveal reads as that card growing rather than a separate surface
+   appearing underneath it. */
+.hero-track-panel{margin-top:10px;padding:13px 14px;border:1px solid rgba(255,255,255,.16);border-left:5px solid var(--track-career);border-radius:18px;background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,.05)),linear-gradient(135deg,var(--track-career-tint),var(--track-career-tint-soft));box-shadow:0 20px 54px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.14);-webkit-backdrop-filter:blur(22px) saturate(1.2);backdrop-filter:blur(22px) saturate(1.2);opacity:0;transform:translateY(-6px);transition:opacity .34s var(--ease),transform .34s var(--ease);}
+.htp-mind{border-left-color:var(--track-mind);background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,.05)),linear-gradient(135deg,var(--track-mind-tint),var(--track-mind-tint-soft));}
 .hero-track-panel.open{opacity:1;transform:none;}
 .hero-track-rows{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:0 0 10px;padding:0;}
 .hero-track-rows li{display:flex;}
-.hero-track-rows button,.hero-track-rows a{flex:1;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:38px;width:100%;padding:6px 10px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.86);font-family:inherit;font-size:.73rem;font-weight:700;line-height:1.3;text-align:left;text-decoration:none;cursor:pointer;transition:background var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease),color var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease);}
-.hero-track-rows button:hover,.hero-track-rows a:hover{background:rgba(255,255,255,.13);border-color:rgba(232,185,90,.42);color:#fff;transform:translateX(3px);}
-.htp-mind .hero-track-rows button:hover,.htp-mind .hero-track-rows a:hover{border-color:rgba(14,140,140,.55);}
-.hero-track-rows b{flex:none;color:var(--gold2);font-size:.72rem;font-weight:900;letter-spacing:.2px;}
-.htp-mind .hero-track-rows b{color:#5fd4d4;}
+/* Rows are sunk, not lifted. They sit on a washed panel, and the old white
+   overlay raised their backdrop far enough that the gold and teal price text
+   measured 3.95:1 and 4.32:1 — both failing. Darkening instead puts them at
+   5.76 and 6.21, and an inset well is what a row inside a card should look
+   like anyway. */
+.hero-track-rows button,.hero-track-rows a{flex:1;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:38px;width:100%;padding:6px 10px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:rgba(0,0,0,.18);color:rgba(255,255,255,.9);font-family:inherit;font-size:.73rem;font-weight:700;line-height:1.3;text-align:left;text-decoration:none;cursor:pointer;transition:background var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease),color var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease);}
+.hero-track-rows button:hover,.hero-track-rows a:hover{background:rgba(0,0,0,.06);border-color:rgba(232,185,90,.42);color:#fff;transform:translateX(3px);}
+.htp-mind .hero-track-rows button:hover,.htp-mind .hero-track-rows a:hover{border-color:rgba(126,208,195,.5);}
+.hero-track-rows b{flex:none;color:var(--track-career);font-size:.72rem;font-weight:900;letter-spacing:.2px;}
+.htp-mind .hero-track-rows b{color:var(--track-mind);}
 .hero-track-btn:focus-visible,.hero-track-rows button:focus-visible,.hero-track-rows a:focus-visible,.hero-track-cta:focus-visible{outline:2px solid var(--gold2);outline-offset:2px;}
 .hero-track-cta{display:flex;flex-direction:column;align-items:center;gap:2px;width:100%;min-height:46px;padding:9px 12px;border:none;border-radius:12px;background:linear-gradient(135deg,#c9933a,#e8b84e);color:#102650;font-family:inherit;text-align:center;cursor:pointer;box-shadow:0 10px 24px rgba(201,147,58,.34);transition:transform var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease);}
 .htp-mind .hero-track-cta{background:linear-gradient(135deg,var(--teal),var(--teal2));color:#fff;box-shadow:0 10px 24px rgba(10,110,110,.38);}
@@ -1024,7 +1115,8 @@ body.js-ready .anim.scale{transform:scale(.9);}
   .hero-track-btn{padding:12px 13px;gap:10px;min-height:56px;}
   .htb-text b{font-size:.96rem;}
   .htb-text small{font-size:.65rem;}
-  .hero-track-icon{width:28px;height:28px;}
+  .hero-track-icon{width:34px;height:34px;border-radius:10px;}
+  .hero-track-icon svg{width:28px;height:28px;}
   .hero-track-panel{padding:12px;margin-top:8px;}
   .hero-track-rows{grid-template-columns:1fr;gap:5px;}
   .hero-track-rows button,.hero-track-rows a{min-height:44px;font-size:.75rem;}
