@@ -6,6 +6,11 @@ APIKey.csv
 *.pem
 *.key
 
+# This repo deliberately has no lockfile — tests.yml runs with no install
+# step at all, and the critical-css workflow uses `npm install`, never
+# `npm ci`. Keep a stray generated lockfile from being committed.
+package-lock.json
+
 # Local/runtime output
 work/
 tools/.cache/

@@ -1,0 +1,61 @@
+# Catches an inlined critical-CSS block that no longer matches index.css.
+#
+# The hero's rules live in two places: index.css, and the <style id="critical-css">
+# block inlined in index.html so the first screen paints without waiting for a
+# 195 KB stylesheet. Edit one and forget the other and the page paints the old
+# layout, then jumps when index.css arrives — the exact flash the inlined block
+# exists to prevent. It has gone stale that way before (#74, fixed in #75), and
+# nothing in the repo noticed.
+#
+# This is a separate workflow from tests.yml on purpose. That one is the money
+# path and deliberately runs on plain Node with no browser and no install step,
+# so it stays fast and has nothing to break. This one needs Playwright and a
+# Chromium, so it is kept apart and only runs when the files it checks change.
+
+name: critical-css
+
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - "index.html"
+      - "index.css"
+      - "tools/build-critical-css.mjs"
+      - ".github/workflows/critical-css.yml"
+  pull_request:
+    paths:
+      - "index.html"
+      - "index.css"
+      - "tools/build-critical-css.mjs"
+      - ".github/workflows/critical-css.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # No lockfile in this repo by design, so `npm install`, never `npm ci`.
+      - name: Install Playwright
+        run: npm install --no-audit --no-fund
+
+      # This is the build the tool prefers, so the runner and a contributor who
+      # has run the same command measure the page with the same browser. That
+      # matters: Chromium builds serialise cssText differently, and the check
+      # was unsatisfiable while the runner and a local machine disagreed.
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      # Exits 1 with "Critical CSS is stale. Run: node tools/build-critical-css.mjs"
+      # when the inlined block and index.css disagree.
+      - name: Critical CSS is in step with index.css
+        run: node tools/build-critical-css.mjs --check
+
