@@ -46,7 +46,7 @@ function shouldCopyFile(name){
   // copied into public/, see skipDirs above). A .js file with one of
   // these names sitting at the repo root is almost certainly a stray
   // duplicate, not a page script — don't publish it by accident.
-  if(/^(create-order|order-status)\.js$/i.test(name)) return false;
+  if(/^(create-order|order-status|webhook)\.js$/i.test(name)) return false;
   if(/\.example\.js$/i.test(name)) return false;
   return true;
 }
