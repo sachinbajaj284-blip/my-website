@@ -13,6 +13,19 @@ const skipDirs = new Set([
   ".github",
   ".vercel",
   "api",
+  /*
+    Internal documentation, not pages. These are runbooks written for
+    whoever operates the site — docs/manual-entitlements.md walks through
+    the admin route that hands out paid product and names the environment
+    variable that arms it, and the others describe how access, coupons and
+    owner notifications actually work. None of it is secret in the sense
+    of containing a credential, but publishing the operations manual for
+    your own payment and entitlement system at a guessable path is free
+    reconnaissance for anyone poking at it. Nothing on the site links
+    here and nothing in the sitemap points here, so excluding it costs
+    nothing.
+  */
+  "docs",
   "godaddy-cashfree-node-app",
   "node_modules",
   "previews",
