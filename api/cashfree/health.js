@@ -55,7 +55,18 @@ module.exports = async function handler(req, res){
   */
   var accountRequired = isEnforced();
   var accountCheckReady = !accountRequired || firebaseConfigured;
-  var ready = cashfreeReady && accountCheckReady;
+
+  /*
+    The webhook is what makes a payment survive a customer who never
+    comes back from the gateway. Without a signing secret it refuses
+    every delivery, so fulfilment quietly falls back to "only if the
+    browser returns" — which is the failure this check exists to make
+    visible rather than leave to be discovered from a refund request.
+  */
+  var hasDedicatedWebhookSecret = !!process.env.CASHFREE_WEBHOOK_SECRET;
+  var webhookReady = hasDedicatedWebhookSecret || hasSecret;
+
+  var ready = cashfreeReady && accountCheckReady && webhookReady;
 
   return json(res, ready ? 200 : 503, {
     ok: ready,
@@ -76,6 +87,16 @@ module.exports = async function handler(req, res){
       connected: firebaseConnected,
       error: firebaseError
     },
+    webhook: {
+      // Deliveries are verified against CASHFREE_WEBHOOK_SECRET, or the
+      // client secret when no separate one is set.
+      signing_secret_present: webhookReady,
+      dedicated_secret: hasDedicatedWebhookSecret,
+      endpoint: "/api/cashfree/webhook",
+      message: webhookReady
+        ? "Webhook deliveries can be verified. Confirm the endpoint is registered in the Cashfree dashboard for PAYMENT_SUCCESS_WEBHOOK."
+        : "No webhook signing secret. Every delivery will be REFUSED, so a payment is only recorded if the customer's browser returns from the gateway — anyone who closes the tab or pays by UPI without a redirect back will be charged and get nothing. Set CASHFREE_WEBHOOK_SECRET (or CASHFREE_CLIENT_SECRET) and redeploy."
+    },
     account_gate: {
       required: accountRequired,
       can_verify: accountCheckReady,
@@ -86,7 +107,9 @@ module.exports = async function handler(req, res){
           : "Every checkout requires a signed-in account, but Firebase Admin is not configured — so NO ONE CAN PAY. Set the FIREBASE_* variables and redeploy, or set LUME_REQUIRE_ACCOUNT=0 to lift the requirement."
     },
     public_base_url_set: !!process.env.LUME_PUBLIC_BASE_URL,
-    message: !cashfreeReady
+    message: !webhookReady && cashfreeReady && accountCheckReady
+      ? "Cashfree checkout is configured, but webhook deliveries cannot be verified — see webhook.message. Payments will only be recorded when the customer returns to the site."
+      : !cashfreeReady
       ? "Cashfree credentials are MISSING. Set CASHFREE_CLIENT_ID and CASHFREE_CLIENT_SECRET in Vercel project environment variables, then redeploy."
       : !accountCheckReady
         ? "Cashfree is configured, but checkout requires a signed-in account and Firebase Admin is not configured — create-order will refuse every order until that is fixed."

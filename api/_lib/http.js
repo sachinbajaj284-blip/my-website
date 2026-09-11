@@ -18,6 +18,14 @@ const DEFAULT_ALLOWED_ORIGINS = [
 function json(res, status, body){
   res.statusCode = status;
   res.setHeader("Content-Type", "application/json");
+  /*
+    Never cache an API reply. These carry order status, entitlements and
+    coupon verdicts — all of them per-request answers, and some of them
+    per-person. A CDN or a browser holding on to one and replaying it for
+    the next caller is how one customer ends up looking at another's
+    order, or at a "PAID" that was true a minute ago.
+  */
+  res.setHeader("Cache-Control", "no-store");
   res.end(JSON.stringify(body));
 }
 

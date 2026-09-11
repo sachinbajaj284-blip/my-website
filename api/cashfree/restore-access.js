@@ -28,38 +28,14 @@
 
 const { auth } = require("../_lib/firebaseAdmin");
 const { findPaidEntitlements } = require("../_lib/entitlements");
-
-function json(res, status, body){
-  res.statusCode = status;
-  res.setHeader("Content-Type", "application/json");
-  res.end(JSON.stringify(body));
-}
-
-const DEFAULT_ALLOWED_ORIGINS = [
-  "https://lumelive.co.in",
-  "https://www.lumelive.co.in",
-  "http://127.0.0.1:8765",
-  "http://localhost:8765"
-];
-
-function allowedOrigins(){
-  return new Set(DEFAULT_ALLOWED_ORIGINS.concat(
-    String(process.env.LUME_ALLOWED_ORIGINS || "")
-      .split(",")
-      .map(function(origin){ return origin.trim(); })
-      .filter(Boolean)
-  ));
-}
-
-function setCors(req, res){
-  const origin = req.headers.origin || "";
-  if(origin && allowedOrigins().has(origin)){
-    res.setHeader("Access-Control-Allow-Origin", origin);
-    res.setHeader("Vary", "Origin");
-  }
-  res.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-}
+/*
+  The CORS allow-list and the JSON reply come from _lib/http.js rather
+  than from a second copy kept here. That copy had already drifted into
+  its own setCors() with a hardcoded method list, which is precisely the
+  thing _lib/http.js exists to stop: an allow-list is a security control,
+  and two of them means one of them is out of date.
+*/
+const { json, setCors } = require("../_lib/http");
 
 function getBearerToken(req){
   const header = String(req.headers.authorization || "");
@@ -68,7 +44,7 @@ function getBearerToken(req){
 }
 
 module.exports = async function handler(req, res){
-  setCors(req, res);
+  setCors(req, res, "POST,OPTIONS");
 
   if(req.method === "OPTIONS"){
     res.statusCode = 204;

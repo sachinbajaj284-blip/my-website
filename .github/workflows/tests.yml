@@ -41,5 +41,17 @@ jobs:
       - name: Coupon rules
         run: npm run coupons:test
 
+      # The webhook is the only fulfilment path that works when the
+      # customer's browser never comes back from the gateway, and it is
+      # the one endpoint where a forged request would mint free access.
+      - name: Payment webhook
+        run: npm run webhook:test
+
+      - name: Manual entitlements
+        run: npm run entitlements:test
+
+      - name: Route wiring
+        run: npm run dispatch:test
+
       - name: JoSAA parser
         run: npm run josaa:test
