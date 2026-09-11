@@ -415,7 +415,23 @@
       return;
     }
     if(!user.emailVerified){
-      notify("Please verify your email first — check your inbox for the verification link, then try again.");
+      /*
+        The dead end this used to be: a line of toast telling someone to
+        find an email they never saw, with no way to send another and no
+        hint that it is sitting in Spam. This is also the moment the
+        requirement first becomes visible — an unverified account can pay
+        perfectly well, so nobody meets it until they try to restore on a
+        second device, by which point the email is weeks old.
+      */
+      if(window.lumeAccount && typeof window.lumeAccount.verifyHelp === "function"){
+        window.lumeAccount.verifyHelp({
+          email: user.email || "",
+          message: "Your purchases are safe — we just need to confirm this email before we can move them to this device.",
+          messageKind: "bad"
+        });
+        return;
+      }
+      notify("Please verify your email first — check your inbox, and your Spam or Promotions folder, for the verification link, then try again.");
       return;
     }
     notify("Checking your payment records…");
