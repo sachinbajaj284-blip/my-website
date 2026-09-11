@@ -179,7 +179,29 @@
 ".la-alt b{color:#0D1B40}",
 ".la-err{margin:0 0 12px;padding:10px 12px;border-radius:11px;background:#FDECEC;color:#933;font-size:.82rem;line-height:1.45;display:none}",
 ".la-err.on{display:block}",
-".la-note{margin:12px 0 0;font-size:.72rem;line-height:1.5;color:#8493ab;text-align:center}"
+".la-note{margin:12px 0 0;font-size:.72rem;line-height:1.5;color:#8493ab;text-align:center}",
+/* The "check your inbox" panel. Shares the card, so it reads as the next
+   step of the same flow rather than a different screen. */
+".lv-mark{width:54px;height:54px;margin:0 auto 14px;border-radius:50%;background:linear-gradient(135deg,#0A6E6E,#12A3A3);display:flex;align-items:center;justify-content:center;font-size:1.5rem}",
+".lv-to{margin:0 0 16px;text-align:center;font-size:.95rem;line-height:1.55;color:#102033}",
+".lv-to b{display:block;margin-top:4px;font-size:1rem;color:#0D1B40;word-break:break-all}",
+".lv-steps{margin:0 0 16px;padding:0;list-style:none;counter-reset:lv}",
+".lv-steps li{position:relative;counter-increment:lv;padding:0 0 12px 34px;font-size:.86rem;line-height:1.5;color:#33425c}",
+".lv-steps li:before{content:counter(lv);position:absolute;left:0;top:-1px;width:23px;height:23px;border-radius:50%;background:#EDF1F8;color:#0D1B40;font-size:.72rem;font-weight:900;display:flex;align-items:center;justify-content:center}",
+".lv-steps b{color:#0D1B40}",
+/* The spam line is the single most useful sentence on this panel, so it
+   is not a footnote — most "I never got the email" reports end here. */
+".lv-spam{margin:0 0 16px;padding:12px 14px;border-radius:12px;background:#FFF8E8;border:1px solid #F2E2BC;font-size:.82rem;line-height:1.55;color:#6B5524}",
+".lv-spam b{color:#0D1B40}",
+".lv-row{display:flex;gap:9px;margin-bottom:10px}",
+".lv-row .la-btn{margin-bottom:0}",
+".la-btn.ghost{background:#fff;border:1.5px solid #D9E1EE;color:#0D1B40;box-shadow:none}",
+".la-btn.ghost:disabled{opacity:.55;cursor:default}",
+".lv-msg{margin:0 0 10px;padding:10px 12px;border-radius:11px;font-size:.82rem;line-height:1.45;display:none}",
+".lv-msg.on{display:block}",
+".lv-msg.ok{background:#E9F7F0;color:#186A4B}",
+".lv-msg.bad{background:#FDECEC;color:#933}",
+"@media(max-width:420px){.lv-row{flex-direction:column}}"
     ].join("\n");
     var s = document.createElement("style");
     s.id = "la-styles";
@@ -234,6 +256,12 @@
 
   function openFallback(mode){
     ensureModal();
+    // The verify panel replaces the form in the same card, so re-opening
+    // the form has to put it back — otherwise "Sign in" from that panel
+    // opens an empty card.
+    if(VER.body){ VER.body.style.display = "none"; }
+    EL.body = EL.body || EL.overlay.querySelector(".la-body:not(.lv-body)");
+    EL.body.style.display = "";
     EL.mode = mode === "signin" ? "signin" : "signup";
     var isUp = EL.mode === "signup";
     EL.title.textContent = isUp ? "Create your Lume Live account" : "Sign in to continue";
@@ -299,10 +327,25 @@
         return authMod.updateProfile(result.user, { displayName: name }).then(function(){
           // Sent, but never required to pay — a client who has not opened
           // their inbox yet is still a client who wants to buy something.
-          return authMod.sendEmailVerification(result.user).catch(function(){});
-        }).then(function(){ return result; });
+          // Whether it actually went is tracked rather than swallowed, so
+          // the panel below can say so instead of sending someone to look
+          // for an email that was never sent.
+          return authMod.sendEmailVerification(result.user)
+            .then(function(){ return true; })
+            .catch(function(){ return false; });
+        }).then(function(sent){ return { user: result.user, sent: sent }; });
       });
-    }).then(function(){
+    }).then(function(outcome){
+      if(isUp){
+        // Created, signed in, and now told what to do about the email —
+        // which used to be nothing at all on this form.
+        currentUser = currentUser || (outcome && outcome.user) || null;
+        showVerifyHelp({
+          email: email,
+          sent: outcome ? outcome.sent : undefined
+        });
+        return;
+      }
       closeFallback();
     }).catch(function(err){
       showError(messageFor(err));
@@ -312,11 +355,204 @@
     });
   }
 
+  /* ============================================================
+     "Check your inbox" — the step after creating an account
+
+     Firebase sends the verification link the moment an account is
+     created, and until now that was the whole of it: a toast on three
+     pages, nothing at all on the rest. The link then sits unopened,
+     usually in Spam, and the person only discovers it matters much
+     later — at Restore access, which refuses to run for an unverified
+     email. By then they have forgotten there was an email, and it reads
+     as the site being broken.
+
+     So this says the three things that actually get someone verified:
+     which address it went to (typos are common, and the address is not
+     shown anywhere else), that it is probably in Spam, and how to get
+     another one. Everything else is a footnote.
+
+     It never blocks anything. Verification is not required to pay —
+     that is deliberate, a client who has not opened their inbox is
+     still a client who wants to buy something — so this panel is
+     always dismissible and never gates a checkout.
+     ============================================================ */
+  var VER = {};
+  var RESEND_COOLDOWN_MS = 60 * 1000;
+  var lastResendAt = 0;
+
+  /*
+    Whoever is signed in, wherever they were signed in.
+
+    Three pages initialise Firebase in their own inline module and run
+    their own sign-up form, so this file's `currentUser` can still be
+    null while somebody is very much signed in — its watcher only
+    attaches once something here has asked for auth. Reading the shared
+    instance too means Resend and I've-verified work on those pages
+    instead of insisting the person signs in first.
+  */
+  function activeUser(){
+    return currentUser
+      || (window.firebaseAuth && window.firebaseAuth.currentUser)
+      || window.currentFirebaseUser
+      || null;
+  }
+
+  function verMsg(text, kind){
+    if(!VER.msg){ return; }
+    VER.msg.textContent = text || "";
+    VER.msg.className = "lv-msg" + (text ? " on " + (kind || "ok") : "");
+  }
+
+  function cooldownLeft(){
+    return Math.max(0, RESEND_COOLDOWN_MS - (Date.now() - lastResendAt));
+  }
+
+  /* Firebase rate-limits verification sends, and answering a rapid
+     second tap with "too many requests" reads as a broken button. The
+     countdown says the wait is expected and how long it is. */
+  function tickResend(){
+    if(!VER.resend){ return; }
+    var left = cooldownLeft();
+    if(left <= 0){
+      VER.resend.disabled = false;
+      VER.resend.textContent = "Resend email";
+      if(VER.timer){ clearInterval(VER.timer); VER.timer = null; }
+      return;
+    }
+    VER.resend.disabled = true;
+    VER.resend.textContent = "Resend in " + Math.ceil(left / 1000) + "s";
+    if(!VER.timer){ VER.timer = setInterval(tickResend, 1000); }
+  }
+
+  function buildVerifyPanel(){
+    if(VER.body){ return; }
+    ensureModal();
+    var body = document.createElement("div");
+    body.className = "la-body lv-body";
+    body.style.display = "none";
+    body.innerHTML =
+      '<div class="lv-mark">✉️</div>' +
+      '<p class="lv-to">We sent a verification link to<b class="lv-email"></b></p>' +
+      '<p class="lv-msg"></p>' +
+      '<ol class="lv-steps">' +
+        '<li>Open your email inbox on any device.</li>' +
+        '<li>Find the email from <b>Lume Live</b> and tap the link inside it.</li>' +
+        '<li>Come back here and tap <b>I\u2019ve verified</b>.</li>' +
+      '</ol>' +
+      '<p class="lv-spam"><b>Can\u2019t see it?</b> Check your <b>Spam</b> or <b>Junk</b> folder \u2014 and on Gmail, the <b>Promotions</b> tab. That is where it usually lands. Marking it \u201cNot spam\u201d helps future emails reach you.</p>' +
+      '<div class="lv-row">' +
+        '<button class="la-btn ghost lv-resend" type="button">Resend email</button>' +
+        '<button class="la-btn gold lv-check" type="button">I\u2019ve verified</button>' +
+      '</div>' +
+      '<button class="la-alt lv-later" type="button">I\u2019ll do this later</button>' +
+      '<p class="la-note">You can keep using the site and pay without verifying. Verifying is what lets you restore your purchases on a new phone or laptop.</p>';
+
+    VER.body = body;
+    VER.email = body.querySelector(".lv-email");
+    VER.msg = body.querySelector(".lv-msg");
+    VER.resend = body.querySelector(".lv-resend");
+    VER.check = body.querySelector(".lv-check");
+    VER.later = body.querySelector(".lv-later");
+
+    VER.resend.addEventListener("click", resendVerification);
+    VER.check.addEventListener("click", recheckVerification);
+    VER.later.addEventListener("click", closeFallback);
+
+    EL.overlay.querySelector(".la-card").appendChild(body);
+  }
+
+  function resendVerification(){
+    if(cooldownLeft() > 0){ return; }
+    var user = activeUser();
+    if(!user){
+      return verMsg("Please sign in first, then ask for a new link.", "bad");
+    }
+    VER.resend.disabled = true;
+    VER.resend.textContent = "Sending\u2026";
+    ensureAuth().then(function(){
+      return authMod.sendEmailVerification(user);
+    }).then(function(){
+      lastResendAt = Date.now();
+      verMsg("Sent. Give it a minute, then check Spam and Promotions too.", "ok");
+      tickResend();
+    }).catch(function(err){
+      // Say which failure it was. "Try again" on a rate-limit is advice
+      // that cannot work, and the person retries until they give up.
+      var code = err && err.code;
+      if(code === "auth/too-many-requests"){
+        lastResendAt = Date.now();
+        verMsg("Too many requests just now. Wait a minute and try again \u2014 the first email is probably already in Spam.", "bad");
+      } else {
+        verMsg("We could not send another email right now. Please try again in a moment, or message us on WhatsApp.", "bad");
+      }
+      tickResend();
+    });
+  }
+
+  /* Firebase caches emailVerified on the local user object, so a link
+     clicked in another tab or on a phone does not show up here until
+     the record is reloaded. Without this the button would keep saying
+     "not yet" to someone who has just verified. */
+  function recheckVerification(){
+    var user = activeUser();
+    if(!user){ return verMsg("Please sign in first.", "bad"); }
+    VER.check.disabled = true;
+    VER.check.textContent = "Checking\u2026";
+    user.reload().then(function(){
+      if(user.emailVerified){
+        verMsg("Verified \u2014 you\u2019re all set.", "ok");
+        setTimeout(closeFallback, 1200);
+      } else {
+        verMsg("Not verified yet. Open the link in the email first \u2014 remember to look in Spam and Promotions.", "bad");
+      }
+    }).catch(function(){
+      verMsg("We could not check just now. Please try again in a moment.", "bad");
+    }).then(function(){
+      VER.check.disabled = false;
+      VER.check.textContent = "I\u2019ve verified";
+    });
+  }
+
+  /*
+    Show the panel. `sent` false means Firebase refused to send the link
+    (rate limit, network) — the person is told that plainly rather than
+    being sent to hunt for an email that was never sent.
+  */
+  function showVerifyHelp(options){
+    var opts = options || {};
+    buildVerifyPanel();
+    var u = activeUser();
+    var email = opts.email || (u && u.email) || "";
+
+    EL.title.textContent = "Verify your email";
+    EL.sub.textContent = "One tap in your inbox, and your purchases follow you to any device.";
+    VER.email.textContent = email;
+    VER.email.style.display = email ? "" : "none";
+
+    if(opts.sent === false){
+      verMsg("We could not send the email just now. Tap Resend to try again.", "bad");
+    } else if(opts.message){
+      verMsg(opts.message, opts.messageKind || "ok");
+    } else {
+      verMsg("", "");
+    }
+
+    // Swap the form out for this panel; openFallback puts it back.
+    EL.body = EL.body || EL.overlay.querySelector(".la-body:not(.lv-body)");
+    EL.body.style.display = "none";
+    VER.body.style.display = "";
+    EL.overlay.classList.add("la-open");
+    tickResend();
+  }
+
   window.lumeAccount = {
     ready: ready,
     current: function(){ return currentUser; },
     prompt: prompt,
     onSignIn: onSignIn,
-    token: token
+    token: token,
+    // Shown by the pages that run their own sign-up UI, so the guidance
+    // after creating an account is the same everywhere.
+    verifyHelp: showVerifyHelp
   };
 })();

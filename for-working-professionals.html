@@ -4771,7 +4771,15 @@ async function handleAuthSubmit(event){
   try{
     if(authView==='signup'){
       const result=await window.lumeAuth.signUp(name,email,password);
-      showToast(result.verificationSent?'Account created. Check your email to verify it.':'Account created. You are signed in.');
+      closeModal('auth');
+      // A toast vanishes in three seconds and says nothing about where the
+      // email actually landed. The shared panel names the address, points
+      // at Spam and Promotions, and can resend.
+      if(window.lumeAccount&&typeof window.lumeAccount.verifyHelp==='function'){
+        window.lumeAccount.verifyHelp({email:email,sent:result.verificationSent});
+      }else{
+        showToast(result.verificationSent?'Account created. Check your email — look in Spam and Promotions too.':'Account created. You are signed in.');
+      }
     }else{
       await window.lumeAuth.signIn(email,password);
       closeModal('auth');
