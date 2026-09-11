@@ -182,16 +182,16 @@
 ".la-note{margin:12px 0 0;font-size:.72rem;line-height:1.5;color:#8493ab;text-align:center}",
 /* The "check your inbox" panel. Shares the card, so it reads as the next
    step of the same flow rather than a different screen. */
-".lv-mark{width:54px;height:54px;margin:0 auto 14px;border-radius:50%;background:linear-gradient(135deg,#0A6E6E,#12A3A3);display:flex;align-items:center;justify-content:center;font-size:1.5rem}",
-".lv-to{margin:0 0 16px;text-align:center;font-size:.95rem;line-height:1.55;color:#102033}",
+".lv-mark{width:48px;height:48px;margin:0 auto 12px;border-radius:50%;background:linear-gradient(135deg,#0A6E6E,#12A3A3);display:flex;align-items:center;justify-content:center;font-size:1.5rem}",
+".lv-to{margin:0 0 14px;text-align:center;font-size:.95rem;line-height:1.55;color:#102033}",
 ".lv-to b{display:block;margin-top:4px;font-size:1rem;color:#0D1B40;word-break:break-all}",
-".lv-steps{margin:0 0 16px;padding:0;list-style:none;counter-reset:lv}",
-".lv-steps li{position:relative;counter-increment:lv;padding:0 0 12px 34px;font-size:.86rem;line-height:1.5;color:#33425c}",
+".lv-steps{margin:0 0 14px;padding:0;list-style:none;counter-reset:lv}",
+".lv-steps li{position:relative;counter-increment:lv;padding:0 0 10px 34px;font-size:.86rem;line-height:1.5;color:#33425c}",
 ".lv-steps li:before{content:counter(lv);position:absolute;left:0;top:-1px;width:23px;height:23px;border-radius:50%;background:#EDF1F8;color:#0D1B40;font-size:.72rem;font-weight:900;display:flex;align-items:center;justify-content:center}",
 ".lv-steps b{color:#0D1B40}",
 /* The spam line is the single most useful sentence on this panel, so it
    is not a footnote — most "I never got the email" reports end here. */
-".lv-spam{margin:0 0 16px;padding:12px 14px;border-radius:12px;background:#FFF8E8;border:1px solid #F2E2BC;font-size:.82rem;line-height:1.55;color:#6B5524}",
+".lv-spam{margin:0 0 14px;padding:11px 13px;border-radius:12px;background:#FFF8E8;border:1px solid #F2E2BC;font-size:.82rem;line-height:1.55;color:#6B5524}",
 ".lv-spam b{color:#0D1B40}",
 ".lv-row{display:flex;gap:9px;margin-bottom:10px}",
 ".lv-row .la-btn{margin-bottom:0}",
@@ -415,12 +415,12 @@
     var left = cooldownLeft();
     if(left <= 0){
       VER.resend.disabled = false;
-      VER.resend.textContent = "Resend email";
+      VER.resend.textContent = "Send it again";
       if(VER.timer){ clearInterval(VER.timer); VER.timer = null; }
       return;
     }
     VER.resend.disabled = true;
-    VER.resend.textContent = "Resend in " + Math.ceil(left / 1000) + "s";
+    VER.resend.textContent = "Wait " + Math.ceil(left / 1000) + "s";
     if(!VER.timer){ VER.timer = setInterval(tickResend, 1000); }
   }
 
@@ -432,20 +432,20 @@
     body.style.display = "none";
     body.innerHTML =
       '<div class="lv-mark">✉️</div>' +
-      '<p class="lv-to">We sent a verification link to<b class="lv-email"></b></p>' +
+      '<p class="lv-to">We sent a link to<b class="lv-email"></b></p>' +
       '<p class="lv-msg"></p>' +
       '<ol class="lv-steps">' +
-        '<li>Open your email inbox on any device.</li>' +
-        '<li>Find the email from <b>Lume Live</b> and tap the link inside it.</li>' +
-        '<li>Come back here and tap <b>I\u2019ve verified</b>.</li>' +
+        '<li>Open your email.</li>' +
+        '<li>Find the email from <b>Lume Live</b>. Tap the link inside it.</li>' +
+        '<li>Come back here and tap <b>I\u2019ve done it</b>.</li>' +
       '</ol>' +
-      '<p class="lv-spam"><b>Can\u2019t see it?</b> Check your <b>Spam</b> or <b>Junk</b> folder \u2014 and on Gmail, the <b>Promotions</b> tab. That is where it usually lands. Marking it \u201cNot spam\u201d helps future emails reach you.</p>' +
+      '<p class="lv-spam"><b>Can\u2019t find it?</b> Look in your <b>Spam</b> or <b>Junk</b> folder. On Gmail, also look in the <b>Promotions</b> tab. That is where it usually hides.<br><br>Found it there? Tap <b>\u201cNot spam\u201d</b> so our emails reach you next time.</p>' +
       '<div class="lv-row">' +
-        '<button class="la-btn ghost lv-resend" type="button">Resend email</button>' +
-        '<button class="la-btn gold lv-check" type="button">I\u2019ve verified</button>' +
+        '<button class="la-btn ghost lv-resend" type="button">Send it again</button>' +
+        '<button class="la-btn gold lv-check" type="button">I\u2019ve done it</button>' +
       '</div>' +
-      '<button class="la-alt lv-later" type="button">I\u2019ll do this later</button>' +
-      '<p class="la-note">You can keep using the site and pay without verifying. Verifying is what lets you restore your purchases on a new phone or laptop.</p>';
+      '<button class="la-alt lv-later" type="button">I\u2019ll do it later</button>' +
+      '<p class="la-note">You can skip this for now. But doing it means your report still works if you change phone.</p>';
 
     VER.body = body;
     VER.email = body.querySelector(".lv-email");
@@ -473,7 +473,7 @@
       return authMod.sendEmailVerification(user);
     }).then(function(){
       lastResendAt = Date.now();
-      verMsg("Sent. Give it a minute, then check Spam and Promotions too.", "ok");
+      verMsg("Sent. Wait a minute, then look in Spam and Promotions too.", "ok");
       tickResend();
     }).catch(function(err){
       // Say which failure it was. "Try again" on a rate-limit is advice
@@ -481,9 +481,9 @@
       var code = err && err.code;
       if(code === "auth/too-many-requests"){
         lastResendAt = Date.now();
-        verMsg("Too many requests just now. Wait a minute and try again \u2014 the first email is probably already in Spam.", "bad");
+        verMsg("That\u2019s a lot of emails! Wait a minute, then try again. The first one is probably in your Spam folder.", "bad");
       } else {
-        verMsg("We could not send another email right now. Please try again in a moment, or message us on WhatsApp.", "bad");
+        verMsg("We could not send it right now. Try again in a minute, or message us on WhatsApp.", "bad");
       }
       tickResend();
     });
@@ -500,16 +500,16 @@
     VER.check.textContent = "Checking\u2026";
     user.reload().then(function(){
       if(user.emailVerified){
-        verMsg("Verified \u2014 you\u2019re all set.", "ok");
+        verMsg("All done! You\u2019re set.", "ok");
         setTimeout(closeFallback, 1200);
       } else {
-        verMsg("Not verified yet. Open the link in the email first \u2014 remember to look in Spam and Promotions.", "bad");
+        verMsg("Not done yet. Open the link in the email first. Remember to look in Spam.", "bad");
       }
     }).catch(function(){
-      verMsg("We could not check just now. Please try again in a moment.", "bad");
+      verMsg("We could not check just now. Try again in a minute.", "bad");
     }).then(function(){
       VER.check.disabled = false;
-      VER.check.textContent = "I\u2019ve verified";
+      VER.check.textContent = "I\u2019ve done it";
     });
   }
 
@@ -524,13 +524,13 @@
     var u = activeUser();
     var email = opts.email || (u && u.email) || "";
 
-    EL.title.textContent = "Verify your email";
-    EL.sub.textContent = "One tap in your inbox, and your purchases follow you to any device.";
+    EL.title.textContent = "Check your email";
+    EL.sub.textContent = "We sent you a link. Tapping it takes about 10 seconds.";
     VER.email.textContent = email;
     VER.email.style.display = email ? "" : "none";
 
     if(opts.sent === false){
-      verMsg("We could not send the email just now. Tap Resend to try again.", "bad");
+      verMsg("The email did not send. Tap \u201cSend it again\u201d to try once more.", "bad");
     } else if(opts.message){
       verMsg(opts.message, opts.messageKind || "ok");
     } else {
