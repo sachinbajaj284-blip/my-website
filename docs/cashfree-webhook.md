@@ -100,7 +100,19 @@ Cashfree Dashboard → **Developers → Webhooks → Add endpoint**:
 https://lumelive.co.in/api/cashfree/webhook
 ```
 
-Subscribe to **`PAYMENT_SUCCESS_WEBHOOK`**.
+Subscribe to the **payment success** event. The dashboard shows a friendly label
+("Payment Success") — `PAYMENT_SUCCESS_WEBHOOK` is what appears in the payload's
+`type` field, not in the UI. If your dashboard has no event picker and sends
+everything, that's fine: unmatched events are acknowledged and ignored.
+
+**Webhook version.** The endpoint is built against `2022-09-01` and is
+deliberately tolerant of neighbouring versions: the event match is a substring
+(`PAYMENT_SUCCESS`) and the order id is read from either `data.order.order_id`
+or `data.order_id`. Being loose costs nothing, because a match only means "go
+ask the gateway about this order" — the grant still rests solely on Cashfree's
+own `PAID` verdict. Any delivery the endpoint declines to act on is logged with
+its `type`, so a version that sends a success under an unrecognised name shows
+up in the Vercel logs rather than as a customer who paid and stayed locked out.
 
 No new environment variable is needed — the signing key is
 `CASHFREE_CLIENT_SECRET`, already set for `create-order.js`. Set
@@ -108,7 +120,14 @@ No new environment variable is needed — the signing key is
 API key; when it's set, it wins.
 
 Use Cashfree's **"Test webhook"** button to confirm the endpoint answers `200`
-before relying on it.
+before relying on it. Reading the failures:
+
+- **"The endpoint did not respond properly"** while this is still unmerged — the
+  URL is a 404. Test a Vercel preview deployment, or merge first.
+- **`401`** — the signature didn't verify. The dashboard is signing with a
+  different key than `CASHFREE_CLIENT_SECRET`; set `CASHFREE_WEBHOOK_SECRET` to
+  the key shown for that endpoint.
+- **`503`** — the endpoint is asking for a retry. The function logs say why.
 
 ---
 

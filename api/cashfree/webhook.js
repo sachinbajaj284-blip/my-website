@@ -73,10 +73,25 @@ const { fetchCashfreeOrder, hasCredentials } = require("../_lib/cashfree");
 // and HMAC'd before anything has established that it's really Cashfree.
 const MAX_WEBHOOK_BYTES = 64 * 1024;
 
-// The events worth acting on. Anything else is acknowledged and ignored —
-// refunds and failures are reconciled in the dashboard, not by revoking
-// access from under someone mid-assessment.
-const FULFILLING_EVENTS = new Set(["PAYMENT_SUCCESS_WEBHOOK"]);
+/*
+  Which events are worth acting on.
+
+  Matched on a substring rather than an exact string, because the exact
+  one depends on the webhook version configured in the Cashfree dashboard
+  and that is a setting nobody here controls — 2022-09-01 sends
+  PAYMENT_SUCCESS_WEBHOOK, and a future version is free to spell it
+  differently. Being loose here costs nothing: a match only means "go ask
+  the gateway about this order", and the order is fulfilled solely on
+  Cashfree's own PAID verdict. An event we match but shouldn't have is a
+  wasted lookup, not a wrongful grant.
+
+  Anything else is acknowledged and ignored — refunds and failures are
+  reconciled in the dashboard, not by revoking access from under someone
+  mid-assessment.
+*/
+function actsOn(type){
+  return String(type || "").toUpperCase().includes("PAYMENT_SUCCESS");
+}
 
 function signingSecret(){
   return process.env.CASHFREE_WEBHOOK_SECRET || process.env.CASHFREE_CLIENT_SECRET || "";
@@ -146,12 +161,20 @@ function signatureMatches(signature, timestamp, rawBody, secret){
   return crypto.timingSafeEqual(received, expected);
 }
 
-// The order id is the only thing read out of the delivered payload, and
-// it is validated against the same shape order-status accepts before it
-// is ever put in a URL.
+/*
+  The order id is the only thing read out of the delivered payload, and it
+  is validated against the same shape order-status accepts before it is
+  ever put in a URL.
+
+  Two nestings are accepted for the same reason the event match is loose:
+  the payload shape is the dashboard's choice of webhook version, not
+  ours. Both spellings mean the same thing and neither is trusted for
+  anything beyond naming an order to go and look up.
+*/
 function readOrderId(payload){
-  const order = payload && payload.data && payload.data.order;
-  const id = String(order && order.order_id || "").trim();
+  const data = (payload && payload.data) || {};
+  const order = data.order || {};
+  const id = String(order.order_id || data.order_id || "").trim();
   return /^[A-Za-z0-9_-]{3,45}$/.test(id) ? id : "";
 }
 
@@ -204,7 +227,16 @@ module.exports = async function handler(req, res){
   }
 
   const type = String(payload && payload.type || "");
-  if(!FULFILLING_EVENTS.has(type)){
+  if(!actsOn(type)){
+    /*
+      Logged, not silently dropped. A delivery this endpoint decides not
+      to act on is indistinguishable — from the dashboard, which just sees
+      a 200 — from one it fulfilled. If a webhook version ever sends a
+      success under a name we don't recognise, this line is what makes
+      that visible in the logs instead of showing up as a customer who
+      paid and stayed locked out.
+    */
+    console.log("[lume webhook] ignored a delivery of type: " + (type || "(untyped)"));
     return json(res, 200, { ok: true, ignored: type || "untyped" });
   }
 
@@ -276,4 +308,5 @@ module.exports.config = { api: { bodyParser: false } };
 // through a mocked request.
 module.exports.signatureMatches = signatureMatches;
 module.exports.readOrderId = readOrderId;
+module.exports.actsOn = actsOn;
 module.exports.MAX_WEBHOOK_BYTES = MAX_WEBHOOK_BYTES;

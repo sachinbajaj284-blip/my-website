@@ -31,7 +31,7 @@ delete process.env.LUME_NOTIFY_WEBHOOK;
 delete process.env.LUME_NOTIFY_URL;
 
 const handler = require("../api/cashfree/webhook.js");
-const { signatureMatches, readOrderId } = handler;
+const { signatureMatches, readOrderId, actsOn } = handler;
 
 let passed = 0;
 let failed = 0;
@@ -185,6 +185,29 @@ await test("survives a payload with no order at all", () => {
   assert.equal(readOrderId({}), "");
   assert.equal(readOrderId({ data: {} }), "");
   assert.equal(readOrderId(null), "");
+});
+
+console.log("\nevent matching across webhook versions");
+
+await test("acts on the 2022-09-01 success event", () => {
+  assert.equal(actsOn("PAYMENT_SUCCESS_WEBHOOK"), true);
+});
+
+await test("acts on a success event spelled differently by another version", () => {
+  for(const t of ["PAYMENT_SUCCESS", "payment_success_webhook", "PG_PAYMENT_SUCCESS_WEBHOOK"]){
+    assert.equal(actsOn(t), true, "did not act on: " + t);
+  }
+});
+
+await test("does not act on failures, drops, refunds or junk", () => {
+  for(const t of ["PAYMENT_FAILED_WEBHOOK", "PAYMENT_USER_DROPPED_WEBHOOK", "REFUND_STATUS_WEBHOOK", "", null, undefined, "SOMETHING_ELSE"]){
+    assert.equal(actsOn(t), false, "acted on: " + String(t));
+  }
+});
+
+await test("reads the order id from either nesting a version might use", () => {
+  assert.equal(readOrderId({ data: { order: { order_id: "lume_student999_aaa" } } }), "lume_student999_aaa");
+  assert.equal(readOrderId({ data: { order_id: "lume_student999_bbb" } }), "lume_student999_bbb");
 });
 
 console.log("\ndelivery handling");
