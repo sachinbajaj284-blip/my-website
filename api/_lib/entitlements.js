@@ -66,7 +66,23 @@ function normalizeReference(reference){
     .slice(0, 64);
 }
 
-// Idempotent: safe to call every time order-status confirms PAID.
+/*
+  Idempotent: safe to call every time a payment is confirmed — and it is
+  called a lot, because order-status is polled by the browser and the
+  webhook is retried by Cashfree.
+
+  `grantedAt` is written once and then left alone. It used to be stamped
+  with the current time on every call, which meant it drifted forward with
+  each poll and recorded "the last time we checked" rather than when the
+  customer actually got access. That is the field restore-access hands
+  back and the one you would reach for to answer "when did they buy this",
+  so it has to mean what it says. The rest of the record is refreshed,
+  since a later confirmation carries the better copy of it.
+
+  Done in a transaction so two confirmations racing — a poll and a webhook
+  for the same payment, which is now the normal case — cannot both decide
+  they are the first.
+*/
 async function recordPaidEntitlement(details){
   const firestore = db();
   const orderId = String(details.orderId || "");
@@ -74,21 +90,27 @@ async function recordPaidEntitlement(details){
 
   const phone = normalizePhone(details.phone);
   const email = normalizeEmail(details.email);
+  const now = new Date().toISOString();
+  const ref = firestore.collection(COLLECTION).doc(orderId);
 
-  await firestore.collection(COLLECTION).doc(orderId).set({
-    orderId: orderId,
-    sku: String(details.sku || ""),
-    status: "PAID",
-    amount: details.amount != null ? Number(details.amount) : null,
-    currency: details.currency || "INR",
-    phone: phone || null,
-    email: email || null,
-    name: details.name || null,
-    // The Firebase account that bought this, when the order carried one.
-    uid: details.uid ? String(details.uid) : null,
-    grantedAt: details.grantedAt || new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  }, { merge: true });
+  await firestore.runTransaction(async tx => {
+    const snap = await tx.get(ref);
+    const existing = snap.exists ? (snap.data() || {}) : {};
+    tx.set(ref, {
+      orderId: orderId,
+      sku: String(details.sku || ""),
+      status: "PAID",
+      amount: details.amount != null ? Number(details.amount) : null,
+      currency: details.currency || "INR",
+      phone: phone || null,
+      email: email || null,
+      name: details.name || null,
+      // The Firebase account that bought this, when the order carried one.
+      uid: details.uid ? String(details.uid) : null,
+      grantedAt: existing.grantedAt || details.grantedAt || now,
+      updatedAt: now
+    }, { merge: true });
+  });
 }
 
 /*
