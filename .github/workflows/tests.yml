@@ -29,9 +29,13 @@ jobs:
         with:
           node-version: "20"
 
-      # No npm install: these suites deliberately depend on nothing outside
-      # the repo, so there is no lockfile step to break and nothing to
-      # download before the payment path can be checked.
+      # No npm install. These suites deliberately depend on nothing outside
+      # the repo — the ones that touch Firestore run against
+      # tools/firestore-stub.mjs, which intercepts require("firebase-admin")
+      # before it resolves — so there is no lockfile step to break and
+      # nothing to download before the payment path can be checked. Adding
+      # a step here that needs node_modules would undo that; check a new
+      # suite runs on a bare checkout before listing it.
       - name: Checkout flow
         run: npm run checkout:test
 
@@ -40,6 +44,18 @@ jobs:
 
       - name: Coupon rules
         run: npm run coupons:test
+
+      - name: Owner dispatch
+        run: npm run dispatch:test
+
+      - name: Manual entitlements
+        run: npm run entitlements:test
+
+      # The webhook is the only fulfilment path that runs when the
+      # customer's browser never comes back, and its signature check is
+      # the whole trust boundary on a public URL that grants paid product.
+      - name: Cashfree webhook
+        run: npm run webhook:test
 
       - name: JoSAA parser
         run: npm run josaa:test
