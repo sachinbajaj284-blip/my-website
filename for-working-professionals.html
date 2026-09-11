@@ -4491,7 +4491,7 @@ if(new URLSearchParams(window.location.search).has("sample-report")){window.saSh
         <h3>You are signed in</h3>
         <div class="auth-email" id="authUserEmail"></div>
         <p class="auth-status" id="authUserStatus"></p>
-        <button class="auth-reset" type="button" id="authResendVerify" onclick="resendVerificationEmail()" hidden>Resend verification email</button>
+        <button class="auth-reset" type="button" id="authResendVerify" onclick="resendVerificationEmail()" hidden>Send the email again</button>
         <button class="auth-signout" type="button" onclick="signOutUser()">Sign Out</button>
       </div>
     </div>
@@ -4778,7 +4778,7 @@ async function handleAuthSubmit(event){
       if(window.lumeAccount&&typeof window.lumeAccount.verifyHelp==='function'){
         window.lumeAccount.verifyHelp({email:email,sent:result.verificationSent});
       }else{
-        showToast(result.verificationSent?'Account created. Check your email — look in Spam and Promotions too.':'Account created. You are signed in.');
+        showToast(result.verificationSent?'Account made. Now check your email — look in Spam too.':'Account made. You are signed in.');
       }
     }else{
       await window.lumeAuth.signIn(email,password);
@@ -4833,7 +4833,7 @@ async function resendVerificationEmail(){
   if(!window.lumeAuth){showToast('Account service is still loading. Please try again in a moment.');return;}
   try{
     await window.lumeAuth.resendVerification();
-    showToast('Verification email sent — check your inbox.');
+    showToast('Email sent. Check your inbox — and your Spam folder.');
   }catch(error){
     showToast(error.message||'Could not send the verification email right now.');
   }

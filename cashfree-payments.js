@@ -366,7 +366,7 @@
       return Promise.resolve({ ok:false, count:0, needsAuth:true, error:"Please sign in to restore your access." });
     }
     if(!user.emailVerified){
-      return Promise.resolve({ ok:false, count:0, needsVerification:true, error:"Please verify your email first — check your inbox for the verification link, then try again." });
+      return Promise.resolve({ ok:false, count:0, needsVerification:true, error:"Please check your email first. Tap the link we sent — it may be in your Spam folder — then try again." });
     }
     var cfg = getConfig();
     return user.getIdToken().then(function(idToken){
@@ -426,12 +426,12 @@
       if(window.lumeAccount && typeof window.lumeAccount.verifyHelp === "function"){
         window.lumeAccount.verifyHelp({
           email: user.email || "",
-          message: "Your purchases are safe — we just need to confirm this email before we can move them to this device.",
+          message: "Your report is safe. We just need to check this email before we can put it on this device.",
           messageKind: "bad"
         });
         return;
       }
-      notify("Please verify your email first — check your inbox, and your Spam or Promotions folder, for the verification link, then try again.");
+      notify("Please check your email first. Tap the link we sent — look in Spam or Promotions too — then try again.");
       return;
     }
     notify("Checking your payment records…");
