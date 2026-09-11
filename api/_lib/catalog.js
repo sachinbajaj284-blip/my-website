@@ -38,6 +38,12 @@ const SKU_PRICES = {
   "internship-1-month": { amount: 3499, label: "Practitioner Foundations (60 supervised hours)", alias: "intern60h3499" },
   "internship-2-month": { amount: 5999, label: "Advanced Fellowship (120 supervised hours)", alias: "intern120h5999" },
   "internship-240-hour": { amount: 11999, label: "University Credit Track (240 supervised hours)", alias: "intern240h11999" },
+  /*
+    Premium upgrade offered on the assessment checkout: a 1:1 hour with
+    Dheeraj Ghughtyal (Founder's Office Head, CoverYou) on top of the
+    Full Clarity Report. Priced once here, like everything else.
+  */
+  "industry-expert-session": { amount: 7500, label: "Talk to Industry Expert - Dheeraj Ghughtyal", alias: "expert7500" },
   "internship-lume-lens": { amount: 500, label: "Lume Lens Report (Intern Add-On)", alias: "internlens500" }
 };
 

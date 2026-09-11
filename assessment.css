@@ -2067,3 +2067,40 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
 .sess-reassure .sr-points{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
 .sess-reassure .sr-points span{font-size:.71rem;font-weight:700;color:#0A6E6E;background:#fff;border:1px solid #D6EAE7;border-radius:20px;padding:5px 11px;}
 .sess-closing{text-align:center;font-size:.78rem;color:#0A6E6E;font-weight:600;margin-top:12px;line-height:1.55;}
+
+/* ── Premium upgrade card: 1:1 hour with an industry expert ──────────
+   Lives inside .sa-pay, one step below the ₹999 Cashfree panel. Gold
+   accent (the site's premium cue) instead of teal, so it reads as a
+   deliberate step up rather than a second, competing primary action. */
+.sa-upgrade{position:relative;margin:18px 0 12px;padding:20px 18px 18px;border-radius:22px;overflow:hidden;
+  border:1px solid rgba(232,185,90,.42);
+  background:linear-gradient(155deg,rgba(255,253,247,.94),rgba(252,246,233,.78) 52%,rgba(255,255,255,.72));
+  box-shadow:0 20px 54px rgba(13,27,64,.10),inset 0 1px 0 rgba(255,255,255,.9);}
+.sa-upgrade::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120% 90% at 100% 0%,rgba(232,185,90,.20),transparent 58%);}
+.sa-upgrade>*{position:relative;z-index:1;}
+.sa-upgrade-flag{display:inline-block;font-size:.62rem;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;
+  color:#8A6516;background:rgba(232,185,90,.22);border:1px solid rgba(232,185,90,.45);
+  border-radius:999px;padding:5px 11px;margin-bottom:14px;}
+.sa-upgrade-head{display:grid;grid-template-columns:96px 1fr;gap:15px;align-items:center;}
+.sa-upgrade-photo{margin:0;width:96px;height:96px;border-radius:50%;overflow:hidden;flex:none;
+  border:2px solid rgba(255,255,255,.95);box-shadow:0 14px 32px rgba(13,27,64,.20),0 0 0 1px rgba(232,185,90,.45);}
+.sa-upgrade-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 22%;display:block;}
+.sa-upgrade-id h4{font-family:'Playfair Display',serif;font-size:.92rem;font-weight:700;letter-spacing:.3px;
+  text-transform:uppercase;color:#8A6516;margin:0 0 3px;}
+.sa-upgrade-id b{display:block;font-family:'Playfair Display',serif;font-size:1.32rem;color:var(--navy);line-height:1.15;}
+.sa-upgrade-id>span{display:block;font-size:.74rem;color:var(--mid);line-height:1.45;margin-top:3px;}
+.sa-upgrade-price{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.sa-upgrade-price strong{font-family:'Playfair Display',serif;font-size:1.72rem;color:var(--navy);line-height:1;}
+.sa-upgrade-price span{font-size:.68rem;color:var(--mid);}
+.sa-upgrade-copy{font-size:.78rem;line-height:1.6;color:var(--mid);margin:14px 0 0;}
+.sa-upgrade-list{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px;}
+.sa-upgrade-list li{position:relative;padding-left:23px;font-size:.77rem;line-height:1.5;color:var(--dark);font-weight:600;}
+.sa-upgrade-list li::before{content:"✦";position:absolute;left:0;top:0;color:#C9992F;font-size:.82rem;}
+.sa-pay .sa-upgrade-btn{margin-top:16px;background:linear-gradient(135deg,#1A2A4F,#0A3B3B);border-color:transparent;color:#fff;}
+.sa-pay .sa-upgrade-btn:hover{background:linear-gradient(135deg,#22376A,#0A4E4E);}
+.sa-upgrade-note{font-size:.68rem;color:var(--mid);line-height:1.55;margin-top:10px;}
+@media(max-width:420px){
+  .sa-upgrade-head{grid-template-columns:1fr;justify-items:center;text-align:center;}
+  .sa-upgrade-price{justify-content:center;}
+}
