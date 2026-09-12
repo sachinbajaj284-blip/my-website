@@ -1027,7 +1027,19 @@ async function seedCoupons({ dryRun = false } = {}){
   that does — writing "what a coupon is" in two places is how the two
   drift apart.
 
-  Two things it will not do:
+  `add` is the difference between "these are the recipients" and "this
+  person too". The recipient list is a single Firestore field, so writing
+  it replaces it: issuing to one address revokes everybody already on the
+  code. That is the right default for a code handed to one person, and a
+  trap the second time you reach for the command — the symptom is a demo
+  that fails in front of a client, because the counsellor was added and
+  the owner was quietly dropped. With `add` the new addresses are merged
+  into the list already there.
+
+  Either way, anyone about to be REMOVED is named in `removed` and in the
+  message, so a --dry-run says so before the write happens.
+
+  Three things it will not do:
 
   - issue with an empty recipient list. That combination — active, no
     recipient — is a 100%-off code belonging to whoever types the string
@@ -1036,10 +1048,13 @@ async function seedCoupons({ dryRun = false } = {}){
     loadCoupon. A write that lands under a misspelled field name throws
     nothing and leaves the code live and open; the read-back is what
     turns that into a visible failure.
+  - add to a list it could not read. `add` means "keep the others", and a
+    failed read would make it mean "replace them" — the exact accident the
+    flag exists to prevent. It fails instead.
 
-  Returns { ok, configured, dryRun, code, emails, effective, message }.
+  Returns { ok, configured, dryRun, code, emails, removed, effective, message }.
 */
-async function issueCoupon({ code, emails, revoke = false, dryRun = false } = {}){
+async function issueCoupon({ code, emails, add = false, revoke = false, dryRun = false } = {}){
   const key = normalizeCode(code);
   if(!key){
     return { ok: false, code: "", message: "A coupon code is required." };
@@ -1064,29 +1079,59 @@ async function issueCoupon({ code, emails, revoke = false, dryRun = false } = {}
     };
   }
 
+  /*
+    Who is on the code right now. Read from the document rather than
+    through loadCoupon so a built-in default can never be mistaken for a
+    real issuance, and read even when `add` was not asked for — naming the
+    addresses a write is about to drop is the whole difference between a
+    deliberate re-issue and an accident.
+  */
+  let current = [];
+  if(!revoke){
+    try{
+      const snap = await firestore.collection(COLLECTION).doc(key).get();
+      const raw = snap.exists ? snap.data().restricted_to_emails : [];
+      current = Array.isArray(raw) ? raw.map(normalizeEmail).filter(Boolean) : [];
+    }catch(err){
+      return {
+        ok: false, configured: true, code: key, emails: list,
+        message: "Could not read the current recipients of " + key + ": " +
+                 String(err && err.message || err) +
+                 (add ? " — refusing to add, because adding to a list this could not read would replace it." : "")
+      };
+    }
+  }
+
+  const finalEmails = add
+    ? Array.from(new Set(current.concat(list)))
+    : list;
+  // Anyone losing the code. Empty on an --add, by definition.
+  const removed = current.filter(function(e){ return finalEmails.indexOf(e) === -1; });
+
   const patch = revoke
     ? { code: key, is_active: false, updatedAt: new Date().toISOString() }
-    : { code: key, is_active: true, restricted_to_emails: list, updatedAt: new Date().toISOString() };
+    : { code: key, is_active: true, restricted_to_emails: finalEmails, updatedAt: new Date().toISOString() };
 
   if(dryRun){
     return {
-      ok: true, configured: true, dryRun: true, code: key, emails: list, effective: null,
+      ok: true, configured: true, dryRun: true, code: key, emails: finalEmails, removed: removed, effective: null,
       message: "Dry run — nothing written. Would " + (revoke ? "revoke " : "issue ") + key +
-               (revoke ? "" : " to " + list.join(", ")) + "."
+               (revoke ? "" : " to " + finalEmails.join(", ")) + "." +
+               (removed.length ? " This REMOVES " + removed.join(", ") + " — pass --add to keep them." : "")
     };
   }
 
   try{
     await firestore.collection(COLLECTION).doc(key).set(patch, { merge: true });
   }catch(err){
-    return { ok: false, configured: true, code: key, emails: list,
+    return { ok: false, configured: true, code: key, emails: finalEmails, removed: removed,
              message: "Write failed: " + String(err && err.message || err) };
   }
 
   // What checkout will actually see, defaults and document combined.
   const effective = await loadCoupon(key);
   if(!effective){
-    return { ok: false, configured: true, code: key, emails: list, effective: null,
+    return { ok: false, configured: true, code: key, emails: finalEmails, removed: removed, effective: null,
              message: "Wrote the document but could not read " + key + " back." };
   }
 
@@ -1101,24 +1146,25 @@ async function issueCoupon({ code, emails, revoke = false, dryRun = false } = {}
 
   if(effective.is_active && !effective.restricted_to_emails.length){
     return {
-      ok: false, configured: true, code: key, emails: list, effective: summary,
+      ok: false, configured: true, code: key, emails: finalEmails, removed: removed, effective: summary,
       message: "REFUSING TO REPORT SUCCESS: " + key + " is now live with no recipient — anyone who types it gets the discount. Revoke it (--revoke) and try again."
     };
   }
   if(!revoke && !effective.is_active){
     return {
-      ok: false, configured: true, code: key, emails: list, effective: summary,
+      ok: false, configured: true, code: key, emails: finalEmails, removed: removed, effective: summary,
       message: key + " was written but reads back as inactive. Check the document in Firestore."
     };
   }
 
   return {
-    ok: true, configured: true, dryRun: false, code: key, emails: list, effective: summary,
+    ok: true, configured: true, dryRun: false, code: key, emails: finalEmails, removed: removed, effective: summary,
     message: revoke
       ? key + " is revoked — it is no longer accepted at checkout."
       : key + " is issued to " + effective.restricted_to_emails.join(", ") +
         ". Nobody else can use it, and it is good for " +
-        (effective.usage_limit == null ? "unlimited uses" : (effective.usage_limit - effective.times_used) + " more use(s)") + "."
+        (effective.usage_limit == null ? "unlimited uses" : (effective.usage_limit - effective.times_used) + " more use(s)") + "." +
+        (removed.length ? " " + removed.join(", ") + " no longer has it." : "")
   };
 }
 

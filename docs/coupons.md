@@ -176,6 +176,26 @@ node tools/issue-coupon.mjs --code LUMEDEMO --email demo-account@example.com --d
 node tools/issue-coupon.mjs --code LUMEDEMO --email demo-account@example.com
 ```
 
+**Adding a second person — use `--add`.** More than one address can hold the
+code at a time (the owner, and a counsellor on the road). But the recipient list
+is one Firestore field, so writing it *replaces* it: the obvious second command
+takes the code away from whoever already had it, and the symptom is a demo
+failing in front of a client. So to add somebody:
+
+```bash
+node tools/issue-coupon.mjs --code LUMEDEMO --email counsellor@example.com --add --dry-run
+node tools/issue-coupon.mjs --code LUMEDEMO --email counsellor@example.com --add
+```
+
+Replacing is still the default, because it is the right behaviour for a code
+meant for one person — but it is never silent. Anyone about to lose the code is
+named on its own line in the output, on a `--dry-run` too, while it is still
+free to fix. Either way, check the `issued to` line the command prints at the
+end: that is what checkout will actually see.
+
+To take one person off without disturbing the others, re-issue the list you want
+(without `--add`) and read the `REMOVED` line to confirm you removed only them.
+
 Use the address the demo account actually **signs in** with. The comparison is
 exact after lower-casing and knows nothing about Gmail's dots-and-plus
 aliasing, so `a.b@gmail.com` and `ab@gmail.com` are two different people here.

@@ -465,6 +465,83 @@ await test("an issued code can be revoked", async () => {
   assert.equal(q.reason, "inactive");
 });
 
+await test("a second recipient can be added without dropping the first", async () => {
+  /*
+    The demo code is the case that needs this: one address for the owner,
+    another for a counsellor on the road, both live at once. Issuing
+    without --add replaces the list, so the obvious second command would
+    take the code off whoever already had it — and the symptom is a demo
+    failing in front of a client.
+  */
+  store.clear();
+  await issueCoupon({ code: "LUMEDEMO", emails: ["owner@example.com"] });
+  const r = await issueCoupon({ code: "LUMEDEMO", emails: ["counsellor@example.com"], add: true });
+
+  assert.equal(r.ok, true, r.message);
+  assert.deepEqual(r.effective.restricted_to_emails.slice().sort(),
+    ["counsellor@example.com", "owner@example.com"]);
+  assert.deepEqual(r.removed, [], "an --add must never remove anybody");
+
+  // Both can actually buy, which is the thing that matters.
+  for(const email of ["owner@example.com", "counsellor@example.com"]){
+    const q = await quote({ code: "LUMEDEMO", packId: "student-full-report", customer: { phone: "9833333333", email: email } });
+    assert.equal(q.ok, true, email + " should be able to use the demo code: " + q.message);
+    assert.equal(q.final_amount, 1);
+  }
+});
+
+await test("adding the same address twice changes nothing", async () => {
+  store.clear();
+  await issueCoupon({ code: "LUMEDEMO", emails: ["owner@example.com"] });
+  const r = await issueCoupon({ code: "LUMEDEMO", emails: [" Owner@Example.com "], add: true });
+  assert.equal(r.ok, true);
+  assert.deepEqual(r.effective.restricted_to_emails, ["owner@example.com"]);
+});
+
+await test("issuing without --add says who it is about to remove", async () => {
+  // The replace is still the default — right for a code meant for one
+  // person — but it must never be silent.
+  store.clear();
+  await issueCoupon({ code: "LUMEDEMO", emails: ["owner@example.com", "counsellor@example.com"] });
+  const r = await issueCoupon({ code: "LUMEDEMO", emails: ["owner@example.com"] });
+
+  assert.equal(r.ok, true);
+  assert.deepEqual(r.removed, ["counsellor@example.com"]);
+  assert.match(r.message, /no longer has it/i);
+
+  const q = await quote({ code: "LUMEDEMO", packId: "student-full-report", customer: { phone: "9833333333", email: "counsellor@example.com" } });
+  assert.equal(q.reason, "not_invited", "and the removal is real");
+});
+
+await test("a dry run names the removal before anything is written", async () => {
+  store.clear();
+  await issueCoupon({ code: "LUMEDEMO", emails: ["owner@example.com", "counsellor@example.com"] });
+  const r = await issueCoupon({ code: "LUMEDEMO", emails: ["owner@example.com"], dryRun: true });
+
+  assert.equal(r.dryRun, true);
+  assert.deepEqual(r.removed, ["counsellor@example.com"]);
+  assert.match(r.message, /--add/, "the dry run should say how to keep them");
+
+  // Nothing was written: the counsellor still has the code.
+  const q = await quote({ code: "LUMEDEMO", packId: "student-full-report", customer: { phone: "9833333333", email: "counsellor@example.com" } });
+  assert.equal(q.ok, true, "a dry run must not change anything");
+});
+
+await test("--add onto a code nobody holds yet just issues it", async () => {
+  store.clear();
+  const r = await issueCoupon({ code: "LUMEDEMO", emails: ["owner@example.com"], add: true });
+  assert.equal(r.ok, true);
+  assert.deepEqual(r.effective.restricted_to_emails, ["owner@example.com"]);
+});
+
+await test("--add still refuses an empty recipient list", async () => {
+  store.clear();
+  await issueCoupon({ code: "LUMEDEMO", emails: ["owner@example.com"] });
+  const r = await issueCoupon({ code: "LUMEDEMO", emails: [], add: true });
+  assert.equal(r.ok, false);
+  assert.match(r.message, /at least one account email/i);
+});
+
 await test("re-seeding does not revoke an issued code", async () => {
   await issueClarity();
   // A routine `npm run coupons:seed` writes the catalogue over Firestore.
