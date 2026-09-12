@@ -215,6 +215,78 @@ const DEFAULT_COUPONS = [
     description: "A one-time invitation code for the ₹999 Full Clarity Report.",
     promote: false,
     first_time_only: false
+  },
+  {
+    /*
+      The demonstration account's code.
+
+      Lume Live is sold by showing it. A counsellor sitting with a school
+      or a corporate client needs to walk the whole route in front of
+      them — take the assessment, pay, land on the report, open a
+      session booking — without the demo costing a fee every time and
+      without anybody having to trust a screenshot. This code is how
+      that account pays.
+
+      It is the widest code in the catalogue, so every one of its limits
+      is set deliberately:
+
+      - applicable_packs is EMPTY, which appliesToPack() reads as "every
+        pack". That is the point: a demo has to be able to reach the
+        report, the sessions, the handbook and the internship tracks, and
+        a SKU added to the catalogue next month should be demonstrable
+        the day it ships without anyone remembering to edit this list.
+
+      - usage_limit and per_customer_limit are both null — unlimited.
+        Every other code here is a promotion, where a cap is the whole
+        mechanism; this one is a tool the owner uses repeatedly, and a
+        cap on it would mean a demo failing in front of a client, which
+        is the one moment it must not. Nothing caps it but the recipient
+        list.
+
+      - which makes restricted_to_emails the only thing standing between
+        this code and a free shop. It therefore ships the way CLARITY100
+        does — parked, is_active:false, recipient list empty — and is
+        issued onto its Firestore document with `npm run coupons:issue`,
+        which refuses to activate a code with no named recipient. The
+        demo account's address is personal data and this repository is
+        public, so it is not written here.
+
+        Read the fail-safe in that order: if the document is missing or
+        Firestore is unreachable, this falls back to inactive, not to an
+        unlimited 100%-off code for every SKU belonging to whoever types
+        "LUMEDEMO". That fallback is the reason the parked default must
+        stay exactly as it is. Do not set is_active true here, do not put
+        an address in restricted_to_emails, and do not set promote — a
+        badge advertising this code would be the same giveaway.
+
+      It charges ₹1 per order, not ₹0, for the reason discountFor()
+      caps every discount at base - MIN_CHARGE: Cashfree will not create
+      a zero-value order. For a demo that is the better number anyway —
+      the client watches a real payment go through a real gateway and a
+      real entitlement appear, which is the part they are being asked to
+      believe.
+    */
+    code: "LUMEDEMO",
+    discount_type: "percentage",
+    discount_value: 100,
+    applicable_packs: [],
+    /*
+      What keeps ₹1 demonstration orders out of the revenue figures. It
+      rides onto the order as a tag, so fulfilment marks the entitlement
+      `source: "demo"` and the owner's notification says so in as many
+      words. Nothing about the client's experience changes.
+    */
+    is_demo: true,
+    is_active: false,
+    restricted_to_emails: [],
+    expiration_date: null,
+    usage_limit: null,
+    times_used: 0,
+    per_customer_limit: null,
+    headline: "Demonstration account",
+    description: "Internal code for the Lume Live demo account. Not an offer.",
+    promote: false,
+    first_time_only: false
   }
 ];
 
@@ -288,6 +360,20 @@ function normalizeCoupon(raw, fallbackCode){
     first_time_skus: Array.isArray(raw.first_time_skus) && raw.first_time_skus.length
       ? raw.first_time_skus.map(function(s){ return String(s || "").trim(); }).filter(Boolean)
       : packs,
+    /*
+      Marks a code as a demonstration code rather than a sale.
+
+      Defaults to false and is only ever true where the catalogue says so
+      — `raw.is_demo === true` rather than anything truthy, because this
+      field travels onto an order tag and decides whether money counts,
+      and "1" or "false" arriving from a Firestore document should not
+      silently turn a real sale into a demo.
+
+      It does not change what anyone is charged or what they get; it is
+      provenance, the same idea as `source: "manual"` on a manual grant.
+      See create-order.js, which stamps it onto the order.
+    */
+    is_demo: raw.is_demo === true,
     /*
       Addressed to specific people, by account email.
 
@@ -696,7 +782,11 @@ async function quote({ code, packId, now, customer }){
       discount_type: coupon.discount_type,
       discount_value: coupon.discount_value,
       headline: coupon.headline,
-      description: coupon.description
+      description: coupon.description,
+      // So create-order can tag the order without loading the coupon a
+      // second time. Whether an order counts as revenue is decided by the
+      // same verdict that decided its price.
+      is_demo: coupon.is_demo
     }
   });
 }
@@ -869,12 +959,35 @@ async function seedCoupons({ dryRun = false } = {}){
       const snap = await firestore.collection(COLLECTION).doc(coupon.code).get();
       if(!snap.exists){ problems.push(coupon.code + ": document missing after write"); continue; }
       const got = snap.data();
+      /*
+        An issued invitation code is expected to read back ACTIVE even
+        though the built-in definition is parked — that is what the
+        `keep` above deliberately preserves. Comparing it against the
+        parked default would report a mismatch on every seed for as long
+        as the code stays issued, and a check that always fails is a
+        check nobody reads. So where an issuance is present, the expected
+        value for is_active is the issued one.
+
+        The recipient list is what makes that safe, so it is verified
+        here rather than taken on trust: a document with is_active true
+        and no recipient is the giveaway this whole arrangement exists to
+        prevent, and it is reported as a problem whichever way the
+        defaults are written.
+      */
+      const issuedTo = Array.isArray(got.restricted_to_emails) ? got.restricted_to_emails.filter(Boolean) : [];
       for(const field of MUST_MATCH){
-        const want = coupon[field] === undefined ? null : coupon[field];
+        const want = field === "is_active" && issuedTo.length
+          ? true
+          : (coupon[field] === undefined ? null : coupon[field]);
         const have = got[field] === undefined ? null : got[field];
         if(JSON.stringify(want) !== JSON.stringify(have)){
           problems.push(coupon.code + "." + field + ": expected " + JSON.stringify(want) + ", found " + JSON.stringify(have));
         }
+      }
+      if(got.is_active === true && !issuedTo.length &&
+         Array.isArray(coupon.restricted_to_emails) && coupon.restricted_to_emails.length === 0 &&
+         coupon.is_active === false){
+        problems.push(coupon.code + ": active in Firestore with an empty restricted_to_emails — it ships parked as an invitation code, so this is a discount for whoever types the code. Revoke it (coupons:issue --revoke) or re-issue it to a named account.");
       }
       const wantPacks = JSON.stringify(coupon.applicable_packs || []);
       const havePacks = JSON.stringify(got.applicable_packs || []);
@@ -914,7 +1027,19 @@ async function seedCoupons({ dryRun = false } = {}){
   that does — writing "what a coupon is" in two places is how the two
   drift apart.
 
-  Two things it will not do:
+  `add` is the difference between "these are the recipients" and "this
+  person too". The recipient list is a single Firestore field, so writing
+  it replaces it: issuing to one address revokes everybody already on the
+  code. That is the right default for a code handed to one person, and a
+  trap the second time you reach for the command — the symptom is a demo
+  that fails in front of a client, because the counsellor was added and
+  the owner was quietly dropped. With `add` the new addresses are merged
+  into the list already there.
+
+  Either way, anyone about to be REMOVED is named in `removed` and in the
+  message, so a --dry-run says so before the write happens.
+
+  Three things it will not do:
 
   - issue with an empty recipient list. That combination — active, no
     recipient — is a 100%-off code belonging to whoever types the string
@@ -923,10 +1048,13 @@ async function seedCoupons({ dryRun = false } = {}){
     loadCoupon. A write that lands under a misspelled field name throws
     nothing and leaves the code live and open; the read-back is what
     turns that into a visible failure.
+  - add to a list it could not read. `add` means "keep the others", and a
+    failed read would make it mean "replace them" — the exact accident the
+    flag exists to prevent. It fails instead.
 
-  Returns { ok, configured, dryRun, code, emails, effective, message }.
+  Returns { ok, configured, dryRun, code, emails, removed, effective, message }.
 */
-async function issueCoupon({ code, emails, revoke = false, dryRun = false } = {}){
+async function issueCoupon({ code, emails, add = false, revoke = false, dryRun = false } = {}){
   const key = normalizeCode(code);
   if(!key){
     return { ok: false, code: "", message: "A coupon code is required." };
@@ -951,29 +1079,59 @@ async function issueCoupon({ code, emails, revoke = false, dryRun = false } = {}
     };
   }
 
+  /*
+    Who is on the code right now. Read from the document rather than
+    through loadCoupon so a built-in default can never be mistaken for a
+    real issuance, and read even when `add` was not asked for — naming the
+    addresses a write is about to drop is the whole difference between a
+    deliberate re-issue and an accident.
+  */
+  let current = [];
+  if(!revoke){
+    try{
+      const snap = await firestore.collection(COLLECTION).doc(key).get();
+      const raw = snap.exists ? snap.data().restricted_to_emails : [];
+      current = Array.isArray(raw) ? raw.map(normalizeEmail).filter(Boolean) : [];
+    }catch(err){
+      return {
+        ok: false, configured: true, code: key, emails: list,
+        message: "Could not read the current recipients of " + key + ": " +
+                 String(err && err.message || err) +
+                 (add ? " — refusing to add, because adding to a list this could not read would replace it." : "")
+      };
+    }
+  }
+
+  const finalEmails = add
+    ? Array.from(new Set(current.concat(list)))
+    : list;
+  // Anyone losing the code. Empty on an --add, by definition.
+  const removed = current.filter(function(e){ return finalEmails.indexOf(e) === -1; });
+
   const patch = revoke
     ? { code: key, is_active: false, updatedAt: new Date().toISOString() }
-    : { code: key, is_active: true, restricted_to_emails: list, updatedAt: new Date().toISOString() };
+    : { code: key, is_active: true, restricted_to_emails: finalEmails, updatedAt: new Date().toISOString() };
 
   if(dryRun){
     return {
-      ok: true, configured: true, dryRun: true, code: key, emails: list, effective: null,
+      ok: true, configured: true, dryRun: true, code: key, emails: finalEmails, removed: removed, effective: null,
       message: "Dry run — nothing written. Would " + (revoke ? "revoke " : "issue ") + key +
-               (revoke ? "" : " to " + list.join(", ")) + "."
+               (revoke ? "" : " to " + finalEmails.join(", ")) + "." +
+               (removed.length ? " This REMOVES " + removed.join(", ") + " — pass --add to keep them." : "")
     };
   }
 
   try{
     await firestore.collection(COLLECTION).doc(key).set(patch, { merge: true });
   }catch(err){
-    return { ok: false, configured: true, code: key, emails: list,
+    return { ok: false, configured: true, code: key, emails: finalEmails, removed: removed,
              message: "Write failed: " + String(err && err.message || err) };
   }
 
   // What checkout will actually see, defaults and document combined.
   const effective = await loadCoupon(key);
   if(!effective){
-    return { ok: false, configured: true, code: key, emails: list, effective: null,
+    return { ok: false, configured: true, code: key, emails: finalEmails, removed: removed, effective: null,
              message: "Wrote the document but could not read " + key + " back." };
   }
 
@@ -988,24 +1146,25 @@ async function issueCoupon({ code, emails, revoke = false, dryRun = false } = {}
 
   if(effective.is_active && !effective.restricted_to_emails.length){
     return {
-      ok: false, configured: true, code: key, emails: list, effective: summary,
+      ok: false, configured: true, code: key, emails: finalEmails, removed: removed, effective: summary,
       message: "REFUSING TO REPORT SUCCESS: " + key + " is now live with no recipient — anyone who types it gets the discount. Revoke it (--revoke) and try again."
     };
   }
   if(!revoke && !effective.is_active){
     return {
-      ok: false, configured: true, code: key, emails: list, effective: summary,
+      ok: false, configured: true, code: key, emails: finalEmails, removed: removed, effective: summary,
       message: key + " was written but reads back as inactive. Check the document in Firestore."
     };
   }
 
   return {
-    ok: true, configured: true, dryRun: false, code: key, emails: list, effective: summary,
+    ok: true, configured: true, dryRun: false, code: key, emails: finalEmails, removed: removed, effective: summary,
     message: revoke
       ? key + " is revoked — it is no longer accepted at checkout."
       : key + " is issued to " + effective.restricted_to_emails.join(", ") +
         ". Nobody else can use it, and it is good for " +
-        (effective.usage_limit == null ? "unlimited uses" : (effective.usage_limit - effective.times_used) + " more use(s)") + "."
+        (effective.usage_limit == null ? "unlimited uses" : (effective.usage_limit - effective.times_used) + " more use(s)") + "." +
+        (removed.length ? " " + removed.join(", ") + " no longer has it." : "")
   };
 }
 

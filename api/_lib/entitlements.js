@@ -10,8 +10,15 @@
   Firestore layout:
     entitlements/{order_id} = {
       sku, orderId, status, amount, phone, email, name,
+      source (null for a sale — see below),
       grantedAt (first PAID confirmation), updatedAt (server timestamp)
     }
+
+  `source` is the field to filter on when adding up what was actually
+  earned: null is an ordinary sale through the gateway, "manual" is money
+  that arrived off-platform, and "demo" is a ₹1 demonstration order placed
+  with a demo coupon — real access, deliberately not revenue. See
+  docs/coupons.md (LUMEDEMO) and docs/manual-entitlements.md.
 
   Manual grants (money that arrived off-platform — a direct UPI or bank
   transfer) live in the same collection with the same shape, so every
@@ -107,6 +114,22 @@ async function recordPaidEntitlement(details){
       name: details.name || null,
       // The Firebase account that bought this, when the order carried one.
       uid: details.uid ? String(details.uid) : null,
+      /*
+        Where this record came from, and the one field that says whether
+        the money is income.
+
+        null for an ordinary gateway sale, "manual" for a direct transfer
+        (written by recordManualEntitlement below), "demo" for a ₹1
+        demonstration order — fulfilment passes that when the order carries
+        the demo tag create-order stamps from a coupon marked is_demo.
+
+        Written on every confirmation rather than only the first, because
+        unlike grantedAt it is not a fact about when something happened: it
+        is what the order IS, and both callers derive it from the same
+        order tags, so a later confirmation cannot disagree with an earlier
+        one about it.
+      */
+      source: details.source ? String(details.source) : null,
       grantedAt: existing.grantedAt || details.grantedAt || now,
       updatedAt: now
     }, { merge: true });

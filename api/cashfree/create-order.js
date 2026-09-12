@@ -140,13 +140,34 @@ module.exports = async function handler(req, res){
     code: requestedCoupon,
     packId: sku,
     /*
-      The account's email counts as the customer's email here even when
-      the form didn't ask for one. Before accounts, leaving the email
-      blank was a way to look like a new person to a "one per customer"
-      offer; now every order carries an identity, so that limit means
-      what it says.
+      The account's email, and ONLY the account's email — never the one
+      typed into the form, even when the form supplied one.
+
+      Two rules depend on which address this is, and they pull in
+      opposite directions if it is the typed one:
+
+      - "one per customer" wants the address that identifies the buyer.
+        Before accounts, leaving the email blank was a way to look like a
+        new person; now every order carries an identity, so the limit
+        means what it says.
+      - restricted_to_emails, which addresses a code to named accounts,
+        is only a restriction if the address cannot be chosen by the
+        person being restricted. Passing the typed address made it
+        satisfiable by anyone who knew the recipient's email and put it
+        in the checkout form — signed in as themselves, with their own
+        card. For LUMEDEMO, an unlimited 100%-off code on every SKU,
+        that is the difference between an internal tool and a free shop.
+
+      So it comes off the verified Firebase token. `email` above, which
+      may be the typed one, stays what it is — a delivery detail for
+      Cashfree and the receipt, which is all it was ever good for.
+
+      With LUME_REQUIRE_ACCOUNT=0 there is no token and this is empty,
+      which checkCustomerRules treats as "not the named account" and
+      refuses. That is the right way round: the kill switch exists to
+      keep the site taking money, not to open the invitation codes.
     */
-    customer: { phone: phone, email: (body.customer && body.customer.email) ? email : accountEmail }
+    customer: { phone: phone, email: accountEmail }
   });
   const couponApplied = priced.ok && priced.reason === "applied" && priced.coupon;
 
@@ -164,6 +185,20 @@ module.exports = async function handler(req, res){
 
   const chargeAmount = couponApplied ? priced.final_amount : product.amount;
   const couponCode = couponApplied ? priced.coupon.code : "";
+  /*
+    Whether this order is a demonstration rather than a sale.
+
+    Taken from the coupon that was actually applied, by the same quote()
+    call that decided the price — not from a list of code names kept here,
+    which would be a second place to edit every time a demo code is added
+    and a silent revenue error when somebody forgot.
+
+    Tagged onto the order because that is the only thing that survives the
+    trip to the gateway and back: fulfilment reads it off the order
+    Cashfree returns, so the ₹1 lands in the books marked as a demo
+    whether it was confirmed by the browser poll or by the webhook.
+  */
+  const isDemo = Boolean(couponApplied && priced.coupon.is_demo);
 
   const env = (process.env.CASHFREE_ENV || "production").toLowerCase();
   const base = env === "sandbox" ? "https://sandbox.cashfree.com/pg" : "https://api.cashfree.com/pg";
@@ -204,6 +239,10 @@ module.exports = async function handler(req, res){
       account ? { account_uid: account.uid } : {},
       account && account.email ? { account_email: account.email } : {},
       sessionMode ? { session_mode: sessionMode } : {},
+      // Only ever written, never absent-as-false: a missing tag reads as a
+      // real sale, which is the right default for every order that does
+      // not come from a demo code.
+      isDemo ? { demo: "1" } : {},
       couponCode ? {
         coupon_code: couponCode,
         coupon_discount: String(priced.discount_amount),

@@ -51,10 +51,24 @@ function readOrder(data){
     // browser, so this is a trustworthy record of what was discounted.
     couponCode: tags.coupon_code ? String(tags.coupon_code).slice(0, 32) : "",
     couponDiscount: tags.coupon_discount != null ? (Number(tags.coupon_discount) || 0) : 0,
+    /*
+      A demonstration order, not a sale — create-order stamps this when the
+      coupon it applied is marked is_demo. Compared against the exact
+      string "1" it writes: anything else, including a missing tag, is a
+      real sale, which is the safe way round. Mistaking a demo for revenue
+      overstates the books; mistaking a sale for a demo hides money.
+    */
+    isDemo: tags.demo === "1",
     // The account that paid, stamped onto the order by create-order.js from
     // a verified sign-in. Contact details can be typed wrong or changed
     // later; this doesn't.
     uid: tags.account_uid || null,
+    // The same account's email, also stamped from the verified sign-in.
+    // Kept distinct from `email` below, which is the contact address on
+    // the order and may have been typed by hand: the coupon rules decide
+    // "who this is" from the account, so the redemption has to be counted
+    // against the same thing the check looked at.
+    accountEmail: tags.account_email || null,
     name: customer.customer_name || null,
     phone: customer.customer_phone || null,
     email: customer.customer_email || null
@@ -103,7 +117,20 @@ async function fulfillPaidOrder(data){
       phone: order.phone,
       email: order.email,
       name: order.name,
-      uid: order.uid
+      uid: order.uid,
+      /*
+        Provenance, read the same way as "manual" on a direct transfer:
+        this ₹1 is a demonstration, not income. It is written on the
+        entitlement rather than worked out later from the coupon code,
+        because this collection is the source of truth anyone reconciling
+        will read, and a figure that needs a join against the coupon
+        catalogue to be correct will eventually be reported wrong.
+
+        The entitlement itself is otherwise completely ordinary — the demo
+        account gets real access, which is the entire point of demoing
+        with a real purchase.
+      */
+      source: order.isDemo ? "demo" : null
     });
     result.recorded = true;
   }catch(err){
@@ -123,9 +150,18 @@ async function fulfillPaidOrder(data){
         sku: order.sku,
         amount: order.amount,
         discount: order.couponDiscount,
-        // Recorded against the customer Cashfree confirmed, not anything
-        // the browser claimed, so per_customer_limit counts real people.
-        customer: { phone: order.phone, email: order.email }
+        /*
+          Recorded against the customer Cashfree confirmed, not anything
+          the browser claimed, so per_customer_limit counts real people.
+
+          The account's email is preferred over the contact address for
+          exactly one reason: create-order checks the limit against the
+          account's email, and a limit checked against one address and
+          counted against another is not a limit. The contact address is
+          still the fallback, for orders placed before accounts existed
+          and for a deploy running with LUME_REQUIRE_ACCOUNT=0.
+        */
+        customer: { phone: order.phone, email: order.accountEmail || order.email }
       });
     }catch(err){
       console.error("[lume fulfilment] coupon redemption failed:", String(err && err.message || err));
@@ -146,7 +182,8 @@ async function fulfillPaidOrder(data){
         name: order.name,
         phone: order.phone,
         email: order.email,
-        summary: "Payment confirmed for " + (order.sku || "a Lume Live service") +
+        summary: (order.isDemo ? "[DEMO — not revenue] " : "") +
+          "Payment confirmed for " + (order.sku || "a Lume Live service") +
           " (₹" + (order.amount != null ? order.amount : "?") + ")." +
           (order.couponCode ? " Coupon " + order.couponCode + " applied (₹" + order.couponDiscount + " off)." : "") +
           (order.sessionMode ? " Preferred mode: " + order.sessionMode + "." : "") +
@@ -158,6 +195,9 @@ async function fulfillPaidOrder(data){
           coupon_code: order.couponCode,
           coupon_discount: order.couponCode ? order.couponDiscount : "",
           picks_own_slot: BOOKING_SKUS.has(order.sku) ? "yes" : "no",
+          // A column to filter or sum on, so the Sheet can exclude these
+          // without anyone having to recognise the coupon code by eye.
+          demo: order.isDemo ? "yes" : "no",
           note: order.note
         }
       });

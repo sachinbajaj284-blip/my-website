@@ -18,14 +18,15 @@ and why the price is safe.
 
 ## Live offers
 
-**One offer is advertised: `FIRST50`.** `CLARITY100` ships parked and is
-issued to one named account from Firestore — see below. Every other SKU sells
-at list price.
+**One offer is advertised: `FIRST50`.** `CLARITY100` and `LUMEDEMO` ship
+parked and are issued to named accounts from Firestore — see below. Every
+other SKU sells at list price.
 
 | Code | Discount | Applies to | Limits | Live | Shown on site |
 |---|---|---|---|---|---|
 | `FIRST50` | 50% | 1:1 Counselling Session (₹499 → ₹249) | **1 per customer, first session only** | **yes** | yes |
 | `CLARITY100` | 100% | Full Clarity Report (₹999 → **₹1**) | **1 use ever, locked to one account** | issued in Firestore | **no** |
+| `LUMEDEMO` | 100% | **every SKU** (all → **₹1**) | **unlimited, locked to one account** | issued in Firestore | **no** |
 | `MIND50` | 50% | 1:1 Counselling Session | 200 uses | no | no |
 | `CAREER30` | 30% | Full Clarity Report, Career Roadmap | — | no | no |
 | `PARENT200` | ₹200 flat | Full Clarity Report, Stream Clarity Session | — | no | no |
@@ -134,6 +135,133 @@ cannot take a second one either. Once redeemed it is spent.
 
 To hand it to someone else afterwards, reset the counter: delete
 `coupons/CLARITY100` in Firestore (or set `times_used: 0`) and re-seed.
+
+### `LUMEDEMO` — the demonstration account
+
+The code the demo account pays with, so the whole route — assessment, payment,
+report, session booking — can be walked in front of a school or a corporate
+client without the demo costing a fee each time.
+
+It is the widest code in the catalogue. Everything below is the reason it is
+still safe.
+
+**It covers every SKU, including ones added later.** `applicable_packs` is
+empty, which `appliesToPack()` reads as "every pack". A SKU added to
+`catalog.js` next month is demonstrable the day it ships, with nobody
+remembering to edit a list here.
+
+**It is unlimited.** `usage_limit` and `per_customer_limit` are both `null`,
+and `first_time_only` is false. Every other code here is a promotion, where a
+cap is the whole mechanism; this one is a tool used repeatedly, and a cap on it
+would mean a demo failing in front of a client.
+
+**Which makes the recipient list the only limit.** So it ships parked exactly
+like `CLARITY100` — `is_active: false`, empty `restricted_to_emails` — and is
+issued onto its Firestore document. If that document is missing or Firestore is
+unreachable, it falls back to inactive, not to an unlimited 100%-off code for
+every SKU belonging to whoever types `LUMEDEMO`. Don't set `is_active` true in
+the catalogue, don't put the address there, and don't set `promote`. Tests
+assert all three.
+
+**It charges ₹1 per order, not ₹0** — the `MIN_CHARGE` cap, because Cashfree
+will not create a zero-value order. For a demo that is the better number
+anyway: the client watches a real payment clear a real gateway and a real
+entitlement appear, which is the part they are being asked to believe. Budget
+₹1 per step of the demo.
+
+To issue it:
+
+```bash
+node tools/issue-coupon.mjs --code LUMEDEMO --email demo-account@example.com --dry-run
+node tools/issue-coupon.mjs --code LUMEDEMO --email demo-account@example.com
+```
+
+**Adding a second person — use `--add`.** More than one address can hold the
+code at a time (the owner, and a counsellor on the road). But the recipient list
+is one Firestore field, so writing it *replaces* it: the obvious second command
+takes the code away from whoever already had it, and the symptom is a demo
+failing in front of a client. So to add somebody:
+
+```bash
+node tools/issue-coupon.mjs --code LUMEDEMO --email counsellor@example.com --add --dry-run
+node tools/issue-coupon.mjs --code LUMEDEMO --email counsellor@example.com --add
+```
+
+Replacing is still the default, because it is the right behaviour for a code
+meant for one person — but it is never silent. Anyone about to lose the code is
+named on its own line in the output, on a `--dry-run` too, while it is still
+free to fix. Either way, check the `issued to` line the command prints at the
+end: that is what checkout will actually see.
+
+To take one person off without disturbing the others, re-issue the list you want
+(without `--add`) and read the `REMOVED` line to confirm you removed only them.
+
+Use the address the demo account actually **signs in** with. The comparison is
+exact after lower-casing and knows nothing about Gmail's dots-and-plus
+aliasing, so `a.b@gmail.com` and `ab@gmail.com` are two different people here.
+
+To switch the demo off — between client meetings, or when a laptop goes
+missing:
+
+```bash
+node tools/issue-coupon.mjs --code LUMEDEMO --revoke
+```
+
+That is one command and takes effect immediately, with no deploy.
+
+**Using it on a checkout that shows no coupon box.** Most checkouts hide the
+"Have a coupon code?" field unless the SKU has a promoted offer, and this code
+is never promoted — so on most pages there is nowhere to type it. Append
+`?coupon=LUMEDEMO` to the page URL: that reveals the field on any declarative
+checkout and pre-fills it, leaving one tap on **Apply**. Nothing needed
+per-page, and nothing revealed to anyone else, since the code only works for
+the one account.
+
+So the demo runs: sign in as the demo account → open the page with
+`?coupon=LUMEDEMO` → Apply → pay ₹1 → the report or booking appears like any
+other purchase.
+
+**Demo orders do not count as revenue.** Every ₹1 it pays for is marked as a
+demonstration at the moment it is created, so the money can be left out of the
+books without anyone recognising a coupon code by eye:
+
+| Where | What to look for |
+|---|---|
+| `entitlements/{order_id}` in Firestore | `source: "demo"` — **the authoritative filter.** `null` is an ordinary sale, `"manual"` is an off-platform transfer |
+| The order at Cashfree | the `demo: "1"` order tag |
+| The owner's Sheet / webhook | `demo: yes` in the Details cell, and the summary opens with `[DEMO — not revenue]` |
+
+So "what did we actually earn" is `entitlements` where `source` is null, and
+adding up `amount` across everything overstates it by ₹1 per demo step.
+
+The chain is worth knowing, because it is the same trick as the coupon code
+itself: `is_demo: true` on the coupon → `create-order` stamps `demo: "1"` onto
+the order tags from the coupon it actually applied → `fulfillment.js` reads the
+tag back off the order Cashfree returns and writes `source: "demo"`. Going
+through the order tag is what makes it survive the redirect to the gateway, so
+the mark is identical whether the payment was confirmed by the browser poll or
+by the webhook.
+
+Two things deliberately *not* done. `create-order` does not compare the code
+against the string `"LUMEDEMO"` — "which codes are demo codes" is written once,
+on the coupon, or the next demo code added quietly counts as income. And a
+missing or unrecognised tag reads as a **real sale**: mistaking a demo for
+revenue overstates the books, while mistaking a sale for a demo hides money,
+and only one of those is recoverable. Tests cover both directions, including
+that `FIRST50` keeps counting as revenue.
+
+The entitlement is otherwise completely ordinary — same collection, same shape,
+real access, restore-access finds it on a second device. Only the provenance
+differs, exactly like a manual grant.
+
+**Why not a free-access flag on the account instead.** The tempting shortcut is
+a check somewhere in the UI — "if the signed-in email is the demo account, skip
+payment". That grants access with no order behind it: nothing in the books,
+nothing for restore-access to find on a second device, nothing to revoke
+without a deploy, and a demo that no longer exercises the payment path it is
+supposed to be demonstrating. A coupon keeps the demo on the same rails as a
+real purchase, which is the only way the demo proves anything. The same
+argument as `docs/manual-entitlements.md`.
 
 The switched-off codes are kept in the catalogue rather than deleted: they
 document the shape of each kind of offer, and re-enabling one is a single
@@ -320,8 +448,17 @@ different email, discount again. The guest placeholder number `9999999999` is
 explicitly not an identity, or every phone-less guest would look like one
 person.
 
-**Where it is enforced:** `create-order.js`, against the contact details it is
-about to charge. `/api/coupons/validate` also applies the rules *when the
+**The email is the account's, never the typed one.** `create-order` takes it
+off the verified Firebase token and ignores whatever is in the form, and
+`fulfillment.js` counts the redemption against the same address (the
+`account_email` order tag), falling back to the contact address only for orders
+with no account on them. These have to agree: a limit checked against one
+address and counted against another is not a limit, and for a code addressed to
+named accounts (`restricted_to_emails`) a typed address would mean the
+restriction could be satisfied by anyone who knew the recipient's email.
+
+**Where it is enforced:** `create-order.js`, against the account it is about to
+charge. `/api/coupons/validate` also applies the rules *when the
 browser sends a customer*, which is what lets the checkout correct itself —
 the coupon widget re-checks on the phone field (`recheckCustomer()`), so a
 returning client sees ₹499 on the booking screen rather than being refused at

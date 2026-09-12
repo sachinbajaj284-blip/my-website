@@ -261,6 +261,19 @@ line and as `session_mode` in `details`. Getting that same answer onto the
 Google Calendar event needs one setting change: see
 [session-mode-on-calendar.md](session-mode-on-calendar.md).
 
+### Demonstration rows are not sales
+
+A `payment` row from the demo account — a ₹1 order placed with the `LUMEDEMO`
+coupon — is marked so it can be left out of any total:
+
+- the **Summary** cell opens with `[DEMO — not revenue]`
+- the **Details** cell carries `demo: yes` (an ordinary sale says `demo: no`)
+
+Filter or sort on either before adding up the Amount column. The authoritative
+copy is `source: "demo"` on the `entitlements` record in Firestore — the Sheet
+is a convenience, and a row can always be deleted or edited by hand. See
+[coupons.md](coupons.md#lumedemo--the-demonstration-account).
+
 ## Checking it works
 
 ```bash

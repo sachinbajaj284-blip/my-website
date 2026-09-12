@@ -370,6 +370,171 @@ await test("a pre-parsed body fails fast instead of hanging on a dead stream", a
   assert.equal(fetchCalls.length, 0);
 });
 
+console.log("\ncoupon redemptions");
+
+await test("a redemption is counted against the account, not the typed address", async () => {
+  /*
+    create-order checks per_customer_limit and restricted_to_emails against
+    the email on the verified sign-in. If the redemption were counted
+    against the contact address instead, the two would look at different
+    people and the limit would not be a limit: buy once with the account's
+    address, buy again with anything else typed into the form.
+
+    So the account_email tag — which create-order stamps from the token —
+    is what the counter is keyed on.
+  */
+  store.clear();
+  stubFetch({ body: paidOrder({
+    order_id: "lume_student999_couponid",
+    order_tags: {
+      sku: "student-full-report",
+      coupon_code: "CAREER30",
+      coupon_discount: "300",
+      account_email: "signed-in@example.com"
+    },
+    customer_details: { customer_name: "Chhavi Sehgal", customer_email: "typed@example.com", customer_phone: "9812345678" }
+  }) });
+
+  const r = await deliver(paymentSuccess("lume_student999_couponid"));
+  assert.equal(r.status, 200, "body: " + JSON.stringify(r.body));
+
+  const counted = store.read("couponCustomers", "CAREER30__e_signed-in@example.com");
+  assert.ok(counted, "the redemption was not counted against the signed-in account");
+  assert.equal(counted.count, 1);
+  assert.equal(store.read("couponCustomers", "CAREER30__e_typed@example.com"), undefined,
+    "counted against the typed address — create-order would never look there");
+
+  // The phone is an identity too, and still counts.
+  assert.ok(store.read("couponCustomers", "CAREER30__p_9812345678"), "the phone key should be counted as well");
+});
+
+await test("an order placed before accounts still counts against its contact address", async () => {
+  // No account_email tag: orders from before sign-in was required, and any
+  // deploy running with LUME_REQUIRE_ACCOUNT=0. Falling back is what keeps
+  // the limit working there rather than silently counting nobody.
+  store.clear();
+  stubFetch({ body: paidOrder({
+    order_id: "lume_student999_legacycoupon",
+    order_tags: { sku: "student-full-report", coupon_code: "CAREER30", coupon_discount: "300" },
+    customer_details: { customer_name: "Chhavi Sehgal", customer_email: "only@example.com", customer_phone: "9812345678" }
+  }) });
+
+  const r = await deliver(paymentSuccess("lume_student999_legacycoupon"));
+  assert.equal(r.status, 200);
+  assert.ok(store.read("couponCustomers", "CAREER30__e_only@example.com"),
+    "with no account on the order the contact address is the only identity there is");
+});
+
+console.log("\ndemo orders");
+
+// The tag create-order stamps on an order paid for with a demo coupon.
+function demoOrder(overrides = {}){
+  return paidOrder(Object.assign({
+    order_id: "lume_student999_demorun",
+    order_amount: 1,
+    order_tags: {
+      sku: "student-full-report",
+      coupon_code: "LUMEDEMO",
+      coupon_discount: "998",
+      list_amount: "999",
+      demo: "1"
+    }
+  }, overrides));
+}
+
+// Reads the body of the POST fulfilment sent to the owner's webhook.
+function ownerEvent(){
+  const hit = fetchCalls.find(c => c.url.indexOf("owner.example") !== -1);
+  return hit ? JSON.parse(hit.options.body) : null;
+}
+
+await test("a demo order is recorded as a demo, not as income", async () => {
+  store.clear();
+  stubFetch({ body: demoOrder() });
+  const r = await deliver(paymentSuccess("lume_student999_demorun"));
+  assert.equal(r.status, 200, "body: " + JSON.stringify(r.body));
+
+  const row = store.read("entitlements", "lume_student999_demorun");
+  assert.ok(row, "no entitlement row was written");
+  assert.equal(row.source, "demo",
+    "the ₹1 would be indistinguishable from a sale when adding up revenue");
+  // ...and the access itself is completely ordinary. A demo that doesn't
+  // hand over the real product demonstrates nothing.
+  assert.equal(row.status, "PAID");
+  assert.equal(row.sku, "student-full-report");
+  assert.equal(row.amount, 1);
+});
+
+await test("an ordinary sale is never marked as a demo", async () => {
+  // The failure that actually costs money: a real payment quietly
+  // filtered out of the books.
+  store.clear();
+  stubFetch({ body: paidOrder() });
+  await deliver(paymentSuccess());
+  const row = store.read("entitlements", "lume_student999_mtx40lur2f2io");
+  assert.equal(row.source, null, "a gateway sale must carry no source");
+});
+
+await test("a coupon that is not a demo code leaves the order a sale", async () => {
+  // Only the demo tag decides this — not merely having a coupon on the
+  // order, or FIRST50 would stop counting as revenue.
+  store.clear();
+  stubFetch({ body: paidOrder({
+    order_id: "lume_session499_first50",
+    order_amount: 249,
+    order_tags: { sku: "wellness-session", coupon_code: "FIRST50", coupon_discount: "250" }
+  }) });
+  await deliver(paymentSuccess("lume_session499_first50"));
+  assert.equal(store.read("entitlements", "lume_session499_first50").source, null);
+});
+
+await test("only the exact demo tag counts, so a stray value is still a sale", async () => {
+  store.clear();
+  for(const [id, demo] of [["lume_a_zero", "0"], ["lume_b_false", "false"], ["lume_c_empty", ""]]){
+    stubFetch({ body: paidOrder({ order_id: id, order_tags: { sku: "student-full-report", demo: demo } }) });
+    await deliver(paymentSuccess(id));
+    assert.equal(store.read("entitlements", id).source, null,
+      'demo tag "' + demo + '" must not hide a real sale');
+  }
+});
+
+await test("the owner's notification says a demo is a demo", async () => {
+  const prev = process.env.OWNER_WEBHOOK_URL;
+  process.env.OWNER_WEBHOOK_URL = "https://owner.example/hook";
+  try{
+    store.clear();
+    stubFetch({ body: demoOrder({ order_id: "lume_student999_demonote" }) });
+    await deliver(paymentSuccess("lume_student999_demonote"));
+
+    const event = ownerEvent();
+    assert.ok(event, "the owner was not notified at all");
+    assert.equal(event.details.demo, "yes", "no column to filter the Sheet on");
+    assert.ok(/DEMO/.test(event.summary),
+      "a ₹1 row that reads like a sale is the one someone adds up by hand: " + event.summary);
+  }finally{
+    if(prev == null) delete process.env.OWNER_WEBHOOK_URL;
+    else process.env.OWNER_WEBHOOK_URL = prev;
+  }
+});
+
+await test("an ordinary sale's notification is not labelled a demo", async () => {
+  const prev = process.env.OWNER_WEBHOOK_URL;
+  process.env.OWNER_WEBHOOK_URL = "https://owner.example/hook";
+  try{
+    store.clear();
+    stubFetch({ body: paidOrder({ order_id: "lume_student999_realnote" }) });
+    await deliver(paymentSuccess("lume_student999_realnote"));
+
+    const event = ownerEvent();
+    assert.ok(event);
+    assert.equal(event.details.demo, "no");
+    assert.ok(!/DEMO/.test(event.summary), event.summary);
+  }finally{
+    if(prev == null) delete process.env.OWNER_WEBHOOK_URL;
+    else process.env.OWNER_WEBHOOK_URL = prev;
+  }
+});
+
 console.log("\nwiring");
 
 await test("the body parser is disabled, or every signature would fail", () => {

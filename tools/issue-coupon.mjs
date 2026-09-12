@@ -3,8 +3,15 @@
 
     node tools/issue-coupon.mjs --code CLARITY100 --email someone@example.com
     node tools/issue-coupon.mjs --code CLARITY100 --email a@x.com --email b@x.com
+    node tools/issue-coupon.mjs --code LUMEDEMO --email new@x.com --add
     node tools/issue-coupon.mjs --code CLARITY100 --email someone@example.com --dry-run
     node tools/issue-coupon.mjs --code CLARITY100 --revoke
+
+  --add merges the addresses into the recipients already on the code.
+  Without it the list is REPLACED, which is right for a code meant for one
+  person and a trap the second time you run the command — everyone already
+  on it loses the code. Either way the output names anyone being removed,
+  and --dry-run shows it before anything is written.
 
   Needs the same three variables the rest of the server code uses:
   FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY.
@@ -45,17 +52,29 @@ const code = argValues("--code")[0] || "";
 const emails = argValues("--email");
 const revoke = process.argv.includes("--revoke");
 const dryRun = process.argv.includes("--dry-run");
+const add = process.argv.includes("--add");
 
 if(!code){
-  console.error("Usage: node tools/issue-coupon.mjs --code CODE --email someone@example.com [--dry-run]");
+  console.error("Usage: node tools/issue-coupon.mjs --code CODE --email someone@example.com [--add] [--dry-run]");
   console.error("       node tools/issue-coupon.mjs --code CODE --revoke");
   process.exit(2);
 }
 
-const result = await issueCoupon({ code, emails, revoke, dryRun });
+const result = await issueCoupon({ code, emails, add, revoke, dryRun });
 
 console.log("");
 console.log(result.ok ? "  " + result.message : "  " + result.message);
+
+/*
+  Losing the code is the one outcome nobody asked for, so it is printed on
+  its own line rather than left at the end of a sentence — including on a
+  dry run, which is when it is still free to fix.
+*/
+if(result.removed && result.removed.length){
+  console.log("");
+  console.log("  ! REMOVED from " + (result.code || "the code") + ": " + result.removed.join(", "));
+  console.log("    They can no longer use it. Re-run with --add to keep existing recipients.");
+}
 
 if(result.effective){
   const e = result.effective;
