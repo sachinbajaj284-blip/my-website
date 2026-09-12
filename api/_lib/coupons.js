@@ -29,6 +29,9 @@
 
       -- per-person rules; both need a phone or email to evaluate --
       per_customer_limit number?  how many times ONE person may use it
+      max_recipients   number?  how many accounts may hold the code at
+                                once. null = no cap. Enforced by
+                                issueCoupon, not at checkout
       first_time_only    boolean  refuse if they have bought before
       first_time_skus    string[] what "bought before" means; defaults to
                                   applicable_packs
@@ -277,6 +280,21 @@ const DEFAULT_COUPONS = [
       words. Nothing about the client's experience changes.
     */
     is_demo: true,
+    /*
+      One account, and the tool enforces it.
+
+      This is the demonstration account's code, not a second discount to
+      hand around: the owner and anyone demoing with them share the one
+      login. Capping it here means `coupons:issue` refuses to put a second
+      address on it rather than quietly widening an unlimited 100%-off
+      code on every SKU — the thing whose whole safety rests on the
+      recipient list being short and known.
+
+      Moving the code to a replacement account is still one command: a
+      plain re-issue replaces the list, so swapping the address is
+      allowed. It is only *adding* to it that is refused.
+    */
+    max_recipients: 1,
     is_active: false,
     restricted_to_emails: [],
     expiration_date: null,
@@ -353,6 +371,25 @@ function normalizeCoupon(raw, fallbackCode){
     description: raw.description ? String(raw.description).slice(0, 240) : "",
     promote: raw.promote === true,
     per_customer_limit: toNumberOrNull(raw.per_customer_limit),
+    /*
+      How many accounts may hold this code at once. null means no cap,
+      which is the right default — almost every offer is open to everybody,
+      and restricted_to_emails is the thing that narrows it.
+
+      A cap is a guard on the issuing tool, not a security boundary:
+      anyone who can write to Firestore can set restricted_to_emails
+      directly and skip issueCoupon entirely. What it prevents is an
+      operator mistake — a second address added to a code that is only
+      supposed to belong to one account.
+
+      Floored at 1, because a cap of 0 would mean a code that can never be
+      issued, and issuing with no recipient is already refused for a
+      better-stated reason.
+    */
+    max_recipients: (function(){
+      const n = toNumberOrNull(raw.max_recipients);
+      return n == null ? null : Math.max(1, Math.floor(n));
+    })(),
     first_time_only: raw.first_time_only === true,
     // "Bought before" defaults to the packs the code itself applies to —
     // the useful reading of "first", and the one that doesn't accidentally
@@ -953,7 +990,7 @@ async function seedCoupons({ dryRun = false } = {}){
   */
   const problems = [];
   const MUST_MATCH = ["discount_type", "discount_value", "is_active", "usage_limit",
-                      "per_customer_limit", "first_time_only"];
+                      "per_customer_limit", "first_time_only", "max_recipients"];
   try{
     for(const coupon of DEFAULT_COUPONS){
       const snap = await firestore.collection(COLLECTION).doc(coupon.code).get();
@@ -1108,6 +1145,34 @@ async function issueCoupon({ code, emails, add = false, revoke = false, dryRun =
   // Anyone losing the code. Empty on an --add, by definition.
   const removed = current.filter(function(e){ return finalEmails.indexOf(e) === -1; });
 
+  /*
+    A code that is only supposed to belong to so many accounts.
+
+    Checked against the final list and before the write, so neither a
+    real run nor a --dry-run can report a widening that the cap forbids.
+    The cap comes from the built-in definition rather than the effective
+    coupon: it is the repository's statement of intent about the code, and
+    reading it from the document would let the cap be raised by the same
+    write it is meant to restrain.
+
+    Refusing names the swap, because that is almost always what was meant
+    — "also give it to X" on a one-account code usually means "move it to
+    X", and the difference is a flag.
+  */
+  const cap = DEFAULTS_BY_CODE[key] ? DEFAULTS_BY_CODE[key].max_recipients : null;
+  if(!revoke && cap != null && finalEmails.length > cap){
+    return {
+      ok: false, configured: true, code: key, emails: finalEmails, removed: [],
+      message: key + " is for " + (cap === 1 ? "one account only" : cap + " accounts at most") +
+               ", and this would give it to " + finalEmails.length + ": " + finalEmails.join(", ") +
+               ". Nothing was written." +
+               (add
+                 ? " Drop --add to MOVE the code to " + list.join(", ") + " instead of adding to the " +
+                   current.length + " already on it."
+                 : " Issue it to a single address instead.")
+    };
+  }
+
   const patch = revoke
     ? { code: key, is_active: false, updatedAt: new Date().toISOString() }
     : { code: key, is_active: true, restricted_to_emails: finalEmails, updatedAt: new Date().toISOString() };
@@ -1141,7 +1206,8 @@ async function issueCoupon({ code, emails, add = false, revoke = false, dryRun =
     usage_limit: effective.usage_limit,
     times_used: effective.times_used,
     applicable_packs: effective.applicable_packs,
-    promote: effective.promote
+    promote: effective.promote,
+    max_recipients: cap
   };
 
   if(effective.is_active && !effective.restricted_to_emails.length){

@@ -176,25 +176,41 @@ node tools/issue-coupon.mjs --code LUMEDEMO --email demo-account@example.com --d
 node tools/issue-coupon.mjs --code LUMEDEMO --email demo-account@example.com
 ```
 
-**Adding a second person — use `--add`.** More than one address can hold the
-code at a time (the owner, and a counsellor on the road). But the recipient list
-is one Firestore field, so writing it *replaces* it: the obvious second command
-takes the code away from whoever already had it, and the symptom is a demo
-failing in front of a client. So to add somebody:
+**One account only, and the tool enforces it.** `max_recipients: 1` on the
+coupon makes `coupons:issue` refuse to put a second address on this code —
+whether by `--add` or by passing two `--email` flags — and nothing is written
+when it refuses:
 
-```bash
-node tools/issue-coupon.mjs --code LUMEDEMO --email counsellor@example.com --add --dry-run
-node tools/issue-coupon.mjs --code LUMEDEMO --email counsellor@example.com --add
+```
+LUMEDEMO is for one account only, and this would give it to 2: … Nothing was
+written. Drop --add to MOVE the code to … instead of adding to the 1 already
+on it.
 ```
 
-Replacing is still the default, because it is the right behaviour for a code
-meant for one person — but it is never silent. Anyone about to lose the code is
-named on its own line in the output, on a `--dry-run` too, while it is still
-free to fix. Either way, check the `issued to` line the command prints at the
-end: that is what checkout will actually see.
+Anyone demoing shares the one login. That is deliberate: this is an unlimited
+100%-off code on every SKU, and its whole safety rests on the recipient list
+being short and known.
 
-To take one person off without disturbing the others, re-issue the list you want
-(without `--add`) and read the `REMOVED` line to confirm you removed only them.
+**Moving it to a replacement account is still one command** — the cap restrains
+widening, not swapping. Re-issue without `--add` and the list is replaced:
+
+```bash
+node tools/issue-coupon.mjs --code LUMEDEMO --email new-account@example.com --dry-run
+node tools/issue-coupon.mjs --code LUMEDEMO --email new-account@example.com
+```
+
+The output names whoever lost the code on its own line, on a `--dry-run` too,
+while it is still free to fix. Check the `issued to` and `max accounts` lines
+the command prints at the end: that is what checkout will actually see.
+
+The cap is a guard on this tool, not a security boundary — anyone who can write
+to Firestore can edit `restricted_to_emails` directly and skip `issueCoupon`
+entirely. What it prevents is the operator mistake of quietly widening the code.
+It is read from the built-in catalogue rather than the Firestore document, so
+the same write it restrains cannot raise it.
+
+`max_recipients` is `null` (no cap) for every other code, which is why
+`CLARITY100` can still be issued to more than one address if you ever need to.
 
 Use the address the demo account actually **signs in** with. The comparison is
 exact after lower-casing and knows nothing about Gmail's dots-and-plus
@@ -320,6 +336,8 @@ deploy.
 | `headline`, `description` | string | Hero banner copy. |
 | `promote` | boolean | Show this code in the hero banner. |
 | `restricted_to_emails` | string[] | Account emails this code was issued to. **Empty = anyone.** Matched against the verified token's email; fails closed when the caller is unidentified. |
+| `max_recipients` | number / null | How many accounts may hold the code at once. Null = no cap. Enforced by `coupons:issue`, not at checkout — a guard against widening a code by mistake, not a security boundary. |
+| `is_demo` | boolean | Marks orders paid with this code as demonstrations rather than sales (`source: "demo"`), so they stay out of revenue. Read as `=== true`. |
 
 
 Pack ids come from `api/_lib/catalog.js`.

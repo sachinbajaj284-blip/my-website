@@ -13,6 +13,11 @@
   on it loses the code. Either way the output names anyone being removed,
   and --dry-run shows it before anything is written.
 
+  Some codes cap how many accounts may hold them — LUMEDEMO is one account
+  only — and issuing past the cap is refused with nothing written. Moving
+  such a code to a replacement account still works: re-issue it to the new
+  address without --add.
+
   Needs the same three variables the rest of the server code uses:
   FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY.
 
@@ -84,6 +89,7 @@ if(result.effective){
   console.log("    issued to         " + (e.restricted_to_emails.length ? e.restricted_to_emails.join(", ") : "(nobody — open to all)"));
   console.log("    works on          " + (e.applicable_packs.length ? e.applicable_packs.join(", ") : "(every pack)"));
   console.log("    uses              " + e.times_used + " of " + (e.usage_limit == null ? "unlimited" : e.usage_limit));
+  console.log("    max accounts      " + (e.max_recipients == null ? "(no cap)" : e.max_recipients));
   console.log("    advertised        " + e.promote);
 }
 
