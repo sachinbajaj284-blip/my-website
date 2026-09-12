@@ -90,17 +90,42 @@ module.exports = async function handler(req, res){
     return json(res, 401, { ok: false, code: "INVALID_TOKEN", error: "Your sign-in has expired. Please sign in again." });
   }
 
-  if(!decoded.email_verified){
-    return json(res, 403, { ok: false, code: "EMAIL_NOT_VERIFIED", error: "Please verify your email first — check your inbox for the verification link, then try again." });
-  }
+  /*
+    Two keys, and they are trusted for different reasons.
 
-  const email = String(decoded.email || "").trim().toLowerCase();
-  if(!email){
+    The uid is the account itself, proven by the token we just verified,
+    and it is what create-order.js stamped onto the order at the time of
+    payment. Nobody can present someone else's uid, so a uid lookup needs
+    no further proof and runs whether or not the email is verified. This
+    is also the key that survives a purchase made with one address and a
+    sign-in with another, which is the common case and used to be
+    indistinguishable from "you never paid".
+
+    The email is only a claim — anyone can type anyone's address into a
+    sign-up form — so that lookup still requires Firebase to have
+    confirmed the person owns the inbox. It stays because orders placed
+    before accounts were required carry no uid at all.
+  */
+  const uid = String(decoded.uid || "");
+  const email = decoded.email_verified ? String(decoded.email || "").trim().toLowerCase() : "";
+
+  if(!uid && !email){
     return json(res, 403, { ok: false, code: "NO_EMAIL", error: "Your account has no verified email on file." });
   }
 
   try{
-    const access = await findPaidEntitlements({ email });
+    const access = await findPaidEntitlements({ uid, email });
+
+    /*
+      Nothing found and the email was never confirmed: verifying it opens
+      a second way to match, so say so rather than reporting a flat "no
+      purchases" that the person cannot act on. Still a 403 with the same
+      code, so the existing UI keeps showing its verification help.
+    */
+    if(!access.length && !decoded.email_verified){
+      return json(res, 403, { ok: false, code: "EMAIL_NOT_VERIFIED", error: "Please check your email first. Tap the link we sent — it may be in your Spam folder — then try again." });
+    }
+
     return json(res, 200, { ok: true, access: access });
   }catch(err){
     console.error("[lume restore-access]", String(err && err.message || err));

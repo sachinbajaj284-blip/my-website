@@ -207,13 +207,30 @@ async function findManualEntitlement(orderId){
   return d;
 }
 
-// Looks up prior PAID entitlements by phone and/or email, for the
-// "restore access on a new device" flow. Returns a de-duplicated
-// (by sku) array, newest first.
-async function findPaidEntitlements({ phone, email }){
+/*
+  Looks up prior PAID entitlements for the "restore access on a new
+  device" flow. Returns a de-duplicated (by sku) array, newest first.
+
+  `uid` is the one to match on wherever there is one. It is the Firebase
+  account that paid, stamped onto the order by create-order.js from a
+  verified token and never from anything the browser typed — so it
+  survives the very things that break the other two keys: paying with a
+  work email and signing in with a personal one, a typo in the checkout
+  form, a phone number entered with a country code one time and without
+  it the next.
+
+  It was being written by recordPaidEntitlement and then never read,
+  which is how someone could pay while signed in, verify their email,
+  and still be told we had no record of their purchase.
+
+  phone and email stay, because orders placed before accounts were
+  required carry no uid at all.
+*/
+async function findPaidEntitlements({ phone, email, uid }){
   const firestore = db();
   const p = normalizePhone(phone);
   const e = normalizeEmail(email);
+  const u = uid ? String(uid) : "";
   const found = new Map();
 
   async function collect(field, value){
@@ -229,6 +246,7 @@ async function findPaidEntitlements({ phone, email }){
     });
   }
 
+  await collect("uid", u);
   await collect("phone", p);
   await collect("email", e);
 

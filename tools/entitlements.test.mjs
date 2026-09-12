@@ -21,8 +21,8 @@ const store = install();
 const require = createRequire(import.meta.url);
 const {
   recordManualEntitlement, peekManualGrant, findManualEntitlement,
-  findPaidEntitlements, isManualOrderId, normalizeReference,
-  MANUAL_ORDER_PREFIX
+  findPaidEntitlements, recordPaidEntitlement, isManualOrderId,
+  normalizeReference, MANUAL_ORDER_PREFIX
 } = require("../api/_lib/entitlements.js");
 
 let passed = 0;
@@ -204,6 +204,76 @@ await test("restore-access finds it by the verified email, like any purchase", a
   assert.equal(access.length, 1);
   assert.equal(access[0].sku, "student-full-report");
   assert.match(access[0].order_id, /^manual_/);
+});
+
+/*
+  The case that put a paying customer through three days of being told we
+  had no record of her purchase: signed in as one address, checked out
+  carrying another. The uid is the same throughout and was always on the
+  record — it just was not being read.
+*/
+await test("a purchase is restorable by the account that paid, whatever email the checkout carried", async () => {
+  store.clear();
+  await recordPaidEntitlement({
+    orderId: "lume_student999_mtx40lur2f2io",
+    sku: "student-full-report",
+    amount: 999,
+    uid: "firebase-uid-chhavi",
+    // What Cashfree recorded from the checkout form — not the address she
+    // signs in with.
+    email: "someone.else@example.com",
+    phone: "9812345678",
+    name: "Chhavi Sehgal"
+  });
+
+  // Her own sign-in email finds nothing on its own. This was the whole bug.
+  assert.equal((await findPaidEntitlements({ email: "chhavisehgal112@gmail.com" })).length, 0);
+
+  // The account that actually paid finds it.
+  const byUid = await findPaidEntitlements({ uid: "firebase-uid-chhavi" });
+  assert.equal(byUid.length, 1);
+  assert.equal(byUid[0].sku, "student-full-report");
+  assert.equal(byUid[0].order_id, "lume_student999_mtx40lur2f2io");
+
+  // And the real call shape — uid plus verified email — finds it too.
+  const both = await findPaidEntitlements({ uid: "firebase-uid-chhavi", email: "chhavisehgal112@gmail.com" });
+  assert.equal(both.length, 1);
+});
+
+await test("one uid never reaches another account's purchases", async () => {
+  store.clear();
+  await recordPaidEntitlement({
+    orderId: "lume_student999_hers", sku: "student-full-report",
+    amount: 999, uid: "uid-her", email: "her@example.com"
+  });
+  assert.equal((await findPaidEntitlements({ uid: "uid-someone-else" })).length, 0);
+  assert.equal((await findPaidEntitlements({ uid: "" })).length, 0);
+  assert.equal((await findPaidEntitlements({ uid: null })).length, 0);
+  assert.equal((await findPaidEntitlements({})).length, 0);
+});
+
+await test("an unpaid order is not restorable by uid either", async () => {
+  store.clear();
+  await recordPaidEntitlement({
+    orderId: "lume_student999_pending", sku: "student-full-report",
+    amount: 999, uid: "uid-pending", email: "p@example.com"
+  });
+  // Flip it the way a revocation would.
+  const row = store.read("entitlements", "lume_student999_pending");
+  store.seed("entitlements", "lume_student999_pending", Object.assign({}, row, { status: "REVOKED" }));
+  assert.equal((await findPaidEntitlements({ uid: "uid-pending" })).length, 0);
+});
+
+await test("the same purchase found by two keys is returned once", async () => {
+  store.clear();
+  await recordPaidEntitlement({
+    orderId: "lume_student999_dup", sku: "student-full-report",
+    amount: 999, uid: "uid-dup", email: "dup@example.com", phone: "9812345678"
+  });
+  const access = await findPaidEntitlements({
+    uid: "uid-dup", email: "dup@example.com", phone: "9812345678"
+  });
+  assert.equal(access.length, 1, "the same order came back more than once");
 });
 
 await test("a phone-only grant is recorded but is not restorable by email", async () => {
