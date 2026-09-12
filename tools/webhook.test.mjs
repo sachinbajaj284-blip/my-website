@@ -370,6 +370,61 @@ await test("a pre-parsed body fails fast instead of hanging on a dead stream", a
   assert.equal(fetchCalls.length, 0);
 });
 
+console.log("\ncoupon redemptions");
+
+await test("a redemption is counted against the account, not the typed address", async () => {
+  /*
+    create-order checks per_customer_limit and restricted_to_emails against
+    the email on the verified sign-in. If the redemption were counted
+    against the contact address instead, the two would look at different
+    people and the limit would not be a limit: buy once with the account's
+    address, buy again with anything else typed into the form.
+
+    So the account_email tag — which create-order stamps from the token —
+    is what the counter is keyed on.
+  */
+  store.clear();
+  stubFetch({ body: paidOrder({
+    order_id: "lume_student999_couponid",
+    order_tags: {
+      sku: "student-full-report",
+      coupon_code: "CAREER30",
+      coupon_discount: "300",
+      account_email: "signed-in@example.com"
+    },
+    customer_details: { customer_name: "Chhavi Sehgal", customer_email: "typed@example.com", customer_phone: "9812345678" }
+  }) });
+
+  const r = await deliver(paymentSuccess("lume_student999_couponid"));
+  assert.equal(r.status, 200, "body: " + JSON.stringify(r.body));
+
+  const counted = store.read("couponCustomers", "CAREER30__e_signed-in@example.com");
+  assert.ok(counted, "the redemption was not counted against the signed-in account");
+  assert.equal(counted.count, 1);
+  assert.equal(store.read("couponCustomers", "CAREER30__e_typed@example.com"), undefined,
+    "counted against the typed address — create-order would never look there");
+
+  // The phone is an identity too, and still counts.
+  assert.ok(store.read("couponCustomers", "CAREER30__p_9812345678"), "the phone key should be counted as well");
+});
+
+await test("an order placed before accounts still counts against its contact address", async () => {
+  // No account_email tag: orders from before sign-in was required, and any
+  // deploy running with LUME_REQUIRE_ACCOUNT=0. Falling back is what keeps
+  // the limit working there rather than silently counting nobody.
+  store.clear();
+  stubFetch({ body: paidOrder({
+    order_id: "lume_student999_legacycoupon",
+    order_tags: { sku: "student-full-report", coupon_code: "CAREER30", coupon_discount: "300" },
+    customer_details: { customer_name: "Chhavi Sehgal", customer_email: "only@example.com", customer_phone: "9812345678" }
+  }) });
+
+  const r = await deliver(paymentSuccess("lume_student999_legacycoupon"));
+  assert.equal(r.status, 200);
+  assert.ok(store.read("couponCustomers", "CAREER30__e_only@example.com"),
+    "with no account on the order the contact address is the only identity there is");
+});
+
 console.log("\nwiring");
 
 await test("the body parser is disabled, or every signature would fail", () => {

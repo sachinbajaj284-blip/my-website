@@ -9,6 +9,7 @@
 
 import { createRequire } from "node:module";
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import { install } from "./firestore-stub.mjs";
 
 // Must happen before coupons.js is loaded: it caches "Firestore is
@@ -555,6 +556,115 @@ await test("seeding reports which codes are live at checkout", async () => {
   // Live means usable at checkout, which is not the same as advertised:
   // CLARITY100 is a one-use invitation code and is never promoted.
   assert.deepEqual(r.live, ["FIRST50"]);
+});
+
+console.log("\nthe demo account");
+
+// LUMEDEMO as it ships, and LUMEDEMO as it behaves once issued. The
+// second is built by hand here rather than written into the catalogue on
+// purpose: the recipient's address is issued onto the Firestore document
+// and must never appear in this repo, tests included.
+const demoParked = DEFAULT_COUPONS.find(c => c.code === "LUMEDEMO");
+const demoIssued = normalizeCoupon(Object.assign({}, demoParked, {
+  is_active: true,
+  restricted_to_emails: ["demo@example.com"]
+}));
+
+await test("LUMEDEMO ships parked, so it belongs to nobody until it is issued", () => {
+  // It is unlimited, 100% off, and applies to every SKU. The recipient
+  // list is the only thing limiting it, so an active LUMEDEMO with an
+  // empty list is a free shop for whoever types the string.
+  const restricted = Array.isArray(demoParked.restricted_to_emails) && demoParked.restricted_to_emails.length > 0;
+  assert.ok(demoParked.is_active === false || restricted,
+    "LUMEDEMO is active with an empty restricted_to_emails — every SKU would be ₹1 for anyone who types it");
+});
+
+await test("LUMEDEMO's recipient is never committed to this public repo", () => {
+  assert.deepEqual(demoParked.restricted_to_emails, [],
+    "an address here would publish it, and leave it in the git history for good — issue it with coupons:issue instead");
+});
+
+await test("LUMEDEMO works on every SKU, including ones added later", () => {
+  // An empty applicable_packs list is what makes a SKU added next month
+  // demonstrable on the day it ships, with nobody remembering to edit it.
+  assert.deepEqual(demoIssued.applicable_packs, []);
+  Object.keys(SKU_PRICES).forEach(function(sku){
+    assert.ok(appliesToPack(demoIssued, sku), "LUMEDEMO should cover " + sku);
+  });
+});
+
+await test("LUMEDEMO leaves exactly ₹1 payable on every SKU", () => {
+  // Not ₹0: Cashfree will not create a zero-value order. The demo is
+  // meant to run the real gateway, so ₹1 is the number.
+  Object.entries(SKU_PRICES).forEach(function([sku, product]){
+    const discount = discountFor(demoIssued, product.amount);
+    assert.equal(product.amount - discount, 1, sku + " should cost ₹1 with LUMEDEMO");
+  });
+});
+
+await test("LUMEDEMO cannot run out in front of a client", () => {
+  // Every other code here is a promotion, where a cap is the mechanism.
+  // This one is a tool used repeatedly, and a cap would mean a demo
+  // failing at the one moment it must not.
+  assert.equal(demoIssued.usage_limit, null);
+  assert.equal(demoIssued.per_customer_limit, null);
+  assert.equal(demoIssued.first_time_only, false);
+  assert.equal(demoIssued.expiration_date, null);
+});
+
+await test("LUMEDEMO is never advertised on the site", () => {
+  // A badge offering every SKU for ₹1 would be claimed by the first
+  // stranger to read it.
+  assert.equal(demoParked.promote, false);
+});
+
+await test("an issued LUMEDEMO refuses every account but the one it was issued to", async () => {
+  store.clear();
+  const verdict = await checkCustomerRules(demoIssued, { phone: "9876543210", email: "someone-else@example.com" });
+  assert.ok(verdict && verdict.ok === false);
+  assert.equal(verdict.reason, "not_invited");
+});
+
+await test("an issued LUMEDEMO refuses a request carrying no account email", async () => {
+  /*
+    Fails closed. This is the case that matters most: create-order now
+    passes the email off the verified Firebase token and nothing else, so
+    a caller who is not signed in — or who is signed in to an account
+    with no address — arrives here with an empty string. Reading that as
+    "no objection" would hand every SKU to anyone for ₹1.
+  */
+  store.clear();
+  for(const customer of [{ phone: "9876543210", email: "" }, { phone: "9876543210" }, {}]){
+    const verdict = await checkCustomerRules(demoIssued, customer);
+    assert.ok(verdict && verdict.ok === false, "no email must not pass: " + JSON.stringify(customer));
+    assert.equal(verdict.reason, "not_invited");
+  }
+});
+
+await test("the demo account itself is let through, repeatedly", async () => {
+  store.clear();
+  for(let i = 0; i < 3; i += 1){
+    const verdict = await checkCustomerRules(demoIssued, { phone: "9876543210", email: "demo@example.com" });
+    assert.equal(verdict, null, "the demo account should pass on attempt " + (i + 1));
+  }
+});
+
+await test("a typed address cannot satisfy an issued LUMEDEMO", async () => {
+  /*
+    The invariant the restriction rests on, pinned at the one place it
+    can be broken. create-order must pass the token's email to quote(),
+    not the one typed into the checkout form: the typed one is chosen by
+    the person being restricted, which makes the restriction decorative.
+  */
+  const source = fs.readFileSync(new URL("../api/cashfree/create-order.js", import.meta.url), "utf8");
+  const call = /const priced = await quote\(\{[\s\S]*?\n  \}\);/.exec(source);
+  assert.ok(call, "could not find the quote() call in create-order.js");
+  const customerLine = /customer:\s*\{[^}]*\}/.exec(call[0]);
+  assert.ok(customerLine, "could not find the customer passed to quote()");
+  assert.ok(/email:\s*accountEmail\s*\}/.test(customerLine[0]),
+    "create-order must pass the verified account email to quote(), found: " + customerLine[0]);
+  assert.ok(!/body\.customer/.test(customerLine[0]),
+    "the email passed to quote() must not come from the request body: " + customerLine[0]);
 });
 
 console.log("\ncatalogue guards");

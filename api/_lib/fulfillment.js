@@ -55,6 +55,12 @@ function readOrder(data){
     // a verified sign-in. Contact details can be typed wrong or changed
     // later; this doesn't.
     uid: tags.account_uid || null,
+    // The same account's email, also stamped from the verified sign-in.
+    // Kept distinct from `email` below, which is the contact address on
+    // the order and may have been typed by hand: the coupon rules decide
+    // "who this is" from the account, so the redemption has to be counted
+    // against the same thing the check looked at.
+    accountEmail: tags.account_email || null,
     name: customer.customer_name || null,
     phone: customer.customer_phone || null,
     email: customer.customer_email || null
@@ -123,9 +129,18 @@ async function fulfillPaidOrder(data){
         sku: order.sku,
         amount: order.amount,
         discount: order.couponDiscount,
-        // Recorded against the customer Cashfree confirmed, not anything
-        // the browser claimed, so per_customer_limit counts real people.
-        customer: { phone: order.phone, email: order.email }
+        /*
+          Recorded against the customer Cashfree confirmed, not anything
+          the browser claimed, so per_customer_limit counts real people.
+
+          The account's email is preferred over the contact address for
+          exactly one reason: create-order checks the limit against the
+          account's email, and a limit checked against one address and
+          counted against another is not a limit. The contact address is
+          still the fallback, for orders placed before accounts existed
+          and for a deploy running with LUME_REQUIRE_ACCOUNT=0.
+        */
+        customer: { phone: order.phone, email: order.accountEmail || order.email }
       });
     }catch(err){
       console.error("[lume fulfilment] coupon redemption failed:", String(err && err.message || err));
