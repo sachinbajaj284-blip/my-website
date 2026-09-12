@@ -164,8 +164,20 @@ This is the part a hard-coded bypass can't do.
 
 Manual grants are the rows where `source == "manual"`. Each carries the
 `reference` you can match against a bank statement line, plus `note`,
-`grantedAt` and `amount`. Gateway payments have no `source` field, so the two
-never blur together in the books.
+`grantedAt` and `amount`.
+
+`source` is what separates the kinds of record, so nothing blurs together in
+the books:
+
+| `source` | What it is | Revenue? |
+|---|---|---|
+| `null` | an ordinary payment through Cashfree | **yes** |
+| `"manual"` | money that arrived off-platform, matched by `reference` | **yes** |
+| `"demo"` | a ₹1 demonstration order from the demo account — real access, not a sale | no |
+
+So earned income is every row where `source` is not `"demo"`. See
+[coupons.md](coupons.md#lumedemo--the-demonstration-account) for how a demo
+order gets marked.
 
 ---
 

@@ -270,6 +270,13 @@ const DEFAULT_COUPONS = [
     discount_type: "percentage",
     discount_value: 100,
     applicable_packs: [],
+    /*
+      What keeps ₹1 demonstration orders out of the revenue figures. It
+      rides onto the order as a tag, so fulfilment marks the entitlement
+      `source: "demo"` and the owner's notification says so in as many
+      words. Nothing about the client's experience changes.
+    */
+    is_demo: true,
     is_active: false,
     restricted_to_emails: [],
     expiration_date: null,
@@ -353,6 +360,20 @@ function normalizeCoupon(raw, fallbackCode){
     first_time_skus: Array.isArray(raw.first_time_skus) && raw.first_time_skus.length
       ? raw.first_time_skus.map(function(s){ return String(s || "").trim(); }).filter(Boolean)
       : packs,
+    /*
+      Marks a code as a demonstration code rather than a sale.
+
+      Defaults to false and is only ever true where the catalogue says so
+      — `raw.is_demo === true` rather than anything truthy, because this
+      field travels onto an order tag and decides whether money counts,
+      and "1" or "false" arriving from a Firestore document should not
+      silently turn a real sale into a demo.
+
+      It does not change what anyone is charged or what they get; it is
+      provenance, the same idea as `source: "manual"` on a manual grant.
+      See create-order.js, which stamps it onto the order.
+    */
+    is_demo: raw.is_demo === true,
     /*
       Addressed to specific people, by account email.
 
@@ -761,7 +782,11 @@ async function quote({ code, packId, now, customer }){
       discount_type: coupon.discount_type,
       discount_value: coupon.discount_value,
       headline: coupon.headline,
-      description: coupon.description
+      description: coupon.description,
+      // So create-order can tag the order without loading the coupon a
+      // second time. Whether an order counts as revenue is decided by the
+      // same verdict that decided its price.
+      is_demo: coupon.is_demo
     }
   });
 }

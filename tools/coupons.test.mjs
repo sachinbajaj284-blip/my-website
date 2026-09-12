@@ -649,6 +649,62 @@ await test("the demo account itself is let through, repeatedly", async () => {
   }
 });
 
+await test("LUMEDEMO is the only code that marks an order a demo", () => {
+  // is_demo is what keeps ₹1 demo orders out of the revenue figures. Any
+  // other code carrying it would quietly stop counting as income.
+  const demoCodes = DEFAULT_COUPONS.filter(c => normalizeCoupon(c).is_demo).map(c => c.code);
+  assert.deepEqual(demoCodes, ["LUMEDEMO"]);
+});
+
+await test("is_demo is true only where the catalogue says true", () => {
+  /*
+    It travels onto an order tag and decides whether money counts, so it
+    is read strictly. A Firestore document carrying the string "1" — or
+    the string "false", which is truthy — must not turn a real sale into
+    a demo.
+  */
+  assert.equal(normalizeCoupon(Object.assign({}, demoParked, { is_demo: true })).is_demo, true);
+  for(const value of ["1", "true", "false", 1, 0, null, undefined, {}]){
+    assert.equal(normalizeCoupon(Object.assign({}, demoParked, { is_demo: value })).is_demo, false,
+      JSON.stringify(value) + " must not read as a demo code");
+  }
+});
+
+await test("an ordinary offer is not a demo code", () => {
+  assert.equal(coupon({ code: "FIRST50" }).is_demo, false);
+});
+
+await test("quote() tells create-order whether the code is a demo code", async () => {
+  // create-order stamps the order tag from this, rather than from a list
+  // of code names of its own — one place where "which codes are demo
+  // codes" is written down.
+  store.clear();
+  const q = await quote({
+    code: "TEST_DEMO_NOT_IN_CATALOGUE",
+    packId: "student-full-report",
+    customer: {}
+  });
+  assert.equal(q.ok, false, "an unknown code must not price");
+
+  const applied = await quote({ code: "FIRST50", packId: "wellness-session", customer: {} });
+  assert.equal(applied.coupon.is_demo, false, "a real offer must not mark the order a demo");
+});
+
+await test("create-order tags the order from the coupon, not from a code name", async () => {
+  /*
+    Pinned at the source. A string comparison against "LUMEDEMO" here
+    would be a second place to edit for every demo code added later, and
+    the failure mode of forgetting is a demo counted as revenue.
+  */
+  const source = fs.readFileSync(new URL("../api/cashfree/create-order.js", import.meta.url), "utf8");
+  assert.ok(/const isDemo = Boolean\(couponApplied && priced\.coupon\.is_demo\)/.test(source),
+    "create-order must decide isDemo from the applied coupon's is_demo flag");
+  assert.ok(/isDemo \? \{ demo: "1" \} : \{\}/.test(source),
+    "the demo flag must be stamped onto order_tags, or it cannot survive the gateway round trip");
+  assert.ok(!/===\s*["\']LUMEDEMO["\']/.test(source),
+    "create-order must not hard-code the demo code's name");
+});
+
 await test("a typed address cannot satisfy an issued LUMEDEMO", async () => {
   /*
     The invariant the restriction rests on, pinned at the one place it

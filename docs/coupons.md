@@ -201,6 +201,39 @@ So the demo runs: sign in as the demo account → open the page with
 `?coupon=LUMEDEMO` → Apply → pay ₹1 → the report or booking appears like any
 other purchase.
 
+**Demo orders do not count as revenue.** Every ₹1 it pays for is marked as a
+demonstration at the moment it is created, so the money can be left out of the
+books without anyone recognising a coupon code by eye:
+
+| Where | What to look for |
+|---|---|
+| `entitlements/{order_id}` in Firestore | `source: "demo"` — **the authoritative filter.** `null` is an ordinary sale, `"manual"` is an off-platform transfer |
+| The order at Cashfree | the `demo: "1"` order tag |
+| The owner's Sheet / webhook | `demo: yes` in the Details cell, and the summary opens with `[DEMO — not revenue]` |
+
+So "what did we actually earn" is `entitlements` where `source` is null, and
+adding up `amount` across everything overstates it by ₹1 per demo step.
+
+The chain is worth knowing, because it is the same trick as the coupon code
+itself: `is_demo: true` on the coupon → `create-order` stamps `demo: "1"` onto
+the order tags from the coupon it actually applied → `fulfillment.js` reads the
+tag back off the order Cashfree returns and writes `source: "demo"`. Going
+through the order tag is what makes it survive the redirect to the gateway, so
+the mark is identical whether the payment was confirmed by the browser poll or
+by the webhook.
+
+Two things deliberately *not* done. `create-order` does not compare the code
+against the string `"LUMEDEMO"` — "which codes are demo codes" is written once,
+on the coupon, or the next demo code added quietly counts as income. And a
+missing or unrecognised tag reads as a **real sale**: mistaking a demo for
+revenue overstates the books, while mistaking a sale for a demo hides money,
+and only one of those is recoverable. Tests cover both directions, including
+that `FIRST50` keeps counting as revenue.
+
+The entitlement is otherwise completely ordinary — same collection, same shape,
+real access, restore-access finds it on a second device. Only the provenance
+differs, exactly like a manual grant.
+
 **Why not a free-access flag on the account instead.** The tempting shortcut is
 a check somewhere in the UI — "if the signed-in email is the demo account, skip
 payment". That grants access with no order behind it: nothing in the books,

@@ -185,6 +185,20 @@ module.exports = async function handler(req, res){
 
   const chargeAmount = couponApplied ? priced.final_amount : product.amount;
   const couponCode = couponApplied ? priced.coupon.code : "";
+  /*
+    Whether this order is a demonstration rather than a sale.
+
+    Taken from the coupon that was actually applied, by the same quote()
+    call that decided the price — not from a list of code names kept here,
+    which would be a second place to edit every time a demo code is added
+    and a silent revenue error when somebody forgot.
+
+    Tagged onto the order because that is the only thing that survives the
+    trip to the gateway and back: fulfilment reads it off the order
+    Cashfree returns, so the ₹1 lands in the books marked as a demo
+    whether it was confirmed by the browser poll or by the webhook.
+  */
+  const isDemo = Boolean(couponApplied && priced.coupon.is_demo);
 
   const env = (process.env.CASHFREE_ENV || "production").toLowerCase();
   const base = env === "sandbox" ? "https://sandbox.cashfree.com/pg" : "https://api.cashfree.com/pg";
@@ -225,6 +239,10 @@ module.exports = async function handler(req, res){
       account ? { account_uid: account.uid } : {},
       account && account.email ? { account_email: account.email } : {},
       sessionMode ? { session_mode: sessionMode } : {},
+      // Only ever written, never absent-as-false: a missing tag reads as a
+      // real sale, which is the right default for every order that does
+      // not come from a demo code.
+      isDemo ? { demo: "1" } : {},
       couponCode ? {
         coupon_code: couponCode,
         coupon_discount: String(priced.discount_amount),
