@@ -1075,6 +1075,10 @@ function storyShortlist(){
   const n=items.length;
   window.LumeStory.open({
     quiz:"shortlist",
+    /* No counter exists for a shortlist — it is not a quiz with a result
+       to tally — so the card shows no completion figures rather than
+       borrowing another quiz's. */
+    stats:false,
     /* "Guess" asks which career tops the list; "Versus" pits the top two
        against each other, which is the argument being had anyway. */
     options:items.slice(0,8).map(o=>o.title),

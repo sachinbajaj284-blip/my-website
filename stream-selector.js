@@ -1037,6 +1037,9 @@ function openStory(){
 
   window.LumeStory.open({
     quiz:"stream",
+    /* The key the leaderboard counts under, so the card can say how many
+       people got the same combination. */
+    statsKey: top.key,
     options:options,
     versus:[{ label:title, pct:top.rel }, { label:altShort, pct:second.rel }],
     emoji:"🎯",

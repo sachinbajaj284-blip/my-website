@@ -91,6 +91,10 @@ var COPY = {
   genz: {
     en: {
       cta:"your turn 👇", free:"free · no login · no cap", scan:"scan me",
+      took:"{n} took this", takenBy:"{n} people have taken this", fomoPrefix:"{n} took this.",
+      fomoRare:"{n} took this. only {pct}% got mine 👀 what are you getting?",
+      fomoCommon:"{n} took this. {pct}% got the same as me — you next 👇",
+      fomoPlain:"{n} people have taken this. your turn 👇",
       kicker:"my result said what it said", kickerNamed:"{name} got read for filth",
       guessKicker:"the quiz just exposed me", guessKickerNamed:"{name} just got exposed",
       guessHead:"guess it. i'll wait 👀",
@@ -104,6 +108,10 @@ var COPY = {
     },
     hi: {
       cta:"अब तेरी बारी 👇", free:"फ्री · लॉगिन नहीं · सच में", scan:"scan कर",
+      took:"{n} ले चुके", takenBy:"{n} लोग ये ले चुके हैं", fomoPrefix:"{n} ने ये quiz ली.",
+      fomoRare:"{n} ने ये quiz ली. सिर्फ़ {pct}% को मेरा वाला आया 👀 तेरा क्या आएगा?",
+      fomoCommon:"{n} ने ये quiz ली. {pct}% को भी यही आया — अब तेरी बारी 👇",
+      fomoPlain:"{n} लोग ये quiz ले चुके हैं. अब तेरी बारी 👇",
       kicker:"result ने सब बोल दिया", kickerNamed:"{name} का result आ गया 💀",
       guessKicker:"quiz ने मुझे expose कर दिया", guessKickerNamed:"{name} expose हो गया 💀",
       guessHead:"बता के दिखा 👀",
@@ -119,6 +127,10 @@ var COPY = {
   clean: {
     en: {
       cta:"Take the quiz 👇", free:"Free · no sign-up", scan:"Scan to try",
+      took:"{n} taken", takenBy:"{n} completions so far", fomoPrefix:"{n} have taken this.",
+      fomoRare:"{n} people have taken this. Only {pct}% get this result.",
+      fomoCommon:"{n} people have taken this. {pct}% get this result too.",
+      fomoPlain:"{n} people have taken this. See what you get.",
       kicker:"I just found my match", kickerNamed:"{name}'s result",
       guessKicker:"I just got my result", guessKickerNamed:"{name} just got their result",
       guessHead:"Can you guess it?",
@@ -132,6 +144,10 @@ var COPY = {
     },
     hi: {
       cta:"अपना result निकालो 👇", free:"फ्री · लॉगिन नहीं", scan:"scan करें",
+      took:"{n} ले चुके", takenBy:"{n} लोग ले चुके हैं", fomoPrefix:"{n} लोग ये ले चुके हैं।",
+      fomoRare:"{n} लोग ये quiz ले चुके हैं। सिर्फ़ {pct}% को यह result आता है।",
+      fomoCommon:"{n} लोग ये quiz ले चुके हैं। {pct}% को भी यही आता है।",
+      fomoPlain:"{n} लोग ये quiz ले चुके हैं। देखो आपका क्या आता है।",
       kicker:"मेरा result आ गया", kickerNamed:"{name} का result",
       guessKicker:"मेरा result आ गया है", guessKickerNamed:"{name} का result आ गया है",
       guessHead:"क्या तुम बता सकते हो?",
@@ -655,7 +671,12 @@ function drawGuess(c, t, d, o){
   y += rowH + 26;
 
   var zone = { x:PAD, y:y, w:W - PAD * 2, h:150 };
-  fomoStrip(c, t, copy(d, "guessFomo"), H - 480 + 10);
+  /* The stats line is stronger than the stock one here too, but Guess
+     must not leak which result is the answer — so it gets the count
+     without the student's own share. */
+  var gst = statsFor(d);
+  fomoStrip(c, t, gst ? copy(d, "fomoPrefix", { n:gst.fmt(gst.total) }) + " " + copy(d, "guessFomo")
+                      : copy(d, "guessFomo"), H - 480 + 10);
   return zone;
 }
 
@@ -769,7 +790,44 @@ function kickerFor(d, o, which){
    headline counts the list ("My top 4 careers") while the guessable
    answer is the career at the top of it. */
 function headline(d){ return d.listTitle || d.title || ""; }
+/* The leaderboard on the page has already asked for these; this reads
+   its cache rather than the endpoint, so the card and the block under it
+   can never show different numbers. Null until they arrive, and null
+   whenever the page would have shown nothing — the card is held to the
+   same floor, because a story reaches more people than the page does. */
+function statsFor(d){
+  var lb = window.LumeLeaderboard;
+  if(!lb || !d.quiz || d.stats === false) return null;
+  var data = lb.cached(d.quiz);
+  if(!data) return null;
+  var mine = null;
+  (data.ranked || []).forEach(function(r){ if(r.key === d.statsKey) mine = r; });
+  return { total:data.total, today:data.today, mine:mine, fmt:lb.format || String };
+}
+
+/* Top-right, under the domain. Small on purpose: it is corroboration,
+   not the headline. */
+function statChip(c, t, d, st){
+  if(!st) return;
+  c.save();
+  c.textAlign = "right";
+  c.font = "800 27px " + FONT;
+  c.fillStyle = hexA(t.accent, 0.92);
+  c.fillText(copy(d, "took", { n:st.fmt(st.total) }), W - PAD, 196);
+  c.restore();
+  c.textAlign = "left";
+}
+
 function fomoFor(d){
+  /* Real numbers beat a written line: "1,491 took this, only 7.8% got
+     mine" is the same appeal as "think yours beats mine?" except it is
+     true and specific. Falls back the moment the counts are missing. */
+  var st = statsFor(d);
+  if(st){
+    var n = st.fmt(st.total);
+    if(st.mine) return copy(d, st.mine.pct < 15 ? "fomoRare" : "fomoCommon", { n:n, pct:st.mine.pct });
+    return copy(d, "fomoPlain", { n:n });
+  }
   /* The caller's line names the student's own runner-up, which beats
      anything generic — but it is written straight, so the slangy tone
      uses its own. */
@@ -788,6 +846,7 @@ function draw(canvas, d, t, styleId, o){
   /* Bold drops the brand row for a cleaner top; the footer still
      carries the domain and the handle. */
   if(styleId !== "bold") brandRow(c, t);
+  statChip(c, t, d, statsFor(d));
 
   var zone;
   if(styleId === "guess")       zone = drawGuess(c, t, d, o);
@@ -1251,6 +1310,16 @@ function open(data){
   document.body.style.overflow = "hidden";
   state.render();
   requestAnimationFrame(function(){ ov.classList.add("on"); });
+
+  /* Usually the page's leaderboard has already fetched these and the
+     first render has them. If the sheet is opened before that lands,
+     redraw once when it does rather than blocking the preview on a
+     network call. */
+  if(window.LumeLeaderboard && d.quiz && d.stats !== false && !window.LumeLeaderboard.cached(d.quiz)){
+    window.LumeLeaderboard.stats(d.quiz).then(function(data){
+      if(data && ov.parentNode) state.render();
+    }).catch(function(){});
+  }
 
   track("story_sheet_opened", { event_category:"viral_loop", event_label:(d.quiz || "") + ":" + state.style });
 

@@ -162,12 +162,45 @@ function record(cfg){
   }catch(e){ return Promise.resolve(null); }
 }
 
+/* One fetch per quiz per page. The story card shows the same counts, and
+   two components asking the same endpoint the same question is both a
+   wasted round trip and a way for the page and the card to disagree. */
+var cache = Object.create(null);
+var inflight = Object.create(null);
+
 function load(quiz){
+  if(cache[quiz]) return Promise.resolve(cache[quiz]);
+  if(inflight[quiz]) return inflight[quiz];
+  var req;
   try{
-    return fetch(ENDPOINT + "?quiz=" + encodeURIComponent(quiz))
+    req = fetch(ENDPOINT + "?quiz=" + encodeURIComponent(quiz))
       .then(function(r){ return r.json(); })
       .catch(function(){ return { available:false }; });
-  }catch(e){ return Promise.resolve({ available:false }); }
+  }catch(e){ req = Promise.resolve({ available:false }); }
+
+  inflight[quiz] = req.then(function(data){
+    var out = data || { available:false };
+    /* Only a real answer is cached: an outage should be retried by the
+       next caller, not remembered for the life of the page. */
+    if(out.available) cache[quiz] = out;
+    delete inflight[quiz];
+    return out;
+  });
+  return inflight[quiz];
+}
+
+/* What another component can use. `cached` is synchronous and returns
+   null until the numbers are in, so a caller can draw immediately and
+   redraw when `stats` resolves. Both honour the same floor as the page:
+   below it there is nothing true to say. */
+function usable(data){
+  return !!(data && data.available && data.total >= MIN_FOR_TOTAL);
+}
+function cached(quiz){
+  return usable(cache[quiz]) ? cache[quiz] : null;
+}
+function stats(quiz){
+  return load(quiz).then(function(data){ return usable(data) ? data : null; });
 }
 
 function render(cfg, data){
@@ -242,6 +275,9 @@ function mount(cfg){
     .catch(function(){ cfg.el.hidden = true; });
 }
 
-window.LumeLeaderboard = { mount:mount, MIN_FOR_BARS:MIN_FOR_BARS, MIN_FOR_TOTAL:MIN_FOR_TOTAL };
+window.LumeLeaderboard = {
+  mount:mount, stats:stats, cached:cached, format:group,
+  MIN_FOR_BARS:MIN_FOR_BARS, MIN_FOR_TOTAL:MIN_FOR_TOTAL
+};
 
 })();

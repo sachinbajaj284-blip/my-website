@@ -596,6 +596,8 @@
     var titleOnly=(parts[1]||parts[0]||theme||'My career type').trim();
     window.LumeStory.open({
       quiz:'snapshot',
+      /* The RIASEC letter the leaderboard counts under. */
+      statsKey:THEME_KEY[(r.themes[0]||{}).label] || '',
       /* "Guess" needs the six themes a friend could name; "Versus" needs
          the two that actually came closest. */
       options:THEME_NAMES,
