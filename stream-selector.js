@@ -840,7 +840,31 @@ function renderResult(){
     pn.innerHTML = "<b>" + esc(t("pressureLabel")) + "</b>" + esc(t("pressure"));
   }else pn.classList.add("hide");
 
+  showLeaderboard();
   playResult();
+}
+
+/* ------------------------------------------------------------------ */
+/* Leaderboard                                                         */
+/* ------------------------------------------------------------------ */
+/* How many people have taken this, and what they got. The counts come
+   from /api/quiz-stats and the block hides itself when there are not
+   enough of them to say anything true — see lume-leaderboard.js. */
+function showLeaderboard(){
+  var el = $("leaderboard");
+  if(!el || !window.LumeLeaderboard || !result) return;
+  var labels = {};
+  Object.keys(COMBOS).forEach(function(k){
+    var n = COMBOS[k].name[LANG], i = n.indexOf("\u2014");
+    labels[k] = i > -1 ? n.slice(0, i).trim() : n;
+  });
+  window.LumeLeaderboard.mount({
+    el: el,
+    quiz: "stream",
+    result: result.ranked[0].key,
+    labels: labels,
+    lang: LANG
+  });
 }
 
 /* ------------------------------------------------------------------ */
@@ -976,6 +1000,66 @@ function resultUrl(){
   return location.origin + location.pathname + "?r=" + encodeAnswers();
 }
 
+/* Story card — hands the result to LumeStory, which renders the 1080x1920
+   poster and runs the Instagram / Snapchat / WhatsApp sheet. Built here
+   because only this file knows what the axes and combinations mean. */
+function openStory(){
+  if(!result || !window.LumeStory) return;
+  var top = result.ranked[0], second = result.ranked[1];
+  var combo = COMBOS[top.key], alt = COMBOS[second.key];
+  var full = combo.name[LANG], dash = full.indexOf("\u2014");
+  var title = dash > -1 ? full.slice(0, dash).trim() : full;
+  var subtitle = dash > -1 ? full.slice(dash + 1).trim() : combo.sub[LANG];
+
+  var bars = AXES.map(function(a){
+    return { label: AXIS_LABEL[a][LANG], pct: Math.round(result.axes[a] * 100) };
+  }).sort(function(x, y){ return y.pct - x.pct; }).slice(0, 3);
+
+  var chips = combo.careers.slice(0, 3).map(function(x){
+    /* The chip has to fit a phone screen, so drop the "How to become a"
+       framing the library pages use in their link text. */
+    var label = LANG === "hi" ? x[2] : x[1];
+    return label.replace(/^How to become an? /i, "").replace(/ कैसे बनें$/, "").trim();
+  });
+
+  var altShort = alt.name[LANG].split("\u2014")[0].trim();
+  var fomo = LANG === "hi"
+    ? "मेरा दूसरा option " + altShort + " था. तुम्हारा क्या आएगा? 2 मिनट लगेंगे."
+    : "My runner-up was " + altShort + ". What do you get? Takes 2 minutes.";
+
+  /* The "Guess" style needs every combination a friend could name, and
+     "Versus" needs the two the student was actually torn between — which
+     is the runner-up, not a random second. */
+  var options = Object.keys(COMBOS).map(function(k){
+    var n = COMBOS[k].name[LANG], i = n.indexOf("\u2014");
+    return i > -1 ? n.slice(0, i).trim() : n;
+  });
+
+  window.LumeStory.open({
+    quiz:"stream",
+    /* The key the leaderboard counts under, so the card can say how many
+       people got the same combination. */
+    statsKey: top.key,
+    options:options,
+    versus:[{ label:title, pct:top.rel }, { label:altShort, pct:second.rel }],
+    emoji:"🎯",
+    lang:LANG,
+    eyebrow: LANG === "hi" ? "स्ट्रीम सिलेक्टर" : "Stream Selector",
+    title:title,
+    subtitle:subtitle,
+    matchPct: top.rel,
+    matchLabel: LANG === "hi" ? "फ़िट" : "fit",
+    bars:bars,
+    chips:chips,
+    fomo:fomo,
+    /* The clean quiz URL, not resultUrl(): a friend tapping this should
+       land on question 1, not on somebody else's answers. */
+    url: location.origin + location.pathname
+  });
+
+  track("stream_quiz_story_open", { event_category:"viral_loop", event_label: top.key });
+}
+
 function copyLink(){
   var url = resultUrl(), btn = $("copyBtn"), old = btn.textContent;
   function done(){
@@ -1016,6 +1100,8 @@ function boot(){
   $("skipBtn").addEventListener("click", skipQ);
   $("leadBtn").addEventListener("click", submitLead);
   $("copyBtn").addEventListener("click", copyLink);
+  var storyBtn = $("storyBtn");
+  if(storyBtn) storyBtn.addEventListener("click", openStory);
   $("printBtn").addEventListener("click", function(){
     track("stream_quiz_print", { event_category:"lead_tools" });
     window.print();

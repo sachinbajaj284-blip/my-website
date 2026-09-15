@@ -162,6 +162,8 @@ button,input,select{font:inherit}
 .ca-btn{border:0;border-radius:999px;padding:12px 18px;min-height:46px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:.84rem;font-weight:900;text-decoration:none;cursor:pointer;transition:transform .2s,box-shadow .2s,background .2s}
 .ca-btn.gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#07182F;box-shadow:0 16px 34px rgba(232,185,90,.27)}
 .ca-btn.light{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.ca-btn.story{background:linear-gradient(135deg,#6d5cff,#b14aed 50%,#ff5f6d);color:#fff;border:0;box-shadow:0 8px 22px rgba(109,92,255,.30)}
+.ca-btn.story:hover{filter:brightness(1.06)}
 .ca-btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
 .ca-btn:hover{transform:translateY(-2px)}
 .ca-hero-panel{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);border-radius:22px;padding:20px;box-shadow:0 26px 70px rgba(0,0,0,.22);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);position:relative;overflow:hidden}
@@ -1058,6 +1060,53 @@ async function shareShortlist(){
   try{await navigator.clipboard.writeText(url);flashShareBtn("✓ Link copied — paste to share");return;}catch(e){}
   try{const ta=document.createElement("textarea");ta.value=url;ta.setAttribute("readonly","");ta.style.position="fixed";ta.style.top="-1000px";document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);flashShareBtn("✓ Link copied — paste to share");}catch(e){window.prompt("Copy this link to share your shortlist:",url);}
 }
+/* Story card. The shortlist is a set of careers rather than a single
+   score, so it gets ranked rows and no match ring — and a kicker that
+   says what it is, since this page is as often a parent's list as a
+   student's. */
+function storyShortlist(){
+  const items=shortlist.map(id=>findItem(id)).filter(Boolean);
+  if(!items.length)return;
+  if(!window.LumeStory)return shareShortlist();
+  const lines=items.slice(0,5).map(o=>({
+    main:o.title,
+    sub:o.sector?`${o.sector} · Entry ${o.salary.entry}`:`Govt job · ${o.exam||o.category}`
+  }));
+  const n=items.length;
+  window.LumeStory.open({
+    quiz:"shortlist",
+    /* No counter exists for a shortlist — it is not a quiz with a result
+       to tally — so the card shows no completion figures rather than
+       borrowing another quiz's. */
+    stats:false,
+    /* "Guess" asks which career tops the list; "Versus" pits the top two
+       against each other, which is the argument being had anyway. */
+    options:items.slice(0,8).map(o=>o.title),
+    versus:items.length>1?[{label:items[0].title},{label:items[1].title}]:null,
+    emoji:"📈",
+    eyebrow:"Career Shortlist",
+    kicker:"On my shortlist right now",
+    /* The Guess style hides `title`, so for a shortlist that has to be the
+       top career rather than a count — "My top 4 careers" is not something
+       a friend can guess. */
+    title:items[0].title,
+    listTitle:n===1?"1 career I'm serious about":`My top ${Math.min(n,5)} careers`,
+    /* The rows already name the careers, so the subtitle carries what they
+       have in common instead of repeating them. */
+    subtitle:[...new Set(items.map(o=>o.sector||"Government"))].slice(0,3).join(" · "),
+    lines:lines,
+    cta:"Build yours free 👇",
+    fomo:"Salary, exams and the actual route in — all free to look up. What is on your list?",
+    captions:[
+      `These ${Math.min(n,5)} are actually on my list 👀\nSalary, exams and the real route in — all free 👇\n${SHARE_BASE}`,
+      `Building my career shortlist instead of guessing 📈\nScreenshot yours and send it to me 👇\n${SHARE_BASE}`
+    ],
+    /* The clean page, not shortlistShareUrl(): a friend tapping this
+       should build their own list, not inherit these careers. */
+    url:SHARE_BASE
+  });
+  track("ci_shortlist_story",{count:n});
+}
 function initShortlistFromUrl(){
   let raw="";try{raw=new URLSearchParams(location.search).get("shortlist")||"";}catch(e){}
   if(!raw)return false;
@@ -1097,6 +1146,7 @@ function renderShortlist(){
   body.innerHTML=`<div class="shortlist-list">${items.map(o=>{const gov=!o.sector;const attr=gov?`data-gov-detail="${esc(o.id)}"`:`data-detail="${esc(o.id)}"`;const sub=gov?`Govt job · ${esc(o.category)}`:`${esc(o.sector)} · Entry ${esc(o.salary.entry)}`;return `<div class="shortlist-row"><div class="sr-main" ${attr}><b>${esc(o.title)}</b><span class="sr-sub">${sub}</span></div><button class="shortlist-remove" type="button" data-unsave="${esc(o.id)}">Remove</button></div>`;}).join("")}</div>
     <div class="shortlist-cta">
       <a class="ca-btn gold" href="${shortlistWa()}" target="_blank" rel="noopener">Discuss these ${items.length} with a counsellor (free)</a>
+      <button class="ca-btn story" type="button" data-story-shortlist="1">✨ Share this shortlist as a story</button>
       <button class="ca-btn ghost" type="button" id="shareBtn" data-share-shortlist="1">🔗 Copy shareable link</button>
       <button class="ca-btn ghost" type="button" data-print-shortlist="1">⤓ Download this shortlist as a plan</button>
       <a class="ca-btn ghost" href="assessment.html#free-test">Match this shortlist to my child — free 60-sec test</a>
@@ -1353,6 +1403,7 @@ document.addEventListener("click",e=>{
   const unsave=e.target.closest("[data-unsave]"); if(unsave){toggleSave(unsave.dataset.unsave);return;}
   const printC=e.target.closest("[data-print]"); if(printC){printCareer(printC.dataset.print);return;}
   const printS=e.target.closest("[data-print-shortlist]"); if(printS){printShortlist();return;}
+  const storyS=e.target.closest("[data-story-shortlist]"); if(storyS){storyShortlist();return;}
   const shareS=e.target.closest("[data-share-shortlist]"); if(shareS){shareShortlist();return;}
   const detail=e.target.closest("[data-detail]"); if(detail){if(detail.closest("#shortlistModal"))closeModal("shortlistModal");openDetail(detail.dataset.detail);return;}
   const govDetail=e.target.closest("[data-gov-detail]"); if(govDetail){if(govDetail.closest("#shortlistModal"))closeModal("shortlistModal");openGovDetail(govDetail.dataset.govDetail);return;}
@@ -1448,6 +1499,8 @@ if(atlasUnlocked){[80,320,760].forEach(t=>setTimeout(scrollToHashTarget,t));}
   window.firebaseAuth = fbAuth;
   onAuthStateChanged(fbAuth, user => { window.currentFirebaseUser = user || null; });
 </script>
+<script src="lume-qr.js" defer></script>
+<script src="lume-story-share.js" defer></script>
 <script src="lume-auth.js" defer></script>
 <script src="cashfree-payments.js" defer></script>
 <script>

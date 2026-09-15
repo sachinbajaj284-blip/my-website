@@ -2005,6 +2005,9 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
 .ft-share-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:12px 22px;font-size:.85rem;font-weight:800;cursor:pointer;text-decoration:none;transition:all .2s;}
 .ft-share-btn.primary{background:#25D366;color:#fff;box-shadow:0 8px 22px rgba(37,211,102,.28);}
 .ft-share-btn.primary:hover{background:#1ebe57;transform:translateY(-1px);}
+/* Story card button — the top of the viral loop, so it leads the row. */
+.ft-share-btn.story{background:linear-gradient(135deg,#6d5cff,#b14aed 50%,#ff5f6d);color:#fff;box-shadow:0 8px 22px rgba(109,92,255,.32);}
+.ft-share-btn.story:hover{filter:brightness(1.06);transform:translateY(-1px);}
 .ft-share-btn.ghost{background:#fff;border:1.5px solid #DDEBE9;color:#0D1B40;}
 .ft-share-btn.ghost:hover{border-color:#0A6E6E;color:#0A6E6E;}
 .ft-share-copied{font-size:.75rem;font-weight:800;color:#0A6E6E;margin-top:10px;min-height:16px;transition:opacity .2s;}
