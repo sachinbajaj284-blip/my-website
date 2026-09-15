@@ -840,7 +840,31 @@ function renderResult(){
     pn.innerHTML = "<b>" + esc(t("pressureLabel")) + "</b>" + esc(t("pressure"));
   }else pn.classList.add("hide");
 
+  showLeaderboard();
   playResult();
+}
+
+/* ------------------------------------------------------------------ */
+/* Leaderboard                                                         */
+/* ------------------------------------------------------------------ */
+/* How many people have taken this, and what they got. The counts come
+   from /api/quiz-stats and the block hides itself when there are not
+   enough of them to say anything true — see lume-leaderboard.js. */
+function showLeaderboard(){
+  var el = $("leaderboard");
+  if(!el || !window.LumeLeaderboard || !result) return;
+  var labels = {};
+  Object.keys(COMBOS).forEach(function(k){
+    var n = COMBOS[k].name[LANG], i = n.indexOf("\u2014");
+    labels[k] = i > -1 ? n.slice(0, i).trim() : n;
+  });
+  window.LumeLeaderboard.mount({
+    el: el,
+    quiz: "stream",
+    result: result.ranked[0].key,
+    labels: labels,
+    lang: LANG
+  });
 }
 
 /* ------------------------------------------------------------------ */
