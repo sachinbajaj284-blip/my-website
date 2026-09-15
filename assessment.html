@@ -567,10 +567,19 @@
     var top=r.themes[0];
     var pct=top&&r.total?Math.round(top.count/r.total*100):null;
     var runner=r.themes[1]?r.themes[1].label:'';
+    var THEME_NAMES=['Realistic','Investigative','Artistic','Social','Enterprising','Conventional'];
+    var titleOnly=(parts[1]||parts[0]||theme||'My career type').trim();
     window.LumeStory.open({
       quiz:'snapshot',
+      /* "Guess" needs the six themes a friend could name; "Versus" needs
+         the two that actually came closest. */
+      options:THEME_NAMES,
+      versus:r.themes.slice(0,2).map(function(t){
+        return {label:t.label,pct:r.total?Math.round(t.count/r.total*100):0};
+      }),
+      emoji:'🧠',
       eyebrow:'Career Snapshot',
-      title:(parts[1]||parts[0]||theme||'My career type').trim(),
+      title:titleOnly,
       subtitle:(parts[0]||'').trim(),
       /* The snapshot scores six themes across six answers, so this is the
          share of the answers the top theme won — labelled as a share, not

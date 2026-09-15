@@ -1075,9 +1075,18 @@ function storyShortlist(){
   const n=items.length;
   window.LumeStory.open({
     quiz:"shortlist",
+    /* "Guess" asks which career tops the list; "Versus" pits the top two
+       against each other, which is the argument being had anyway. */
+    options:items.slice(0,8).map(o=>o.title),
+    versus:items.length>1?[{label:items[0].title},{label:items[1].title}]:null,
+    emoji:"📈",
     eyebrow:"Career Shortlist",
     kicker:"On my shortlist right now",
-    title:n===1?"1 career I'm serious about":`My top ${Math.min(n,5)} careers`,
+    /* The Guess style hides `title`, so for a shortlist that has to be the
+       top career rather than a count — "My top 4 careers" is not something
+       a friend can guess. */
+    title:items[0].title,
+    listTitle:n===1?"1 career I'm serious about":`My top ${Math.min(n,5)} careers`,
     /* The rows already name the careers, so the subtitle carries what they
        have in common instead of repeating them. */
     subtitle:[...new Set(items.map(o=>o.sector||"Government"))].slice(0,3).join(" · "),

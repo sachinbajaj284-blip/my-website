@@ -998,12 +998,24 @@ function openStory(){
     return label.replace(/^How to become an? /i, "").replace(/ कैसे बनें$/, "").trim();
   });
 
+  var altShort = alt.name[LANG].split("\u2014")[0].trim();
   var fomo = LANG === "hi"
-    ? "मेरा दूसरा option " + alt.name.hi.split("\u2014")[0].trim() + " था. तुम्हारा क्या आएगा? 2 मिनट लगेंगे."
-    : "My runner-up was " + alt.name.en.split("\u2014")[0].trim() + ". What do you get? Takes 2 minutes.";
+    ? "मेरा दूसरा option " + altShort + " था. तुम्हारा क्या आएगा? 2 मिनट लगेंगे."
+    : "My runner-up was " + altShort + ". What do you get? Takes 2 minutes.";
+
+  /* The "Guess" style needs every combination a friend could name, and
+     "Versus" needs the two the student was actually torn between — which
+     is the runner-up, not a random second. */
+  var options = Object.keys(COMBOS).map(function(k){
+    var n = COMBOS[k].name[LANG], i = n.indexOf("\u2014");
+    return i > -1 ? n.slice(0, i).trim() : n;
+  });
 
   window.LumeStory.open({
     quiz:"stream",
+    options:options,
+    versus:[{ label:title, pct:top.rel }, { label:altShort, pct:second.rel }],
+    emoji:"🎯",
     lang:LANG,
     eyebrow: LANG === "hi" ? "स्ट्रीम सिलेक्टर" : "Stream Selector",
     title:title,
