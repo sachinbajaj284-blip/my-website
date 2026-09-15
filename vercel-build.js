@@ -95,3 +95,117 @@ const source = findSource();
 fs.rmSync(target, { recursive: true, force: true });
 copyDir(source.path, target, source.isRootSource);
 console.log("Copied website files from " + source.label + " to public/ for Vercel.");
+
+/*
+  Freshness stamping.
+
+  dateModified in the JSON-LD and <lastmod> in sitemap.xml were both
+  maintained by hand. The sitemap was kept in good shape, but the schema
+  dates were not: the newest dateModified in the repo was 2026-07-28, months
+  behind pages that had genuinely changed since, and on most pages it had
+  simply been left equal to datePublished. Recency is a real input to how
+  search and AI answer engines pick sources, so a page that under-reports
+  its own freshness is competing with a handicap.
+
+  Both are now derived at build time from the last commit that touched each
+  file, so they agree with each other and with reality without anyone
+  editing a date again.
+
+  If git is not available (or the file is untracked), the existing value is
+  left exactly as it is — a wrong date is better than no date, and silently
+  stamping every page with "today" would be a freshness claim we cannot
+  back up.
+*/
+const { execFileSync } = require("child_process");
+
+function gitAvailable(){
+  try{
+    execFileSync("git", ["rev-parse", "--git-dir"], { cwd: root, stdio: "ignore" });
+    return true;
+  }catch(err){
+    return false;
+  }
+}
+
+// Last commit date (YYYY-MM-DD) that touched a file, or null when git does
+// not know about it — a new file that has never been committed included.
+function lastCommitDate(relPath){
+  try{
+    const out = execFileSync("git", ["log", "-1", "--format=%cs", "--", relPath], {
+      cwd: root,
+      encoding: "utf8"
+    }).trim();
+    return /^\d{4}-\d{2}-\d{2}$/.test(out) ? out : null;
+  }catch(err){
+    return null;
+  }
+}
+
+function stampDates(){
+  if(!gitAvailable()){
+    console.log("Freshness stamping skipped: no git metadata in the build environment.");
+    return;
+  }
+
+  const dateCache = new Map();
+  function dateFor(relPath){
+    if(!dateCache.has(relPath)) dateCache.set(relPath, lastCommitDate(relPath));
+    return dateCache.get(relPath);
+  }
+
+  let pagesStamped = 0;
+
+  for(const name of fs.readdirSync(target)){
+    if(!name.endsWith(".html")) continue;
+    const committed = dateFor(name);
+    if(!committed) continue;
+
+    const file = path.join(target, name);
+    let html = fs.readFileSync(file, "utf8");
+    let changed = false;
+
+    html = html.replace(/("dateModified"\s*:\s*")(\d{4}-\d{2}-\d{2})(")/g, (match, open, current, close) => {
+      // A page cannot have been modified before it was published. Where the
+      // two disagree the published date wins, so a file whose only commit
+      // predates its stated datePublished is left alone rather than being
+      // stamped backwards.
+      const published = (html.match(/"datePublished"\s*:\s*"(\d{4}-\d{2}-\d{2})"/) || [])[1];
+      const stamped = published && committed < published ? published : committed;
+      if(stamped === current) return match;
+      changed = true;
+      return open + stamped + close;
+    });
+
+    if(changed){
+      fs.writeFileSync(file, html);
+      pagesStamped++;
+    }
+  }
+
+  const sitemap = path.join(target, "sitemap.xml");
+  let urlsStamped = 0;
+
+  if(fs.existsSync(sitemap)){
+    let xml = fs.readFileSync(sitemap, "utf8");
+
+    xml = xml.replace(/<loc>([^<]+)<\/loc>(\s*)<lastmod>([^<]+)<\/lastmod>/g, (match, loc, gap, current) => {
+      // Map the published URL back to the file it is served from. A URL
+      // ending in "/" is the site root, which is index.html.
+      let rel = loc.replace(/^https?:\/\/[^/]+\//, "");
+      if(rel === "" || rel.endsWith("/")) rel += "index.html";
+
+      const committed = dateFor(rel);
+      if(!committed || committed === current) return match;
+      urlsStamped++;
+      return "<loc>" + loc + "</loc>" + gap + "<lastmod>" + committed + "</lastmod>";
+    });
+
+    if(urlsStamped) fs.writeFileSync(sitemap, xml);
+  }
+
+  console.log(
+    "Stamped freshness dates from git: " + pagesStamped + " page(s), " + urlsStamped + " sitemap URL(s)."
+  );
+}
+
+stampDates();
