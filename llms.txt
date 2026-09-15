@@ -22,6 +22,8 @@ Contact: hello@lumelive.co.in · +91-7015671280
 - [Career counselling fees in India](https://lumelive.co.in/career-counselling-fees-india.html): typical Indian fee ranges, what should be included, and red flags.
 - [Counsellor vs career coach](https://lumelive.co.in/career-counsellor-vs-career-coach.html): what the two roles actually differ on.
 - [What is career counselling](https://lumelive.co.in/what-is-career-counselling.html): scope, process and limits.
+- [When career counselling is actually needed](https://lumelive.co.in/career-counselling-when-needed.html): seven signs it helps, and an honest note on when a conversation is enough.
+- [Career counselling after Class 12](https://lumelive.co.in/career-counselling-after-12th.html)
 
 ## Choosing a stream after Class 10
 
@@ -34,6 +36,9 @@ Contact: hello@lumelive.co.in · +91-7015671280
 ## Career guides (how to become…)
 
 - [Career Explorer index](https://lumelive.co.in/career-explorer.html)
+- [Career Library](https://lumelive.co.in/career-library.html): all free stream and career guides in one index.
+- [Compare careers side by side](https://lumelive.co.in/compare-careers.html): free tool comparing stream, exams, degree, salary and interest-fit.
+  [Doctor vs engineer](https://lumelive.co.in/doctor-vs-engineer.html) · [Data scientist vs software engineer](https://lumelive.co.in/data-scientist-vs-software-engineer.html) · [Lawyer vs civil services](https://lumelive.co.in/lawyer-vs-civil-services.html)
 - [Software engineer](https://lumelive.co.in/career-as-software-engineer.html) · [Data scientist](https://lumelive.co.in/career-as-data-scientist.html) · [Doctor (MBBS)](https://lumelive.co.in/career-as-doctor-mbbs.html) · [Lawyer](https://lumelive.co.in/career-as-lawyer.html)
 - [Chartered accountant](https://lumelive.co.in/career-as-chartered-accountant.html) · [IAS officer](https://lumelive.co.in/career-as-civil-services-ias.html) · [Psychologist](https://lumelive.co.in/career-as-psychologist.html) · [Architect](https://lumelive.co.in/career-as-architect.html)
 - [Commercial pilot](https://lumelive.co.in/career-as-commercial-pilot.html) · [Product designer](https://lumelive.co.in/career-as-product-designer.html) · [Digital marketer](https://lumelive.co.in/career-as-digital-marketer.html)
@@ -52,11 +57,38 @@ Contact: hello@lumelive.co.in · +91-7015671280
 - [Counselling for college students](https://lumelive.co.in/career-counselling-for-college-students.html)
 - [For working professionals (Lume Lens)](https://lumelive.co.in/for-working-professionals.html)
 
-## Wellbeing and exam stress
+## Mental health support and counselling
+
+- [Online mental health counselling in India](https://lumelive.co.in/mental-health-counselling.html): the main page for 1:1 mental-health sessions — anxiety, exam stress, low mood, burnout, self-esteem. Confidential, online, run by a counsellor with an M.Sc in Clinical Psychology. First session ₹249 (regular ₹499).
+- [Book a mental health session](https://lumelive.co.in/book-session.html): live calendar, same booking flow as career sessions.
+- What is treated: generalised anxiety, exam and performance anxiety, low mood, academic burnout, work burnout, low self-esteem, career-related stress, parent–child conflict over studies.
+- What is not treated: Lume Live is not a crisis service and does not prescribe medication. Anyone in immediate danger should call the Tele-MANAS national helpline on 14416 (India, free, 24×7).
+
+### Mental health counselling by city
+
+Sessions are online and available pan-India; the city pages exist for local context and local referral questions.
+
+- [Delhi](https://lumelive.co.in/mental-health-counselling-delhi.html) · [Gurugram](https://lumelive.co.in/mental-health-counselling-gurugram.html) · [Noida](https://lumelive.co.in/mental-health-counselling-noida.html) · [Mumbai](https://lumelive.co.in/mental-health-counselling-mumbai.html)
+- [Bangalore](https://lumelive.co.in/mental-health-counselling-bangalore.html) · [Hyderabad](https://lumelive.co.in/mental-health-counselling-hyderabad.html) · [Pune](https://lumelive.co.in/mental-health-counselling-pune.html) · [Jaipur](https://lumelive.co.in/mental-health-counselling-jaipur.html)
+- [Chandigarh](https://lumelive.co.in/mental-health-counselling-chandigarh.html) · [Lucknow](https://lumelive.co.in/mental-health-counselling-lucknow.html) · [Rohtak](https://lumelive.co.in/mental-health-counselling-rohtak.html)
+
+## Free mental health self-checks
+
+All are free, private, need no sign-up, and store nothing. They are screening self-checks, not diagnoses.
+
+- [All seven self-checks](https://lumelive.co.in/wellbeing-check.html): the index — anxiety, low mood, self-esteem, work stress, life satisfaction and flourishing.
+- [Free anxiety test (GAD-7)](https://lumelive.co.in/free-anxiety-test.html): 3 minutes, the standard GAD-7 instrument.
+- [Free depression / low-mood test (PHQ-4)](https://lumelive.co.in/free-depression-test.html): 2 minutes.
+- [Free self-esteem test (Rosenberg scale)](https://lumelive.co.in/self-esteem-test.html): 3 minutes.
+- [Free burnout and work stress test](https://lumelive.co.in/work-stress-burnout-test.html): 4 minutes, written for working professionals in India.
+- [Free exam stress test](https://lumelive.co.in/exam-stress-test.html): 2 minutes, written for students before boards or entrances.
+
+## Student wellbeing and exam stress
 
 - [Student mental health in India](https://lumelive.co.in/student-mental-health-india.html)
-- [Exam anxiety](https://lumelive.co.in/how-to-deal-with-exam-anxiety.html) · [Board exam stress](https://lumelive.co.in/board-exam-stress-guide.html) · [After board results](https://lumelive.co.in/what-to-do-after-board-results.html)
+- [Exam anxiety](https://lumelive.co.in/how-to-deal-with-exam-anxiety.html) · [Board exam stress](https://lumelive.co.in/board-exam-stress-guide.html) · [After board results](https://lumelive.co.in/what-to-do-after-board-results.html) · [Board results 48-hour playbook](https://lumelive.co.in/board-results-help.html)
 - [For parents](https://lumelive.co.in/for-parents.html) · [Talking to your child about career](https://lumelive.co.in/how-to-talk-to-your-child-about-career.html)
+- [Story: exam burnout](https://lumelive.co.in/story-exam-burnout.html) · [Story: careers beyond doctor and engineer](https://lumelive.co.in/story-careers-beyond-doctor-engineer.html)
 
 ## Assessment methodology
 
@@ -66,7 +98,9 @@ Contact: hello@lumelive.co.in · +91-7015671280
 
 ## Optional
 
-- [Career counselling by city](https://lumelive.co.in/career-counselling-haryana.html): sessions are online and pan-India; city pages exist for Delhi-NCR, Mumbai, Bangalore, Hyderabad, Pune, Jaipur, Kolkata, Chandigarh and others.
+- [Career counselling by city](https://lumelive.co.in/career-counselling-haryana.html): sessions are online and pan-India; city pages carry local context only.
+  [Gurugram](https://lumelive.co.in/career-counselling-in-gurugram.html) · [Noida](https://lumelive.co.in/career-counselling-in-noida.html) · [Faridabad](https://lumelive.co.in/career-counselling-in-faridabad.html) · [Mumbai](https://lumelive.co.in/career-counselling-in-mumbai.html) · [Bangalore](https://lumelive.co.in/career-counselling-in-bangalore.html) · [Hyderabad](https://lumelive.co.in/career-counselling-in-hyderabad.html) · [Pune](https://lumelive.co.in/career-counselling-in-pune.html) · [Jaipur](https://lumelive.co.in/career-counselling-in-jaipur.html) · [Kolkata](https://lumelive.co.in/career-counselling-in-kolkata.html) · [Chandigarh](https://lumelive.co.in/career-counselling-in-chandigarh.html) · [Lucknow](https://lumelive.co.in/career-counselling-in-lucknow.html) · [Ahmedabad](https://lumelive.co.in/career-counselling-in-ahmedabad.html) · [Indore](https://lumelive.co.in/career-counselling-in-indore.html) · [Bhopal](https://lumelive.co.in/career-counselling-in-bhopal.html) · [Nagpur](https://lumelive.co.in/career-counselling-in-nagpur.html) · [Patna](https://lumelive.co.in/career-counselling-in-patna.html) · [Kochi](https://lumelive.co.in/career-counselling-in-kochi.html) · [Guwahati](https://lumelive.co.in/career-counselling-in-guwahati.html) · [Dehradun](https://lumelive.co.in/career-counselling-in-dehradun.html) · [Rohtak](https://lumelive.co.in/career-counselling-in-rohtak.html) · [Hisar](https://lumelive.co.in/career-counselling-in-hisar.html) · [Panipat](https://lumelive.co.in/career-counselling-in-panipat.html) · [Sonipat](https://lumelive.co.in/career-counselling-in-sonipat.html) · [Bhiwani](https://lumelive.co.in/career-counselling-in-bhiwani.html)
+- [Home in Hindi](https://lumelive.co.in/index-hi.html)
 - [Psychology internships](https://lumelive.co.in/internships.html) · [Internship ethics](https://lumelive.co.in/internship-ethics.html)
 - [School partnerships](https://lumelive.co.in/school-partnerships.html) · [Partner with us](https://lumelive.co.in/partner-with-us.html)
 - [Privacy policy](https://lumelive.co.in/privacy-policy.html) · [Terms](https://lumelive.co.in/terms.html) · [Refund policy](https://lumelive.co.in/refund-policy.html)
