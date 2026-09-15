@@ -57,17 +57,100 @@ var THEMES = [
     blobs:[["#6d5cff",0.55],["#00d4ff",0.38],["#ff4ecd",0.30]],
     ink:"#ffffff", dim:"rgba(255,255,255,.72)", accent:"#7ee8fa", ring:"#8b7dff",
     card:"rgba(255,255,255,.08)", line:"rgba(255,255,255,.18)" },
+  { id:"y2k", name:"Y2K",
+    bg:["#140b2e","#4b2fd0","#c79bff"],
+    blobs:[["#9ad9ff",0.55],["#ff9ae6",0.45],["#e6e1ff",0.34]],
+    ink:"#ffffff", dim:"rgba(255,255,255,.80)", accent:"#bdf0ff", ring:"#ff9ae6",
+    card:"rgba(255,255,255,.13)", line:"rgba(255,255,255,.28)" },
+  { id:"cherry", name:"Cherry",
+    bg:["#12060c","#6b0f33","#ff4d6d"],
+    blobs:[["#ff8fab",0.50],["#ffd6e0",0.32],["#7b2cbf",0.34]],
+    ink:"#ffffff", dim:"rgba(255,255,255,.80)", accent:"#ffd6e0", ring:"#ff8fab",
+    card:"rgba(255,255,255,.12)", line:"rgba(255,255,255,.24)" },
   { id:"sunset", name:"Sunset",
     bg:["#2b0b3f","#7a1f5c","#ff7a45"],
     blobs:[["#ffd166",0.50],["#ff5f6d",0.42],["#b14aed",0.32]],
     ink:"#ffffff", dim:"rgba(255,255,255,.78)", accent:"#ffd166", ring:"#ffb03a",
     card:"rgba(255,255,255,.10)", line:"rgba(255,255,255,.22)" },
-  { id:"mint", name:"Mint",
+  { id:"matcha", name:"Matcha",
     bg:["#05231f","#0a4a3c","#0f8a63"],
     blobs:[["#3ef2a1",0.48],["#7ee8fa",0.34],["#f7ff8a",0.26]],
     ink:"#ffffff", dim:"rgba(255,255,255,.76)", accent:"#9dffcf", ring:"#3ef2a1",
     card:"rgba(255,255,255,.09)", line:"rgba(255,255,255,.20)" }
 ];
+
+/* ------------------------------------------------------------------ */
+/* Voice                                                               */
+/* ------------------------------------------------------------------ */
+/* Two tones, because the same card gets posted to two audiences: a
+   student's story, and a shortlist a parent is shown. Gen Z leads —
+   the story is the point — and the toggle is there for the other one.
+   Slang is kept to what an Indian 15-to-19-year-old actually types;
+   anything trying too hard reads as an adult doing an impression. */
+var COPY = {
+  genz: {
+    en: {
+      cta:"your turn 👇", free:"free · no login · no cap", scan:"scan me",
+      kicker:"my result said what it said", kickerNamed:"{name} got read for filth",
+      guessKicker:"the quiz just exposed me", guessKickerNamed:"{name} just got exposed",
+      guessHead:"guess it. i'll wait 👀",
+      hint:"{n} characters · starts with {c}",
+      guessFomo:"drop your guess 👀 answer posting in my next story",
+      or:" or ", mine:"what i got", alt:"the runner-up",
+      versusFomo:"which one are you? vote 👇 be honest",
+      fomo:"think yours beats mine? 60 seconds. prove it 💀",
+      guessEyebrow:"guess my result",
+      sticker:"put your poll / question sticker here"
+    },
+    hi: {
+      cta:"अब तेरी बारी 👇", free:"फ्री · लॉगिन नहीं · सच में", scan:"scan कर",
+      kicker:"result ने सब बोल दिया", kickerNamed:"{name} का result आ गया 💀",
+      guessKicker:"quiz ने मुझे expose कर दिया", guessKickerNamed:"{name} expose हो गया 💀",
+      guessHead:"बता के दिखा 👀",
+      hint:"{n} अक्षर · शुरू {c} से",
+      guessFomo:"अपना guess भेज 👀 answer अगली story में",
+      or:" या ", mine:"मेरा result", alt:"दूसरा option",
+      versusFomo:"तू कौन-सा है? vote कर 👇 सच बोल",
+      fomo:"लगता है तेरा बेहतर आएगा? 60 सेकंड. दिखा 💀",
+      guessEyebrow:"पहचान मेरा result",
+      sticker:"यहाँ poll / question sticker लगा"
+    }
+  },
+  clean: {
+    en: {
+      cta:"Take the quiz 👇", free:"Free · no sign-up", scan:"Scan to try",
+      kicker:"I just found my match", kickerNamed:"{name}'s result",
+      guessKicker:"I just got my result", guessKickerNamed:"{name} just got their result",
+      guessHead:"Can you guess it?",
+      hint:"Hint: {n} characters · starts with {c}",
+      guessFomo:"Reply with your guess — I'm posting the answer in my next story 👀",
+      or:" or ", mine:"what I got", alt:"my runner-up",
+      versusFomo:"Which one are you? Vote in the poll 👇",
+      fomo:"Think your result beats mine? 60 seconds to find out.",
+      guessEyebrow:"Guess my result",
+      sticker:"drop your poll or question sticker here"
+    },
+    hi: {
+      cta:"अपना result निकालो 👇", free:"फ्री · लॉगिन नहीं", scan:"scan करें",
+      kicker:"मेरा result आ गया", kickerNamed:"{name} का result",
+      guessKicker:"मेरा result आ गया है", guessKickerNamed:"{name} का result आ गया है",
+      guessHead:"क्या तुम बता सकते हो?",
+      hint:"संकेत: {n} अक्षर · शुरू होता है {c} से",
+      guessFomo:"सही जवाब भेजो — मैं अगली story में answer डालूँगा/डालूँगी 👀",
+      or:" या ", mine:"मेरा result", alt:"मेरा दूसरा option",
+      versusFomo:"तुम कौन-से हो? Poll में वोट करो 👇",
+      fomo:"क्या तुम्हारा result इससे बेहतर है? 60 सेकंड में पता करो।",
+      guessEyebrow:"पहचानो तो जानें",
+      sticker:"यहाँ poll / question sticker लगाओ"
+    }
+  }
+};
+function copy(d, key, vars){
+  var tone = COPY[(d && d.tone) === "clean" ? "clean" : "genz"];
+  var str = tone[isHi(d) ? "hi" : "en"][key] || "";
+  if(vars) for(var k in vars) str = str.replace("{" + k + "}", vars[k]);
+  return str;
+}
 
 var MOODS = ["🎯","🔥","👀","😭","🧠","🚀","✨","🫡"];
 
@@ -180,6 +263,7 @@ function paintBackground(c, t, seed){
     c.fillRect(rnd() * W, rnd() * H, 2, 2);
   }
   c.restore();
+  sparkles(c, t, (seed || 7) * 31 + 5);
 }
 function mulberry(a){
   return function(){
@@ -202,32 +286,111 @@ function brandRow(c, t){
   c.textAlign = "left";
 }
 
+/* Tilted a couple of degrees so it reads as a sticker somebody stuck on,
+   not a label the layout printed. The tilt is cosmetic — the function
+   still reports the upright height, so nothing downstream shifts. */
 function pill(c, t, text, y){
   var label = String(text || "").toUpperCase();
+  c.save();
   c.font = "800 30px " + FONT;
-  var w = c.measureText(label).width;
+  var w = c.measureText(label).width + 60;
+  c.translate(PAD + w / 2, y + 37);
+  c.rotate(-2.4 * Math.PI / 180);
+  c.translate(-(PAD + w / 2), -(y + 37));
   c.fillStyle = hexA(t.accent, 0.18);
-  roundRect(c, PAD, y, w + 60, 74, 37); c.fill();
+  roundRect(c, PAD, y, w, 74, 37); c.fill();
   c.strokeStyle = hexA(t.accent, 0.55); c.lineWidth = 2; c.stroke();
   c.fillStyle = t.accent;
   c.fillText(label, PAD + 30, y + 48);
+  c.restore();
   return y + 74;
+}
+
+/* A scatter of four-point sparkles. Cheap, and it is the difference
+   between "a chart" and something someone wants on their story. */
+function sparkles(c, t, seed){
+  var rnd = mulberry(seed);
+  c.save();
+  c.fillStyle = hexA(t.accent, 0.5);
+  for(var i = 0; i < 22; i++){
+    var x = rnd() * W, y = rnd() * (H - 360), r = 5 + rnd() * 12;
+    /* Decoration belongs in the margins. A sparkle landing mid-sentence
+       reads as a rendering fault, not as decoration. */
+    if(x > PAD * 1.6 && x < W - PAD * 1.6 && y > 200) continue;
+    c.beginPath();
+    c.moveTo(x, y - r);
+    c.quadraticCurveTo(x + r * 0.16, y - r * 0.16, x + r, y);
+    c.quadraticCurveTo(x + r * 0.16, y + r * 0.16, x, y + r);
+    c.quadraticCurveTo(x - r * 0.16, y + r * 0.16, x - r, y);
+    c.quadraticCurveTo(x - r * 0.16, y - r * 0.16, x, y - r);
+    c.globalAlpha = 0.22 + rnd() * 0.38;
+    c.fill();
+  }
+  c.restore();
+}
+
+/* Big display type wants negative tracking; not every engine supports
+   it, and an unsupported value must not leak into the next fill. */
+function tracking(c, val){
+  try{ c.letterSpacing = val; }catch(e){}
+}
+
+/* A QR earns its place here because a story is watched, not tapped: a
+   viewer who screenshots the card, or watches on a laptop, has no link
+   sticker to press. Drawn on a white plate with a real quiet zone —
+   scanners need both. */
+function drawQR(c, d){
+  if(!window.LumeQR) return 0;
+  var m;
+  try{ m = window.LumeQR.matrix(d.url); }catch(e){ m = null; }
+  if(!m) return 0;
+
+  var plate = 178, quiet = 4;
+  var px = plate / (m.size + quiet * 2);
+  var x0 = W - PAD - plate, y0 = H - 256;
+
+  c.save();
+  c.shadowColor = "rgba(0,0,0,.35)"; c.shadowBlur = 24; c.shadowOffsetY = 6;
+  c.fillStyle = "#ffffff";
+  roundRect(c, x0, y0, plate, plate, 22); c.fill();
+  c.restore();
+
+  c.fillStyle = "#0b1020";
+  for(var y = 0; y < m.size; y++)
+    for(var x = 0; x < m.size; x++)
+      if(m.get(x, y)){
+        /* +1px on each module closes the hairline seams that fractional
+           widths leave between neighbours, which scanners read as noise. */
+        c.fillRect(x0 + (x + quiet) * px, y0 + (y + quiet) * px, px + 1, px + 1);
+      }
+  return plate;
 }
 
 function footer(c, t, d){
   var by = H - 232;
+  var qr = drawQR(c, d);
+  var col = W - PAD * 2 - (qr ? qr + 30 : 0);
+
   c.font = "800 38px " + FONT;
   c.fillStyle = t.dim;
-  c.fillText(d.cta || (isHi(d) ? "अपना result निकालो 👇" : "Take the quiz 👇"), PAD, by);
+  c.fillText(clip(c, d.cta || copy(d, "cta"), col), PAD, by);
 
   var link = shortUrl(d.url);
-  c.font = "900 " + fitOneLine(c, link, W - PAD * 2, 52, 30, "900") + "px " + FONT;
+  c.font = "900 " + fitOneLine(c, link, col, 52, 26, "900") + "px " + FONT;
   c.fillStyle = t.ink;
   c.fillText(link, PAD, by + 72);
 
   c.font = "700 30px " + FONT;
   c.fillStyle = t.accent;
-  c.fillText(HANDLE + " · " + (isHi(d) ? "फ्री · लॉगिन नहीं" : "Free · no sign-up"), PAD, by + 126);
+  c.fillText(clip(c, HANDLE + " · " + copy(d, "free"), col), PAD, by + 126);
+
+  if(qr){
+    c.fillStyle = t.dim;
+    c.font = "800 24px " + FONT;
+    c.textAlign = "center";
+    c.fillText(copy(d, "scan"), W - PAD - qr / 2, H - 270);
+    c.textAlign = "left";
+  }
 }
 
 function fomoStrip(c, t, text, top){
@@ -272,7 +435,7 @@ function stickerGuide(c, t, zone, d){
   c.textAlign = "center";
   c.fillStyle = t.accent;
   c.font = "800 30px " + FONT;
-  var msg = isHi(d) ? "यहाँ poll / question sticker लगाओ" : "drop your poll or question sticker here";
+  var msg = copy(d, "sticker");
   wrap(c, msg, zone.w - 60).slice(0, 2).forEach(function(ln, i){
     c.fillText(ln, zone.x + zone.w / 2, zone.y + zone.h / 2 + 10 + i * 36);
   });
@@ -299,13 +462,18 @@ function drawFlex(c, t, d, o){
 
   c.fillStyle = t.dim;
   c.font = "600 38px " + FONT;
-  c.fillText(kickerFor(d, o), PAD, y + 46);
-  y += 130;
+  var kickY = y + 46;
+  c.fillText(clip(c, kickerFor(d, o), textW), PAD, kickY);
+  /* Measured from the kicker's own baseline: the headline is up to 128px,
+     so anything less than this and its ascenders sit on the kicker. */
+  y = kickY + 130;
 
   var fit = fitLines(c, headline(d), textW, 3, 128, 64, "900");
   c.fillStyle = t.ink;
   c.font = "900 " + fit.px + "px " + FONT;
+  tracking(c, "-0.035em");
   fit.lines.forEach(function(ln, i){ c.fillText(ln, PAD, y + i * (fit.px * 1.06)); });
+  tracking(c, "0px");
   y += (fit.lines.length - 1) * (fit.px * 1.06) + 66;
 
   if(d.subtitle){
@@ -410,20 +578,19 @@ function drawFlex(c, t, d, o){
 /* --- Guess: the result stays hidden, so the only way to find out is to
        reply. This is the style that turns one story into a thread. --- */
 function drawGuess(c, t, d, o){
-  var y = pill(c, t, isHi(d) ? "पहचानो तो जानें" : "Guess my result", 220) + 46;
+  var y = pill(c, t, copy(d, "guessEyebrow"), 220) + 46;
 
-  /* The generic kicker says "I just found my match", which answers the
-     question this card is asking. Guess gets its own. */
-  var who = (o.name || d.name || "").trim();
+  /* The default kicker answers the question this card is asking, so
+     Guess gets its own. */
   c.fillStyle = t.dim; c.font = "600 38px " + FONT;
-  c.fillText(who
-    ? (isHi(d) ? who + " का result आ गया" : who + " just got their result")
-    : (isHi(d) ? "मेरा result आ गया है" : "I just got my result"), PAD, y + 20);
+  c.fillText(kickerFor(d, o, "guess"), PAD, y + 20);
 
-  var head = isHi(d) ? "क्या तुम बता सकते हो?" : "Can you guess it?";
+  var head = copy(d, "guessHead");
   var fit = fitLines(c, head, W - PAD * 2 - 200, 2, 100, 66, "900");
   c.fillStyle = t.ink; c.font = "900 " + fit.px + "px " + FONT;
+  tracking(c, "-0.035em");
   fit.lines.forEach(function(ln, i){ c.fillText(ln, PAD, y + 130 + i * (fit.px * 1.06)); });
+  tracking(c, "0px");
   y += 130 + fit.lines.length * (fit.px * 1.06) + 30;
 
   moodSticker(c, t, o.emoji || "👀", W - PAD - 86, 440, 86);
@@ -463,9 +630,7 @@ function drawGuess(c, t, d, o){
   }
   c.fillStyle = t.dim; c.font = "700 28px " + FONT;
   c.textAlign = "center";
-  var hint = isHi(d)
-    ? "संकेत: " + letters.length + " अक्षर · शुरू होता है " + (letters[0] || "?").toUpperCase() + " से"
-    : "Hint: " + letters.length + " characters · starts with " + (letters[0] || "?").toUpperCase();
+  var hint = copy(d, "hint", { n:letters.length, c:(letters[0] || "?").toUpperCase() });
   c.fillText(hint, W / 2, y + 168);
   c.textAlign = "left";
   y += 232;
@@ -490,9 +655,7 @@ function drawGuess(c, t, d, o){
   y += rowH + 26;
 
   var zone = { x:PAD, y:y, w:W - PAD * 2, h:150 };
-  fomoStrip(c, t, isHi(d)
-    ? "सही जवाब DM करो — मैं अगली story में answer डालूँगा/डालूँगी 👀"
-    : "Reply with your guess — I'm posting the answer in my next story 👀", H - 480 + 10);
+  fomoStrip(c, t, copy(d, "guessFomo"), H - 480 + 10);
   return zone;
 }
 
@@ -504,10 +667,12 @@ function drawVersus(c, t, d, o){
   c.fillStyle = t.dim; c.font = "600 38px " + FONT;
   c.fillText(kickerFor(d, o), PAD, y + 20);
 
-  var head = v[0].label + (isHi(d) ? " या " : " or ") + v[1].label + "?";
+  var head = v[0].label + copy(d, "or") + v[1].label + "?";
   var fit = fitLines(c, head, W - PAD * 2 - 190, 3, 104, 56, "900");
   c.fillStyle = t.ink; c.font = "900 " + fit.px + "px " + FONT;
+  tracking(c, "-0.035em");
   fit.lines.forEach(function(ln, i){ c.fillText(ln, PAD, y + 128 + i * (fit.px * 1.04)); });
+  tracking(c, "0px");
   y += 128 + fit.lines.length * (fit.px * 1.04) + 40;
 
   v.slice(0, 2).forEach(function(side, i){
@@ -523,8 +688,7 @@ function drawVersus(c, t, d, o){
 
     c.fillStyle = mine ? t.accent : t.dim;
     c.font = "700 28px " + FONT;
-    c.fillText(mine ? (isHi(d) ? "मेरा जवाब" : "what I got")
-                    : (isHi(d) ? "मेरा दूसरा option" : "my runner-up"), PAD + 36, y + 126);
+    c.fillText(copy(d, mine ? "mine" : "alt"), PAD + 36, y + 126);
 
     if(typeof side.pct === "number"){
       c.textAlign = "right";
@@ -544,9 +708,7 @@ function drawVersus(c, t, d, o){
   moodSticker(c, t, o.emoji || "⚔️", W - PAD - 80, 400, 80);
 
   var zone = { x:PAD, y:y + 24, w:W - PAD * 2, h:Math.max(140, H - 500 - y - 40) };
-  fomoStrip(c, t, isHi(d)
-    ? "तुम कौन-से हो? Poll में वोट करो 👇"
-    : "Which one are you? Vote in the poll 👇", H - 480 + 10);
+  fomoStrip(c, t, copy(d, "versusFomo"), H - 480 + 10);
   return zone;
 }
 
@@ -566,7 +728,9 @@ function drawBold(c, t, d, o){
   var y = 560;
   var fit = fitLines(c, headline(d), W - PAD * 2, 4, 160, 72, "900");
   c.fillStyle = t.ink; c.font = "900 " + fit.px + "px " + FONT;
+  tracking(c, "-0.04em");
   fit.lines.forEach(function(ln, i){ c.fillText(ln, PAD, y + i * (fit.px * 0.98)); });
+  tracking(c, "0px");
   y += (fit.lines.length - 1) * (fit.px * 0.98) + 76;
 
   if(d.subtitle){
@@ -591,11 +755,14 @@ function drawBold(c, t, d, o){
   return zone;
 }
 
-function kickerFor(d, o){
+function kickerFor(d, o, which){
   var name = (o.name || d.name || "").trim();
-  if(d.kicker && !name) return d.kicker;
-  if(name) return isHi(d) ? name + " का result" : name + "'s result";
-  return d.kicker || (isHi(d) ? "मेरा result आ गया" : "I just found my match");
+  var base = which === "guess" ? "guessKicker" : "kicker";
+  if(name) return copy(d, base + "Named", { name:name });
+  /* A caller-supplied kicker only survives the neutral tone — it is
+     written in the page's own voice, which is not the story's. */
+  if(d.kicker && (d.tone === "clean")) return d.kicker;
+  return copy(d, base);
 }
 /* Most results have one name, so the headline and the thing a friend
    would guess are the same string. A shortlist is the exception: its
@@ -603,9 +770,11 @@ function kickerFor(d, o){
    answer is the career at the top of it. */
 function headline(d){ return d.listTitle || d.title || ""; }
 function fomoFor(d){
-  return d.fomo || (isHi(d)
-    ? "क्या तुम्हारा result इससे बेहतर है? 60 सेकंड में पता करो।"
-    : "Think your result beats mine? 60 seconds to find out.");
+  /* The caller's line names the student's own runner-up, which beats
+     anything generic — but it is written straight, so the slangy tone
+     uses its own. */
+  if(d.fomo && d.tone === "clean") return d.fomo;
+  return copy(d, "fomo");
 }
 
 /* ------------------------------------------------------------------ */
@@ -642,16 +811,35 @@ function draw(canvas, d, t, styleId, o){
 /* ------------------------------------------------------------------ */
 function captionsFor(d, styleId){
   var title = headline(d), url = d.url || ("https://" + BRAND);
+  var hi = isHi(d), genz = d.tone !== "clean";
+
   /* Each style asks the viewer for something different, so the caption
      that ships with it has to match — a "guess mine" card under a "my
      result is X" caption gives the answer away. */
-  var byStyle = { en:{}, hi:{} };
-  byStyle.en.guess = ["Guess what I got 👀 First one right gets bragging rights.\nTake it yourself 👇\n" + url];
-  byStyle.hi.guess = ["बताओ मेरा क्या आया 👀 सही बताने वाले को respect.\nखुद try करो 👇\n" + url];
-  byStyle.en.versus = ["Vote: which one are you? 👇 I'll show the results later.\n" + url];
-  byStyle.hi.versus = ["Vote करो: तुम कौन-से हो? 👇 बाद में results दिखाऊँगा/दिखाऊँगी.\n" + url];
+  var lead = [];
+  if(styleId === "guess"){
+    lead = genz
+      ? (hi ? ["बता मेरा क्या आया 👀 सही बताने वाला मेरा फेवरेट\nखुद निकाल अपना 👇\n" + url]
+            : ["guess what i got 👀 first one right is my favourite person\ntry it yourself 👇\n" + url])
+      : (hi ? ["बताओ मेरा क्या आया 👀 सही बताने वाले को respect.\nखुद try करो 👇\n" + url]
+            : ["Guess what I got 👀 First one right gets bragging rights.\nTake it yourself 👇\n" + url]);
+  }else if(styleId === "versus"){
+    lead = genz
+      ? (hi ? ["vote कर: तू कौन-सा है? 👇 बाद में results दिखाऊँगा\n" + url]
+            : ["vote: which one are you? 👇 posting results later\n" + url])
+      : (hi ? ["Vote करो: तुम कौन-से हो? 👇 बाद में results दिखाऊँगा/दिखाऊँगी.\n" + url]
+            : ["Vote: which one are you? 👇 I'll show the results later.\n" + url]);
+  }
 
-  var base = isHi(d) ? [
+  var base = genz ? (hi ? [
+    "not मेरा result इतना सही आना 😭\n" + title + "\nतू निकाल के दिखा 👇 " + url,
+    "60 सेकंड की quiz ने वो बता दिया जो मैं 2 साल से सोच रहा था 💀\n" + title + "\n" + url,
+    "stream वाली टेंशन खत्म ✅ " + title + "\nscreenshot भेज अपना 👇\n" + url
+  ] : [
+    "not the quiz reading me for filth 😭\n" + title + "\nyour turn 👇 " + url,
+    "60 seconds and it knew me better than my 2 years of overthinking 💀\n" + title + "\n" + url,
+    "okay this ate. " + title + " ✅\nscreenshot yours and send it 👇\n" + url
+  ]) : (hi ? [
     "मेरा result: " + title + " 🎯\nतुम्हारा क्या आएगा? 60 सेकंड लगेंगे 👇\n" + url,
     "60 सेकंड की quiz ने वो बता दिया जो मैं 2 साल से सोच रहा/रही था 😭\n" + title + "\nअपना try करो 👇 " + url,
     "Stream को लेकर confusion खत्म ✅\n" + title + "\nScreenshot भेजो अपना result का 👇\n" + url
@@ -659,17 +847,21 @@ function captionsFor(d, styleId){
     "My result: " + title + " 🎯\nBet you can't guess yours. 60 seconds 👇\n" + url,
     "This 60-second quiz figured out in one minute what I've been confused about for two years 😭\n" + title + "\nTry it 👇 " + url,
     "Okay this is scarily accurate.\n" + title + " ✅\nScreenshot yours and send it to me 👇\n" + url
-  ];
+  ]);
 
-  var lead = (byStyle[isHi(d) ? "hi" : "en"] || {})[styleId] || [];
   /* A caller that knows its own result writes a better caption than
-     anything generic, so those come next and the defaults are last. */
-  return lead.concat(d.captions || [], base);
+     anything generic — but it is written straight, so it sits behind the
+     slangy ones and leads only in the neutral tone. */
+  var own = d.captions || [];
+  return genz ? lead.concat(base, own) : lead.concat(own, base);
 }
 function hashtagsFor(d){
-  var tags = ["#LumeLive", "#CareerClarity", "#Class10", "#Class12", "#StreamSelector", "#CareerQuiz", "#StudentLife"];
-  if(d.quiz === "snapshot")  tags.splice(4, 1, "#CareerSnapshot");
-  if(d.quiz === "shortlist") tags.splice(4, 1, "#CareerShortlist");
+  var tags = d.tone === "clean"
+    ? ["#LumeLive", "#CareerClarity", "#Class10", "#Class12", "#StreamSelector", "#CareerQuiz", "#StudentLife"]
+    : ["#LumeLive", "#careertok", "#class10", "#class12", "#streamselector", "#boardexams2026", "#studentlife", "#fyp"];
+  var lower = d.tone !== "clean";
+  if(d.quiz === "snapshot")  tags.splice(4, 1, lower ? "#careersnapshot" : "#CareerSnapshot");
+  if(d.quiz === "shortlist") tags.splice(4, 1, lower ? "#careershortlist" : "#CareerShortlist");
   return tags.join(" ");
 }
 
@@ -817,16 +1009,18 @@ function open(data){
   var avail = STYLES.filter(function(s){ return s.needs(d); });
   var state = {
     data:d, canvas:null, captionEl:null,
-    theme:0, style:avail[0].id, guide:true,
+    theme:0, style:avail[0].id, guide:true, tone:"genz",
     name:(d.name || ""), emoji:d.emoji || MOODS[0], capIdx:0
   };
+
+  d.tone = state.tone;
 
   var ov = el("div", "lsOv");
   var box = el("div", "lsBox");
   ov.appendChild(box);
 
   var top = el("div", "lsTop");
-  top.appendChild(el("h3", null, isHi(d) ? "अपनी story बनाओ 📲" : "Make your story 📲"));
+  top.appendChild(el("h3", null, isHi(d) ? "अपनी story बना 🔥" : "Post this. Watch the replies 🔥"));
   var x = el("button", "lsX", "✕");
   x.type = "button"; x.setAttribute("aria-label", "Close");
   top.appendChild(x);
@@ -838,13 +1032,14 @@ function open(data){
   canvas.setAttribute("aria-label", (d.title || "Your result") + " — story card preview");
   canvas.title = "Tap to change the colours";
   stage.appendChild(canvas);
-  stage.appendChild(el("div", "lsTapHint", isHi(d) ? "tap करके रंग बदलो" : "tap the card to change colours"));
+  stage.appendChild(el("div", "lsTapHint", isHi(d) ? "tap करके रंग बदल" : "tap the card to switch the vibe"));
   box.appendChild(stage);
   state.canvas = canvas;
 
   /* One render path for every control, so nothing can drift out of sync. */
   state.render = function(opts){
     opts = opts || {};
+    d.tone = state.tone;
     draw(canvas, d, THEMES[state.theme], state.style, {
       name: state.name,
       emoji: state.emoji,
@@ -877,6 +1072,28 @@ function open(data){
     styleRow.appendChild(b);
   });
   box.appendChild(styleRow);
+
+  /* ---- tone ---- */
+  var toneRow = el("div", "lsRow");
+  [["genz", "🔥 Gen Z"], ["clean", "🎓 Clean"]].forEach(function(pair){
+    var b = el("button", "lsChip", pair[1]);
+    b.type = "button";
+    b.setAttribute("aria-pressed", pair[0] === state.tone ? "true" : "false");
+    b.addEventListener("click", function(){
+      state.tone = pair[0];
+      Array.prototype.forEach.call(toneRow.children, function(n, j){
+        n.setAttribute("aria-pressed", j === (pair[0] === "genz" ? 0 : 1) ? "true" : "false");
+      });
+      /* The caption is written in the tone, so it has to follow it. */
+      state.capIdx = 0;
+      d.tone = state.tone;
+      setCaption();
+      flip();
+      track("story_tone_switch", { event_category:"viral_loop", event_label:pair[0] });
+    });
+    toneRow.appendChild(b);
+  });
+  box.appendChild(toneRow);
 
   /* ---- palette picker ---- */
   var themeRow = el("div", "lsRow");
@@ -912,7 +1129,7 @@ function open(data){
   var nameIn = el("input", "lsName");
   nameIn.type = "text";
   nameIn.maxLength = 18;
-  nameIn.placeholder = isHi(d) ? "अपना नाम (optional)" : "Your name (optional)";
+  nameIn.placeholder = isHi(d) ? "नाम डाल (optional)" : "Your name (optional)";
   nameIn.value = state.name;
   nameIn.addEventListener("input", function(){
     state.name = nameIn.value.trim();
@@ -973,7 +1190,7 @@ function open(data){
 
   /* ---- caption ---- */
   var capWrap = el("div", "lsCapWrap");
-  capWrap.appendChild(el("p", "lsLbl", isHi(d) ? "Caption (बदल सकते हो)" : "Caption — edit it, make it yours"));
+  capWrap.appendChild(el("p", "lsLbl", isHi(d) ? "Caption — अपने हिसाब से बदल" : "Caption — make it yours"));
   var cap = el("textarea", "lsCap");
   capWrap.appendChild(cap);
   state.captionEl = cap;
@@ -1015,15 +1232,17 @@ function open(data){
   /* ---- posting tips ---- */
   box.appendChild(el("div", "lsTips", isHi(d)
     ? "<b>ज़्यादा लोग कैसे try करेंगे</b><ul>" +
-      "<li><b>👀 Guess</b> style सबसे ज़्यादा reply लाता है — result छुपा रहता है।</li>" +
-      "<li>Story में <b>poll या question sticker</b> उसी जगह लगाओ जहाँ dotted box दिख रहा है।</li>" +
-      "<li>Link sticker में <b>" + shortUrl(d.url) + "</b> डालो — तभी दोस्त एक tap में quiz खोल पाएंगे।</li>" +
-      "<li>3 दोस्तों को tag करो और उनका result screenshot माँगो।</li></ul>"
-    : "<b>How to make friends actually take it</b><ul>" +
-      "<li><b>👀 Guess</b> pulls the most replies — the result stays hidden until you post it.</li>" +
-      "<li>Put your <b>poll or question sticker</b> exactly where the dotted box is.</li>" +
-      "<li>Put <b>" + shortUrl(d.url) + "</b> in a link sticker — that is the one-tap path for your friends.</li>" +
-      "<li>Tag 3 friends and ask them to reply with a screenshot of theirs.</li></ul>"));
+      "<li><b>👀 Guess</b> सबसे ज़्यादा reply लाता है — result छुपा रहता है।</li>" +
+      "<li>Poll या question sticker ठीक उसी dotted box पर लगा।</li>" +
+      "<li>Link sticker में <b>" + shortUrl(d.url) + "</b> डाल — एक tap में quiz खुल जाएगी।</li>" +
+      "<li>QR भी card पर है, तो screenshot से भी दोस्त scan कर सकते हैं।</li>" +
+      "<li>3 दोस्तों को tag कर और उनका result माँग।</li></ul>"
+    : "<b>How to actually get replies</b><ul>" +
+      "<li><b>👀 Guess</b> pulls the most — the result stays hidden till you post it.</li>" +
+      "<li>Drop your poll or question sticker right on the dotted box.</li>" +
+      "<li>Put <b>" + shortUrl(d.url) + "</b> in a link sticker — one tap for your friends.</li>" +
+      "<li>The QR is on the card too, so even a screenshot still works.</li>" +
+      "<li>Tag 3 people and make them send theirs.</li></ul>"));
 
   document.body.appendChild(ov);
   /* The sheet is taller than a phone screen, so it scrolls itself. Without
