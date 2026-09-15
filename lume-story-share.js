@@ -108,6 +108,15 @@ function wrap(c, text, maxW){
   return out;
 }
 var FONT = '"Inter","Segoe UI",system-ui,-apple-system,"Noto Sans",Arial,sans-serif';
+/* Truncate rather than wrap: a shortlist row is one line by design, and a
+   career title that overruns should end in an ellipsis, not a second row
+   that pushes the rest of the card down. */
+function clip(c, text, maxW){
+  var s = String(text || "");
+  if(c.measureText(s).width <= maxW) return s;
+  while(s.length > 1 && c.measureText(s + "\u2026").width > maxW) s = s.slice(0, -1);
+  return s.replace(/[\s,·-]+$/, "") + "\u2026";
+}
 
 /* ------------------------------------------------------------------ */
 /* The card itself                                                     */
@@ -171,9 +180,9 @@ function draw(canvas, d, theme){
   /* ---- the line that makes a friend stop scrolling ---- */
   c.fillStyle = t.dim;
   c.font = "600 38px " + FONT;
-  var kicker = d.name
+  var kicker = d.kicker || (d.name
     ? (isHi(d) ? d.name + " का result" : d.name + "'s result")
-    : (isHi(d) ? "मेरा result आ गया" : "I just found my match");
+    : (isHi(d) ? "मेरा result आ गया" : "I just found my match"));
   c.fillText(kicker, PAD, 380);
 
   /* ---- headline ---- */
@@ -220,7 +229,8 @@ function draw(canvas, d, theme){
      keeps a short result from leaving a hole above the FOMO strip. */
   var fomoTop = H - 480;
   var barCount = Math.min(3, (d.bars || []).length);
-  var bodyH = barCount * 96 + ((d.chips || []).length ? 110 : 0);
+  var lineCount = Math.min(5, (d.lines || []).length);
+  var bodyH = barCount * 96 + lineCount * 116 + ((d.chips || []).length ? 110 : 0);
   var slack = (fomoTop - 40) - (y + 46 + bodyH);
   y += 46 + Math.max(0, Math.min(slack * 0.5, 180));
 
@@ -241,6 +251,31 @@ function draw(canvas, d, theme){
     c.fillStyle = bg2;
     roundRect(c, PAD, y + 18, Math.max(24, bw * (b.pct / 100)), 20, 10); c.fill();
     y += 96;
+  });
+
+  /* ---- numbered rows: a shortlist is a set, not a score, so it gets
+         ranked rows instead of bars ---- */
+  (d.lines || []).slice(0, 5).forEach(function(row, i){
+    var rowH = 100;
+    c.fillStyle = t.card;
+    roundRect(c, PAD, y - 34, W - PAD * 2, rowH, 26); c.fill();
+    c.strokeStyle = t.line; c.lineWidth = 2; c.stroke();
+
+    c.fillStyle = hexA(t.ring, 0.9);
+    c.beginPath(); c.arc(PAD + 44, y + 15, 26, 0, Math.PI * 2); c.fill();
+    c.textAlign = "center";
+    c.fillStyle = "#ffffff"; c.font = "900 28px " + FONT;
+    c.fillText(String(i + 1), PAD + 44, y + 25);
+    c.textAlign = "left";
+
+    var tx = PAD + 92, tw = W - PAD - 30 - tx;
+    c.fillStyle = t.ink; c.font = "800 36px " + FONT;
+    c.fillText(clip(c, row.main, tw), tx, y + 8);
+    if(row.sub){
+      c.fillStyle = t.dim; c.font = "600 26px " + FONT;
+      c.fillText(clip(c, row.sub, tw), tx, y + 44);
+    }
+    y += 116;
   });
 
   y += 10;
@@ -277,7 +312,7 @@ function draw(canvas, d, theme){
 
   /* ---- CTA footer ---- */
   var by = H - 232;
-  var cta = isHi(d) ? "अपना result निकालो 👇" : "Take the quiz 👇";
+  var cta = d.cta || (isHi(d) ? "अपना result निकालो 👇" : "Take the quiz 👇");
   c.font = "800 38px " + FONT;
   c.fillStyle = t.dim;
   c.fillText(cta, PAD, by);
@@ -325,11 +360,14 @@ function captionsFor(d){
     "This 60-second quiz figured out in one minute what I've been confused about for two years 😭\n" + title + "\nTry it 👇 " + url,
     "Okay this is scarily accurate.\n" + title + " ✅\nScreenshot yours and send it to me 👇\n" + url
   ];
-  return base.concat(d.captions || []);
+  /* A caller that knows its own result writes a better first caption than
+     anything generic, so those lead and the defaults stay as alternates. */
+  return (d.captions || []).concat(base);
 }
 function hashtagsFor(d){
   var tags = ["#LumeLive", "#CareerClarity", "#Class10", "#Class12", "#StreamSelector", "#CareerQuiz", "#StudentLife"];
   if(d.quiz === "snapshot") tags.splice(4, 1, "#CareerSnapshot");
+  if(d.quiz === "shortlist") tags.splice(4, 1, "#CareerShortlist");
   return tags.join(" ");
 }
 
