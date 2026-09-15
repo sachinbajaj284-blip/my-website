@@ -182,6 +182,27 @@ function stampDates(){
     }
   }
 
+  // The footer copyright year was hardcoded and had gone stale — it read 2025
+  // into 2026. A visibly out-of-date footer is a small thing that reads as an
+  // abandoned site, to visitors and to anyone assessing the site as a source.
+  // Stamp it from the build clock so it cannot drift again.
+  const buildYear = String(new Date().getFullYear());
+  let footersStamped = 0;
+
+  for(const name of fs.readdirSync(target)){
+    if(!name.endsWith(".html")) continue;
+    const file = path.join(target, name);
+    const html = fs.readFileSync(file, "utf8");
+    const stamped = html.replace(
+      /(&copy;|©)(\s*)(20\d{2})(\s*Lume Live)/g,
+      (match, sym, gapA, year, tail) => year === buildYear ? match : sym + gapA + buildYear + tail
+    );
+    if(stamped !== html){
+      fs.writeFileSync(file, stamped);
+      footersStamped++;
+    }
+  }
+
   const sitemap = path.join(target, "sitemap.xml");
   let urlsStamped = 0;
 
@@ -206,6 +227,7 @@ function stampDates(){
   console.log(
     "Stamped freshness dates from git: " + pagesStamped + " page(s), " + urlsStamped + " sitemap URL(s)."
   );
+  console.log("Stamped copyright year " + buildYear + " into " + footersStamped + " footer(s).");
 }
 
 stampDates();
