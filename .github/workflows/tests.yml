@@ -24,6 +24,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # sitemap.mjs reads each page's last commit date. A shallow clone
+          # reports the single fetched commit for every file, so every URL
+          # would come back dated today and the check below would fail on
+          # every push. Full history is what makes the dates real.
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -59,3 +65,11 @@ jobs:
 
       - name: JoSAA parser
         run: npm run josaa:test
+
+      # sitemap.xml is generated, not hand-written, but nothing forced it to
+      # be regenerated — so it drifted: every entry read August while pages
+      # had changed in September, which tells Google there is nothing new to
+      # recrawl. This fails the build when it drifts again.
+      #   Fix with: npm run sitemap
+      - name: Sitemap is current
+        run: npm run sitemap:check
