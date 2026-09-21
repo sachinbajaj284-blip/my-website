@@ -22,6 +22,7 @@ const referrals = require("../api/_lib/referrals.js");
 const { normalizeCode, isValidCode, makeCode, rewardFor, todayKey, publicStats,
         ensureCode, statsFor, lookupCode, recordQualified,
         normalizeUpi, isValidUpi, payoutSummary, requestPayout, settlePayout, listPayouts,
+        normalizePhone, phoneKey, requiresPhone, bindPhone, PHONES, ATTRIBUTIONS,
         EARNINGS_CAP, DAILY_QUALIFY_LIMIT, HOLD_MS, MIN_PAYOUT, REFERRERS } = referrals;
 
 let passed = 0;
@@ -36,6 +37,26 @@ async function test(name, fn){
     failed += 1;
     console.log("  ✗ " + name + "\n      " + (err && err.message || err));
   }
+}
+
+/*
+  Every referred account needs its own verified number now, so these two
+  wrappers supply one derived from the uid. Tests that are ABOUT the
+  phone gate call recordQualified/requestPayout directly instead.
+*/
+let phoneSeq = 6000000000;
+const phones = new Map();
+function phoneFor(uid){
+  if(!phones.has(uid)) phones.set(uid, String(phoneSeq++));
+  return phones.get(uid);
+}
+function qualify(args){
+  return recordQualified(Object.assign({
+    referredPhone: phoneFor(args.referredUid)
+  }, args));
+}
+function askPayout(args){
+  return requestPayout(Object.assign({ phone: phoneFor(args.uid) }, args));
 }
 
 // A code generator with no randomness, so a test can assert on the code
@@ -152,7 +173,7 @@ console.log("\nqualifying");
 await test("a real referral pays the referrer", async () => {
   store.clear();
   const code = await referrer("u1", "Aarav", "7K2P");
-  const out = await recordQualified({ code, referredUid: "friend", event: "snapshot" });
+  const out = await qualify({ code, referredUid: "friend", event: "snapshot" });
   assert.equal(out.ok, true);
   assert.equal(out.amount, 50);
   assert.equal(out.stats.qualified, 1);
@@ -162,8 +183,8 @@ await test("a real referral pays the referrer", async () => {
 await test("the same friend never counts twice", async () => {
   store.clear();
   const code = await referrer("u1", "Aarav", "7K2P");
-  await recordQualified({ code, referredUid: "friend", event: "snapshot" });
-  const again = await recordQualified({ code, referredUid: "friend", event: "snapshot" });
+  await qualify({ code, referredUid: "friend", event: "snapshot" });
+  const again = await qualify({ code, referredUid: "friend", event: "snapshot" });
   assert.equal(again.ok, false);
   assert.equal(again.reason, "ALREADY_ATTRIBUTED");
   assert.equal((await statsFor("u1")).earned, 50, "a replay must not pay twice");
@@ -173,8 +194,8 @@ await test("a friend already claimed by one referrer cannot be resold to another
   store.clear();
   const a = await referrer("u1", "Aarav", "7K2P");
   const b = await referrer("u2", "Bhavya", "9M4Q");
-  await recordQualified({ code: a, referredUid: "friend", event: "snapshot" });
-  const poached = await recordQualified({ code: b, referredUid: "friend", event: "snapshot" });
+  await qualify({ code: a, referredUid: "friend", event: "snapshot" });
+  const poached = await qualify({ code: b, referredUid: "friend", event: "snapshot" });
   assert.equal(poached.ok, false);
   assert.equal(poached.reason, "ALREADY_ATTRIBUTED");
   assert.equal((await statsFor("u2")).earned, 0);
@@ -183,21 +204,21 @@ await test("a friend already claimed by one referrer cannot be resold to another
 await test("nobody refers themselves", async () => {
   store.clear();
   const code = await referrer("u1", "Aarav", "7K2P");
-  const out = await recordQualified({ code, referredUid: "u1", event: "snapshot" });
+  const out = await qualify({ code, referredUid: "u1", event: "snapshot" });
   assert.equal(out.reason, "SELF_REFERRAL");
   assert.equal((await statsFor("u1")).earned, 0);
 });
 
 await test("an unknown code pays nobody", async () => {
   store.clear();
-  const out = await recordQualified({ code: "GHOST99", referredUid: "friend", event: "snapshot" });
+  const out = await qualify({ code: "GHOST99", referredUid: "friend", event: "snapshot" });
   assert.equal(out.reason, "UNKNOWN_CODE");
 });
 
 await test("only an allow-listed event qualifies", async () => {
   store.clear();
   const code = await referrer("u1", "Aarav", "7K2P");
-  const out = await recordQualified({ code, referredUid: "friend", event: "pageview" });
+  const out = await qualify({ code, referredUid: "friend", event: "pageview" });
   assert.equal(out.reason, "EVENT_NOT_QUALIFYING");
   assert.equal((await statsFor("u1")).earned, 0,
     "a client must not be able to invent an event that pays");
@@ -209,10 +230,10 @@ await test("the daily limit stops a burst", async () => {
   const day = Date.UTC(2026, 8, 21, 10, 0);
 
   for(let i = 0; i < DAILY_QUALIFY_LIMIT; i++){
-    const out = await recordQualified({ code, referredUid: "f" + i, event: "snapshot", now: day });
+    const out = await qualify({ code, referredUid: "f" + i, event: "snapshot", now: day });
     assert.equal(out.ok, true, "referral " + i + " should have counted");
   }
-  const blocked = await recordQualified({ code, referredUid: "one-too-many", event: "snapshot", now: day });
+  const blocked = await qualify({ code, referredUid: "one-too-many", event: "snapshot", now: day });
   assert.equal(blocked.ok, false);
   assert.equal(blocked.reason, "DAILY_LIMIT");
 });
@@ -224,9 +245,9 @@ await test("the daily limit resets the next day", async () => {
   const day2 = Date.UTC(2026, 8, 22, 10, 0);
 
   for(let i = 0; i < DAILY_QUALIFY_LIMIT; i++){
-    await recordQualified({ code, referredUid: "f" + i, event: "snapshot", now: day1 });
+    await qualify({ code, referredUid: "f" + i, event: "snapshot", now: day1 });
   }
-  const tomorrow = await recordQualified({ code, referredUid: "later", event: "snapshot", now: day2 });
+  const tomorrow = await qualify({ code, referredUid: "later", event: "snapshot", now: day2 });
   assert.equal(tomorrow.ok, true);
   assert.equal(tomorrow.amount, 50);
 });
@@ -239,7 +260,7 @@ await test("earning stops at the cap but the referral is still recorded", async 
     code, qualified: 6, earned: EARNINGS_CAP, day: "2000-01-01", day_count: 0
   });
 
-  const out = await recordQualified({ code, referredUid: "friend", event: "snapshot" });
+  const out = await qualify({ code, referredUid: "friend", event: "snapshot" });
   assert.equal(out.ok, true);
   assert.equal(out.reason, "CAP_REACHED");
   assert.equal(out.amount, 0);
@@ -249,15 +270,136 @@ await test("earning stops at the cap but the referral is still recorded", async 
   assert.equal(after.qualified, 7, "the referral still counted, it just paid nothing");
 
   // And the friend is spent: they cannot be re-used once the cap lifts.
-  const replay = await recordQualified({ code, referredUid: "friend", event: "snapshot" });
+  const replay = await qualify({ code, referredUid: "friend", event: "snapshot" });
   assert.equal(replay.reason, "ALREADY_ATTRIBUTED");
 });
 
 await test("a missing account is refused before anything is read", async () => {
   store.clear();
   const code = await referrer("u1", "Aarav", "7K2P");
-  const out = await recordQualified({ code, referredUid: "", event: "snapshot" });
+  const out = await qualify({ code, referredUid: "", event: "snapshot" });
   assert.equal(out.reason, "NO_ACCOUNT");
+});
+
+console.log("\nphone numbers");
+
+await test("a number is the same number however it was typed", () => {
+  assert.equal(normalizePhone("+91 98765 43210"), "9876543210");
+  assert.equal(normalizePhone("09876543210"), "9876543210");
+  assert.equal(normalizePhone("919876543210"), "9876543210");
+  assert.equal(normalizePhone("98765-43210"), "9876543210");
+  assert.equal(normalizePhone("12345"), "", "too short to be a number");
+  assert.equal(normalizePhone(null), "");
+});
+
+await test("the same number hashes the same way, and different ones differ", () => {
+  assert.equal(phoneKey("+919876543210"), phoneKey("09876543210"));
+  assert.notEqual(phoneKey("9876543210"), phoneKey("9876543211"));
+  assert.equal(phoneKey("nonsense"), "", "nothing to hash");
+});
+
+await test("a number is never stored in the clear", () => {
+  const key = phoneKey("9876543210");
+  assert.match(key, /^[0-9a-f]{64}$/);
+  assert.equal(key.includes("9876543210"), false);
+});
+
+await test("the salt actually changes the hash", () => {
+  // Without it the space of Indian mobile numbers is small enough to
+  // enumerate, so a hash of an unsalted number is barely a hash.
+  const before = process.env.LUME_PHONE_SALT;
+  process.env.LUME_PHONE_SALT = "salt-one";
+  const a = phoneKey("9876543210");
+  process.env.LUME_PHONE_SALT = "salt-two";
+  const b = phoneKey("9876543210");
+  process.env.LUME_PHONE_SALT = before === undefined ? "" : before;
+  assert.notEqual(a, b);
+});
+
+await test("first account to verify a number keeps it", async () => {
+  store.clear();
+  const first = await bindPhone({ uid: "u1", phone: "9876543210" });
+  assert.equal(first.ok, true);
+
+  const second = await bindPhone({ uid: "u2", phone: "+91 98765 43210" });
+  assert.equal(second.ok, false);
+  assert.equal(second.owner, "u1", "and it names who has it");
+});
+
+await test("re-binding a number to the same account is a no-op", async () => {
+  store.clear();
+  await bindPhone({ uid: "u1", phone: "9876543210" });
+  const again = await bindPhone({ uid: "u1", phone: "9876543210" });
+  assert.equal(again.ok, true, "safe to call on every request that carries one");
+});
+
+console.log("\nthe phone gate");
+
+await test("the gate is on unless it is switched off", () => {
+  assert.equal(requiresPhone(), true);
+});
+
+await test("a referred account with no verified number does not qualify", async () => {
+  store.clear();
+  const code = await referrer("u1", "Aarav", "7K2P");
+  const out = await recordQualified({ code, referredUid: "friend", event: "snapshot" });
+  assert.equal(out.ok, false);
+  assert.equal(out.reason, "PHONE_REQUIRED");
+  assert.equal((await statsFor("u1")).earned, 0);
+});
+
+await test("one SIM cannot qualify two accounts", async () => {
+  // The whole point. Ten throwaway emails, one phone, one referral.
+  store.clear();
+  const code = await referrer("u1", "Aarav", "7K2P");
+  const SIM = "9876543210";
+
+  const first = await recordQualified({ code, referredUid: "friend1", event: "snapshot", referredPhone: SIM });
+  assert.equal(first.ok, true);
+
+  const second = await recordQualified({ code, referredUid: "friend2", event: "snapshot", referredPhone: SIM });
+  assert.equal(second.ok, false);
+  assert.equal(second.reason, "PHONE_ALREADY_USED");
+  assert.equal((await statsFor("u1")).earned, 50, "paid once, for one person");
+});
+
+await test("a second account on the referrer's own phone is self-referral", async () => {
+  // Named for what it is rather than as a phone problem, because that is
+  // what it is: the same human, twice.
+  store.clear();
+  const code = await ensureCode({ uid: "u1", name: "Aarav", phone: "9876543210" },
+    { random: () => "7K2P" }).then(r => r.stats.code);
+
+  const out = await recordQualified({
+    code, referredUid: "u1-alt", event: "snapshot", referredPhone: "+91 98765 43210"
+  });
+  assert.equal(out.ok, false);
+  assert.equal(out.reason, "SELF_REFERRAL");
+});
+
+await test("a qualified referral records which number paid for it", async () => {
+  store.clear();
+  const code = await referrer("u1", "Aarav", "7K2P");
+  await recordQualified({ code, referredUid: "friend", event: "snapshot", referredPhone: "9876543210" });
+  const row = store.read(ATTRIBUTIONS, "friend");
+  assert.equal(row.phone_key, phoneKey("9876543210"), "so an audit can follow it later");
+});
+
+await test("with the gate switched off, a phoneless referral still counts", async () => {
+  // The escape hatch: Firebase phone auth needs Blaze, an authorised
+  // domain and a working reCAPTCHA, and if any is wrong every referral
+  // silently stops qualifying.
+  store.clear();
+  process.env.LUME_REFERRAL_REQUIRE_PHONE = "0";
+  try{
+    const code = await referrer("u1", "Aarav", "7K2P");
+    const out = await recordQualified({ code, referredUid: "friend", event: "snapshot" });
+    assert.equal(out.ok, true);
+    assert.equal(out.amount, 50);
+  }finally{
+    delete process.env.LUME_REFERRAL_REQUIRE_PHONE;
+  }
+  assert.equal(requiresPhone(), true, "and the gate is back on afterwards");
 });
 
 console.log("\npayout addresses");
@@ -278,7 +420,7 @@ console.log("\nwhat a student may ask for");
 async function earn(code, count, age){
   const at = Date.now() - (age || 0);
   for(let i = 0; i < count; i++){
-    await recordQualified({ code, referredUid: "f" + i + "_" + at, event: "snapshot", now: at + i });
+    await qualify({ code, referredUid: "f" + i + "_" + at, event: "snapshot", now: at + i });
   }
 }
 
@@ -329,18 +471,28 @@ await test("a request below the minimum is refused", async () => {
   store.clear();
   const code = await referrer("u1", "Aarav", "7K2P");
   await earn(code, 2, OLD);   // ₹100, under MIN_PAYOUT
-  const out = await requestPayout({ uid: "u1", upi: "aarav@okhdfcbank", ageDeclared: true });
+  const out = await askPayout({ uid: "u1", upi: "aarav@okhdfcbank", ageDeclared: true });
   assert.equal(out.ok, false);
   assert.equal(out.reason, "MIN_NOT_MET");
   assert.equal(out.payable, 100);
   assert.ok(MIN_PAYOUT > 100, "this test assumes the minimum is above ₹100");
 });
 
+await test("a payout needs a verified number too", async () => {
+  store.clear();
+  const code = await referrer("u1", "Aarav", "7K2P");
+  await earn(code, 5, OLD);
+  const out = await requestPayout({ uid: "u1", upi: "aarav@okhdfcbank", ageDeclared: true });
+  assert.equal(out.ok, false);
+  assert.equal(out.reason, "PHONE_REQUIRED");
+  assert.equal((await listPayouts("pending")).length, 0, "and nothing is written");
+});
+
 await test("nobody is paid without being asked about their age", async () => {
   store.clear();
   const code = await referrer("u1", "Aarav", "7K2P");
   await earn(code, 5, OLD);
-  const out = await requestPayout({ uid: "u1", upi: "aarav@okhdfcbank", ageDeclared: false });
+  const out = await askPayout({ uid: "u1", upi: "aarav@okhdfcbank", ageDeclared: false });
   assert.equal(out.reason, "AGE_NOT_DECLARED");
   assert.equal((await listPayouts("pending")).length, 0, "and nothing is written");
 });
@@ -349,7 +501,7 @@ await test("a bad UPI address is refused before anything is written", async () =
   store.clear();
   const code = await referrer("u1", "Aarav", "7K2P");
   await earn(code, 5, OLD);
-  const out = await requestPayout({ uid: "u1", upi: "pay me on whatsapp", ageDeclared: true });
+  const out = await askPayout({ uid: "u1", upi: "pay me on whatsapp", ageDeclared: true });
   assert.equal(out.reason, "BAD_UPI");
   assert.equal((await listPayouts("pending")).length, 0);
 });
@@ -359,7 +511,7 @@ await test("a good request is recorded and held against the balance", async () =
   const code = await referrer("u1", "Aarav", "7K2P");
   await earn(code, 5, OLD);
 
-  const out = await requestPayout({ uid: "u1", upi: "aarav@okhdfcbank", ageDeclared: true });
+  const out = await askPayout({ uid: "u1", upi: "aarav@okhdfcbank", ageDeclared: true });
   assert.equal(out.ok, true);
   assert.equal(out.amount, 250);
 
@@ -379,9 +531,9 @@ await test("a second request while one is pending is refused", async () => {
   store.clear();
   const code = await referrer("u1", "Aarav", "7K2P");
   await earn(code, 5, OLD);
-  await requestPayout({ uid: "u1", upi: "aarav@okhdfcbank", ageDeclared: true });
+  await askPayout({ uid: "u1", upi: "aarav@okhdfcbank", ageDeclared: true });
 
-  const again = await requestPayout({ uid: "u1", upi: "aarav@okhdfcbank", ageDeclared: true });
+  const again = await askPayout({ uid: "u1", upi: "aarav@okhdfcbank", ageDeclared: true });
   assert.equal(again.ok, false);
   assert.equal(again.reason, "ALREADY_PENDING");
   assert.equal((await listPayouts("pending")).length, 1, "and no second row is written");
@@ -393,7 +545,7 @@ async function pendingPayout(){
   store.clear();
   const code = await referrer("u1", "Aarav", "7K2P");
   await earn(code, 5, OLD);
-  await requestPayout({ uid: "u1", upi: "aarav@okhdfcbank", ageDeclared: true });
+  await askPayout({ uid: "u1", upi: "aarav@okhdfcbank", ageDeclared: true });
   return (await listPayouts("pending"))[0];
 }
 
@@ -434,7 +586,7 @@ await test("a rejection gives the money back rather than destroying it", async (
 await test("a rejected student can ask again", async () => {
   const row = await pendingPayout();
   await settlePayout({ id: row.id, status: "rejected" });
-  const retry = await requestPayout({ uid: "u1", upi: "aarav@okhdfcbank", ageDeclared: true });
+  const retry = await askPayout({ uid: "u1", upi: "aarav@okhdfcbank", ageDeclared: true });
   assert.equal(retry.ok, true);
   assert.equal(retry.amount, 250);
 });

@@ -28,7 +28,8 @@
      LumeReferral.inviteMessage(lang, url) -> text for a WhatsApp invite
      LumeReferral.payout([{upi, ageDeclared}]) -> Promise<answer|null>
      LumeReferral.decorate(url[,code]) -> url + ?ref= (sync, cached)
-     LumeReferral.claim(event)     -> Promise<boolean>  ("snapshot")
+     LumeReferral.claim(event)     -> Promise<{counted, needsPhone}>
+     LumeReferral.claimWithPhone(event) -> claim, offering OTP if needed
      LumeReferral.forget()         -> clear the inbound stash
    ================================================================== */
 (function(){
@@ -308,23 +309,53 @@
   function claim(event){
     var name = String(event || "");
     var code = stashed();
-    if(!name || !code || alreadyClaimed(name)) return Promise.resolve(false);
+    var no = { counted: false, needsPhone: false };
+    if(!name || !code || alreadyClaimed(name)) return Promise.resolve(no);
 
     return account().then(function(user){
-      if(!user || !user.uid) return false;
+      if(!user || !user.uid) return no;
       return token().then(function(idToken){
-        if(!idToken) return false;
+        if(!idToken) return no;
         return post(CLAIM_ENDPOINT, { ref: code, event: name }, idToken).then(function(data){
-          /* Marked only when the server actually answered. Every decision
-             it makes is final and repeating it would change nothing, so a
-             refusal is worth remembering — but a 429 or a 503 is not an
-             answer, and marking one would lose the referral for good. */
-          if(!data) return false;
+          if(!data) return { counted: false, needsPhone: false };
+
+          /*
+             A missing phone number is the one refusal that is NOT final:
+             the student can verify one and the same claim then counts.
+             So it is deliberately not marked as claimed — everything
+             else is, because repeating it would change nothing and a 429
+             or a 503 is not an answer at all.
+          */
+          if(data.needs_phone) return { counted: false, needsPhone: true };
+
           markClaimed(name);
-          return Boolean(data.counted);
+          return { counted: Boolean(data.counted), needsPhone: false };
         });
       });
-    }).catch(function(){ return false; });
+    }).catch(function(){ return no; });
+  }
+
+  /*
+     Claim, and if the only thing standing in the way is a verified
+     number, offer to get one and claim again.
+
+     The friend is being asked to do twenty seconds of work for somebody
+     else's ₹50, so this is asked once, after their result is already on
+     screen, and a "no" is taken as a no — claim() is not retried and
+     nothing nags. Pages without lume-auth.js simply cannot ask, and that
+     is a quiet no-op rather than an error.
+  */
+  function claimWithPhone(event){
+    return claim(event).then(function(answer){
+      if(!answer || !answer.needsPhone) return answer;
+      if(!window.lumeAccount || typeof window.lumeAccount.verifyPhone !== "function") return answer;
+
+      return window.lumeAccount.verifyPhone().then(function(verified){
+        if(!verified) return answer;
+        // The token now carries the number, so the same claim can win.
+        return claim(event);
+      }).catch(function(){ return answer; });
+    });
   }
 
   /* ---------------------------------------------------------------- */
@@ -338,6 +369,7 @@
     ready: ready,
     stats: stats,
     payout: payout,
+    claimWithPhone: claimWithPhone,
     inviteMessage: inviteMessage,
     decorate: decorate,
     claim: claim,

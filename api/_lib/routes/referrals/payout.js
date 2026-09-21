@@ -18,7 +18,7 @@
 const { json, setCors, readBody } = require("../../http");
 const { requireAccount } = require("../../account");
 const { checkRateLimit, clientKey } = require("../../rateLimit");
-const { payoutSummary, requestPayout, isEnabled } = require("../../referrals");
+const { payoutSummary, requestPayout, isEnabled, requiresPhone, normalizePhone } = require("../../referrals");
 
 /*
   What the student is told. Unlike /claim — where a named reason would
@@ -30,7 +30,8 @@ const MESSAGES = {
   BAD_UPI: "That doesn't look like a UPI ID. It should look like yourname@bank.",
   NO_CODE: "You don't have a referral link yet.",
   ALREADY_PENDING: "You already have a payout on the way. We'll message you when it's sent.",
-  MIN_NOT_MET: "Not quite there yet — keep sharing."
+  MIN_NOT_MET: "Not quite there yet — keep sharing.",
+  PHONE_REQUIRED: "Please verify your mobile number first — we need a way to reach you about the payment."
 };
 
 module.exports = async function handler(req, res){
@@ -65,21 +66,27 @@ module.exports = async function handler(req, res){
   const uid = account.account.uid;
 
   try{
+    // Whether this account carries a verified number decides which
+    // control the dashboard shows, so it rides along with the summary.
+    const phoneOk = !requiresPhone() || Boolean(normalizePhone(account.account.phone));
+
     if(body.request !== true){
       const summary = await payoutSummary(uid);
       if(!summary) return json(res, 200, { ok: true, summary: null });
-      return json(res, 200, { ok: true, summary });
+      return json(res, 200, { ok: true, summary: Object.assign({ phone_verified: phoneOk }, summary) });
     }
 
     const result = await requestPayout({
       uid,
       upi: body.upi,
+      phone: account.account.phone,
       ageDeclared: body.age_declared === true
     });
 
     // The fresh summary rides back with every answer so the dashboard
     // redraws from the server rather than from what it hoped happened.
-    const summary = await payoutSummary(uid);
+    const raw = await payoutSummary(uid);
+    const summary = raw ? Object.assign({ phone_verified: phoneOk }, raw) : null;
 
     if(!result.ok){
       return json(res, 200, {

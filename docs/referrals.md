@@ -11,6 +11,7 @@ money can and cannot leak.
 - A student gets a **code** (`AARA7K2P`) and a link (`?ref=AARA7K2P`).
 - A friend who arrives on that link and **finishes a quiz** qualifies it.
 - The referrer earns **₹50**, capped at **₹300** per account.
+- Both accounts need a **verified mobile number** — one number, one account.
 - Earnings become withdrawable **7 days** later, from **₹200** up.
 - **A human makes every transfer**, from `npm run referrals:payouts`.
   Nothing on the site can move money.
@@ -69,6 +70,9 @@ All of these live in `api/_lib/referrals.js` and are covered by
 | **₹200 minimum withdrawal** | `MIN_PAYOUT` |
 | **One pending payout at a time** | re-checked inside the transaction, so two requests cannot race |
 | The code must be real | `referralCodes/{CODE}` lookup |
+| **Referred account has a verified phone** | `requiresPhone()`; the number comes off the ID token, never the body |
+| **One phone, one account, one referral** | `referralPhones/{hash}` — first verifier keeps it |
+| **A payout needs a verified phone too** | checked in `requestPayout` |
 
 The attribution document is keyed by the **referred** person rather than
 by the (code, person) pair. That one choice is what makes a replay, a
@@ -78,6 +82,62 @@ the same no-op.
 At the cap a referral is still **recorded** (and the friend still spent),
 it is just worth ₹0. Otherwise raising the cap later would make every
 previously-capped friend claimable again.
+
+---
+
+## The phone gate
+
+Email is free and unlimited, which is why a ₹50 payout against an
+email-only account is farmable in an afternoon. A phone number costs
+money and a SIM, and **Firebase only puts one on an ID token after an
+SMS code has come back from it** — so the claim *is* the verification.
+There is no "verified" flag to trust and nothing the client sends can
+fake one. `api/_lib/account.js` reads it off the token; the request body
+is never consulted.
+
+Two rules, and the second is the one that bites:
+
+1. The referred account must carry a verified number.
+2. That number is bound to the **first** account that verifies it, and a
+   referral is refused if it already belongs to someone else — or to the
+   referrer.
+
+Without rule 2 the gate is decorative: one SIM would qualify ten
+accounts, and a referrer's own second account would qualify against
+their own phone. That second case is reported as `SELF_REFERRAL` rather
+than as a phone problem, because that is what it is — the same human,
+twice.
+
+**Numbers are stored as a salted hash, never in the clear.** All we ever
+need to answer is "is this the same number as that one", and a Firestore
+collection of readable phone numbers is a liability that answers a
+question nobody asked. **Set `LUME_PHONE_SALT`** — without it the space
+of Indian mobile numbers is small enough to enumerate, and the hash is
+barely a hash. The code warns once per process if it is missing.
+
+### What this costs
+
+The friend is being asked for twenty seconds of work towards *somebody
+else's* ₹50. This will reduce referral conversion, and possibly by a
+lot. It is asked once, after their result is already on screen, and a
+"no" is taken as a no — `claimWithPhone()` does not retry and nothing
+nags.
+
+A claim blocked on a missing phone is deliberately **not** marked as
+claimed locally, unlike every other refusal, because it is the one
+refusal that stops being true once the student acts on it.
+
+### If SMS breaks
+
+Firebase phone auth needs the **Blaze plan**, an **authorised domain**
+and a **working reCAPTCHA**. If any of those is wrong, every referral
+silently stops qualifying. `LUME_REFERRAL_REQUIRE_PHONE=0` keeps the
+programme running while you fix it, at the cost of the control it buys.
+
+The pages that can show the SMS panel had their CSP extended for
+reCAPTCHA (`script-src www.google.com`, and a `frame-src` — which most
+of them did not have at all, so the iframe would have been blocked by
+`default-src 'self'`).
 
 ---
 
@@ -96,6 +156,9 @@ referralAttributions/{referredUid}
 
 referralPayouts/{uid}_{requestedAt}
   { uid, code, amount, upi, status, requested_at, settled_at, note }
+
+referralPhones/{sha256(salt:last10digits)}
+  { uid, created_at }              first account to verify it keeps it
 ```
 
 `earned` is the lifetime total, `paid` is what has actually been
@@ -305,6 +368,8 @@ doubt, reject with a note and ask them.
 | Turn it off | `LUME_REFERRALS_ENABLED=0` — both routes 404, links keep resolving |
 | Change what a referral is worth | `TIERS` in `api/_lib/referrals.js` (a table, so tiering it is an edit in one place) |
 | Change the cap | `EARNINGS_CAP` |
+| Turn the phone gate off | `LUME_REFERRAL_REQUIRE_PHONE=0` — see above before you do |
+| Phone hash salt | `LUME_PHONE_SALT` — **set this**, and never change it afterwards: every existing hash becomes unmatchable |
 | Change the hold | `HOLD_MS` — applies to unpaid earnings immediately, including ones already banked |
 | Change the withdrawal minimum | `MIN_PAYOUT` |
 | Pay people | `npm run referrals:payouts` — see above |
@@ -321,30 +386,23 @@ be one environment variable, not a revert.
 
 Deliberately, and in roughly this order:
 
-1. **Phone OTP on the referred account.** Was second while this paid
-   credit. With cash it is the one that matters: nothing today checks
-   how old a referred account is, and throwaway-email farming is the
-   cheapest attack on a ₹50 payout. The 7-day hold buys time to notice
-   it; OTP would stop it.
-2. **The friend's side of the offer** (₹100 off their first paid
+1. **The friend's side of the offer** (₹100 off their first paid
    product), which is what makes this two-sided. Today the friend gets
    nothing for arriving on a link, which is half a referral programme.
-3. **A "who joined" list on `refer.html`.** The page shows totals; it
+2. **A "who joined" list on `refer.html`.** The page shows totals; it
    cannot yet name the friends behind them, because `/api/referrals/code`
    returns counts only. A student chasing the last ₹50 wants to know who
    has not finished yet.
 
-`stream-selector.html` has no `lume-auth.js`, so a student cannot be
-signed in there, `ready()` returns `""`, and **the referral block never
-appears on the Stream Selector** — its sharers get an undecorated card.
-Inbound capture still works, so that page can still *receive* referrals;
-it just cannot originate them. Adding auth there is now the single
-cheapest win available.
+`stream-selector.html` and its Hindi twin now carry `lume-auth.js`, so
+the Stream Selector can both originate and receive referrals. It had to:
+the phone panel lives in that module, and without it a friend landing
+there could never verify a number and no referral through that quiz
+could ever qualify.
 
-Note that `lume-auth.js` imports Firebase the first time an account is
-actually needed, which on that page would be when the share sheet opens
-— not on page load. The cost is one SDK fetch for a student who has
-already finished the quiz.
+`lume-auth.js` imports Firebase the first time an account is actually
+needed — the share sheet opening, or a claim asking for a number — not
+on page load.
 
 ---
 

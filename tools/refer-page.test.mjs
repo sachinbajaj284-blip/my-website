@@ -119,7 +119,8 @@ const CODE = "AARA7K2P";
 function summary(over){
   return Object.assign({
     earned: 250, paid: 0, pending: 0, matured: 250, payable: 250,
-    min_payout: 200, hold_days: 7, can_request: true, upi: ""
+    min_payout: 200, hold_days: 7, can_request: true, upi: "",
+    phone_verified: true
   }, over || {});
 }
 const PAYABLE = summary();
@@ -145,13 +146,17 @@ function referralStub(opts = {}){
   return stub;
 }
 
-function accountStub(user){
+function accountStub(user, opts = {}){
   const handlers = [];
   return {
     ready: () => Promise.resolve(user || null),
     prompt(){ this.prompted = true; },
     onSignIn(fn){ handlers.push(fn); },
-    _signIn(){ handlers.forEach(fn => fn()); }
+    _signIn(){ handlers.forEach(fn => fn()); },
+    verifyPhone(){
+      this.askedToVerify = true;
+      return Promise.resolve(opts.verifies !== false);
+    }
   };
 }
 
@@ -413,6 +418,51 @@ await test("a refusal shows the server's message and redraws from its summary", 
   assert.match(page.byId.payoutErr.textContent, /UPI ID/);
   assert.equal(page.byId.requestPayout.disabled, false, "the button comes back");
   assert.equal(visible(page, "payoutForm"), true, "and they can fix it and retry");
+});
+
+await test("an unverified number blocks the form and offers verification", async () => {
+  const { page } = run({
+    referral: referralStub({ stats: FULL, payout: { ok: true, summary: summary({ phone_verified: false }) } }),
+    account: SIGNED_IN()
+  });
+  await settle();
+  assert.equal(visible(page, "phoneGate"), true);
+  assert.equal(visible(page, "payoutForm"), false, "an unusable form under a balance reads as broken");
+  assert.match(page.byId.payoutState.textContent, /once your number is verified/);
+});
+
+await test("there is nothing to verify for when there is nothing to withdraw", async () => {
+  // Asking for an SMS from someone who cannot withdraw anything yet is
+  // friction for no reason.
+  const { page } = run({
+    referral: referralStub({ stats: FULL, payout: { ok: true, summary: summary({ phone_verified: false, payable: 0, can_request: false }) } }),
+    account: SIGNED_IN()
+  });
+  await settle();
+  assert.equal(visible(page, "phoneGate"), false);
+});
+
+await test("verifying re-reads the balance from the server", async () => {
+  // The panel closing is not the same as the server agreeing, so the
+  // page asks again rather than assuming.
+  let calls = 0;
+  const account = accountStub({ uid: "u1" });
+  const referral = referralStub({
+    stats: FULL,
+    payout: () => {
+      calls += 1;
+      return { ok: true, summary: summary({ phone_verified: calls > 1 }) };
+    }
+  });
+  const { page } = run({ referral, account });
+  await settle();
+  assert.equal(visible(page, "phoneGate"), true);
+
+  page.byId.verifyPhone.click();
+  await settle();
+  assert.equal(account.askedToVerify, true);
+  assert.equal(calls, 2, "the summary is re-fetched, not assumed");
+  assert.equal(visible(page, "payoutForm"), true);
 });
 
 await test("an unreachable payout endpoint hides the card rather than guessing", async () => {

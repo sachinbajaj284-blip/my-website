@@ -854,7 +854,7 @@ function showLeaderboard(){
   /* The result is on screen, which is what a referral is paid for. The
      server decides whether it counts; this only reports that it
      happened, and never blocks the result on the answer. */
-  if(window.LumeReferral) window.LumeReferral.claim("stream");
+  if(window.LumeReferral) window.LumeReferral.claimWithPhone("stream");
   var el = $("leaderboard");
   if(!el || !window.LumeLeaderboard || !result) return;
   var labels = {};

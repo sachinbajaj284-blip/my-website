@@ -76,6 +76,7 @@ const REFERRERS = "referrers";
 const CODES = "referralCodes";
 const ATTRIBUTIONS = "referralAttributions";
 const PAYOUTS = "referralPayouts";
+const PHONES = "referralPhones";
 
 /*
   What a referral is worth, in whole rupees. One place, because the
@@ -205,6 +206,106 @@ function todayKey(now){
 }
 
 /* ------------------------------------------------------------------ */
+/* Phone numbers                                                       */
+/* ------------------------------------------------------------------ */
+
+/*
+  One phone number, one person, one referral.
+
+  Email is free and unlimited, which is why a ₹50 payout against an
+  email-only account is farmable in an afternoon. A phone number is not:
+  it costs money and a SIM to obtain, and Firebase will only put one on
+  an ID token after an SMS code has come back from it. That makes it the
+  one identity signal here that has a price attached.
+
+  Two rules, and the second is the one that actually bites:
+
+  1. The referred account must carry a verified number.
+  2. That number is bound to the FIRST account that verifies it, and a
+     referral is refused if the number is already somebody else's — or
+     if it is the referrer's own.
+
+  Without rule 2 the control is decorative: one SIM would qualify ten
+  accounts, and a referrer's own second account would qualify against
+  their own phone.
+
+  Numbers are stored as a salted hash, never in the clear. We only ever
+  need to answer "is this the same number as that one", and a Firestore
+  collection full of readable phone numbers is a liability that answers
+  a question nobody asked. LUME_PHONE_SALT keeps the hashes from being
+  reversible by anyone who gets the collection and a list of Indian
+  mobile numbers — without it the space is small enough to enumerate.
+*/
+
+// Last ten digits: the same number reaches us as +919876543210,
+// 919876543210 and 09876543210 depending on how it was entered.
+function normalizePhone(value){
+  const digits = String(value == null ? "" : value).replace(/\D/g, "");
+  return digits.length >= 10 ? digits.slice(-10) : "";
+}
+
+function phoneKey(value){
+  const digits = normalizePhone(value);
+  if(!digits) return "";
+  const salt = String(process.env.LUME_PHONE_SALT || "");
+  if(!salt && !phoneKey._warned){
+    // Loud, because a missing salt silently downgrades the hashes to
+    // something a laptop can reverse in minutes. Once per process: this
+    // runs on every referral, and a warning printed a thousand times is
+    // a warning nobody reads.
+    phoneKey._warned = true;
+    console.warn("[lume referrals] LUME_PHONE_SALT is not set — phone hashes are enumerable. Set it.");
+  }
+  return crypto.createHash("sha256").update(salt + ":" + digits).digest("hex");
+}
+
+/*
+  Set LUME_REFERRAL_REQUIRE_PHONE=0 to stop requiring a verified number.
+
+  Worth knowing before you use it: Firebase phone auth needs the Blaze
+  plan, an authorised domain and a working reCAPTCHA. If any of those is
+  wrong, every referral quietly stops qualifying — this switch is how you
+  keep the programme running while you fix it, at the cost of the control
+  it buys.
+*/
+function requiresPhone(){
+  const raw = String(process.env.LUME_REFERRAL_REQUIRE_PHONE == null ? "1" : process.env.LUME_REFERRAL_REQUIRE_PHONE)
+    .trim().toLowerCase();
+  return !(raw === "0" || raw === "false" || raw === "off" || raw === "no");
+}
+
+/*
+  Bind a number to an account, or report who already has it.
+
+  First verifier wins and keeps it forever. Re-binding the same number to
+  the same account is a no-op, so this is safe to call on every request
+  that happens to carry one.
+
+  Resolves { ok, key, owner } — `owner` is set when somebody else has it.
+*/
+async function bindPhone({ uid, phone, now }, options){
+  const opts = options || {};
+  const db = opts.db || firestore();
+  const at = now == null ? Date.now() : now;
+  const id = String(uid || "");
+  const key = phoneKey(phone);
+
+  if(!id || !key) return { ok: false, key: "" };
+
+  const ref = db.collection(PHONES).doc(key);
+  return db.runTransaction(async (tx) => {
+    const snap = await tx.get(ref);
+    if(snap.exists){
+      const owner = String((snap.data() || {}).uid || "");
+      if(owner && owner !== id) return { ok: false, key, owner };
+      return { ok: true, key, owner: id };
+    }
+    tx.set(ref, { uid: id, created_at: at });
+    return { ok: true, key, owner: id };
+  });
+}
+
+/* ------------------------------------------------------------------ */
 /* Kill switch                                                         */
 /* ------------------------------------------------------------------ */
 
@@ -254,7 +355,7 @@ function publicStats(doc){
   it is a create, not a set, inside a transaction, so two students
   minting the same code at the same moment cannot both win.
 */
-async function ensureCode({ uid, name, attempts }, options){
+async function ensureCode({ uid, name, phone, attempts }, options){
   const id = String(uid || "");
   if(!id) throw new Error("ensureCode requires a uid.");
 
@@ -263,6 +364,18 @@ async function ensureCode({ uid, name, attempts }, options){
   const tries = Math.max(1, Number(attempts) || 5);
 
   const ref = db.collection(REFERRERS).doc(id);
+
+  /*
+    Bind the referrer's own number too, whenever the token carries one.
+    Not a gate — a student without a verified number can still have a
+    link and still earn — but it is what makes "this friend's phone is
+    the referrer's phone" answerable, and the payout below needs it.
+  */
+  if(phone && phoneKey(phone)){
+    try{ await bindPhone({ uid: id, phone }, { db }); }
+    catch(err){ /* never block a code on this */ }
+  }
+
   const existing = await ref.get();
   if(existing.exists && existing.data() && existing.data().code){
     return { created: false, stats: publicStats(existing.data()) };
@@ -329,7 +442,7 @@ async function lookupCode(code, options){
 
   Resolves { ok, reason, amount, stats }.
 */
-async function recordQualified({ code, referredUid, event, now }, options){
+async function recordQualified({ code, referredUid, event, referredPhone, now }, options){
   const opts = options || {};
   const db = opts.db || firestore();
   const at = now == null ? Date.now() : now;
@@ -346,6 +459,30 @@ async function recordQualified({ code, referredUid, event, now }, options){
 
   // The cheapest fraud there is, and the one everybody tries first.
   if(found.uid === referred) return { ok: false, reason: "SELF_REFERRAL" };
+
+  /*
+    The phone gate. Done before the transaction because binding is its
+    own transaction, and because a refusal here should cost one read
+    rather than a contended write.
+  */
+  let phoneBinding = null;
+  if(requiresPhone()){
+    if(!phoneKey(referredPhone)) return { ok: false, reason: "PHONE_REQUIRED" };
+
+    phoneBinding = await bindPhone({ uid: referred, phone: referredPhone, now: at }, { db });
+    if(!phoneBinding.ok){
+      /*
+        Somebody already verified this number. If that somebody is the
+        referrer, this is the same person with a second account — the
+        exact move the gate exists to stop — and it is named as what it
+        is rather than as a phone problem.
+      */
+      return {
+        ok: false,
+        reason: phoneBinding.owner === found.uid ? "SELF_REFERRAL" : "PHONE_ALREADY_USED"
+      };
+    }
+  }
 
   const attributionRef = db.collection(ATTRIBUTIONS).doc(referred);
   const referrerRef = db.collection(REFERRERS).doc(found.uid);
@@ -387,7 +524,8 @@ async function recordQualified({ code, referredUid, event, now }, options){
 
     tx.set(attributionRef, {
       code: found.code, referrer_uid: found.uid,
-      event: String(event), amount, created_at: at
+      event: String(event), amount, created_at: at,
+      phone_key: phoneBinding ? phoneBinding.key : ""
     });
 
     const next = Object.assign({}, data, {
@@ -478,7 +616,7 @@ async function payoutSummary(uid, options){
 
   Resolves { ok, reason, amount }.
 */
-async function requestPayout({ uid, upi, ageDeclared, now }, options){
+async function requestPayout({ uid, upi, phone, ageDeclared, now }, options){
   const opts = options || {};
   const db = opts.db || firestore();
   const at = now == null ? Date.now() : now;
@@ -486,6 +624,14 @@ async function requestPayout({ uid, upi, ageDeclared, now }, options){
 
   if(!id) return { ok: false, reason: "NO_ACCOUNT" };
   if(!ageDeclared) return { ok: false, reason: "AGE_NOT_DECLARED" };
+
+  /*
+    Money only goes to an account with a verified number on it. This is
+    the same control as the one on the referred side, applied where it
+    matters most: an account nobody can reach is an account nobody can
+    ask about a payout that looks wrong.
+  */
+  if(requiresPhone() && !phoneKey(phone)) return { ok: false, reason: "PHONE_REQUIRED" };
 
   const address = normalizeUpi(upi);
   if(!isValidUpi(address)) return { ok: false, reason: "BAD_UPI" };
@@ -592,6 +738,7 @@ module.exports = {
   CODES,
   ATTRIBUTIONS,
   PAYOUTS,
+  PHONES,
   TIERS,
   EARNINGS_CAP,
   DAILY_QUALIFY_LIMIT,
@@ -613,6 +760,10 @@ module.exports = {
   recordQualified,
   normalizeUpi,
   isValidUpi,
+  normalizePhone,
+  phoneKey,
+  requiresPhone,
+  bindPhone,
   payoutSummary,
   requestPayout,
   settlePayout,

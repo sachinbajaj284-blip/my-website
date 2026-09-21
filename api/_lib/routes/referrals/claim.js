@@ -59,10 +59,24 @@ module.exports = async function handler(req, res){
     const result = await recordQualified({
       code: body.ref,
       referredUid: account.account.uid,
+      // From the verified token, never from the body — see _lib/account.js.
+      referredPhone: account.account.phone,
       event: body.event
     });
-    // `counted` is all the page is told. The reason is logged, not sent.
-    return json(res, 200, { ok: true, counted: Boolean(result.ok && result.credit > 0) });
+
+    /*
+      `counted` is all the page is told, with one exception: a missing
+      phone number is the single refusal the student can actually do
+      something about, and it is not a secret — the sign-up flow asks for
+      one in the open. Every other reason stays unnamed, because a client
+      that can tell "already counted" from "daily limit" can map the
+      anti-abuse rules.
+    */
+    return json(res, 200, {
+      ok: true,
+      counted: Boolean(result.ok && result.amount > 0),
+      needs_phone: result.reason === "PHONE_REQUIRED"
+    });
   }catch(err){
     console.error("[lume referrals] claim failed:", err && err.message);
     // A failed claim must never break the quiz result behind it.

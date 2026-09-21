@@ -69,7 +69,8 @@ module.exports = async function handler(req, res){
   try{
     const result = await ensureCode({
       uid: account.account.uid,
-      name: account.account.name || account.account.email
+      name: account.account.name || account.account.email,
+      phone: account.account.phone
     });
     return json(res, 200, {
       ok: true,

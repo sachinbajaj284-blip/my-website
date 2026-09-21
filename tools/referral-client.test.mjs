@@ -324,6 +324,104 @@ await atest("a cache minted for another account is dropped, not reused", async (
   assert.deepEqual(plain(api.stats()), { qualified: 0 }, "and the stale totals go with it");
 });
 
+console.log("\nclaiming, and the phone gate");
+
+function claimFetch(answers){
+  let n = 0;
+  const calls = [];
+  const fn = (url, init) => {
+    calls.push({ url, body: JSON.parse(init.body) });
+    const answer = answers[Math.min(n, answers.length - 1)];
+    n += 1;
+    return jsonResponse(answer);
+  };
+  fn.calls = calls;
+  return fn;
+}
+
+await atest("a claim reports what the server said", async () => {
+  const fetch = claimFetch([{ ok: true, counted: true, needs_phone: false }]);
+  const { api } = load({
+    search: "?ref=AARA7K2P",
+    account: signedIn("friend"),
+    fetch
+  });
+  const answer = await api.claim("snapshot");
+  assert.equal(answer.counted, true);
+  assert.equal(answer.needsPhone, false);
+  assert.equal(fetch.calls[0].body.ref, "AARA7K2P");
+});
+
+await atest("a claim blocked on a phone is not marked, so it can be retried", async () => {
+  // Every other refusal is final and worth remembering. This one is not:
+  // the student can verify a number and the same claim then counts.
+  const fetch = claimFetch([
+    { ok: true, counted: false, needs_phone: true },
+    { ok: true, counted: true, needs_phone: false }
+  ]);
+  const { api } = load({ search: "?ref=AARA7K2P", account: signedIn("friend"), fetch });
+
+  const first = await api.claim("snapshot");
+  assert.equal(first.needsPhone, true);
+
+  const second = await api.claim("snapshot");
+  assert.equal(second.counted, true, "the retry must not be short-circuited by a local mark");
+  assert.equal(fetch.calls.length, 2);
+});
+
+await atest("a counted claim is marked and never asked again", async () => {
+  const fetch = claimFetch([{ ok: true, counted: true, needs_phone: false }]);
+  const { api } = load({ search: "?ref=AARA7K2P", account: signedIn("friend"), fetch });
+  await api.claim("snapshot");
+  await api.claim("snapshot");
+  assert.equal(fetch.calls.length, 1);
+});
+
+await atest("claimWithPhone offers verification and claims again on success", async () => {
+  const fetch = claimFetch([
+    { ok: true, counted: false, needs_phone: true },
+    { ok: true, counted: true, needs_phone: false }
+  ]);
+  const account = signedIn("friend");
+  let asked = 0;
+  account.verifyPhone = () => { asked += 1; return Promise.resolve(true); };
+
+  const { api } = load({ search: "?ref=AARA7K2P", account, fetch });
+  const answer = await api.claimWithPhone("snapshot");
+  assert.equal(asked, 1);
+  assert.equal(answer.counted, true);
+});
+
+await atest("declining the SMS is taken as a no", async () => {
+  // The friend is being asked for twenty seconds of work towards someone
+  // else's ₹50. Asked once; a no is a no.
+  const fetch = claimFetch([{ ok: true, counted: false, needs_phone: true }]);
+  const account = signedIn("friend");
+  account.verifyPhone = () => Promise.resolve(false);
+
+  const { api } = load({ search: "?ref=AARA7K2P", account, fetch });
+  const answer = await api.claimWithPhone("snapshot");
+  assert.equal(answer.counted, false);
+  assert.equal(fetch.calls.length, 1, "no second claim, and no nagging");
+});
+
+await atest("a page with no auth module cannot ask, and does not fail", async () => {
+  // stream-selector used to be exactly this page.
+  const fetch = claimFetch([{ ok: true, counted: false, needs_phone: true }]);
+  const { api } = load({ search: "?ref=AARA7K2P", account: signedIn("friend"), fetch });
+  const answer = await api.claimWithPhone("snapshot");
+  assert.equal(answer.needsPhone, true);
+  assert.equal(fetch.calls.length, 1);
+});
+
+await atest("nothing is claimed without an inbound code", async () => {
+  const fetch = claimFetch([{ ok: true, counted: true }]);
+  const { api } = load({ search: "", account: signedIn("friend"), fetch });
+  const answer = await api.claim("snapshot");
+  assert.equal(answer.counted, false);
+  assert.equal(fetch.calls.length, 0, "no code, no request");
+});
+
 console.log("");
 console.log(passed + " passed, " + failed + " failed");
 if(failed > 0) process.exit(1);

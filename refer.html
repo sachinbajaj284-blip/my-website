@@ -2,7 +2,7 @@
 <html lang="en-IN">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' www.gstatic.com www.googletagmanager.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; img-src 'self' data: blob: www.google-analytics.com www.googletagmanager.com; connect-src 'self' *.googleapis.com *.firebaseio.com *.firebaseapp.com www.gstatic.com www.googletagmanager.com *.google-analytics.com *.analytics.google.com; object-src 'none'; base-uri 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' www.gstatic.com www.googletagmanager.com www.google.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; img-src 'self' data: blob: www.google-analytics.com www.googletagmanager.com; connect-src 'self' *.googleapis.com *.firebaseio.com *.firebaseapp.com www.gstatic.com www.googletagmanager.com *.google-analytics.com *.analytics.google.com; object-src 'none'; base-uri 'self'; frame-src www.google.com *.firebaseapp.com;">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Your Referral Link | Lume Live</title>
 <meta name="description" content="Share your link. Every friend who finishes the free Career Snapshot earns you ₹50, paid to your UPI.">
@@ -76,6 +76,7 @@ a{color:var(--teal);text-decoration:none}
 .check{display:flex;gap:9px;align-items:flex-start;margin-top:12px;font-size:.85rem;color:var(--muted);cursor:pointer}
 .check input{margin-top:3px;flex-shrink:0;width:17px;height:17px;accent-color:var(--teal)}
 .fine{margin-top:10px;font-size:.82rem;font-weight:700;color:#B3261E;min-height:1px}
+.fine.ok{color:var(--muted);font-weight:600}
 .note{margin-top:16px;padding:13px 15px;border-radius:12px;background:#FFF8E9;border:1px solid #EBD9AE;font-size:.85rem;color:#6B5522}
 .note b{color:#4A3A12}
 .foot{background:var(--navy);color:rgba(255,255,255,.72);padding:26px 18px;text-align:center;font-size:.82rem;margin-top:20px}
@@ -159,6 +160,11 @@ a{color:var(--teal);text-decoration:none}
       <div class="stats" id="payoutStats">
         <div class="stat"><b id="pReady">₹0</b><span>ready to withdraw</span></div>
         <div class="stat"><b id="pPaid">₹0</b><span>paid out so far</span></div>
+      </div>
+
+      <div id="phoneGate" class="hide">
+        <p class="fine ok">We need a verified mobile number before we can send money.</p>
+        <div class="row"><button class="btn go" id="verifyPhone" type="button">Verify my number</button></div>
       </div>
 
       <div id="payoutForm" class="hide">
@@ -362,9 +368,18 @@ a{color:var(--teal);text-decoration:none}
 
     var held = Math.max(0, (summary.matured === undefined ? 0 : summary.earned - summary.matured));
 
+    /* A number has to be verified before money can be sent, so when one
+       is missing that is the only control worth showing — an unusable
+       payout form under a balance they cannot withdraw reads as broken. */
+    var needsPhone = summary.phone_verified === false;
+    $("phoneGate").classList.toggle("hide", !(needsPhone && summary.can_request));
+
     if(summary.pending > 0){
       $("payoutState").textContent = inr(summary.pending) + " is on its way to " +
         (summary.upi || "your UPI") + ". We'll message you when it's sent.";
+      $("payoutForm").classList.add("hide");
+    }else if(needsPhone && summary.can_request){
+      $("payoutState").textContent = "You can withdraw " + inr(summary.payable) + " once your number is verified.";
       $("payoutForm").classList.add("hide");
     }else if(summary.can_request){
       $("payoutState").textContent = "You can withdraw " + inr(summary.payable) + " now.";
@@ -441,6 +456,16 @@ a{color:var(--teal);text-decoration:none}
     };
     $("retry").onclick = load;
     $("requestPayout").onclick = requestPayout;
+    $("verifyPhone").onclick = function(){
+      if(!window.lumeAccount || !window.lumeAccount.verifyPhone) return;
+      track("referral_phone_verify_start", { event_category:"viral_loop" });
+      window.lumeAccount.verifyPhone().then(function(ok){
+        // Re-read from the server either way: it decides what counts as
+        // verified, not the panel that just closed.
+        if(ok) track("referral_phone_verified", { event_category:"viral_loop" });
+        loadPayout();
+      }).catch(function(){});
+    };
 
     /* Signed in already — straight to the dashboard. Otherwise wait for
        the sign-in to land rather than polling for it. */
