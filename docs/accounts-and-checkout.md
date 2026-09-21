@@ -13,9 +13,12 @@ Cashfree payment window without signing in first, on any page, for any SKU.
   same modal, with the same item and coupon. The client does not start over.
 - The order carries the account: `order_tags.account_uid` comes from a
   verified Firebase ID token, never from the page.
-- **Email verification is not required to pay.** The verification mail is
-  sent at sign-up, but somebody who hasn't opened their inbox yet is still
-  somebody trying to buy something.
+- **An account is a name, a mobile number and an OTP.** No password, and no
+  separate sign-up: a number either has an account behind it or gets one the
+  moment the OTP checks out.
+- **Email verification is not required to pay**, and no longer asked for at
+  all on a new account. The panel and the checks stay for the older
+  email-and-password accounts, which still verify an inbox to restore access.
 
 ---
 
@@ -83,24 +86,31 @@ leaves it on. Switch it back the moment the real problem is fixed.
 
 ## Signing in, on six different pages
 
-Three pages already had their own sign-in modal (`index.html`,
+Three pages used to run their own email-and-password modal (`index.html`,
 `assessment.html`, `for-working-professionals.html`).
 `career-intelligence.html` had Firebase but nothing to sign in with, and
 `for-parents.html` and `internships.html` had no account layer at all.
+
+There is now one form, on every page: **full name, mobile number, OTP**
+(Firebase `signInWithPhoneNumber`, with an invisible reCAPTCHA). The name is
+asked on the way in, or straight after the first OTP for someone who arrived
+through "Sign in". A returning number skips it entirely.
 
 `lume-auth.js` is the one thing the checkout talks to:
 
 ```js
 window.lumeAccount.ready()      // Promise<user|null>, once auth state is known
 window.lumeAccount.current()    // user|null
-window.lumeAccount.prompt(mode) // opens whatever sign-in UI this page has
+window.lumeAccount.prompt(mode) // opens the name / number / OTP form
 window.lumeAccount.onSignIn(fn) // fires once, when a user appears
 window.lumeAccount.token()      // Promise<idToken|"">
 ```
 
-Where a page has its own `openAuth()`, **that** is what opens — this does not
-replace a working sign-in flow. Only the pages without one get the small
-fallback form built into `lume-auth.js`.
+`lume-auth.js` claims `window.openAuth` when it loads, because every Login and
+Create Account button on those three pages already calls that name — claiming
+it is what retires their email-and-password forms. Clicking it while signed in
+shows who you are and a way to sign out, rather than asking again for the
+number you signed in with.
 
 Nothing runs on page load: Firebase is imported the first time an account is
 actually needed, which on most pages is never.
@@ -115,11 +125,15 @@ leave them being asked to create an account they just created.
 ## What this improved for free
 
 - **Coupon limits mean what they say.** `per_customer_limit` is matched on
-  phone and email; leaving the email blank used to be a way to look like a
-  new person. Every order now carries an account email.
+  phone and email; leaving them blank used to be a way to look like a new
+  person. Every order now carries the account's verified number — checkout
+  fills `customer.phone` from it, and `create-order.js` falls back to it.
 - **Restore-access is more reliable.** Orders are stamped with `account_uid`,
   and entitlements record it, so a purchase is tied to an account rather than
-  only to contact details that can be typed wrong or changed later.
+  only to contact details that can be typed wrong or changed later. It also
+  matches on the token's `phone_number`, which Firebase only sets after an
+  SMS code came back — the same standing a clicked email link has, and the
+  field older orders (placed before accounts existed) already carry.
 
 ---
 
