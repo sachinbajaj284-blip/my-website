@@ -314,6 +314,12 @@
     return "+91" + digits.slice(-10);
   }
 
+  // The host as Firebase sees it, which is the thing that has to be on
+  // the allowlist — and the one fact a screenshot of the error never has.
+  function here(){
+    try{ return window.location.hostname || "this site"; }catch(e){ return "this site"; }
+  }
+
   function prettyNumber(e164){
     var d = String(e164 || "").replace(/\D/g, "").slice(-10);
     return d ? "+91 " + d.slice(0, 5) + " " + d.slice(5) : "";
@@ -436,8 +442,20 @@
     if(!EL.timer){ EL.timer = setInterval(tickOtpResend, 1000); }
   }
 
+  /*
+    The console gets the whole error, always.
+
+    Firebase’s codes are the only thing that separates "your number is
+    wrong" from "this domain is not on the project’s allowlist", and the
+    card can only ever show one friendly sentence. Swallowing the code
+    turned a one-line fix into an afternoon, so it is printed here and
+    shown in the card for the ones nobody can guess from the wording.
+  */
   function otpError(err){
     var code = (err && err.code) || "";
+    try{
+      console.error("[lume auth] phone sign-in failed:", code || err, err && err.message);
+    }catch(e){}
     switch(code){
       case "auth/invalid-verification-code": return "That OTP didn’t match. Check the SMS and type it again.";
       case "auth/code-expired":              return "That OTP has expired. Ask for a new one.";
@@ -446,9 +464,15 @@
       case "auth/quota-exceeded":            return "We can’t send an OTP right now. Please try again in a few minutes, or message us on WhatsApp.";
       case "auth/too-many-requests":         return "Too many attempts from this device. Please wait a few minutes and try again.";
       case "auth/network-request-failed":    return "Network connection failed. Please check your internet and try again.";
+      case "auth/operation-not-allowed":     return "Phone sign-in is switched off for this site. (auth/operation-not-allowed — enable the Phone provider in Firebase.)";
+      case "auth/unauthorized-domain":       return "This website address is not allowed to sign people in. (auth/unauthorized-domain — add " + here() + " to Firebase’s authorised domains.)";
       case "auth/captcha-check-failed":
-      case "auth/internal-error":            return "We couldn’t run the security check. Reload the page and try once more.";
-      default: return "We could not send the OTP just now. Please try again in a moment.";
+      case "auth/internal-error":
+        /* Nearly always the domain: the SMS itself is fine, but reCAPTCHA
+           refuses to vouch for a host Firebase has not been told about.
+           An ad blocker eating www.google.com/recaptcha does it too. */
+        return "We couldn’t run the security check for " + here() + ". (" + code + ") Reload and try once more — if it keeps happening, this address needs adding to Firebase’s authorised domains.";
+      default: return "We could not send the OTP just now. Please try again in a moment." + (code ? " (" + code + ")" : "");
     }
   }
 
