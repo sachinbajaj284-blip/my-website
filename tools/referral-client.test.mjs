@@ -377,32 +377,30 @@ await atest("a counted claim is marked and never asked again", async () => {
   assert.equal(fetch.calls.length, 1);
 });
 
-await atest("claimWithPhone offers verification and claims again on success", async () => {
-  const fetch = claimFetch([
-    { ok: true, counted: false, needs_phone: true },
-    { ok: true, counted: true, needs_phone: false }
-  ]);
+await atest("a claim that needs a number never opens the phone card", async () => {
+  // It used to: sign in with an email code, finish the quiz, and be
+  // asked for a mobile number and an SMS on the way to your result.
+  // Two verifications for one sign-in, and the second one cannot even
+  // finish without Firebase's paid plan.
+  const fetch = claimFetch([{ ok: true, counted: false, needs_phone: true }]);
   const account = signedIn("friend");
   let asked = 0;
   account.verifyPhone = () => { asked += 1; return Promise.resolve(true); };
 
   const { api } = load({ search: "?ref=AARA7K2P", account, fetch });
   const answer = await api.claimWithPhone("snapshot");
-  assert.equal(asked, 1);
-  assert.equal(answer.counted, true);
+
+  assert.equal(asked, 0, "nobody should be asked for a number mid-quiz");
+  assert.equal(answer.counted, false, "the referral simply does not count yet");
+  assert.equal(fetch.calls.length, 1, "one claim, no retry");
 });
 
-await atest("declining the SMS is taken as a no", async () => {
-  // The friend is being asked for twenty seconds of work towards someone
-  // else's ₹50. Asked once; a no is a no.
-  const fetch = claimFetch([{ ok: true, counted: false, needs_phone: true }]);
+await atest("a claim that needs no number still counts", async () => {
+  const fetch = claimFetch([{ ok: true, counted: true, needs_phone: false }]);
   const account = signedIn("friend");
-  account.verifyPhone = () => Promise.resolve(false);
-
   const { api } = load({ search: "?ref=AARA7K2P", account, fetch });
   const answer = await api.claimWithPhone("snapshot");
-  assert.equal(answer.counted, false);
-  assert.equal(fetch.calls.length, 1, "no second claim, and no nagging");
+  assert.equal(answer.counted, true);
 });
 
 await atest("a page with no auth module cannot ask, and does not fail", async () => {
@@ -412,6 +410,23 @@ await atest("a page with no auth module cannot ask, and does not fail", async ()
   const answer = await api.claimWithPhone("snapshot");
   assert.equal(answer.needsPhone, true);
   assert.equal(fetch.calls.length, 1);
+});
+
+await atest("claimWithPhone still hands back the friend's offer", async () => {
+  /*
+    The path the quiz pages actually call. It lost its phone-card detour
+    when sign-in became an email code; the offer must have survived that,
+    because announcing it is the only thing claimWithPhone now adds over
+    claim(). There is no document in this harness, so the bar does not
+    render — what is pinned here is that the answer comes back intact
+    and nothing throws on the way.
+  */
+  const fetch = claimFetch([{ ok: true, counted: true, needs_phone: false,
+    offer: { code: "FRIEND100", amount: 100 } }]);
+  const { api } = load({ search: "?ref=AARA7K2P", account: signedIn("friend"), fetch });
+  const answer = await api.claimWithPhone("snapshot");
+  assert.equal(answer.counted, true);
+  assert.equal(answer.offer.code, "FRIEND100");
 });
 
 await atest("a counted claim carries the friend's own offer", async () => {

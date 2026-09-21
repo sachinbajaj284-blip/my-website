@@ -108,13 +108,21 @@ module.exports = async function handler(req, res){
   */
   const uid = String(decoded.uid || "");
   const email = decoded.email_verified ? String(decoded.email || "").trim().toLowerCase() : "";
+  /*
+    Firebase only puts phone_number on a token after an SMS code came
+    back, so the claim IS the verification — the same standing the
+    email gets from a clicked link. It matters most for orders placed
+    before accounts existed, which carry no uid but do carry the number
+    the client typed at checkout.
+  */
+  const phone = String(decoded.phone_number || "").trim();
 
-  if(!uid && !email){
-    return json(res, 403, { ok: false, code: "NO_EMAIL", error: "Your account has no verified email on file." });
+  if(!uid && !email && !phone){
+    return json(res, 403, { ok: false, code: "NO_EMAIL", error: "Your account has no verified number or email on file." });
   }
 
   try{
-    const access = await findPaidEntitlements({ uid, email });
+    const access = await findPaidEntitlements({ uid, email, phone });
 
     /*
       Nothing found and the email was never confirmed: verifying it opens
@@ -122,7 +130,7 @@ module.exports = async function handler(req, res){
       purchases" that the person cannot act on. Still a 403 with the same
       code, so the existing UI keeps showing its verification help.
     */
-    if(!access.length && !decoded.email_verified){
+    if(!access.length && !decoded.email_verified && !phone){
       return json(res, 403, { ok: false, code: "EMAIL_NOT_VERIFIED", error: "Please check your email first. Tap the link we sent — it may be in your Spam folder — then try again." });
     }
 

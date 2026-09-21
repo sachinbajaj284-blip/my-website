@@ -347,28 +347,33 @@
   }
 
   /*
-     Claim, and if the only thing standing in the way is a verified
-     number, offer to get one and claim again.
+     Claim, and stop there.
 
-     The friend is being asked to do twenty seconds of work for somebody
-     else's ₹50, so this is asked once, after their result is already on
-     screen, and a "no" is taken as a no — claim() is not retried and
-     nothing nags. Pages without lume-auth.js simply cannot ask, and that
-     is a quiet no-op rather than an error.
+     This used to open the phone-verification card when a claim came
+     back needing a number — which meant somebody who had just signed in
+     with their name, email and a code was immediately asked for a
+     mobile number and an SMS. Two verifications for one sign-in reads as
+     a site that cannot make up its mind, and since phone auth needs
+     Firebase's Blaze plan, the card could not finish even when they
+     said yes: a dead end, mid-quiz, right after the result they came
+     for.
+
+     So the claim is made and its answer is returned as-is. A referral
+     that needs a number simply does not count yet — refer.html still
+     offers the number explicitly, for anyone who has gone looking for
+     their reward — and nothing interrupts the person who was only here
+     to see their result.
+
+     The name is kept because two pages call it. It is now claim() plus
+     one thing: when the referral lands, the friend is told about their
+     own ₹100. That is the opposite of the interruption removed above —
+     it is not asking them for anything, it is giving them something,
+     and it appears under a result they already have.
   */
   function claimWithPhone(event){
     return claim(event).then(function(answer){
-      if(!answer || !answer.needsPhone){ announce(answer); return answer; }
-      if(!window.lumeAccount || typeof window.lumeAccount.verifyPhone !== "function") return answer;
-
-      return window.lumeAccount.verifyPhone().then(function(verified){
-        if(!verified) return answer;
-        // The token now carries the number, so the same claim can win.
-        return claim(event).then(function(second){
-          announce(second);
-          return second;
-        });
-      }).catch(function(){ return answer; });
+      announce(answer);
+      return answer;
     });
   }
 

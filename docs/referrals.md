@@ -116,13 +116,21 @@ question nobody asked. **Set `LUME_PHONE_SALT`** — without it the space
 of Indian mobile numbers is small enough to enumerate, and the hash is
 barely a hash. The code warns once per process if it is missing.
 
-### What this costs
+### Nobody is asked for a number mid-quiz any more
 
-The friend is being asked for twenty seconds of work towards *somebody
-else's* ₹50. This will reduce referral conversion, and possibly by a
-lot. It is asked once, after their result is already on screen, and a
-"no" is taken as a no — `claimWithPhone()` does not retry and nothing
-nags.
+`claimWithPhone()` used to open the phone-verification card when a claim
+came back needing a number. That ended when sign-in became an email and
+a code: somebody who had just verified themselves one way was
+immediately asked to do it again another way, and — since phone auth
+needs the Blaze plan — the card could not finish even if they agreed.
+A dead end, mid-quiz, right after the result they came for.
+
+It is now exactly `claim()`. A referral that needs a number does not
+count yet, and `refer.html` still offers **Verify my number** to anyone
+who has gone looking for their reward. That button needs Blaze to work;
+until then the verified-number rule below means referrals do not pay
+out. If you would rather they paid out without it, the rule to relax is
+`requiresPhone()` in `api/_lib/referrals.js`.
 
 A claim blocked on a missing phone is deliberately **not** marked as
 claimed locally, unlike every other refusal, because it is the one
@@ -330,8 +338,12 @@ ids, so a renamed element fails there rather than silently in a browser.
 ## The friend's half
 
 The referrer earns ₹50; the friend gets **₹100 off** their first paid
-report or counselling session. Without it this was half a programme —
-and sharper still since we started asking the friend for an SMS code.
+report or counselling session. Without it this was half a programme: the
+friend did the thing the ₹50 was paid for and got nothing at all.
+
+They are asked for nothing in return — the mid-quiz SMS prompt is gone
+(see the phone gate above), so the only thing that ever reaches them is
+this.
 
 It is the existing coupon engine, not a second discount path.
 `FRIEND100` is an ordinary catalogue coupon (`api/_lib/coupons.js`) with
