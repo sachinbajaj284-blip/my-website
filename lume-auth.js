@@ -12,18 +12,19 @@
      account layer at all.
 
      Rather than copy a sign-in form onto the pages that lack it, this
-     is the one place that knows how to get a signed-in user:
+     is the one place that knows how to get a signed-in user — and, since
+     the sign-in is a mobile number and an OTP, the only place:
 
        window.lumeAccount.ready()    -> Promise<user|null>  once known
        window.lumeAccount.current()  -> user|null
-       window.lumeAccount.prompt()   -> opens whatever sign-in UI exists
+       window.lumeAccount.prompt()   -> opens the sign-in form below
        window.lumeAccount.onSignIn(fn) -> called once, when a user appears
        window.lumeAccount.token()    -> Promise<idToken|"">
 
-     Where the page already has its own modal, that is what opens —
-     this does not replace a working sign-in flow, it just gives the
-     checkout one number to call. Pages without one get the fallback
-     form below.
+     The form it opens is the one below, on every page. The three pages
+     that used to run their own email-and-password modal open this
+     instead: their buttons call openAuth(), and this file claims that
+     name once it loads.
 
      Nothing here runs on page load. Firebase is imported the first
      time an account is actually needed, which on most pages is never.
@@ -137,22 +138,36 @@
   }
 
   /* ---------------------------------------------------------- prompt --
-     Opens the page's own sign-in UI when it has one, so a client sees
-     the form they'd see anywhere else on that page. Only pages with no
-     sign-in of their own fall through to the form below. */
+     One sign-in for the whole site, and it is the phone one below.
+
+     This used to hand off to whatever sign-in a page had of its own,
+     which meant three pages asked for an email and a password while the
+     rest asked for a number. Signing in is now the same three steps
+     everywhere — name, number, OTP — so there is nothing left to hand
+     off to. `openAuth` is claimed below for the same reason: every
+     Login / Create Account button on those pages already calls it. */
   function prompt(mode){
-    if(typeof window.openAuth === "function"){
-      try{ window.openAuth(mode || "signup"); return; }catch(err){}
-    }
     openFallback(mode || "signup");
   }
 
   /* ============================================================
-     Fallback sign-in / sign-up form
+     Sign in / sign up — name, mobile number, OTP
 
-     Only used on pages that have no auth UI of their own. Deliberately
-     small: an account here exists so a purchase has an owner, so it
-     asks for the least that makes that true.
+     The account a purchase belongs to is now the phone number that
+     bought it. That is the field every other part of this site already
+     keys on: entitlements are looked up by phone, coupons count "one
+     per customer" by phone, and a session is delivered by calling one.
+     An email address was an extra thing to remember that none of that
+     used ever needed.
+
+     So there is no password here and no separate sign-up: a number
+     either has an account behind it or gets one the moment the OTP
+     checks out, and the person never has to know which of the two they
+     were. The name is asked once — on the way in, or straight after a
+     first OTP if they arrived through "Sign in".
+
+     Firebase needs an invisible reCAPTCHA to send an SMS at all, which
+     is why there is a container div here doing nothing visible.
      ============================================================ */
   var EL = {};
 
@@ -172,14 +187,26 @@
 ".la-field label{display:block;font-size:.74rem;font-weight:800;letter-spacing:.3px;text-transform:uppercase;color:#56657d;margin-bottom:5px}",
 ".la-field input{width:100%;box-sizing:border-box;padding:11px 13px;border:1.5px solid #E3E9F2;border-radius:12px;font-size:.94rem;font-family:inherit;color:#102033;background:#FBFCFE}",
 ".la-field input:focus{outline:0;border-color:#0D1B40;background:#fff}",
+/* The phone box reads as one field with the +91 that never changes. */
+".la-tel{display:flex;align-items:stretch;border:1.5px solid #E3E9F2;border-radius:12px;background:#FBFCFE;overflow:hidden}",
+".la-tel:focus-within{border-color:#0D1B40;background:#fff}",
+".la-tel span{display:flex;align-items:center;padding:0 10px 0 13px;font-size:.94rem;font-weight:700;color:#56657d;border-right:1.5px solid #E3E9F2}",
+".la-tel input{border:0;border-radius:0;background:transparent}",
+".la-tel input:focus{background:transparent}",
+/* The code itself: wide spacing so a 6-digit SMS code is easy to check. */
+"#laOtp{letter-spacing:.42em;font-size:1.12rem;font-weight:800;text-align:center}",
 ".la-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;border:0;border-radius:999px;font-size:.94rem;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:10px}",
 ".la-btn.gold{background:linear-gradient(135deg,#C9933A,#E8B95A);color:#0D1B40;box-shadow:0 10px 26px rgba(201,147,58,.32)}",
 ".la-btn.gold:disabled{opacity:.6;cursor:default;box-shadow:none}",
 ".la-alt{background:none;border:0;width:100%;font-family:inherit;font-size:.84rem;color:#33425c;cursor:pointer;padding:6px}",
 ".la-alt b{color:#0D1B40}",
+".la-alt:disabled{opacity:.55;cursor:default}",
 ".la-err{margin:0 0 12px;padding:10px 12px;border-radius:11px;background:#FDECEC;color:#933;font-size:.82rem;line-height:1.45;display:none}",
 ".la-err.on{display:block}",
 ".la-note{margin:12px 0 0;font-size:.72rem;line-height:1.5;color:#8493ab;text-align:center}",
+".la-sent{margin:0 0 12px;padding:10px 12px;border-radius:11px;background:#E9F7F0;color:#186A4B;font-size:.82rem;line-height:1.45;display:none}",
+".la-sent.on{display:block}",
+".la-sent b{white-space:nowrap}",
 /* The "check your inbox" panel. Shares the card, so it reads as the next
    step of the same flow rather than a different screen. */
 ".lv-mark{width:48px;height:48px;margin:0 auto 12px;border-radius:50%;background:linear-gradient(135deg,#0A6E6E,#12A3A3);display:flex;align-items:center;justify-content:center;font-size:1.5rem}",
@@ -221,16 +248,22 @@
         '<div class="la-hd">' +
           '<button class="la-x" type="button" aria-label="Close">✕</button>' +
           '<h3 class="la-title">Create your Lume Live account</h3>' +
-          '<p class="la-sub">Your report, session and receipts stay with your account — on any device.</p>' +
+          '<p class="la-sub">Your report, session and receipts stay with your number — on any device.</p>' +
         '</div>' +
         '<div class="la-body">' +
           '<p class="la-err"></p>' +
-          '<div class="la-field la-name-field"><label for="laName">Full name</label><input id="laName" type="text" autocomplete="name"></div>' +
-          '<div class="la-field"><label for="laEmail">Email</label><input id="laEmail" type="email" autocomplete="email"></div>' +
-          '<div class="la-field"><label for="laPassword">Password</label><input id="laPassword" type="password" autocomplete="current-password"></div>' +
-          '<button class="la-btn gold la-submit" type="button">Create account</button>' +
-          '<button class="la-alt" type="button">Already have an account? <b>Sign in</b></button>' +
-          '<p class="la-note">We only use this to deliver what you paid for.</p>' +
+          '<p class="la-sent"></p>' +
+          '<div class="la-field la-name-field"><label for="laName">Full name</label><input id="laName" type="text" autocomplete="name" placeholder="Your name"></div>' +
+          '<div class="la-field la-phone-field"><label for="laPhone2">Mobile number</label>' +
+            '<div class="la-tel"><span>+91</span><input id="laPhone2" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="98765 43210" maxlength="15"></div></div>' +
+          '<div class="la-field la-otp-field" style="display:none"><label for="laOtp">6-digit OTP</label>' +
+            '<input id="laOtp" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="••••••" maxlength="6"></div>' +
+          '<button class="la-btn gold la-submit" type="button">Send OTP</button>' +
+          '<button class="la-alt la-resend" type="button" style="display:none">Didn’t get it? <b>Send again</b></button>' +
+          '<button class="la-alt la-edit" type="button" style="display:none">Wrong number? <b>Change it</b></button>' +
+          '<button class="la-alt la-signout" type="button" style="display:none">Not you? <b>Sign out</b></button>' +
+          '<p class="la-note">We send one SMS to confirm it’s you. No password to remember, no marketing.</p>' +
+          '<div class="la-captcha"></div>' +
         '</div>' +
       '</div>';
     document.body.appendChild(o);
@@ -238,50 +271,130 @@
     EL.title = o.querySelector(".la-title");
     EL.sub = o.querySelector(".la-sub");
     EL.err = o.querySelector(".la-err");
+    EL.sent = o.querySelector(".la-sent");
     EL.nameField = o.querySelector(".la-name-field");
+    EL.phoneField = o.querySelector(".la-phone-field");
+    EL.otpField = o.querySelector(".la-otp-field");
     EL.name = o.querySelector("#laName");
-    EL.email = o.querySelector("#laEmail");
-    EL.password = o.querySelector("#laPassword");
+    EL.phone = o.querySelector("#laPhone2");
+    EL.otp = o.querySelector("#laOtp");
     EL.submit = o.querySelector(".la-submit");
-    EL.alt = o.querySelector(".la-alt");
+    EL.resend = o.querySelector(".la-resend");
+    EL.edit = o.querySelector(".la-edit");
+    EL.signout = o.querySelector(".la-signout");
+    EL.captcha = o.querySelector(".la-captcha");
 
     o.querySelector(".la-x").addEventListener("click", closeFallback);
     o.addEventListener("click", function(e){ if(e.target === o){ closeFallback(); } });
-    EL.alt.addEventListener("click", function(){ openFallback(EL.mode === "signup" ? "signin" : "signup"); });
     EL.submit.addEventListener("click", submit);
-    [EL.name, EL.email, EL.password].forEach(function(input){
+    EL.resend.addEventListener("click", function(){ sendOtp(true); });
+    EL.edit.addEventListener("click", function(){
+      if(EL.pendingPhone && !EL.phone.value){ EL.phone.value = String(EL.pendingPhone).replace(/\D/g, "").slice(-10); }
+      showStep("phone");
+    });
+    EL.signout.addEventListener("click", signOutNow);
+    [EL.name, EL.phone, EL.otp].forEach(function(input){
       input.addEventListener("keydown", function(e){ if(e.key === "Enter"){ submit(); } });
     });
+    // Six digits is the whole code, so verify as soon as they are there
+    // rather than asking for a tap the SMS autofill has already earned.
+    EL.otp.addEventListener("input", function(){
+      var digits = String(EL.otp.value || "").replace(/\D/g, "").slice(0, 6);
+      if(EL.otp.value !== digits){ EL.otp.value = digits; }
+      if(digits.length === 6 && !EL.submit.disabled){ submit(); }
+    });
+  }
+
+  /* Firebase wants E.164. Indian numbers arrive as ten digits, with a
+     leading zero, or already prefixed, and all three are the same number
+     to the person typing. */
+  function toE164(raw){
+    var digits = String(raw || "").replace(/\D/g, "");
+    if(digits.length < 10){ return ""; }
+    return "+91" + digits.slice(-10);
+  }
+
+  function prettyNumber(e164){
+    var d = String(e164 || "").replace(/\D/g, "").slice(-10);
+    return d ? "+91 " + d.slice(0, 5) + " " + d.slice(5) : "";
+  }
+
+  /* One card, three steps: the number, the code, and — only for someone
+     we have never met — their name. Sign-in and sign-up are the same
+     three steps, because a number either has an account behind it or
+     gets one; the person should not have to know which. */
+  function showStep(step){
+    EL.step = step;
+    var onPhone = step === "phone";
+    var onCode  = step === "code";
+    var onName  = step === "name";
+    var onAcct  = step === "account";
+
+    EL.phoneField.style.display = onPhone ? "" : "none";
+    EL.otpField.style.display   = onCode ? "" : "none";
+    EL.nameField.style.display  = (onName || (onPhone && EL.mode === "signup")) ? "" : "none";
+    EL.resend.style.display     = onCode ? "" : "none";
+    EL.edit.style.display       = onCode ? "" : "none";
+    EL.signout.style.display    = onAcct ? "" : "none";
+
+    if(onPhone){
+      EL.title.textContent = EL.mode === "signup" ? "Create your Lume Live account" : "Sign in to continue";
+      EL.sub.textContent = EL.mode === "signup"
+        ? "Your report, session and receipts stay with your number — on any device."
+        : "Enter your mobile number. We’ll send you an OTP.";
+      EL.submit.textContent = "Send OTP";
+      showSent("");
+    } else if(onCode){
+      EL.title.textContent = "Enter the OTP";
+      EL.sub.textContent = "It usually arrives within a few seconds.";
+      EL.submit.textContent = "Verify and continue";
+    } else if(onName){
+      EL.title.textContent = "One last thing";
+      EL.sub.textContent = "What should we call you?";
+      EL.submit.textContent = "Finish";
+      showSent("");
+    } else if(onAcct){
+      var u = activeUser();
+      EL.title.textContent = "You’re signed in";
+      EL.sub.textContent = (u && u.displayName) ? u.displayName : "Your purchases follow this number.";
+      EL.submit.textContent = "Done";
+      showSent(u && u.phoneNumber
+        ? "Signed in as <b>" + esc(prettyNumber(u.phoneNumber)) + "</b>"
+        : (u && u.email ? "Signed in as <b>" + esc(u.email) + "</b>" : ""));
+    }
+
+    showError("");
+    EL.submit.disabled = false;
+    setTimeout(function(){
+      try{
+        if(onCode){ EL.otp.focus(); }
+        else if(onName){ EL.name.focus(); }
+        else if(EL.mode === "signup"){ EL.name.focus(); }
+        else { EL.phone.focus(); }
+      }catch(err){}
+    }, 60);
   }
 
   function openFallback(mode){
     ensureModal();
-    // The verify panel replaces the form in the same card, so re-opening
-    // the form has to put it back — otherwise "Sign in" from that panel
-    // opens an empty card.
+    // The verify panels replace the form in the same card, so re-opening
+    // the form has to put it back — otherwise this opens an empty card.
     if(VER.body){ VER.body.style.display = "none"; }
     if(PH.body){ PH.body.style.display = "none"; }
     EL.body = EL.body || EL.overlay.querySelector(".la-body:not(.lv-body)");
     EL.body.style.display = "";
     EL.mode = mode === "signin" ? "signin" : "signup";
-    var isUp = EL.mode === "signup";
-    EL.title.textContent = isUp ? "Create your Lume Live account" : "Sign in to continue";
-    EL.sub.textContent = isUp
-      ? "Your report, session and receipts stay with your account — on any device."
-      : "Welcome back. Sign in to complete your payment.";
-    EL.nameField.style.display = isUp ? "" : "none";
-    EL.submit.textContent = isUp ? "Create account" : "Sign in";
-    EL.alt.innerHTML = isUp
-      ? "Already have an account? <b>Sign in</b>"
-      : "New to Lume Live? <b>Create an account</b>";
-    EL.password.setAttribute("autocomplete", isUp ? "new-password" : "current-password");
-    showError("");
+    EL.otp.value = "";
+    /* The same button says Login and then Account. Re-asking a signed-in
+       client for the number they signed in with reads as being logged
+       out, so they get told who they are and how to leave instead. */
+    showStep(activeUser() ? "account" : "phone");
     EL.overlay.classList.add("la-open");
-    setTimeout(function(){ (isUp ? EL.name : EL.email).focus(); }, 60);
   }
 
   function closeFallback(){
     if(EL.overlay){ EL.overlay.classList.remove("la-open"); }
+    stopResendTimer();
   }
 
   function showError(message){
@@ -290,69 +403,177 @@
     EL.err.classList.toggle("on", Boolean(message));
   }
 
-  function messageFor(error){
-    switch(error && error.code){
-      case "auth/email-already-in-use": return "An account already exists for this email. Please sign in instead.";
-      case "auth/invalid-email":        return "Please enter a valid email address.";
-      case "auth/weak-password":        return "Choose a stronger password with at least 6 characters.";
-      case "auth/invalid-credential":
-      case "auth/user-not-found":
-      case "auth/wrong-password":       return "The email or password is incorrect.";
-      case "auth/too-many-requests":    return "Too many attempts. Please wait a little while and try again.";
-      case "auth/network-request-failed": return "Network connection failed. Please check your internet and try again.";
-      default: return "We could not complete your account request. Please try again.";
+  function showSent(html){
+    if(!EL.sent){ return; }
+    EL.sent.innerHTML = html || "";
+    EL.sent.classList.toggle("on", Boolean(html));
+  }
+
+  /* An SMS costs money and Firebase rate-limits it hard, so a second tap
+     30 seconds in has to read as "not yet" rather than as a dead button.
+
+     Named apart from the email panel's tickResend below: two function
+     declarations of one name in this scope is not two functions, it is
+     the second one, and the countdown here silently never ran. */
+  var OTP_COOLDOWN_MS = 45 * 1000;
+  var lastOtpAt = 0;
+
+  function stopResendTimer(){
+    if(EL.timer){ clearInterval(EL.timer); EL.timer = null; }
+  }
+
+  function tickOtpResend(){
+    if(!EL.resend){ return; }
+    var left = Math.max(0, OTP_COOLDOWN_MS - (Date.now() - lastOtpAt));
+    if(left <= 0){
+      EL.resend.disabled = false;
+      EL.resend.innerHTML = "Didn’t get it? <b>Send again</b>";
+      stopResendTimer();
+      return;
+    }
+    EL.resend.disabled = true;
+    EL.resend.textContent = "You can ask for another OTP in " + Math.ceil(left / 1000) + "s";
+    if(!EL.timer){ EL.timer = setInterval(tickOtpResend, 1000); }
+  }
+
+  function otpError(err){
+    var code = (err && err.code) || "";
+    switch(code){
+      case "auth/invalid-verification-code": return "That OTP didn’t match. Check the SMS and type it again.";
+      case "auth/code-expired":              return "That OTP has expired. Ask for a new one.";
+      case "auth/invalid-phone-number":      return "That doesn’t look like a valid mobile number.";
+      case "auth/missing-phone-number":      return "Please enter your mobile number.";
+      case "auth/quota-exceeded":            return "We can’t send an OTP right now. Please try again in a few minutes, or message us on WhatsApp.";
+      case "auth/too-many-requests":         return "Too many attempts from this device. Please wait a few minutes and try again.";
+      case "auth/network-request-failed":    return "Network connection failed. Please check your internet and try again.";
+      case "auth/captcha-check-failed":
+      case "auth/internal-error":            return "We couldn’t run the security check. Reload the page and try once more.";
+      default: return "We could not send the OTP just now. Please try again in a moment.";
     }
   }
 
   function submit(){
-    var isUp = EL.mode === "signup";
+    if(EL.step === "account"){ return closeFallback(); }
+    if(EL.step === "code"){ return confirmOtp(); }
+    if(EL.step === "name"){ return saveName(); }
+    return sendOtp(false);
+  }
+
+  function sendOtp(isResend){
+    if(isResend && Math.max(0, OTP_COOLDOWN_MS - (Date.now() - lastOtpAt)) > 0){ return; }
+
     var name = (EL.name.value || "").trim();
-    var email = (EL.email.value || "").trim();
-    var password = EL.password.value || "";
+    // The number is what the account IS, so it is asked for first and the
+    // name is carried along rather than gating the SMS.
+    if(EL.mode === "signup" && !name){ return showError("Please enter your name."); }
 
-    if(isUp && !name){ return showError("Please enter your name."); }
-    if(!email){ return showError("Please enter your email address."); }
-    if(!password){ return showError("Please enter a password."); }
-    if(isUp && password.length < 6){ return showError("Choose a password with at least 6 characters."); }
+    // On the number step the field is the truth — otherwise "Change it",
+    // a new number, "Send OTP" would quietly text the old one. A resend
+    // from the code step has no field on screen, so it uses what was sent.
+    var e164 = toE164(EL.step === "code" ? (EL.pendingPhone || EL.phone.value) : EL.phone.value);
+    if(!e164){ return showError("Please enter your 10-digit mobile number."); }
 
+    EL.pendingName = name;
+    EL.pendingPhone = e164;
     showError("");
     EL.submit.disabled = true;
-    EL.submit.textContent = isUp ? "Creating your account…" : "Signing you in…";
+    EL.submit.textContent = "Sending OTP…";
 
     ensureAuth().then(function(auth){
       watch(auth);
-      if(!isUp){
-        return authMod.signInWithEmailAndPassword(auth, email, password);
+      /* A fresh verifier per attempt. A reCAPTCHA that has already been
+         solved cannot be reused, and re-rendering into the same div is
+         what the SDK expects. */
+      if(EL.verifier){ try{ EL.verifier.clear(); }catch(err){} }
+      EL.captcha.innerHTML = "";
+      EL.verifier = new authMod.RecaptchaVerifier(auth, EL.captcha, { size: "invisible" });
+      return authMod.signInWithPhoneNumber(auth, e164, EL.verifier);
+    }).then(function(confirmation){
+      EL.confirmation = confirmation;
+      lastOtpAt = Date.now();
+      EL.otp.value = "";
+      showStep("code");
+      showSent("OTP sent to <b>" + esc(prettyNumber(e164)) + "</b>");
+      tickOtpResend();
+    }).catch(function(err){
+      EL.submit.disabled = false;
+      EL.submit.textContent = EL.step === "code" ? "Verify and continue" : "Send OTP";
+      showError(otpError(err));
+    });
+  }
+
+  function confirmOtp(){
+    var code = String(EL.otp.value || "").replace(/\D/g, "");
+    if(code.length < 6){ return showError("Enter the 6-digit OTP from the SMS."); }
+    if(!EL.confirmation){ return showError("Please ask for a new OTP."); }
+
+    showError("");
+    EL.submit.disabled = true;
+    EL.submit.textContent = "Checking…";
+
+    EL.confirmation.confirm(code).then(function(result){
+      var user = (result && result.user) || activeUser();
+      currentUser = user || currentUser;
+      window.currentFirebaseUser = currentUser;
+      stopResendTimer();
+
+      // A name typed on the way in is kept; a returning client keeps the
+      // one already on the account. Only someone with neither is asked.
+      var wanted = EL.pendingName || "";
+      if(user && wanted && !user.displayName){
+        return authMod.updateProfile(user, { displayName: wanted }).catch(function(){}).then(done);
       }
-      return authMod.createUserWithEmailAndPassword(auth, email, password).then(function(result){
-        return authMod.updateProfile(result.user, { displayName: name }).then(function(){
-          // Sent, but never required to pay — a client who has not opened
-          // their inbox yet is still a client who wants to buy something.
-          // Whether it actually went is tracked rather than swallowed, so
-          // the panel below can say so instead of sending someone to look
-          // for an email that was never sent.
-          return authMod.sendEmailVerification(result.user)
-            .then(function(){ return true; })
-            .catch(function(){ return false; });
-        }).then(function(sent){ return { user: result.user, sent: sent }; });
-      });
-    }).then(function(outcome){
-      if(isUp){
-        // Created, signed in, and now told what to do about the email —
-        // which used to be nothing at all on this form.
-        currentUser = currentUser || (outcome && outcome.user) || null;
-        showVerifyHelp({
-          email: email,
-          sent: outcome ? outcome.sent : undefined
-        });
+      if(user && !user.displayName){
+        EL.name.value = "";
+        showStep("name");
         return;
       }
-      closeFallback();
+      return done();
+
+      function done(){
+        showSent("");
+        closeFallback();
+      }
     }).catch(function(err){
-      showError(messageFor(err));
-    }).then(function(){
       EL.submit.disabled = false;
-      EL.submit.textContent = isUp ? "Create account" : "Sign in";
+      EL.submit.textContent = "Verify and continue";
+      showError(otpError(err));
+    });
+  }
+
+  function signOutNow(){
+    EL.signout.disabled = true;
+    ensureAuth().then(function(auth){
+      return authMod.signOut(auth);
+    }).then(function(){
+      currentUser = null;
+      window.currentFirebaseUser = null;
+      EL.signout.disabled = false;
+      EL.mode = "signin";
+      EL.phone.value = "";
+      EL.pendingPhone = "";
+      EL.pendingName = "";
+      showStep("phone");
+    }).catch(function(){
+      EL.signout.disabled = false;
+      showError("We could not sign you out just now. Please try again.");
+    });
+  }
+
+  function saveName(){
+    var name = (EL.name.value || "").trim();
+    if(!name){ return showError("Please enter your name."); }
+    var user = activeUser();
+    if(!user){ closeFallback(); return; }
+
+    EL.submit.disabled = true;
+    EL.submit.textContent = "Saving…";
+    ensureAuth().then(function(){
+      return authMod.updateProfile(user, { displayName: name });
+    }).catch(function(){}).then(function(){
+      EL.submit.disabled = false;
+      EL.submit.textContent = "Finish";
+      closeFallback();
     });
   }
 
@@ -570,15 +791,6 @@
     PH.msg.className = "lv-msg" + (text ? " on " + (kind || "ok") : "");
   }
 
-  /* Firebase wants E.164. Indian numbers arrive as ten digits, with a
-     leading zero, or already prefixed, and all three are the same
-     number to the person typing. */
-  function toE164(raw){
-    var digits = String(raw || "").replace(/\D/g, "");
-    if(digits.length < 10){ return ""; }
-    return "+91" + digits.slice(-10);
-  }
-
   function buildPhonePanel(){
     if(PH.body){ return; }
     ensureModal();
@@ -750,6 +962,24 @@
     return (u && u.phoneNumber) || "";
   }
 
+  /*
+    Every page's Login and Create Account button already calls
+    openAuth(). Three pages define their own — an email-and-password
+    modal from before this existed — and this file is loaded after them,
+    so claiming the name here is what actually retires those forms. It
+    is re-claimed on DOMContentLoaded in case a page defines its own
+    later in the parse.
+  */
+  function claimOpenAuth(){
+    if(window.openAuth === openFallback){ return; }
+    window.openAuth = openFallback;
+  }
+  claimOpenAuth();
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", claimOpenAuth);
+  }
+  window.addEventListener("load", claimOpenAuth);
+
   window.lumeAccount = {
     ready: ready,
     current: function(){ return currentUser; },
@@ -757,6 +987,9 @@
     onSignIn: onSignIn,
     token: token,
     verifyPhone: verifyPhone,
+    // The same modal the page buttons open, for anything that wants it
+    // by name rather than through prompt().
+    open: openFallback,
     phone: phoneNumber,
     // Shown by the pages that run their own sign-up UI, so the guidance
     // after creating an account is the same everywhere.

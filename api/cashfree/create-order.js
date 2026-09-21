@@ -101,7 +101,11 @@ module.exports = async function handler(req, res){
   }
 
   const customer = body.customer || {};
-  const phone = String(customer.phone || "").replace(/\D/g, "").slice(-10);
+  // The account's number is the one Firebase sent an OTP to, so it is a
+  // better fallback than nothing at all — and on a checkout that never
+  // asked for a phone it is the only way to deliver what was bought.
+  const accountPhone = account ? String(account.phone || "") : "";
+  const phone = String(customer.phone || accountPhone || "").replace(/\D/g, "").slice(-10);
   // The account's email is a better fallback than a Lume Live inbox
   // address: it came from the token, and it is where this person already
   // expects to hear from us.

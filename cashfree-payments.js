@@ -365,7 +365,11 @@
     if(!user){
       return Promise.resolve({ ok:false, count:0, needsAuth:true, error:"Please sign in to restore your access." });
     }
-    if(!user.emailVerified){
+    /* An account created with an OTP carries a number Firebase itself
+       verified, which is the same proof a clicked email link gives and
+       the field the entitlement records are keyed on. Only the older
+       email-and-password accounts still have to check an inbox. */
+    if(!user.phoneNumber && !user.emailVerified){
       return Promise.resolve({ ok:false, count:0, needsVerification:true, error:"Please check your email first. Tap the link we sent — it may be in your Spam folder — then try again." });
     }
     var cfg = getConfig();
@@ -414,7 +418,7 @@
       else { notify("Please sign in on the Assessment page (lumelive.co.in/assessment.html), then come back here and tap Restore access again."); }
       return;
     }
-    if(!user.emailVerified){
+    if(!user.phoneNumber && !user.emailVerified){
       /*
         The dead end this used to be: a line of toast telling someone to
         find an email they never saw, with no way to send another and no
@@ -444,7 +448,7 @@
         notify("Access restored — you're all set on this device.");
         window.dispatchEvent(new CustomEvent("lume:access-restored"));
       } else {
-        notify("No completed payment found for your signed-in email. If you just paid, wait a minute and try again, or message us on WhatsApp.");
+        notify("No completed payment found for your account. If you just paid, wait a minute and try again, or message us on WhatsApp.");
       }
     });
   };
@@ -1024,6 +1028,10 @@
       if(account.user){
         if(!options.customerEmail && account.user.email){ options.customerEmail = account.user.email; }
         if(!options.customerName && account.user.displayName){ options.customerName = account.user.displayName; }
+        // The verified number the account was created with. It is what
+        // the receipt, the reminder and the session call all go to, so a
+        // checkout that never asked for a phone still has the right one.
+        if(!options.customerPhone && account.user.phoneNumber){ options.customerPhone = account.user.phoneNumber; }
       }
       renderLoading("Creating your secure order…");
       return createOrder(options, cfg, account.token);
