@@ -156,7 +156,12 @@
   }
 
   /* One fetch per page, however many callers ask. The share sheet, the
-     dashboard and a claim can all want this within the same second. */
+     dashboard and a claim can all want this within the same second.
+
+     Only a SUCCESS is kept. Caching a failure would mean a page that
+     failed once can never recover — the dashboard's "try again" button
+     would hand back the same rejected promise forever, and a student who
+     signs in after the first call would be told they have no code. */
   var pending = null;
 
   function ready(){
@@ -186,6 +191,13 @@
         });
       });
     }).catch(function(){ return ""; });
+
+    /* Forget anything that did not produce a code, so the next caller
+       retries rather than replaying the failure. */
+    pending = pending.then(function(code){
+      if(!code) pending = null;
+      return code;
+    });
 
     return pending;
   }

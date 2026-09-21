@@ -181,6 +181,34 @@ them. There is a test that keeps it that way.
 
 ---
 
+## refer.html — the dashboard
+
+`refer.html` is where a student finds their link, their code as a QR,
+and what they have earned. Reachable from the share sheet
+("See all your referrals →") and from the homepage footer.
+
+**`noindex, follow`.** It is a signed-in dashboard: there is nothing on
+it for a crawler, and an indexed page that only says "sign in" is thin
+content. That tag is also what keeps it out of `sitemap.xml`, which is
+generated from it — so the page adds no sitemap churn.
+
+**Every number on it is the server's.** `/api/referrals/code` is the only
+source; nothing is computed from a rule the browser thinks it knows. When
+the totals are missing, the reward line and the progress bar say nothing
+rather than guessing, because a page that says ₹50 while the ledger says
+₹0 is a support ticket, and these are numbers a student will hold us to.
+At the ceiling the page stops promising a reward it will not pay.
+
+The signed-out card is the default state in the markup, so a visitor with
+no JavaScript sees something correct rather than "Getting your link…"
+forever. A signed-in student sees it for a moment before the dashboard
+loads — that is the trade, and it is the right way round.
+
+Covered by `npm run refer:test`, which builds its DOM from the page's own
+ids, so a renamed element fails there rather than silently in a browser.
+
+---
+
 ## Operating it
 
 | | |
@@ -189,7 +217,7 @@ them. There is a test that keeps it that way.
 | Change what a referral is worth | `TIERS` in `api/_lib/referrals.js` (a table, so tiering it is an edit in one place) |
 | Change the cap | `CREDIT_CAP` |
 | Change the invite wording | `inviteMessage()` in `lume-referral.js` — shared with `refer.html` when it lands |
-| Tests | `npm run referrals:test` (ledger) and `npm run referrals:client:test` (browser) |
+| Tests | `npm run referrals:test` (ledger), `npm run referrals:client:test` (browser), `npm run refer:test` (dashboard) |
 
 The kill switch exists because this is the one feature on the site that
 gives money away. If something is being abused at 2am the answer should
@@ -201,21 +229,27 @@ be one environment variable, not a revert.
 
 Deliberately, and in roughly this order:
 
-1. **Spending the credit.** Minting a flat-discount coupon from
-   `credit_earned` through `api/_lib/coupons.js`, with the **7-day hold**
-   before credit becomes spendable so a burst can be clawed back. A
-   ledger that cannot spend cannot be drained while we watch it.
+1. **Spending the credit — now the blocking gap.** Minting a
+   flat-discount coupon from `credit_earned` through
+   `api/_lib/coupons.js`, with the **7-day hold** before credit becomes
+   spendable so a burst can be clawed back.
+
+   This was a reasonable thing to defer while the credit was invisible.
+   It is not any more: `refer.html` now shows a student a rupee figure,
+   and the page currently has to tell them to message us on WhatsApp so
+   we can apply it by hand. That is an honest answer and a bad one — it
+   is manual work per redemption, and it scales exactly as badly as the
+   programme succeeds.
 2. **Phone OTP on the referred account.** The single highest-leverage
    control left — it kills most throwaway-email farming. Nothing today
    checks how old the referred account is.
-3. **`refer.html`** — the dashboard: code, link, progress to the next
-   reward, who has joined.
-4. **The friend's side of the offer** (₹100 off their first paid
-   product), which is what makes this two-sided.
-5. **A referral entry point that is not a quiz result.** Today the only
-   way to reach the block is to finish a quiz and open the share sheet.
-   A student who wants to refer a week later has nowhere to go — that is
-   what `refer.html` is for.
+3. **The friend's side of the offer** (₹100 off their first paid
+   product), which is what makes this two-sided. Today the friend gets
+   nothing for arriving on a link, which is half a referral programme.
+4. **A "who joined" list on `refer.html`.** The page shows totals; it
+   cannot yet name the friends behind them, because `/api/referrals/code`
+   returns counts only. A student chasing the last ₹50 wants to know who
+   has not finished yet.
 
 `stream-selector.html` has no `lume-auth.js`, so a student cannot be
 signed in there, `ready()` returns `""`, and **the referral block never

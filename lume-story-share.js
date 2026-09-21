@@ -989,6 +989,8 @@ var CSS = [
 ".lsRefLink{display:block;width:100%;margin:10px 0 0;padding:9px 11px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.28);color:#fff;font:700 .78rem/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;text-align:center;overflow:hidden;text-overflow:ellipsis}",
 ".lsRefRow{display:flex;gap:8px;margin-top:9px}",
 ".lsRefRow .lsBtn{flex:1;padding:11px 8px;font-size:.82rem}",
+".lsRefMore{margin:10px 0 0;text-align:center;font-size:.79rem}",
+".lsRefMore a{color:#7ef0ad;font-weight:800;text-decoration:none}",
 ".lsToast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#fff;color:#0e1222;font:800 .85rem/1 inherit;padding:12px 18px;border-radius:999px;z-index:100000;box-shadow:0 12px 34px rgba(0,0,0,.35);opacity:0;transition:opacity .2s ease}",
 ".lsToast.on{opacity:1}",
 "@media (max-width:420px){.lsBox{padding:14px;border-radius:20px}.lsCanvas{width:56vw}}",
@@ -1162,6 +1164,17 @@ function referralBlock(box, d, code){
   row.appendChild(copy);
 
   wrap.appendChild(row);
+
+  /* The way back. The sheet only exists for a few seconds after a
+     result, and a student who wants to refer next week needs somewhere
+     that is not a quiz. */
+  var more = el("p", "lsRefMore",
+    '<a href="refer.html">' + (hi ? "अपने सारे referrals देखो →" : "See all your referrals →") + "</a>");
+  more.querySelector("a").addEventListener("click", function(){
+    track("referral_dashboard_click", { event_category:"viral_loop", event_label:(d.quiz || "") });
+  });
+  wrap.appendChild(more);
+
   box.appendChild(wrap);
   return wrap;
 }

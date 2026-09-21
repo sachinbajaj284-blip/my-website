@@ -46,17 +46,44 @@ function storage(initial){
 }
 
 // Load the module against a window we built, and hand back its API.
-function load({ search, store }){
+function load({ search, store, account, fetch }){
   const win = {
     location: { search: search || "", origin: "https://lumelive.co.in", pathname: "/start.html" },
     localStorage: store || storage(),
     URLSearchParams
   };
-  const sandbox = { window: win, URLSearchParams, fetch: () => Promise.reject(new Error("no network")), console };
+  if(account) win.lumeAccount = account;
+  const sandbox = {
+    window: win,
+    URLSearchParams,
+    fetch: fetch || (() => Promise.reject(new Error("no network"))),
+    console
+  };
   sandbox.globalThis = sandbox;
   vm.createContext(sandbox);
   vm.runInContext(SOURCE, sandbox);
   return { api: win.LumeReferral, win };
+}
+
+// A signed-in account, the shape lume-auth.js exposes.
+function signedIn(uid){
+  return {
+    ready: () => Promise.resolve({ uid }),
+    token: () => Promise.resolve("id-token"),
+    current: () => ({ uid }),
+    onSignIn(){}
+  };
+}
+
+function jsonResponse(body){
+  return Promise.resolve({ ok: true, json: () => Promise.resolve(body) });
+}
+
+// Objects that come back out of the vm carry that realm's prototype, so
+// assert.deepEqual would compare realms rather than values. Round-trip
+// through JSON to compare what we actually care about.
+function plain(value){
+  return value == null ? value : JSON.parse(JSON.stringify(value));
 }
 
 function stash(code, ts){
@@ -206,6 +233,95 @@ test("the invite does not mention the reward", () => {
     assert.equal(/₹|\brs\b|credit|cash/i.test(text), false,
       lang + " invite must not mention money: " + text);
   }
+});
+
+console.log("\nfetching the student's own code");
+
+// These are async, so they run after the synchronous tests above.
+async function atest(name, fn){
+  try{
+    await fn();
+    passed += 1;
+    console.log("  ✓ " + name);
+  }catch(err){
+    failed += 1;
+    console.log("  ✗ " + name + "\n      " + (err && err.message || err));
+  }
+}
+
+await atest("a signed-out visitor has no code and no request is made", async () => {
+  let calls = 0;
+  const { api } = load({
+    account: { ready: () => Promise.resolve(null), token: () => Promise.resolve(""), onSignIn(){} },
+    fetch: () => { calls += 1; return jsonResponse({}); }
+  });
+  assert.equal(await api.ready(), "");
+  assert.equal(calls, 0, "nothing to mint for nobody");
+});
+
+await atest("a fetched code and its stats are cached", async () => {
+  let calls = 0;
+  const { api } = load({
+    account: signedIn("u1"),
+    fetch: () => {
+      calls += 1;
+      return jsonResponse({ ok: true, code: "AARA7K2P", stats: { qualified: 2, credit_earned: 100 } });
+    }
+  });
+  assert.equal(await api.ready(), "AARA7K2P");
+  assert.equal(api.mine(), "AARA7K2P");
+  assert.deepEqual(plain(api.stats()), { qualified: 2, credit_earned: 100 });
+
+  // Second ask must be served from cache, not the network.
+  assert.equal(await api.ready(), "AARA7K2P");
+  assert.equal(calls, 1);
+});
+
+await atest("a failed fetch is not cached, so a retry can still work", async () => {
+  // The dashboard's "try again" button depends on this: caching the
+  // failure would hand back the same empty answer forever.
+  let calls = 0;
+  const { api } = load({
+    account: signedIn("u1"),
+    fetch: () => {
+      calls += 1;
+      return calls === 1
+        ? Promise.reject(new Error("offline"))
+        : jsonResponse({ ok: true, code: "AARA7K2P", stats: null });
+    }
+  });
+  assert.equal(await api.ready(), "");
+  assert.equal(await api.ready(), "AARA7K2P", "the retry must reach the network again");
+  assert.equal(calls, 2);
+});
+
+await atest("a non-2xx answer is also a retryable failure", async () => {
+  let calls = 0;
+  const { api } = load({
+    account: signedIn("u1"),
+    fetch: () => {
+      calls += 1;
+      return calls === 1
+        ? Promise.resolve({ ok: false, json: () => Promise.resolve({}) })
+        : jsonResponse({ ok: true, code: "AARA7K2P" });
+    }
+  });
+  assert.equal(await api.ready(), "");
+  assert.equal(await api.ready(), "AARA7K2P");
+});
+
+await atest("a cache minted for another account is dropped, not reused", async () => {
+  // Shared laptop: the second student must not get the first one's code.
+  const store = storage({
+    lumeRefMine: JSON.stringify({ code: "OTHER123", uid: "u1", stats: { qualified: 9 } })
+  });
+  const { api } = load({
+    account: signedIn("u2"),
+    store,
+    fetch: () => jsonResponse({ ok: true, code: "BHAV9M4Q", stats: { qualified: 0 } })
+  });
+  assert.equal(await api.ready(), "BHAV9M4Q");
+  assert.deepEqual(plain(api.stats()), { qualified: 0 }, "and the stale totals go with it");
 });
 
 console.log("");
