@@ -92,8 +92,10 @@ Three pages used to run their own email-and-password modal (`index.html`,
 `for-parents.html` and `internships.html` had no account layer at all.
 
 There is now one form, on every page: **full name, email address, 6-digit
-code**. The name is asked on the way in, or straight after the first code for
-someone who arrived through "Sign in". A returning address skips it entirely.
+code** — the same two fields whichever button was pressed, because Create
+account and Sign in lead to the same flow and a form that changes shape
+suggests they are different things. The name typed is the name the account
+keeps, so a name that went in wrong can be corrected by signing in again.
 
 Firebase has no email OTP — only a passwordless *link*, which has to be opened
 in the browser that asked for it and on a phone usually is not. So the code is
