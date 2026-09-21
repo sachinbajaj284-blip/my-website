@@ -1,0 +1,427 @@
+/*
+  Tests for the browser half of referrals — run with:
+    npm run referrals:client:test
+
+  lume-referral.js decides two things that are easy to get quietly wrong
+  and impossible to notice in production: which code a browser is
+  carrying, and what URL ends up inside the QR on a story card. Both are
+  pure string work over localStorage, so they need no DOM — just a fresh
+  module instance per case with storage we control.
+
+  The module is loaded in a vm rather than imported, because everything
+  it does happens once, on load, against whatever window it finds.
+*/
+
+import vm from "node:vm";
+import fs from "node:fs";
+import assert from "node:assert/strict";
+
+const SOURCE = fs.readFileSync(new URL("../lume-referral.js", import.meta.url), "utf8");
+
+let passed = 0;
+let failed = 0;
+
+function test(name, fn){
+  try{
+    fn();
+    passed += 1;
+    console.log("  ✓ " + name);
+  }catch(err){
+    failed += 1;
+    console.log("  ✗ " + name + "\n      " + (err && err.message || err));
+  }
+}
+
+// A localStorage that behaves, plus a switch to make it throw the way a
+// private window or a full quota does.
+function storage(initial){
+  const map = new Map(Object.entries(initial || {}));
+  return {
+    throws: false,
+    getItem(k){ if(this.throws) throw new Error("denied"); return map.has(k) ? map.get(k) : null; },
+    setItem(k, v){ if(this.throws) throw new Error("denied"); map.set(k, String(v)); },
+    removeItem(k){ if(this.throws) throw new Error("denied"); map.delete(k); },
+    _map: map
+  };
+}
+
+// Load the module against a window we built, and hand back its API.
+function load({ search, store, account, fetch }){
+  const win = {
+    location: { search: search || "", origin: "https://lumelive.co.in", pathname: "/start.html" },
+    localStorage: store || storage(),
+    URLSearchParams
+  };
+  if(account) win.lumeAccount = account;
+  const sandbox = {
+    window: win,
+    URLSearchParams,
+    fetch: fetch || (() => Promise.reject(new Error("no network"))),
+    console
+  };
+  sandbox.globalThis = sandbox;
+  vm.createContext(sandbox);
+  vm.runInContext(SOURCE, sandbox);
+  return { api: win.LumeReferral, win };
+}
+
+// A signed-in account, the shape lume-auth.js exposes.
+function signedIn(uid){
+  return {
+    ready: () => Promise.resolve({ uid }),
+    token: () => Promise.resolve("id-token"),
+    current: () => ({ uid }),
+    onSignIn(){}
+  };
+}
+
+function jsonResponse(body){
+  return Promise.resolve({ ok: true, json: () => Promise.resolve(body) });
+}
+
+// Objects that come back out of the vm carry that realm's prototype, so
+// assert.deepEqual would compare realms rather than values. Round-trip
+// through JSON to compare what we actually care about.
+function plain(value){
+  return value == null ? value : JSON.parse(JSON.stringify(value));
+}
+
+function stash(code, ts){
+  return { lumeRefInbound: JSON.stringify({ code, ts: ts == null ? Date.now() : ts }) };
+}
+
+console.log("\ninbound capture");
+
+test("a code in the URL is picked up", () => {
+  const { api } = load({ search: "?ref=AARA7K2P" });
+  assert.equal(api.inbound(), "AARA7K2P");
+});
+
+test("a code is normalised the way the server will read it", () => {
+  const { api } = load({ search: "?ref=aara-7k2p" });
+  assert.equal(api.inbound(), "AARA7K2P");
+});
+
+test("something too short to be a code is ignored", () => {
+  const { api } = load({ search: "?ref=AB" });
+  assert.equal(api.inbound(), "");
+});
+
+test("no parameter and no stash means no code", () => {
+  const { api } = load({ search: "" });
+  assert.equal(api.inbound(), "");
+});
+
+test("first touch wins — a second link does not steal the referral", () => {
+  const { api } = load({ search: "?ref=SECOND22", store: storage(stash("FIRST11")) });
+  assert.equal(api.inbound(), "FIRST11",
+    "the friend who actually got them here keeps the referral");
+});
+
+test("a stash older than the window is dropped", () => {
+  const stale = Date.now() - (31 * 24 * 60 * 60 * 1000);
+  const { api } = load({ search: "", store: storage(stash("OLD1234", stale)) });
+  assert.equal(api.inbound(), "");
+});
+
+test("a stash inside the window still counts", () => {
+  const recent = Date.now() - (29 * 24 * 60 * 60 * 1000);
+  const { api } = load({ search: "", store: storage(stash("NEW1234", recent)) });
+  assert.equal(api.inbound(), "NEW1234");
+});
+
+test("an expired stash does not block a fresh code", () => {
+  const stale = Date.now() - (31 * 24 * 60 * 60 * 1000);
+  const { api } = load({ search: "?ref=FRESH11", store: storage(stash("OLD1234", stale)) });
+  assert.equal(api.inbound(), "FRESH11");
+});
+
+test("forget() clears the stash", () => {
+  const { api } = load({ search: "?ref=AARA7K2P" });
+  api.forget();
+  assert.equal(api.inbound(), "");
+});
+
+console.log("\nstorage that refuses");
+
+test("a localStorage that throws does not take the page down", () => {
+  const store = storage();
+  store.throws = true;
+  // Loading is the risky part: capture() runs on load.
+  const { api } = load({ search: "?ref=AARA7K2P", store });
+  assert.equal(api.mine(), "");
+  assert.equal(api.stats(), null);
+  assert.equal(api.decorate("https://x.co/a"), "https://x.co/a");
+});
+
+test("a referral survives in memory when it cannot be written down", () => {
+  // Private window, blocked cookies, full quota. The referral is still
+  // real for the rest of this page view — and a quiz is usually finished
+  // on the page the link landed on, so it is still claimable.
+  const store = storage();
+  store.throws = true;
+  const { api } = load({ search: "?ref=AARA7K2P", store });
+  assert.equal(api.inbound(), "AARA7K2P");
+  api.forget();
+  assert.equal(api.inbound(), "", "and forgetting still forgets it");
+});
+
+test("corrupt JSON in storage is survivable", () => {
+  const { api } = load({ search: "", store: storage({ lumeRefInbound: "{not json" }) });
+  assert.equal(api.inbound(), "");
+});
+
+console.log("\ndecorating a share URL");
+
+const decorate = load({ search: "" }).api.decorate;
+
+test("a code is appended to a clean URL", () => {
+  assert.equal(decorate("https://x.co/a.html", "AARA7K2P"), "https://x.co/a.html?ref=AARA7K2P");
+});
+
+test("an existing query is preserved", () => {
+  assert.equal(decorate("https://x.co/a.html?lang=hi", "AARA7K2P"),
+    "https://x.co/a.html?lang=hi&ref=AARA7K2P");
+});
+
+test("a stale ref is replaced, not duplicated", () => {
+  // The shared-laptop case: the cache briefly holds the previous
+  // student's code and the fetched one has to win.
+  assert.equal(decorate("https://x.co/a.html?ref=OLD12345", "AARA7K2P"),
+    "https://x.co/a.html?ref=AARA7K2P");
+});
+
+test("a stale ref in the middle of a query is replaced in place", () => {
+  assert.equal(decorate("https://x.co/a.html?ref=OLD12345&lang=hi", "AARA7K2P"),
+    "https://x.co/a.html?lang=hi&ref=AARA7K2P");
+});
+
+test("no code means the URL comes back untouched", () => {
+  assert.equal(decorate("https://x.co/a.html", ""), "https://x.co/a.html");
+  assert.equal(decorate("https://x.co/a.html?ref=OLD12345", ""), "https://x.co/a.html?ref=OLD12345",
+    "with nothing to put there, an existing ref is left alone rather than stripped");
+});
+
+test("an empty URL stays empty", () => {
+  assert.equal(decorate("", "AARA7K2P"), "");
+  assert.equal(decorate(null, "AARA7K2P"), "");
+});
+
+test("decorating twice is stable", () => {
+  const once = decorate("https://x.co/a.html", "AARA7K2P");
+  assert.equal(decorate(once, "AARA7K2P"), once);
+});
+
+console.log("\nthe invite message");
+
+const invite = load({ search: "" }).api.inviteMessage;
+
+test("the link is in the message", () => {
+  assert.ok(invite("en", "https://x.co/a?ref=AARA7K2P").includes("https://x.co/a?ref=AARA7K2P"));
+  assert.ok(invite("hi", "https://x.co/a?ref=AARA7K2P").includes("https://x.co/a?ref=AARA7K2P"));
+});
+
+test("Hindi and English are actually different", () => {
+  assert.notEqual(invite("en", "u"), invite("hi", "u"));
+});
+
+test("the invite does not mention the reward", () => {
+  // A friend asked for a favour converts worse than a friend given
+  // something. The reward is the referrer's business.
+  for(const lang of ["en", "hi"]){
+    const text = invite(lang, "https://x.co/a");
+    assert.equal(/₹|\brs\b|credit|cash/i.test(text), false,
+      lang + " invite must not mention money: " + text);
+  }
+});
+
+console.log("\nfetching the student's own code");
+
+// These are async, so they run after the synchronous tests above.
+async function atest(name, fn){
+  try{
+    await fn();
+    passed += 1;
+    console.log("  ✓ " + name);
+  }catch(err){
+    failed += 1;
+    console.log("  ✗ " + name + "\n      " + (err && err.message || err));
+  }
+}
+
+await atest("a signed-out visitor has no code and no request is made", async () => {
+  let calls = 0;
+  const { api } = load({
+    account: { ready: () => Promise.resolve(null), token: () => Promise.resolve(""), onSignIn(){} },
+    fetch: () => { calls += 1; return jsonResponse({}); }
+  });
+  assert.equal(await api.ready(), "");
+  assert.equal(calls, 0, "nothing to mint for nobody");
+});
+
+await atest("a fetched code and its stats are cached", async () => {
+  let calls = 0;
+  const { api } = load({
+    account: signedIn("u1"),
+    fetch: () => {
+      calls += 1;
+      return jsonResponse({ ok: true, code: "AARA7K2P", stats: { qualified: 2, credit_earned: 100 } });
+    }
+  });
+  assert.equal(await api.ready(), "AARA7K2P");
+  assert.equal(api.mine(), "AARA7K2P");
+  assert.deepEqual(plain(api.stats()), { qualified: 2, credit_earned: 100 });
+
+  // Second ask must be served from cache, not the network.
+  assert.equal(await api.ready(), "AARA7K2P");
+  assert.equal(calls, 1);
+});
+
+await atest("a failed fetch is not cached, so a retry can still work", async () => {
+  // The dashboard's "try again" button depends on this: caching the
+  // failure would hand back the same empty answer forever.
+  let calls = 0;
+  const { api } = load({
+    account: signedIn("u1"),
+    fetch: () => {
+      calls += 1;
+      return calls === 1
+        ? Promise.reject(new Error("offline"))
+        : jsonResponse({ ok: true, code: "AARA7K2P", stats: null });
+    }
+  });
+  assert.equal(await api.ready(), "");
+  assert.equal(await api.ready(), "AARA7K2P", "the retry must reach the network again");
+  assert.equal(calls, 2);
+});
+
+await atest("a non-2xx answer is also a retryable failure", async () => {
+  let calls = 0;
+  const { api } = load({
+    account: signedIn("u1"),
+    fetch: () => {
+      calls += 1;
+      return calls === 1
+        ? Promise.resolve({ ok: false, json: () => Promise.resolve({}) })
+        : jsonResponse({ ok: true, code: "AARA7K2P" });
+    }
+  });
+  assert.equal(await api.ready(), "");
+  assert.equal(await api.ready(), "AARA7K2P");
+});
+
+await atest("a cache minted for another account is dropped, not reused", async () => {
+  // Shared laptop: the second student must not get the first one's code.
+  const store = storage({
+    lumeRefMine: JSON.stringify({ code: "OTHER123", uid: "u1", stats: { qualified: 9 } })
+  });
+  const { api } = load({
+    account: signedIn("u2"),
+    store,
+    fetch: () => jsonResponse({ ok: true, code: "BHAV9M4Q", stats: { qualified: 0 } })
+  });
+  assert.equal(await api.ready(), "BHAV9M4Q");
+  assert.deepEqual(plain(api.stats()), { qualified: 0 }, "and the stale totals go with it");
+});
+
+console.log("\nclaiming, and the phone gate");
+
+function claimFetch(answers){
+  let n = 0;
+  const calls = [];
+  const fn = (url, init) => {
+    calls.push({ url, body: JSON.parse(init.body) });
+    const answer = answers[Math.min(n, answers.length - 1)];
+    n += 1;
+    return jsonResponse(answer);
+  };
+  fn.calls = calls;
+  return fn;
+}
+
+await atest("a claim reports what the server said", async () => {
+  const fetch = claimFetch([{ ok: true, counted: true, needs_phone: false }]);
+  const { api } = load({
+    search: "?ref=AARA7K2P",
+    account: signedIn("friend"),
+    fetch
+  });
+  const answer = await api.claim("snapshot");
+  assert.equal(answer.counted, true);
+  assert.equal(answer.needsPhone, false);
+  assert.equal(fetch.calls[0].body.ref, "AARA7K2P");
+});
+
+await atest("a claim blocked on a phone is not marked, so it can be retried", async () => {
+  // Every other refusal is final and worth remembering. This one is not:
+  // the student can verify a number and the same claim then counts.
+  const fetch = claimFetch([
+    { ok: true, counted: false, needs_phone: true },
+    { ok: true, counted: true, needs_phone: false }
+  ]);
+  const { api } = load({ search: "?ref=AARA7K2P", account: signedIn("friend"), fetch });
+
+  const first = await api.claim("snapshot");
+  assert.equal(first.needsPhone, true);
+
+  const second = await api.claim("snapshot");
+  assert.equal(second.counted, true, "the retry must not be short-circuited by a local mark");
+  assert.equal(fetch.calls.length, 2);
+});
+
+await atest("a counted claim is marked and never asked again", async () => {
+  const fetch = claimFetch([{ ok: true, counted: true, needs_phone: false }]);
+  const { api } = load({ search: "?ref=AARA7K2P", account: signedIn("friend"), fetch });
+  await api.claim("snapshot");
+  await api.claim("snapshot");
+  assert.equal(fetch.calls.length, 1);
+});
+
+await atest("claimWithPhone offers verification and claims again on success", async () => {
+  const fetch = claimFetch([
+    { ok: true, counted: false, needs_phone: true },
+    { ok: true, counted: true, needs_phone: false }
+  ]);
+  const account = signedIn("friend");
+  let asked = 0;
+  account.verifyPhone = () => { asked += 1; return Promise.resolve(true); };
+
+  const { api } = load({ search: "?ref=AARA7K2P", account, fetch });
+  const answer = await api.claimWithPhone("snapshot");
+  assert.equal(asked, 1);
+  assert.equal(answer.counted, true);
+});
+
+await atest("declining the SMS is taken as a no", async () => {
+  // The friend is being asked for twenty seconds of work towards someone
+  // else's ₹50. Asked once; a no is a no.
+  const fetch = claimFetch([{ ok: true, counted: false, needs_phone: true }]);
+  const account = signedIn("friend");
+  account.verifyPhone = () => Promise.resolve(false);
+
+  const { api } = load({ search: "?ref=AARA7K2P", account, fetch });
+  const answer = await api.claimWithPhone("snapshot");
+  assert.equal(answer.counted, false);
+  assert.equal(fetch.calls.length, 1, "no second claim, and no nagging");
+});
+
+await atest("a page with no auth module cannot ask, and does not fail", async () => {
+  // stream-selector used to be exactly this page.
+  const fetch = claimFetch([{ ok: true, counted: false, needs_phone: true }]);
+  const { api } = load({ search: "?ref=AARA7K2P", account: signedIn("friend"), fetch });
+  const answer = await api.claimWithPhone("snapshot");
+  assert.equal(answer.needsPhone, true);
+  assert.equal(fetch.calls.length, 1);
+});
+
+await atest("nothing is claimed without an inbound code", async () => {
+  const fetch = claimFetch([{ ok: true, counted: true }]);
+  const { api } = load({ search: "", account: signedIn("friend"), fetch });
+  const answer = await api.claim("snapshot");
+  assert.equal(answer.counted, false);
+  assert.equal(fetch.calls.length, 0, "no code, no request");
+});
+
+console.log("");
+console.log(passed + " passed, " + failed + " failed");
+if(failed > 0) process.exit(1);

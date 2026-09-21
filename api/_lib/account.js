@@ -13,6 +13,11 @@
   so an order can be tied back to a real account later even if the client
   typed someone else's email into the form.
 
+  The same distinction is why `phone` here is read off the token rather
+  than off the body. A number typed into a form is a claim; a number on
+  the token has had an SMS code sent to it. Referrals pay money against
+  the second kind only — see api/_lib/referrals.js.
+
   Requires the same Firebase Admin credentials as restore-access:
   FIREBASE_PROJECT_ID / FIREBASE_CLIENT_EMAIL / FIREBASE_PRIVATE_KEY.
 
@@ -109,12 +114,19 @@ async function requireAccount(req, options){
     };
   }
 
+  /*
+    A phone number is only ever present on this token because Firebase
+    put it there, and Firebase only does that after an SMS code came
+    back. So the claim IS the verification — there is no separate
+    "verified" flag to read, and nothing the client sends can fake one.
+  */
   return {
     ok: true,
     account: {
       uid: String(decoded.uid),
       email: String(decoded.email || "").trim().toLowerCase(),
       emailVerified: Boolean(decoded.email_verified),
+      phone: String(decoded.phone_number || "").trim(),
       name: String(decoded.name || "").slice(0, 80)
     }
   };

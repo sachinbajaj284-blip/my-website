@@ -260,6 +260,7 @@
     // the form has to put it back — otherwise "Sign in" from that panel
     // opens an empty card.
     if(VER.body){ VER.body.style.display = "none"; }
+    if(PH.body){ PH.body.style.display = "none"; }
     EL.body = EL.body || EL.overlay.querySelector(".la-body:not(.lv-body)");
     EL.body.style.display = "";
     EL.mode = mode === "signin" ? "signin" : "signup";
@@ -545,12 +546,218 @@
     tickResend();
   }
 
+  /* ============================================================
+     Phone verification
+
+     Referrals pay real money, and an email address costs nothing to
+     manufacture. A phone number does — so a referral only counts when
+     the account carries one that Firebase has actually sent a code to.
+     This is the panel that gets it.
+
+     The number is LINKED to the account the student already has, rather
+     than becoming a second way to sign in. Nobody is asked to abandon
+     the Google or email account they signed up with, and the uid the
+     referral ledger knows about stays the same one.
+
+     Firebase needs an invisible reCAPTCHA to send an SMS at all, which
+     is why there is a container div here doing nothing visible.
+     ============================================================ */
+  var PH = {};
+
+  function phMsg(text, kind){
+    if(!PH.msg){ return; }
+    PH.msg.textContent = text || "";
+    PH.msg.className = "lv-msg" + (text ? " on " + (kind || "ok") : "");
+  }
+
+  /* Firebase wants E.164. Indian numbers arrive as ten digits, with a
+     leading zero, or already prefixed, and all three are the same
+     number to the person typing. */
+  function toE164(raw){
+    var digits = String(raw || "").replace(/\D/g, "");
+    if(digits.length < 10){ return ""; }
+    return "+91" + digits.slice(-10);
+  }
+
+  function buildPhonePanel(){
+    if(PH.body){ return; }
+    ensureModal();
+    var body = document.createElement("div");
+    body.className = "la-body lv-body";
+    body.style.display = "none";
+    body.innerHTML =
+      '<p class="lv-msg"></p>' +
+      '<div class="la-field lp-numf"><label for="laPhone">Mobile number</label>' +
+        '<input id="laPhone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="98765 43210" maxlength="15"></div>' +
+      '<div class="la-field lp-codef" style="display:none"><label for="laCode">6-digit code</label>' +
+        '<input id="laCode" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="123456" maxlength="6"></div>' +
+      '<button class="la-btn gold lp-go" type="button">Send code</button>' +
+      '<button class="la-alt lp-later" type="button">Not now</button>' +
+      '<p class="la-note">We use it to confirm you\u2019re a real person, and to reach you about a payout. No marketing.</p>' +
+      '<div class="lp-captcha"></div>';
+    EL.overlay.querySelector(".la-card").appendChild(body);
+
+    PH.body = body;
+    PH.msg = body.querySelector(".lv-msg");
+    PH.numField = body.querySelector(".lp-numf");
+    PH.codeField = body.querySelector(".lp-codef");
+    PH.num = body.querySelector("#laPhone");
+    PH.code = body.querySelector("#laCode");
+    PH.go = body.querySelector(".lp-go");
+    PH.later = body.querySelector(".lp-later");
+    PH.captcha = body.querySelector(".lp-captcha");
+
+    PH.go.addEventListener("click", function(){ PH.step === "code" ? confirmCode() : sendCode(); });
+    [PH.num, PH.code].forEach(function(input){
+      input.addEventListener("keydown", function(e){ if(e.key === "Enter"){ PH.go.click(); } });
+    });
+    PH.later.addEventListener("click", function(){ finishPhone(false); });
+    EL.overlay.querySelector(".la-x").addEventListener("click", function(){ finishPhone(false); });
+  }
+
+  function finishPhone(ok){
+    if(PH.resolve){
+      var done = PH.resolve;
+      PH.resolve = null;
+      done(Boolean(ok));
+    }
+    closeFallback();
+  }
+
+  function phBusy(on, label){
+    if(!PH.go){ return; }
+    PH.go.disabled = Boolean(on);
+    PH.go.textContent = label || (PH.step === "code" ? "Verify" : "Send code");
+  }
+
+  function sendCode(){
+    var e164 = toE164(PH.num.value);
+    if(!e164){
+      phMsg("That doesn\u2019t look like a 10-digit mobile number.", "bad");
+      return;
+    }
+    phBusy(true, "Sending\u2026");
+    phMsg("", "");
+
+    ensureAuth().then(function(auth){
+      var user = activeUser();
+      if(!user){ throw new Error("NO_USER"); }
+
+      /* A fresh verifier per attempt. A reCAPTCHA that has already been
+         solved cannot be reused, and re-rendering into the same div is
+         what the SDK expects. */
+      if(PH.verifier){ try{ PH.verifier.clear(); }catch(err){} }
+      PH.captcha.innerHTML = "";
+      PH.verifier = new authMod.RecaptchaVerifier(auth, PH.captcha, { size: "invisible" });
+
+      return authMod.linkWithPhoneNumber(user, e164, PH.verifier);
+    }).then(function(confirmation){
+      PH.confirmation = confirmation;
+      PH.step = "code";
+      PH.numField.style.display = "none";
+      PH.codeField.style.display = "";
+      PH.code.value = "";
+      phBusy(false, "Verify");
+      phMsg("Code sent to " + e164 + ".", "ok");
+      try{ PH.code.focus(); }catch(err){}
+    }).catch(function(err){
+      phBusy(false);
+      phMsg(phoneError(err), "bad");
+    });
+  }
+
+  function confirmCode(){
+    var code = String(PH.code.value || "").replace(/\D/g, "");
+    if(code.length < 6){
+      phMsg("Enter the 6-digit code from the SMS.", "bad");
+      return;
+    }
+    phBusy(true, "Checking\u2026");
+
+    PH.confirmation.confirm(code).then(function(result){
+      /*
+        The ID token in memory was minted before the link and does not
+        carry the number. Force a refresh, or the very next request tells
+        the server there is still no phone on this account — which is
+        exactly the request the student verified in order to make work.
+      */
+      var user = (result && result.user) || activeUser();
+      return user ? user.getIdToken(true) : "";
+    }).then(function(){
+      phBusy(false);
+      phMsg("Verified. Thanks.", "ok");
+      setTimeout(function(){ finishPhone(true); }, 700);
+    }).catch(function(err){
+      phBusy(false);
+      phMsg(phoneError(err), "bad");
+    });
+  }
+
+  function phoneError(err){
+    var code = (err && err.code) || "";
+    if(code === "auth/invalid-verification-code"){ return "That code didn\u2019t match. Check the SMS and try again."; }
+    if(code === "auth/code-expired"){ return "That code expired. Send a new one."; }
+    if(code === "auth/invalid-phone-number"){ return "That doesn\u2019t look like a valid mobile number."; }
+    if(code === "auth/too-many-requests"){ return "Too many attempts from this device. Please wait a few minutes."; }
+    if(code === "auth/provider-already-linked"){ return "This account already has a verified number."; }
+    /* The number is on somebody else's account. Said plainly, because
+       the honest reason — one number, one account — is also the rule,
+       and a student who shares a phone with a sibling needs to know
+       that rather than be told to try again. */
+    if(code === "auth/credential-already-in-use" || code === "auth/account-exists-with-different-credential"){
+      return "That number is already verified on another Lume Live account. Each number can only be used once.";
+    }
+    if(code === "auth/captcha-check-failed" || code === "auth/internal-error"){
+      return "We couldn\u2019t run the security check. Reload the page and try once more.";
+    }
+    return "We couldn\u2019t verify that number. Please try again in a moment.";
+  }
+
+  /*
+     Opens the panel and resolves true only once a number is actually
+     verified. Resolves false when the student closes it or taps
+     “Not now” — the caller decides what that means, and nothing
+     here treats it as an error.
+  */
+  function verifyPhone(){
+    var existing = activeUser();
+    if(existing && existing.phoneNumber){ return Promise.resolve(true); }
+    if(!existing){ return Promise.resolve(false); }
+
+    buildPhonePanel();
+    PH.step = "number";
+    PH.numField.style.display = "";
+    PH.codeField.style.display = "none";
+    PH.num.value = "";
+    phBusy(false, "Send code");
+    phMsg("", "");
+
+    EL.title.textContent = "Verify your mobile number";
+    EL.sub.textContent = "One SMS. It confirms you\u2019re a real person.";
+
+    EL.body = EL.body || EL.overlay.querySelector(".la-body:not(.lv-body)");
+    EL.body.style.display = "none";
+    if(VER.body){ VER.body.style.display = "none"; }
+    PH.body.style.display = "";
+    EL.overlay.classList.add("la-open");
+    try{ PH.num.focus(); }catch(err){}
+
+    return new Promise(function(resolve){ PH.resolve = resolve; });
+  }
+
+  function phoneNumber(){
+    var u = activeUser();
+    return (u && u.phoneNumber) || "";
+  }
+
   window.lumeAccount = {
     ready: ready,
     current: function(){ return currentUser; },
     prompt: prompt,
     onSignIn: onSignIn,
     token: token,
+    verifyPhone: verifyPhone,
+    phone: phoneNumber,
     // Shown by the pages that run their own sign-up UI, so the guidance
     // after creating an account is the same everywhere.
     verifyHelp: showVerifyHelp
