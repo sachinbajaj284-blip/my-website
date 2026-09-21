@@ -410,7 +410,11 @@
   }
 
   /* An SMS costs money and Firebase rate-limits it hard, so a second tap
-     30 seconds in has to read as "not yet" rather than as a dead button. */
+     30 seconds in has to read as "not yet" rather than as a dead button.
+
+     Named apart from the email panel's tickResend below: two function
+     declarations of one name in this scope is not two functions, it is
+     the second one, and the countdown here silently never ran. */
   var OTP_COOLDOWN_MS = 45 * 1000;
   var lastOtpAt = 0;
 
@@ -418,7 +422,7 @@
     if(EL.timer){ clearInterval(EL.timer); EL.timer = null; }
   }
 
-  function tickResend(){
+  function tickOtpResend(){
     if(!EL.resend){ return; }
     var left = Math.max(0, OTP_COOLDOWN_MS - (Date.now() - lastOtpAt));
     if(left <= 0){
@@ -429,7 +433,7 @@
     }
     EL.resend.disabled = true;
     EL.resend.textContent = "You can ask for another OTP in " + Math.ceil(left / 1000) + "s";
-    if(!EL.timer){ EL.timer = setInterval(tickResend, 1000); }
+    if(!EL.timer){ EL.timer = setInterval(tickOtpResend, 1000); }
   }
 
   function otpError(err){
@@ -490,7 +494,7 @@
       EL.otp.value = "";
       showStep("code");
       showSent("OTP sent to <b>" + esc(prettyNumber(e164)) + "</b>");
-      tickResend();
+      tickOtpResend();
     }).catch(function(err){
       EL.submit.disabled = false;
       EL.submit.textContent = EL.step === "code" ? "Verify and continue" : "Send OTP";
