@@ -217,6 +217,51 @@ fast.
 Alerts are sent *after* the row is written and can never throw, so a Telegram
 outage or a wrong token costs you the notification but never the record.
 
+## Sending the sign-in code
+
+The site signs people in with a six-digit code emailed to them (see
+`docs/accounts-and-checkout.md`). That email goes out through **this same
+script** — no second account, no monthly bill — but the script has to be
+taught to recognise it, because it is the one message here addressed to the
+customer rather than to you.
+
+Add this as the **first thing inside the `try` block** in `doPost`, right
+after the token check:
+
+```js
+    // A sign-in code, addressed to the customer. Answered before the
+    // token check writes anything: this is never a row in the Sheet.
+    if (data.type === 'auth_email' && data.to && data.text) {
+      MailApp.sendEmail({
+        to: data.to,
+        subject: data.subject || 'Your Lume Live sign-in code',
+        body: data.text,
+        name: 'Lume Live'
+      });
+      return ContentService.createTextOutput('sent');
+    }
+```
+
+Then **Deploy → Manage deployments → edit → Version: New version → Deploy**.
+A script edit does nothing until it is redeployed, and a code that never
+arrives is indistinguishable from a broken site.
+
+Nothing else changes: `AUTH_EMAIL_WEBHOOK_URL` defaults to the
+`OWNER_WEBHOOK_URL` you already have, so if your notifications work, the codes
+will too.
+
+**The one limit worth knowing.** Gmail caps a free account at roughly 100
+recipients a day, 1,500 on a Workspace account. That is a ceiling on sign-ins
+per day, and when you hit it the emails simply stop — people see "we couldn't
+send the email just now". If the site ever gets close, move the sending to a
+transactional provider (Resend's free tier is 3,000 a month and sends from
+your own domain, which also lands in the inbox more reliably than Gmail does).
+
+**Deliverability.** A code from a Gmail address to a Gmail address is usually
+fine; to Outlook and corporate mail it can land in Spam. The card on the site
+says to check Spam for exactly this reason. If you set up sending from
+`lumelive.co.in` later, that mostly goes away.
+
 ## What you can do from a row
 
 The **Message** column holds a one-tap WhatsApp link to that client —

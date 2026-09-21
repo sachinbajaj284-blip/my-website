@@ -58,11 +58,13 @@ test("no var is declared twice in the module scope", () => {
   assert.deepEqual(dupes, [], "re-declared and re-assigned on load: " + dupes.join(", "));
 });
 
-test("sign-in asks for a name, a number and an OTP", () => {
-  ["laName", "laPhone2", "laOtp"].forEach(id => {
+test("sign-in asks for a name, an address and a code", () => {
+  ["laName", "laEmail2", "laOtp"].forEach(id => {
     assert.ok(SOURCE.includes('id="' + id + '"'), "missing the " + id + " field");
   });
-  assert.ok(SOURCE.includes("signInWithPhoneNumber"), "the OTP is what signs anyone in");
+  assert.ok(SOURCE.includes("signInWithCustomToken"), "the code is exchanged for a real Firebase session");
+  assert.ok(SOURCE.includes("/api/auth/send-code"), "the code is issued by our own endpoint");
+  assert.ok(SOURCE.includes("/api/auth/verify-code"), "and checked by it");
 });
 
 test("nothing signs anyone in with a password", () => {
@@ -74,12 +76,18 @@ test("openAuth is claimed, so the old page modals stay shut", () => {
   assert.ok(SOURCE.includes("window.openAuth = openFallback"), "the page buttons call openAuth by name");
 });
 
-test("an SMS needs its reCAPTCHA built fresh per attempt", () => {
-  // A solved verifier cannot be reused: the second send fails with
-  // captcha-check-failed, which reads as a broken Send-again button.
+test("the code is never asked for before an address is", () => {
   const send = SOURCE.slice(SOURCE.indexOf("function sendOtp"), SOURCE.indexOf("function confirmOtp"));
-  assert.ok(send.includes("new authMod.RecaptchaVerifier"), "the verifier is built inside the send");
-  assert.ok(send.includes("EL.verifier.clear()"), "the previous one is cleared first");
+  assert.ok(send.includes("looksLikeEmail(email)"), "a malformed address never reaches the server");
+  assert.ok(send.includes("EL.pendingEmail = email"), "the address the code went to is remembered for the check");
+});
+
+test("the browser is never handed a code, only a token", () => {
+  // The code exists in the email and in the server's hash. If it ever
+  // appeared in a response the page could read, the email would be
+  // decoration rather than proof.
+  assert.ok(!/data\.code\b/.test(SOURCE), "a response carrying the code would defeat the whole flow");
+  assert.ok(SOURCE.includes("r.data.token"), "what comes back is a one-use custom token");
 });
 
 console.log(`\n${passed} passed, ${failed} failed`);
