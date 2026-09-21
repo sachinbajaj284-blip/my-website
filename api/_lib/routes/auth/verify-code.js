@@ -18,9 +18,9 @@
   always has. Nothing downstream needs to know sign-in changed.
 */
 
-const { json, setCors, readBody } = require("../_lib/http");
-const { checkRateLimit, clientKey } = require("../_lib/rateLimit");
-const { verifyCode, normalizeEmail, looksLikeEmail } = require("../_lib/emailCodes");
+const { json, setCors, readBody } = require("../../http");
+const { checkRateLimit, clientKey } = require("../../rateLimit");
+const { verifyCode, normalizeEmail, looksLikeEmail } = require("../../emailCodes");
 
 const HOUR_MS = 60 * 60 * 1000;
 
@@ -79,7 +79,7 @@ module.exports = async (req, res) => {
   }
 
   try{
-    const auth = require("../_lib/firebaseAdmin").auth();
+    const auth = require("../../firebaseAdmin").auth();
 
     let user = null;
     try{
