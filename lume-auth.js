@@ -24,7 +24,8 @@
      The form it opens is the one below, on every page. The three pages
      that used to run their own email-and-password modal open this
      instead: their buttons call openAuth(), and this file claims that
-     name once it loads.
+     name once it loads. Same address they always used, minus the
+     password.
 
      Nothing here runs on page load. Firebase is imported the first
      time an account is actually needed, which on most pages is never.
@@ -138,12 +139,12 @@
   }
 
   /* ---------------------------------------------------------- prompt --
-     One sign-in for the whole site, and it is the phone one below.
+     One sign-in for the whole site, and it is the one below.
 
      This used to hand off to whatever sign-in a page had of its own,
      which meant three pages asked for an email and a password while the
-     rest asked for a number. Signing in is now the same three steps
-     everywhere — name, number, OTP — so there is nothing left to hand
+     rest had nothing at all. Signing in is now the same three steps
+     everywhere — name, address, code — so there is nothing left to hand
      off to. `openAuth` is claimed below for the same reason: every
      Login / Create Account button on those pages already calls it. */
   function prompt(mode){
@@ -153,21 +154,26 @@
   /* ============================================================
      Sign in / sign up — name, mobile number, OTP
 
-     The account a purchase belongs to is now the phone number that
-     bought it. That is the field every other part of this site already
-     keys on: entitlements are looked up by phone, coupons count "one
-     per customer" by phone, and a session is delivered by calling one.
-     An email address was an extra thing to remember that none of that
-     used ever needed.
+     There is no password: a six-digit code, emailed, proves the same
+     thing a password does and is one less thing to remember, forget and
+     reset. And there is no separate sign-up — an address either has an
+     account behind it or gets one the moment the code checks out, and
+     the person never has to know which of the two they were. The name
+     is asked once, on the way in, or straight after a first code if
+     they arrived through "Sign in".
 
-     So there is no password here and no separate sign-up: a number
-     either has an account behind it or gets one the moment the OTP
-     checks out, and the person never has to know which of the two they
-     were. The name is asked once — on the way in, or straight after a
-     first OTP if they arrived through "Sign in".
+     This was phone and SMS first, which is the better flow: a number is
+     the field the rest of the site already keys on, and an SMS beats a
+     Spam folder. It needs Firebase's Blaze plan, which needs a card. If
+     that changes, the phone version is in the history of this file and
+     is worth reviving.
 
-     Firebase needs an invisible reCAPTCHA to send an SMS at all, which
-     is why there is a container div here doing nothing visible.
+     The code itself is ours, because Firebase does not do email codes —
+     only a link, which has to be opened in the browser that asked for
+     it, and on a phone usually is not. /api/auth/send-code issues and
+     emails it; /api/auth/verify-code checks it and returns a custom
+     token this file exchanges for an ordinary Firebase session. Nothing
+     downstream knows sign-in changed.
      ============================================================ */
   var EL = {};
 
@@ -254,13 +260,13 @@
           '<p class="la-err"></p>' +
           '<p class="la-sent"></p>' +
           '<div class="la-field la-name-field"><label for="laName">Full name</label><input id="laName" type="text" autocomplete="name" placeholder="Your name"></div>' +
-          '<div class="la-field la-phone-field"><label for="laPhone2">Mobile number</label>' +
-            '<div class="la-tel"><span>+91</span><input id="laPhone2" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="98765 43210" maxlength="15"></div></div>' +
+          '<div class="la-field la-email-field"><label for="laEmail2">Email address</label>' +
+            '<input id="laEmail2" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" maxlength="254"></div>' +
           '<div class="la-field la-otp-field" style="display:none"><label for="laOtp">6-digit OTP</label>' +
             '<input id="laOtp" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="••••••" maxlength="6"></div>' +
           '<button class="la-btn gold la-submit" type="button">Send OTP</button>' +
           '<button class="la-alt la-resend" type="button" style="display:none">Didn’t get it? <b>Send again</b></button>' +
-          '<button class="la-alt la-edit" type="button" style="display:none">Wrong number? <b>Change it</b></button>' +
+          '<button class="la-alt la-edit" type="button" style="display:none">Wrong address? <b>Change it</b></button>' +
           '<button class="la-alt la-signout" type="button" style="display:none">Not you? <b>Sign out</b></button>' +
           '<p class="la-note">We send one SMS to confirm it’s you. No password to remember, no marketing.</p>' +
           '<div class="la-captcha"></div>' +
@@ -273,27 +279,26 @@
     EL.err = o.querySelector(".la-err");
     EL.sent = o.querySelector(".la-sent");
     EL.nameField = o.querySelector(".la-name-field");
-    EL.phoneField = o.querySelector(".la-phone-field");
+    EL.emailField = o.querySelector(".la-email-field");
     EL.otpField = o.querySelector(".la-otp-field");
     EL.name = o.querySelector("#laName");
-    EL.phone = o.querySelector("#laPhone2");
+    EL.email = o.querySelector("#laEmail2");
     EL.otp = o.querySelector("#laOtp");
     EL.submit = o.querySelector(".la-submit");
     EL.resend = o.querySelector(".la-resend");
     EL.edit = o.querySelector(".la-edit");
     EL.signout = o.querySelector(".la-signout");
-    EL.captcha = o.querySelector(".la-captcha");
 
     o.querySelector(".la-x").addEventListener("click", closeFallback);
     o.addEventListener("click", function(e){ if(e.target === o){ closeFallback(); } });
     EL.submit.addEventListener("click", submit);
     EL.resend.addEventListener("click", function(){ sendOtp(true); });
     EL.edit.addEventListener("click", function(){
-      if(EL.pendingPhone && !EL.phone.value){ EL.phone.value = String(EL.pendingPhone).replace(/\D/g, "").slice(-10); }
-      showStep("phone");
+      if(EL.pendingEmail && !EL.email.value){ EL.email.value = EL.pendingEmail; }
+      showStep("email");
     });
     EL.signout.addEventListener("click", signOutNow);
-    [EL.name, EL.phone, EL.otp].forEach(function(input){
+    [EL.name, EL.email, EL.otp].forEach(function(input){
       input.addEventListener("keydown", function(e){ if(e.key === "Enter"){ submit(); } });
     });
     // Six digits is the whole code, so verify as soon as they are there
@@ -305,25 +310,22 @@
     });
   }
 
-  /* Firebase wants E.164. Indian numbers arrive as ten digits, with a
-     leading zero, or already prefixed, and all three are the same number
-     to the person typing. */
-  function toE164(raw){
-    var digits = String(raw || "").replace(/\D/g, "");
-    if(digits.length < 10){ return ""; }
-    return "+91" + digits.slice(-10);
+  /* A plausible address, not a valid one. The server checks it the same
+     way, and the only real test of an address is whether a code sent to
+     it comes back. */
+  function cleanEmail(raw){
+    return String(raw || "").trim().toLowerCase();
   }
 
-  // The host as Firebase sees it, which is the thing that has to be on
-  // the allowlist — and the one fact a screenshot of the error never has.
-  function here(){
-    try{ return window.location.hostname || "this site"; }catch(e){ return "this site"; }
+  function looksLikeEmail(raw){
+    var value = cleanEmail(raw);
+    if(value.length < 6 || /\s/.test(value)){ return false; }
+    var at = value.indexOf("@");
+    if(at < 1 || at !== value.lastIndexOf("@")){ return false; }
+    var domain = value.slice(at + 1);
+    return domain.indexOf(".") > 0 && domain.charAt(domain.length - 1) !== ".";
   }
 
-  function prettyNumber(e164){
-    var d = String(e164 || "").replace(/\D/g, "").slice(-10);
-    return d ? "+91 " + d.slice(0, 5) + " " + d.slice(5) : "";
-  }
 
   /* One card, three steps: the number, the code, and — only for someone
      we have never met — their name. Sign-in and sign-up are the same
@@ -331,19 +333,19 @@
      gets one; the person should not have to know which. */
   function showStep(step){
     EL.step = step;
-    var onPhone = step === "phone";
+    var onEmail = step === "email";
     var onCode  = step === "code";
     var onName  = step === "name";
     var onAcct  = step === "account";
 
-    EL.phoneField.style.display = onPhone ? "" : "none";
+    EL.emailField.style.display = onEmail ? "" : "none";
     EL.otpField.style.display   = onCode ? "" : "none";
-    EL.nameField.style.display  = (onName || (onPhone && EL.mode === "signup")) ? "" : "none";
+    EL.nameField.style.display  = (onName || (onEmail && EL.mode === "signup")) ? "" : "none";
     EL.resend.style.display     = onCode ? "" : "none";
     EL.edit.style.display       = onCode ? "" : "none";
     EL.signout.style.display    = onAcct ? "" : "none";
 
-    if(onPhone){
+    if(onEmail){
       EL.title.textContent = EL.mode === "signup" ? "Create your Lume Live account" : "Sign in to continue";
       EL.sub.textContent = EL.mode === "signup"
         ? "Your report, session and receipts stay with your number — on any device."
@@ -362,11 +364,11 @@
     } else if(onAcct){
       var u = activeUser();
       EL.title.textContent = "You’re signed in";
-      EL.sub.textContent = (u && u.displayName) ? u.displayName : "Your purchases follow this number.";
+      EL.sub.textContent = (u && u.displayName) ? u.displayName : "Your purchases follow this account.";
       EL.submit.textContent = "Done";
-      showSent(u && u.phoneNumber
-        ? "Signed in as <b>" + esc(prettyNumber(u.phoneNumber)) + "</b>"
-        : (u && u.email ? "Signed in as <b>" + esc(u.email) + "</b>" : ""));
+      showSent(u && u.email
+        ? "Signed in as <b>" + esc(u.email) + "</b>"
+        : (u && u.phoneNumber ? "Signed in as <b>" + esc(u.phoneNumber) + "</b>" : ""));
     }
 
     showError("");
@@ -376,7 +378,7 @@
         if(onCode){ EL.otp.focus(); }
         else if(onName){ EL.name.focus(); }
         else if(EL.mode === "signup"){ EL.name.focus(); }
-        else { EL.phone.focus(); }
+        else { EL.email.focus(); }
       }catch(err){}
     }, 60);
   }
@@ -392,9 +394,9 @@
     EL.mode = mode === "signin" ? "signin" : "signup";
     EL.otp.value = "";
     /* The same button says Login and then Account. Re-asking a signed-in
-       client for the number they signed in with reads as being logged
+       client for the address they signed in with reads as being logged
        out, so they get told who they are and how to leave instead. */
-    showStep(activeUser() ? "account" : "phone");
+    showStep(activeUser() ? "account" : "email");
     EL.overlay.classList.add("la-open");
   }
 
@@ -443,37 +445,32 @@
   }
 
   /*
-    The console gets the whole error, always.
+    Why a send or a check failed, in words, and never a silent failure.
 
-    Firebase’s codes are the only thing that separates "your number is
-    wrong" from "this domain is not on the project’s allowlist", and the
-    card can only ever show one friendly sentence. Swallowing the code
-    turned a one-line fix into an afternoon, so it is printed here and
-    shown in the card for the ones nobody can guess from the wording.
+    Our own endpoints answer with a `code` and an `error` written for the
+    person reading it, so most of this is passing that through. The
+    console line exists for the cases the card cannot explain — a
+    misconfigured mail webhook looks identical to a slow one from the
+    outside.
   */
-  function otpError(err){
-    var code = (err && err.code) || "";
+  function apiError(payload, fallback){
+    var message = payload && payload.error;
     try{
-      console.error("[lume auth] phone sign-in failed:", code || err, err && err.message);
+      console.error("[lume auth] email sign-in failed:", (payload && payload.code) || "?", message || "");
     }catch(e){}
-    switch(code){
-      case "auth/invalid-verification-code": return "That OTP didn’t match. Check the SMS and type it again.";
-      case "auth/code-expired":              return "That OTP has expired. Ask for a new one.";
-      case "auth/invalid-phone-number":      return "That doesn’t look like a valid mobile number.";
-      case "auth/missing-phone-number":      return "Please enter your mobile number.";
-      case "auth/quota-exceeded":            return "We can’t send an OTP right now. Please try again in a few minutes, or message us on WhatsApp.";
-      case "auth/too-many-requests":         return "Too many attempts from this device. Please wait a few minutes and try again.";
-      case "auth/network-request-failed":    return "Network connection failed. Please check your internet and try again.";
-      case "auth/operation-not-allowed":     return "Phone sign-in is switched off for this site. (auth/operation-not-allowed — enable the Phone provider in Firebase.)";
-      case "auth/unauthorized-domain":       return "This website address is not allowed to sign people in. (auth/unauthorized-domain — add " + here() + " to Firebase’s authorised domains.)";
-      case "auth/captcha-check-failed":
-      case "auth/internal-error":
-        /* Nearly always the domain: the SMS itself is fine, but reCAPTCHA
-           refuses to vouch for a host Firebase has not been told about.
-           An ad blocker eating www.google.com/recaptcha does it too. */
-        return "We couldn’t run the security check for " + here() + ". (" + code + ") Reload and try once more — if it keeps happening, this address needs adding to Firebase’s authorised domains.";
-      default: return "We could not send the OTP just now. Please try again in a moment." + (code ? " (" + code + ")" : "");
-    }
+    return message || fallback || "Something went wrong. Please try again in a moment.";
+  }
+
+  function post(path, body){
+    return fetch(path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body || {})
+    }).then(function(res){
+      return res.json().catch(function(){ return {}; }).then(function(data){
+        return { ok: res.ok, status: res.status, data: data || {} };
+      });
+    });
   }
 
   function submit(){
@@ -487,81 +484,100 @@
     if(isResend && Math.max(0, OTP_COOLDOWN_MS - (Date.now() - lastOtpAt)) > 0){ return; }
 
     var name = (EL.name.value || "").trim();
-    // The number is what the account IS, so it is asked for first and the
-    // name is carried along rather than gating the SMS.
+    // The address is what the account IS, so it is asked for first and
+    // the name is carried along rather than gating the email.
     if(EL.mode === "signup" && !name){ return showError("Please enter your name."); }
 
-    // On the number step the field is the truth — otherwise "Change it",
-    // a new number, "Send OTP" would quietly text the old one. A resend
-    // from the code step has no field on screen, so it uses what was sent.
-    var e164 = toE164(EL.step === "code" ? (EL.pendingPhone || EL.phone.value) : EL.phone.value);
-    if(!e164){ return showError("Please enter your 10-digit mobile number."); }
+    // On the address step the field is the truth — otherwise "Change it",
+    // a new address, "Email me a code" would quietly write to the old
+    // one. A resend from the code step has no field on screen, so it
+    // uses what was sent.
+    var email = cleanEmail(EL.step === "code" ? (EL.pendingEmail || EL.email.value) : EL.email.value);
+    if(!looksLikeEmail(email)){ return showError("Please enter a valid email address."); }
 
     EL.pendingName = name;
-    EL.pendingPhone = e164;
+    EL.pendingEmail = email;
     showError("");
     EL.submit.disabled = true;
-    EL.submit.textContent = "Sending OTP…";
+    EL.submit.textContent = "Sending\u2026";
 
-    ensureAuth().then(function(auth){
-      watch(auth);
-      /* A fresh verifier per attempt. A reCAPTCHA that has already been
-         solved cannot be reused, and re-rendering into the same div is
-         what the SDK expects. */
-      if(EL.verifier){ try{ EL.verifier.clear(); }catch(err){} }
-      EL.captcha.innerHTML = "";
-      EL.verifier = new authMod.RecaptchaVerifier(auth, EL.captcha, { size: "invisible" });
-      return authMod.signInWithPhoneNumber(auth, e164, EL.verifier);
-    }).then(function(confirmation){
-      EL.confirmation = confirmation;
+    post("/api/auth/send-code", { email: email }).then(function(r){
+      if(!r.ok || r.data.ok === false){
+        EL.submit.disabled = false;
+        EL.submit.textContent = EL.step === "code" ? "Verify and continue" : "Email me a code";
+        return showError(apiError(r.data, "We could not send the code just now. Please try again in a moment."));
+      }
+
       lastOtpAt = Date.now();
       EL.otp.value = "";
       showStep("code");
-      showSent("OTP sent to <b>" + esc(prettyNumber(e164)) + "</b>");
+      /* r.data.resent === false means a code from a minute ago is still
+         live. Sending a second one would invalidate the first, so the
+         person is told to use the one they have rather than left
+         wondering which of two emails is the real one. */
+      showSent(r.data.resent === false
+        ? esc(r.data.message || "We\u2019ve already sent you a code. Check your inbox \u2014 and your Spam folder.")
+        : "Code sent to <b>" + esc(email) + "</b>. Check Spam if it\u2019s not there.");
       tickOtpResend();
-    }).catch(function(err){
+    }).catch(function(){
       EL.submit.disabled = false;
-      EL.submit.textContent = EL.step === "code" ? "Verify and continue" : "Send OTP";
-      showError(otpError(err));
+      EL.submit.textContent = EL.step === "code" ? "Verify and continue" : "Email me a code";
+      showError("We couldn\u2019t reach Lume Live just now. Check your connection and try again.");
     });
   }
 
   function confirmOtp(){
     var code = String(EL.otp.value || "").replace(/\D/g, "");
-    if(code.length < 6){ return showError("Enter the 6-digit OTP from the SMS."); }
-    if(!EL.confirmation){ return showError("Please ask for a new OTP."); }
+    if(code.length < 6){ return showError("Enter the 6-digit code from the email."); }
 
     showError("");
     EL.submit.disabled = true;
-    EL.submit.textContent = "Checking…";
+    EL.submit.textContent = "Checking\u2026";
 
-    EL.confirmation.confirm(code).then(function(result){
-      var user = (result && result.user) || activeUser();
-      currentUser = user || currentUser;
-      window.currentFirebaseUser = currentUser;
-      stopResendTimer();
-
-      // A name typed on the way in is kept; a returning client keeps the
-      // one already on the account. Only someone with neither is asked.
-      var wanted = EL.pendingName || "";
-      if(user && wanted && !user.displayName){
-        return authMod.updateProfile(user, { displayName: wanted }).catch(function(){}).then(done);
+    /*
+      The server checks the code and hands back a custom token — a
+      one-use ticket that Firebase exchanges for a real session. Nothing
+      downstream has to know sign-in changed: after this line there is an
+      ordinary Firebase user, with an ordinary ID token, and
+      api/_lib/account.js verifies it exactly as it always has.
+    */
+    post("/api/auth/verify-code", {
+      email: EL.pendingEmail,
+      code: code,
+      name: EL.pendingName || ""
+    }).then(function(r){
+      if(!r.ok || r.data.ok === false || !r.data.token){
+        EL.submit.disabled = false;
+        EL.submit.textContent = "Verify and continue";
+        return showError(apiError(r.data, "That code didn\u2019t match. Check the email and try again."));
       }
-      if(user && !user.displayName){
-        EL.name.value = "";
-        showStep("name");
-        return;
-      }
-      return done();
+      return ensureAuth().then(function(auth){
+        watch(auth);
+        return authMod.signInWithCustomToken(auth, r.data.token);
+      }).then(function(result){
+        var user = (result && result.user) || activeUser();
+        currentUser = user || currentUser;
+        window.currentFirebaseUser = currentUser;
+        stopResendTimer();
+        EL.submit.disabled = false;
+        EL.submit.textContent = "Verify and continue";
 
-      function done(){
+        // The server already put a typed-in name on a new account. This
+        // is for the person who arrived through "Sign in", so was never
+        // asked for one, and turns out to be new.
+        if(user && !user.displayName){
+          EL.name.value = "";
+          showStep("name");
+          return;
+        }
         showSent("");
         closeFallback();
-      }
+      });
     }).catch(function(err){
       EL.submit.disabled = false;
       EL.submit.textContent = "Verify and continue";
-      showError(otpError(err));
+      try{ console.error("[lume auth] could not finish signing in:", err && (err.code || err.message)); }catch(e){}
+      showError("We couldn\u2019t finish signing you in. Please try again in a moment.");
     });
   }
 
@@ -574,10 +590,10 @@
       window.currentFirebaseUser = null;
       EL.signout.disabled = false;
       EL.mode = "signin";
-      EL.phone.value = "";
-      EL.pendingPhone = "";
+      EL.email.value = "";
+      EL.pendingEmail = "";
       EL.pendingName = "";
-      showStep("phone");
+      showStep("email");
     }).catch(function(){
       EL.signout.disabled = false;
       showError("We could not sign you out just now. Please try again.");
@@ -813,6 +829,16 @@
     if(!PH.msg){ return; }
     PH.msg.textContent = text || "";
     PH.msg.className = "lv-msg" + (text ? " on " + (kind || "ok") : "");
+  }
+
+  /* Firebase wants E.164. Indian numbers arrive as ten digits, with a
+     leading zero, or already prefixed, and all three are the same number
+     to the person typing. Only this panel needs it now that signing in
+     is an address. */
+  function toE164(raw){
+    var digits = String(raw || "").replace(/\D/g, "");
+    if(digits.length < 10){ return ""; }
+    return "+91" + digits.slice(-10);
   }
 
   function buildPhonePanel(){
