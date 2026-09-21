@@ -201,9 +201,31 @@ async function verifyCode(email, code, opts){
   return outcome;
 }
 
+/*
+  Throws away an issued code.
+
+  Used when the email could not be sent. The code is written before the
+  send — it has to be, or there would be nothing to put in the email —
+  so a failed send leaves a live code nobody has seen. The next attempt
+  would then be refused as a resend and the person told "we've already
+  sent you a code", which is a lie of exactly the kind this flow is
+  supposed to avoid.
+*/
+async function dropCode(email, opts){
+  const options = opts || {};
+  try{
+    await collection(options.store).doc(addressKey(email)).delete();
+  }catch(err){
+    // Nothing to recover: the worst case is the person waits out the
+    // 45-second cooldown, which is what would have happened anyway.
+    console.error("[lume auth] could not discard an unsent code:", String(err && err.message || err));
+  }
+}
+
 module.exports = {
   issueCode,
   verifyCode,
+  dropCode,
   normalizeEmail,
   looksLikeEmail,
   COLLECTION,

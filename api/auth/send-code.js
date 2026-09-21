@@ -18,7 +18,7 @@
 const crypto = require("crypto");
 const { json, setCors, readBody } = require("../_lib/http");
 const { checkRateLimit, clientKey } = require("../_lib/rateLimit");
-const { issueCode, normalizeEmail, looksLikeEmail, RESEND_COOLDOWN_MS } = require("../_lib/emailCodes");
+const { issueCode, dropCode, normalizeEmail, looksLikeEmail, RESEND_COOLDOWN_MS } = require("../_lib/emailCodes");
 const { sendEmail, codeEmail } = require("../_lib/sendEmail");
 
 const HOUR_MS = 60 * 60 * 1000;
@@ -77,6 +77,14 @@ module.exports = async (req, res) => {
   const mail = codeEmail(issued.code);
   const sent = await sendEmail({ to: email, subject: mail.subject, text: mail.text });
   if(!sent.ok){
+    /*
+      Throw the code away. It was written before the send, so leaving it
+      would make the very next attempt answer "we've already sent you a
+      code" — about an email that does not exist. Discarding it means a
+      retry issues and sends a fresh one.
+    */
+    await dropCode(email);
+
     // Honest failure. Telling someone to check an inbox for an email
     // that was never sent is the cruellest possible version of this.
     return json(res, 502, {

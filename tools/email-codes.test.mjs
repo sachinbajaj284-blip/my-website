@@ -61,7 +61,8 @@ function fakeDb(){
         const data = docs.get(id);
         return { exists: data !== undefined, data: () => data };
       },
-      async set(value){ docs.set(id, value); }
+      async set(value){ docs.set(id, value); },
+      async delete(){ docs.delete(id); }
     };
   }
   return api;
@@ -150,6 +151,23 @@ await test("after the cooldown a new code replaces the old one", async () => {
   assert.equal(old.ok, false, "the superseded code still worked");
   const current = await codes.verifyCode(EMAIL, "222222", { store, now: codes.RESEND_COOLDOWN_MS + 3 });
   assert.equal(current.ok, true, "the newest code should be the live one");
+});
+
+await test("a code that could not be emailed is thrown away, not left to block the retry", async () => {
+  // The send happens after the write, so a failed send leaves a live
+  // code nobody has seen. Left there, the next attempt is refused as a
+  // resend and the person is told an email exists that does not.
+  const store = fakeDb();
+  const issued = await codes.issueCode(EMAIL, { store, now: 1000 });
+  assert.equal(issued.ok, true);
+
+  await codes.dropCode(EMAIL, { store });
+
+  const retry = await codes.issueCode(EMAIL, { store, now: 1500 });
+  assert.equal(retry.ok, true, "the retry was refused as a resend");
+  // And the code from the email that never arrived is dead.
+  const stale = await codes.verifyCode(EMAIL, issued.code, { store, now: 1600 });
+  assert.equal(stale.ok, false);
 });
 
 await test("a code for one address does not open another", async () => {
