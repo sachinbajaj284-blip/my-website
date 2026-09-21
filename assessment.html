@@ -512,6 +512,7 @@
 
 <script src="lume-leaderboard.js" defer></script>
 <script src="lume-qr.js" defer></script>
+<script src="lume-referral.js" defer></script>
 <script src="lume-story-share.js" defer></script>
 <!-- Shareable result — viral loop (ftShare) -->
 <script>
@@ -551,6 +552,10 @@
   var THEME_KEY = { Realistic:"R", Investigative:"I", Artistic:"A",
                     Social:"S", Enterprising:"E", Conventional:"C" };
   window.ftLeaderboard = function(){
+    /* The result is on screen, which is what a referral is paid for. The
+       server decides whether it counts; this only reports that it
+       happened, and never blocks the result on the answer. */
+    if(window.LumeReferral) window.LumeReferral.claim('snapshot');
     var el = document.getElementById('ftLeaderboard');
     if(!el || !window.LumeLeaderboard) return;
     var first = document.querySelector('#ftThemes .ft-theme-name');

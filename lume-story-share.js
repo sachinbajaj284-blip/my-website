@@ -254,6 +254,17 @@ function shortUrl(u){
   }catch(e){ return BRAND; }
 }
 
+/* The student's own referral code, when lume-referral.js is on the page
+   and has one cached. Absent module, absent code or a URL that already
+   carries one: the URL comes back untouched. */
+function withRef(u, code){
+  try{
+    return (window.LumeReferral && window.LumeReferral.decorate)
+      ? window.LumeReferral.decorate(u, code)
+      : u;
+  }catch(e){ return u; }
+}
+
 /* ------------------------------------------------------------------ */
 /* Shared card furniture                                               */
 /* ------------------------------------------------------------------ */
@@ -1065,6 +1076,12 @@ function open(data){
   var d = data || {};
   d.url = d.url || (location.origin + location.pathname);
 
+  /* The card's QR and every caption carry this URL, so this is the one
+     place a referral code has to be attached. decorate() is synchronous
+     and returns the URL unchanged when the student's code has not been
+     fetched yet — the redraw below picks it up when it lands. */
+  d.url = withRef(d.url);
+
   var avail = STYLES.filter(function(s){ return s.needs(d); });
   var state = {
     data:d, canvas:null, captionEl:null,
@@ -1310,6 +1327,25 @@ function open(data){
   document.body.style.overflow = "hidden";
   state.render();
   requestAnimationFrame(function(){ ov.classList.add("on"); });
+
+  /* A student opening the sheet for the first time has no referral code
+     cached yet. Fetch it, then redraw the QR and rebuild the caption —
+     the preview is never blocked on it, because a card without a code
+     still works and a share sheet that waits on the network is a share
+     that does not happen. */
+  if(window.LumeReferral && typeof window.LumeReferral.ready === "function"){
+    window.LumeReferral.ready().then(function(code){
+      if(!code || !ov.parentNode) return;
+      /* The fetched code is passed explicitly rather than left to the
+         cache: decorate() replaces whatever ref is already on the URL,
+         which is what corrects a stale one on a shared device. */
+      var next = withRef(d.url, code);
+      if(next === d.url) return;
+      d.url = next;
+      state.render();
+      setCaption();
+    }).catch(function(){});
+  }
 
   /* Usually the page's leaderboard has already fetched these and the
      first render has them. If the sheet is opened before that lands,

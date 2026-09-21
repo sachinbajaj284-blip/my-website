@@ -851,6 +851,10 @@ function renderResult(){
    from /api/quiz-stats and the block hides itself when there are not
    enough of them to say anything true — see lume-leaderboard.js. */
 function showLeaderboard(){
+  /* The result is on screen, which is what a referral is paid for. The
+     server decides whether it counts; this only reports that it
+     happened, and never blocks the result on the answer. */
+  if(window.LumeReferral) window.LumeReferral.claim("stream");
   var el = $("leaderboard");
   if(!el || !window.LumeLeaderboard || !result) return;
   var labels = {};
