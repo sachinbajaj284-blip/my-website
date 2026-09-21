@@ -43,6 +43,7 @@
 const { json, setCors, readBody } = require("../../http");
 const { checkRateLimit, clientKey } = require("../../rateLimit");
 const { quote } = require("../../coupons");
+const { requireAccount } = require("../../account");
 
 module.exports = async function handler(req, res){
   setCors(req, res, "POST,OPTIONS");
@@ -106,10 +107,30 @@ module.exports = async function handler(req, res){
     Nothing is trusted: create-order re-runs the same rules against the
     customer it is about to charge, and that is the decision that counts.
   */
-  const customer = body.customer && typeof body.customer === "object" ? {
+  const typed = body.customer && typeof body.customer === "object" ? {
     phone: String(body.customer.phone || "").slice(0, 20),
     email: String(body.customer.email || "").slice(0, 120)
   } : null;
+
+  /*
+    The uid, when the request carries a sign-in.
+
+    Only ever read from a verified token — never from the body, which is
+    the whole point of the referral gate. It is optional here: this
+    endpoint exists to SHOW a price and is reachable signed out, so a
+    missing uid simply means a referral-gated code answers "not_referred"
+    on this screen. That is the honest answer to show, and it is the same
+    answer create-order would give.
+  */
+  let uid = "";
+  try{
+    const identity = await requireAccount(req);
+    if(identity.ok && identity.account) uid = identity.account.uid;
+  }catch(err){
+    uid = "";
+  }
+
+  const customer = (typed || uid) ? Object.assign({ uid: uid }, typed || {}) : null;
 
   const result = await quote({ code: code, packId: packId, customer: customer });
 

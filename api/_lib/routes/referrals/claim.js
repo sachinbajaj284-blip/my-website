@@ -4,6 +4,9 @@
 
   "I arrived on someone's link and I have just finished the Snapshot."
 
+  Answers with the friend's own offer when the referral lands, so the
+  student who did the referring is not the only one who gets something.
+
   The browser is reporting two things it knows and we do not: which code
   it was carrying, and that the student reached the end of the quiz. Both
   are taken as a *request* to qualify a referral, never as the decision
@@ -21,6 +24,7 @@ const { json, setCors, readBody } = require("../../http");
 const { requireAccount } = require("../../account");
 const { checkRateLimit, clientKey } = require("../../rateLimit");
 const { recordQualified, isEnabled } = require("../../referrals");
+const { friendOffer } = require("../../coupons");
 
 module.exports = async function handler(req, res){
   if(!isEnabled()) return json(res, 404, { error: "Not found" });
@@ -72,10 +76,19 @@ module.exports = async function handler(req, res){
       that can tell "already counted" from "daily limit" can map the
       anti-abuse rules.
     */
+    const counted = Boolean(result.ok && result.amount > 0);
+
+    /*
+      The friend's own half of the deal. Only sent once the referral has
+      actually been recorded, because FRIEND100 is gated on exactly that
+      — telling them about a code the checkout would refuse is worse than
+      telling them nothing.
+    */
     return json(res, 200, {
       ok: true,
-      counted: Boolean(result.ok && result.amount > 0),
-      needs_phone: result.reason === "PHONE_REQUIRED"
+      counted,
+      needs_phone: result.reason === "PHONE_REQUIRED",
+      offer: counted ? await friendOffer() : null
     });
   }catch(err){
     console.error("[lume referrals] claim failed:", err && err.message);

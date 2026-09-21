@@ -35,6 +35,8 @@
       first_time_only    boolean  refuse if they have bought before
       first_time_skus    string[] what "bought before" means; defaults to
                                   applicable_packs
+      requires_referral  boolean  only for someone a friend referred —
+                                  needs the account uid, see below
     }
 
   usage_limit is a global cap; per_customer_limit is per person. A code
@@ -58,6 +60,9 @@
 
 const { getProduct } = require("./catalog");
 const { normalizePhone, normalizeEmail } = require("./identity");
+// Just the collection name. referrals.js keeps its Firestore handle lazy,
+// so this does not drag firebase-admin in at load time.
+const { ATTRIBUTIONS: REFERRAL_ATTRIBUTIONS } = require("./referrals");
 
 const COLLECTION = "coupons";
 const REDEMPTIONS = "couponRedemptions";
@@ -138,6 +143,46 @@ const DEFAULT_COUPONS = [
     first_time_only: false
   },
   {
+    /*
+      The friend's half of the referral programme.
+
+      Deliberately NOT on wellness-session: FIRST50 already takes that
+      from ₹499 to ₹249, and codes do not stack, so offering ₹100 there
+      would be offering a referred student a worse deal than an
+      unreferred one.
+
+      promote:false keeps it out of the hero badge. It is gated on
+      requires_referral, so advertising it to everybody would mostly
+      generate refusals at checkout from people who never had a link.
+    */
+    code: "FRIEND100",
+    discount_type: "flat",
+    discount_value: 100,
+    applicable_packs: [
+      "student-full-report",
+      "stream-clarity-session",
+      "career-direction-session",
+      "career-intelligence-roadmap"
+    ],
+    is_active: true,
+    expiration_date: null,
+    usage_limit: null,
+    times_used: 0,
+    requires_referral: true,
+    per_customer_limit: 1,
+    first_time_only: true,
+    headline: "₹100 off because a friend invited you",
+    description: "Your friend sent you here. This takes ₹100 off your first report or counselling session.",
+    promote: false
+  },
+  {
+    /*
+      Superseded by FRIEND100 and the referral ledger. Left parked rather
+      than deleted so an old order that carries the code still resolves;
+      the ₹200 it refers to was the REFERRER's discount under the manual
+      WhatsApp scheme that book-session.html used to run, which is not
+      how any of this works now.
+    */
     code: "REFER200",
     discount_type: "flat",
     discount_value: 200,
@@ -391,6 +436,12 @@ function normalizeCoupon(raw, fallbackCode){
       return n == null ? null : Math.max(1, Math.floor(n));
     })(),
     first_time_only: raw.first_time_only === true,
+    /*
+      Only usable by someone who actually arrived on a referral link and
+      qualified. Evaluated against the referral ledger, not against
+      anything the browser says — see checkCustomerRules.
+    */
+    requires_referral: raw.requires_referral === true,
     // "Bought before" defaults to the packs the code itself applies to —
     // the useful reading of "first", and the one that doesn't accidentally
     // disqualify someone for having bought an unrelated PDF.
@@ -624,6 +675,33 @@ async function hasPriorPurchase(skus, customer){
   create-order re-runs them with the real customer before charging, and
   that is the gate that actually counts.
 */
+/*
+  Did a friend refer this account?
+
+  One keyed read of the referral ledger's attribution document, which is
+  written only when a referral actually qualified — so this is the same
+  fact the ₹50 was paid for, not a claim the browser is making.
+
+  The collection name is imported rather than repeated: requiring
+  referrals.js does not pull in firebase-admin (its own Firestore handle
+  is lazy), so this file stays loadable when Firebase is not configured,
+  which is the whole reason the built-in catalogue fallback works.
+
+  Fails CLOSED. If the ledger cannot be read we refuse the discount
+  rather than grant it — an unreadable ledger is not evidence of a
+  referral, and the client can still pay full price.
+*/
+async function wasReferred(uid){
+  const firestore = firestoreOrNull();
+  if(!firestore) return false;
+  try{
+    const snap = await firestore.collection(REFERRAL_ATTRIBUTIONS).doc(String(uid)).get();
+    return snap.exists;
+  }catch(err){
+    return false;
+  }
+}
+
 async function checkCustomerRules(coupon, customer){
   const c = customer || {};
   const email = normalizeEmail(c.email);
@@ -649,6 +727,30 @@ async function checkCustomerRules(coupon, customer){
       reason: "not_invited",
       message: "This code was issued to a specific Lume Live account. Sign in with the email it was sent to, or continue without the code."
     };
+  }
+
+  /*
+    The friend's half of the referral programme.
+
+    Checked here, before the "do we know who this is?" shortcut, and it
+    fails closed for the same reason restricted_to_emails does: a request
+    we cannot tie to an account is exactly the case this rule exists to
+    refuse. Handing ₹100 off to anyone who is signed out would make the
+    code a public discount that happens to be undocumented.
+
+    The uid comes from the verified Firebase token (create-order reads
+    it off the token, never off the body), so this cannot be satisfied by
+    typing somebody else's details into the checkout form.
+  */
+  if(coupon.requires_referral){
+    const uid = String(c.uid || "").trim();
+    if(!uid || !(await wasReferred(uid))){
+      return {
+        ok: false,
+        reason: "not_referred",
+        message: "This code is for students a friend invited. Ask them for their link, or continue without the code."
+      };
+    }
   }
 
   const known = Boolean(normalizePhone(c.phone) || email);
@@ -1234,8 +1336,37 @@ async function issueCoupon({ code, emails, add = false, revoke = false, dryRun =
   };
 }
 
+/*
+  The friend's offer, as it stands right now.
+
+  One place asks this — the claim endpoint, so a newly referred student
+  can be told what they have. It reads the live catalogue rather than
+  repeating "₹100" in a second file, so switching FRIEND100 off or
+  changing its value silently stops the promise too. Returns null when
+  there is nothing to promise.
+*/
+const FRIEND_CODE = "FRIEND100";
+
+async function friendOffer(){
+  try{
+    const coupon = await loadCoupon(FRIEND_CODE);
+    if(!coupon || !coupon.is_active || coupon.discount_type !== "flat") return null;
+    if(!(coupon.discount_value > 0)) return null;
+    return {
+      code: coupon.code,
+      amount: coupon.discount_value,
+      headline: coupon.headline || ""
+    };
+  }catch(err){
+    // A promise we cannot verify is one we do not make.
+    return null;
+  }
+}
+
 module.exports = {
   COLLECTION,
+  FRIEND_CODE,
+  friendOffer,
   REDEMPTIONS,
   CUSTOMER_USES,
   MIN_CHARGE,

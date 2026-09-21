@@ -11,6 +11,7 @@ money can and cannot leak.
 - A student gets a **code** (`AARA7K2P`) and a link (`?ref=AARA7K2P`).
 - A friend who arrives on that link and **finishes a quiz** qualifies it.
 - The referrer earns **₹50**, capped at **₹300** per account.
+- The friend gets **₹100 off** their first report or session (`FRIEND100`).
 - Both accounts need a **verified mobile number** — one number, one account.
 - Earnings become withdrawable **7 days** later, from **₹200** up.
 - **A human makes every transfer**, from `npm run referrals:payouts`.
@@ -334,6 +335,74 @@ ids, so a renamed element fails there rather than silently in a browser.
 
 ---
 
+## The friend's half
+
+The referrer earns ₹50; the friend gets **₹100 off** their first paid
+report or counselling session. Without it this was half a programme: the
+friend did the thing the ₹50 was paid for and got nothing at all.
+
+They are asked for nothing in return — the mid-quiz SMS prompt is gone
+(see the phone gate above), so the only thing that ever reaches them is
+this.
+
+It is the existing coupon engine, not a second discount path.
+`FRIEND100` is an ordinary catalogue coupon (`api/_lib/coupons.js`) with
+one new rule:
+
+| Field | Meaning |
+|---|---|
+| `requires_referral: true` | Only usable by an account the referral ledger says a friend actually referred |
+
+`checkCustomerRules` answers it with one keyed read of
+`referralAttributions/{uid}` — the same document the ₹50 was paid
+against, so the discount and the payout cannot disagree about who was
+referred.
+
+**It fails closed**, like `restricted_to_emails`: no uid, no attribution,
+or an unreadable ledger all mean refused. An unreadable ledger is not
+evidence of a referral, and the student can still pay full price.
+
+**The uid comes off the verified token**, never the body — `create-order`
+reads it from Firebase the same way it reads the email, and a source-text
+guard in `coupons.test.mjs` pins both. A uid from the body would let
+anyone claim to have been referred.
+
+### Why not the ₹499 session
+
+`FRIEND100` deliberately does **not** apply to `wellness-session`.
+`FIRST50` already takes that from ₹499 to ₹249, and codes do not stack —
+offering ₹100 there would give a referred student a *worse* deal than an
+unreferred one. There is a test that keeps it off that SKU.
+
+### How the friend finds out
+
+`/api/referrals/claim` returns the offer once the referral has actually
+been recorded, and `lume-referral.js` shows a dismissible bar under their
+result. Shown once per device: it is information, not a nag, and the code
+works whether or not they read it.
+
+Both the bar and the dashboard render **what the server sent**. Switch
+`FRIEND100` off and `friendOffer()` returns null, so nothing is promised
+anywhere — no ₹100 is written into a page.
+
+### What it costs
+
+₹50 cash + ₹100 discount = **₹150 per converted friend**. On the ₹999
+report that nets ₹849. On a ₹999 session, the same. It is thinner than
+the ₹50 alone, and it is the half that makes the ask reasonable.
+
+### The programme this replaced
+
+`book-session.html` used to run a separate manual scheme: *"they book
+free, you save ₹200 — have them mention your name on WhatsApp"*, with the
+friend's first session free. It was fulfilled by hand and promised
+different numbers from the tracked programme, so a student could read two
+contradictory offers on one site. That section now points at
+`refer.html`. `REFER200` stays parked in the catalogue so old orders
+carrying the code still resolve.
+
+---
+
 ## Paying people
 
 ```
@@ -376,6 +445,8 @@ doubt, reject with a note and ask them.
 | Turn it off | `LUME_REFERRALS_ENABLED=0` — both routes 404, links keep resolving |
 | Change what a referral is worth | `TIERS` in `api/_lib/referrals.js` (a table, so tiering it is an edit in one place) |
 | Change the cap | `EARNINGS_CAP` |
+| Change the friend's discount | `FRIEND100` in `api/_lib/coupons.js`, then `npm run coupons:seed` |
+| Turn the friend's half off | set `FRIEND100` to `is_active: false` — the pages stop promising it on their own |
 | Turn the phone gate off | `LUME_REFERRAL_REQUIRE_PHONE=0` — see above before you do |
 | Phone hash salt | `LUME_PHONE_SALT` — **set this**, and never change it afterwards: every existing hash becomes unmatchable |
 | Change the hold | `HOLD_MS` — applies to unpaid earnings immediately, including ones already banked |
@@ -394,10 +465,7 @@ be one environment variable, not a revert.
 
 Deliberately, and in roughly this order:
 
-1. **The friend's side of the offer** (₹100 off their first paid
-   product), which is what makes this two-sided. Today the friend gets
-   nothing for arriving on a link, which is half a referral programme.
-2. **A "who joined" list on `refer.html`.** The page shows totals; it
+1. **A "who joined" list on `refer.html`.** The page shows totals; it
    cannot yet name the friends behind them, because `/api/referrals/code`
    returns counts only. A student chasing the last ₹50 wants to know who
    has not finished yet.
