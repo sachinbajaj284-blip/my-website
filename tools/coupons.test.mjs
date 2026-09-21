@@ -195,7 +195,9 @@ await test("only the intended codes are live", () => {
   const live = DEFAULT_COUPONS.filter(c => c.is_active !== false).map(c => c.code);
   // CLARITY100 ships parked and is issued from Firestore, so the recipient's
   // address never enters this public repo. See issueCoupon().
-  assert.deepEqual(live, ["FIRST50"]);
+  // FRIEND100 is live but gated on requires_referral, so it is only usable
+  // by someone the referral ledger says a friend actually referred.
+  assert.deepEqual(live, ["FIRST50", "FRIEND100"]);
 });
 
 await test("CLARITY100 cannot go live without the account it was issued to", () => {
@@ -206,6 +208,121 @@ await test("CLARITY100 cannot go live without the account it was issued to", () 
   // the string first. One of the two has to be true.
   assert.ok(clarity.is_active === false || restricted,
     "CLARITY100 is active with an empty restricted_to_emails — it would be free to whoever guesses the code");
+});
+
+console.log("\nFRIEND100 — the friend's half of the referral programme");
+
+const ATTRIBUTIONS = "referralAttributions";
+
+// A qualified referral, as api/_lib/referrals.js writes it.
+function seedReferral(uid){
+  store.seed(ATTRIBUTIONS, uid, {
+    code: "AARA7K2P", referrer_uid: "u1", event: "snapshot",
+    amount: 50, created_at: Date.now(), phone_key: "deadbeef"
+  });
+}
+
+await test("a signed-out visitor cannot use it", async () => {
+  store.clear();
+  // Fails closed: an anonymous request is exactly what the gate exists to
+  // refuse, so "we don't know who you are" must not read as "no objection".
+  const q = await quote({ code: "FRIEND100", packId: "student-full-report" });
+  assert.equal(q.ok, false);
+  assert.equal(q.reason, "not_referred");
+  assert.equal(q.final_amount, 999, "and the price is unchanged");
+});
+
+await test("an account nobody referred cannot use it", async () => {
+  store.clear();
+  const q = await quote({
+    code: "FRIEND100", packId: "student-full-report",
+    customer: { uid: "stranger", email: "a@x.com" }
+  });
+  assert.equal(q.ok, false);
+  assert.equal(q.reason, "not_referred");
+});
+
+await test("an account a friend referred gets ₹100 off", async () => {
+  store.clear();
+  seedReferral("friend");
+  const q = await quote({
+    code: "FRIEND100", packId: "student-full-report",
+    customer: { uid: "friend", email: "friend@x.com" }
+  });
+  assert.equal(q.ok, true);
+  assert.equal(q.reason, "applied");
+  assert.equal(q.base_amount, 999);
+  assert.equal(q.discount_amount, 100);
+  assert.equal(q.final_amount, 899);
+});
+
+await test("it works on the sessions it covers too", async () => {
+  store.clear();
+  seedReferral("friend");
+  const q = await quote({
+    code: "FRIEND100", packId: "stream-clarity-session",
+    customer: { uid: "friend", email: "friend@x.com" }
+  });
+  assert.equal(q.final_amount, 899);
+});
+
+await test("it is refused on the ₹499 session, where FIRST50 is better", async () => {
+  store.clear();
+  seedReferral("friend");
+  const q = await quote({
+    code: "FRIEND100", packId: "wellness-session",
+    customer: { uid: "friend", email: "friend@x.com" }
+  });
+  assert.equal(q.ok, false);
+  assert.equal(q.reason, "not_applicable");
+  assert.equal(q.final_amount, 499, "and FIRST50 is still there to take it to 249");
+});
+
+await test("a referred student who has already bought is refused", async () => {
+  // first_time_only still applies — being referred does not make it a
+  // standing discount.
+  store.clear();
+  seedReferral("friend");
+  store.seed("entitlements", "lume_prior", {
+    orderId: "lume_prior", sku: "student-full-report", status: "PAID",
+    phone: null, email: "friend@x.com", updatedAt: "2026-01-01T00:00:00Z"
+  });
+  const q = await quote({
+    code: "FRIEND100", packId: "student-full-report",
+    customer: { uid: "friend", email: "friend@x.com" }
+  });
+  assert.equal(q.ok, false);
+  assert.equal(q.reason, "not_first_time");
+});
+
+await test("the uid is what is checked, not the email", async () => {
+  // The gate is answered by the referral ledger against the uid off the
+  // verified token. A matching email on an unreferred account proves
+  // nothing.
+  store.clear();
+  seedReferral("friend");
+  const q = await quote({
+    code: "FRIEND100", packId: "student-full-report",
+    customer: { uid: "someone-else", email: "friend@x.com" }
+  });
+  assert.equal(q.reason, "not_referred");
+});
+
+await test("FRIEND100 cannot go live without the referral gate", () => {
+  const friend = DEFAULT_COUPONS.find(c => c.code === "FRIEND100");
+  // Without requires_referral this is ₹100 off for anyone who types the
+  // string — the same failure mode CLARITY100 is guarded against, just
+  // cheaper per use.
+  assert.ok(friend.is_active === false || friend.requires_referral === true,
+    "FRIEND100 is active without requires_referral — it would be a public discount");
+});
+
+await test("FRIEND100 never undercuts FIRST50 on the session it applies to", () => {
+  // ₹100 off a ₹499 session is worse than FIRST50's 50%, and codes do not
+  // stack. Offering it there would give a referred student a worse deal
+  // than an unreferred one.
+  const friend = DEFAULT_COUPONS.find(c => c.code === "FRIEND100");
+  assert.equal(friend.applicable_packs.includes("wellness-session"), false);
 });
 
 await test("FIRST50 is the only offer advertised on the site", () => {
@@ -714,8 +831,9 @@ await test("seeding reports which codes are live at checkout", async () => {
   store.clear();
   const r = await coupons.seedCoupons({});
   // Live means usable at checkout, which is not the same as advertised:
-  // CLARITY100 is a one-use invitation code and is never promoted.
-  assert.deepEqual(r.live, ["FIRST50"]);
+  // CLARITY100 is a one-use invitation code and is never promoted, and
+  // FRIEND100 is gated on having been referred.
+  assert.deepEqual(r.live, ["FIRST50", "FRIEND100"]);
 });
 
 console.log("\nthe demo account");
@@ -871,16 +989,25 @@ await test("a typed address cannot satisfy an issued LUMEDEMO", async () => {
     can be broken. create-order must pass the token's email to quote(),
     not the one typed into the checkout form: the typed one is chosen by
     the person being restricted, which makes the restriction decorative.
+
+    The same now goes for the uid, which answers FRIEND100's referral
+    gate. Both are matched by what they are ASSIGNED FROM rather than by
+    their position in the object, so adding a third verified field does
+    not fail this test for the wrong reason — while a field that starts
+    coming from the body still does.
   */
   const source = fs.readFileSync(new URL("../api/cashfree/create-order.js", import.meta.url), "utf8");
   const call = /const priced = await quote\(\{[\s\S]*?\n  \}\);/.exec(source);
   assert.ok(call, "could not find the quote() call in create-order.js");
-  const customerLine = /customer:\s*\{[^}]*\}/.exec(call[0]);
+  const customerLine = /customer:\s*\{[\s\S]*?\n    \}/.exec(call[0]);
   assert.ok(customerLine, "could not find the customer passed to quote()");
-  assert.ok(/email:\s*accountEmail\s*\}/.test(customerLine[0]),
+
+  assert.ok(/email:\s*accountEmail\b/.test(customerLine[0]),
     "create-order must pass the verified account email to quote(), found: " + customerLine[0]);
+  assert.ok(/uid:\s*account\s*\?\s*account\.uid/.test(customerLine[0]),
+    "create-order must pass the verified account uid to quote(), or FRIEND100's referral gate is satisfiable by anyone: " + customerLine[0]);
   assert.ok(!/body\.customer/.test(customerLine[0]),
-    "the email passed to quote() must not come from the request body: " + customerLine[0]);
+    "nothing passed to quote() as the customer may come from the request body: " + customerLine[0]);
 });
 
 console.log("\ncatalogue guards");

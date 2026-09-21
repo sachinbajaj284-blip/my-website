@@ -167,7 +167,17 @@ module.exports = async function handler(req, res){
       refuses. That is the right way round: the kill switch exists to
       keep the site taking money, not to open the invitation codes.
     */
-    customer: { phone: phone, email: accountEmail }
+    customer: {
+      phone: phone,
+      email: accountEmail,
+      /*
+        Off the verified token, for the same reason `email` is: the
+        referral gate on FRIEND100 is answered by the ledger against THIS
+        uid, and a uid taken from the body would let anyone claim to be
+        somebody a friend referred.
+      */
+      uid: account ? account.uid : ""
+    }
   });
   const couponApplied = priced.ok && priced.reason === "applied" && priced.coupon;
 

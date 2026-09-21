@@ -18,7 +18,10 @@ and why the price is safe.
 
 ## Live offers
 
-**One offer is advertised: `FIRST50`.** `CLARITY100` and `LUMEDEMO` ship
+**One offer is advertised: `FIRST50`.** `FRIEND100` is live but never
+advertised — it is gated on `requires_referral`, so promoting it would
+mostly generate refusals from people who never had a friend's link. See
+`docs/referrals.md` for how that gate is answered. `CLARITY100` and `LUMEDEMO` ship
 parked and are issued to named accounts from Firestore — see below. Every
 other SKU sells at list price.
 
@@ -30,7 +33,8 @@ other SKU sells at list price.
 | `MIND50` | 50% | 1:1 Counselling Session | 200 uses | no | no |
 | `CAREER30` | 30% | Full Clarity Report, Career Roadmap | — | no | no |
 | `PARENT200` | ₹200 flat | Full Clarity Report, Stream Clarity Session | — | no | no |
-| `REFER200` | ₹200 flat | Full Clarity Report | — | no | no |
+| `FRIEND100` | ₹100 flat | Full Clarity Report, Stream Clarity, Career Direction, Career Roadmap | **1 per customer, first purchase only, and only for a referred account** | **yes** | no |
+| `REFER200` | ₹200 flat | Full Clarity Report | — | no (superseded by `FRIEND100`) | no |
 | `INTERN500` | ₹500 flat | All three internship tracks | 50 uses | no | no |
 
 ### `CLARITY100` — the free Full Clarity Report

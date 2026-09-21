@@ -28,7 +28,7 @@
      LumeReferral.inviteMessage(lang, url) -> text for a WhatsApp invite
      LumeReferral.payout([{upi, ageDeclared}]) -> Promise<answer|null>
      LumeReferral.decorate(url[,code]) -> url + ?ref= (sync, cached)
-     LumeReferral.claim(event)     -> Promise<{counted, needsPhone}>
+     LumeReferral.claim(event)     -> Promise<{counted, needsPhone, offer}>
      LumeReferral.claimWithPhone(event) -> claim, offering OTP if needed
      LumeReferral.forget()         -> clear the inbound stash
    ================================================================== */
@@ -189,7 +189,11 @@
           /* The totals ride along with the code so the share sheet can
              say "2 friends joined" without a second round trip. They are
              a cache of a server number, never the source of one. */
-          write(MY_KEY, { code: code, uid: user.uid, stats: (data && data.stats) || null });
+          write(MY_KEY, {
+            code: code, uid: user.uid,
+            stats: (data && data.stats) || null,
+            friendOffer: (data && data.friend_offer) || null
+          });
           return code;
         });
       });
@@ -233,6 +237,13 @@
   function stats(){
     var row = read(MY_KEY);
     return (row && row.stats) || null;
+  }
+
+  /* What the friend gets, as the server last reported it. Null when
+     there is no live offer to promise. */
+  function friendOffer(){
+    var row = read(MY_KEY);
+    return (row && row.friendOffer) || null;
   }
 
   /* ---------------------------------------------------------------- */
@@ -309,7 +320,7 @@
   function claim(event){
     var name = String(event || "");
     var code = stashed();
-    var no = { counted: false, needsPhone: false };
+    var no = { counted: false, needsPhone: false, offer: null };
     if(!name || !code || alreadyClaimed(name)) return Promise.resolve(no);
 
     return account().then(function(user){
@@ -326,10 +337,10 @@
              else is, because repeating it would change nothing and a 429
              or a 503 is not an answer at all.
           */
-          if(data.needs_phone) return { counted: false, needsPhone: true };
+          if(data.needs_phone) return { counted: false, needsPhone: true, offer: null };
 
           markClaimed(name);
-          return { counted: Boolean(data.counted), needsPhone: false };
+          return { counted: Boolean(data.counted), needsPhone: false, offer: data.offer || null };
         });
       });
     }).catch(function(){ return no; });
@@ -347,15 +358,108 @@
   */
   function claimWithPhone(event){
     return claim(event).then(function(answer){
-      if(!answer || !answer.needsPhone) return answer;
+      if(!answer || !answer.needsPhone){ announce(answer); return answer; }
       if(!window.lumeAccount || typeof window.lumeAccount.verifyPhone !== "function") return answer;
 
       return window.lumeAccount.verifyPhone().then(function(verified){
         if(!verified) return answer;
         // The token now carries the number, so the same claim can win.
-        return claim(event);
+        return claim(event).then(function(second){
+          announce(second);
+          return second;
+        });
       }).catch(function(){ return answer; });
     });
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* The friend's offer                                                */
+  /* ---------------------------------------------------------------- */
+
+  /*
+     A student who arrived on a friend's link has just earned that friend
+     ₹50 and, until now, got nothing themselves. This is their half.
+
+     Shown once, as a dismissible bar under the result, and never again
+     on this device — it is information, not a nag, and the code stays
+     valid whether or not they read it here. Rendered from what the
+     SERVER sent: if FRIEND100 is switched off, no offer comes back and
+     nothing is promised.
+  */
+  var OFFER_SEEN = "lumeRefOfferSeen";
+
+  function announce(answer){
+    var offer = answer && answer.offer;
+    if(!offer || !offer.code || !(offer.amount > 0)) return;
+    if(read(OFFER_SEEN)) return;
+    if(typeof document === "undefined" || !document.body) return;
+
+    write(OFFER_SEEN, { code: offer.code, at: Date.now() });
+
+    try{ renderOfferBar(offer); }catch(e){}
+  }
+
+  function renderOfferBar(offer){
+    if(!document.getElementById("lumeOfferCSS")){
+      var css = document.createElement("style");
+      css.id = "lumeOfferCSS";
+      css.textContent = [
+        ".lro{position:fixed;left:50%;bottom:16px;transform:translate(-50%,12px);z-index:9999;",
+        "width:min(460px,calc(100vw - 24px));display:flex;gap:12px;align-items:flex-start;",
+        "background:#0D1B40;color:#fff;border-radius:16px;padding:14px 16px;",
+        "box-shadow:0 18px 50px rgba(8,16,38,.4);font:600 .86rem/1.45 'Inter',system-ui,Arial,sans-serif;",
+        "opacity:0;transition:opacity .25s,transform .25s}",
+        ".lro.on{opacity:1;transform:translate(-50%,0)}",
+        ".lro-b{flex:1}",
+        ".lro-c{display:inline-block;margin-top:6px;padding:4px 9px;border-radius:7px;background:rgba(255,255,255,.14);",
+        "font:800 .85rem/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.5px;cursor:pointer}",
+        ".lro-x{background:transparent;border:0;color:rgba(255,255,255,.6);font-size:1.05rem;line-height:1;",
+        "cursor:pointer;padding:2px 4px;flex-shrink:0}",
+        ".lro-x:hover{color:#fff}"
+      ].join("");
+      document.head.appendChild(css);
+    }
+
+    var bar = document.createElement("div");
+    bar.className = "lro";
+    bar.setAttribute("role", "status");
+
+    var body = document.createElement("div");
+    body.className = "lro-b";
+    body.appendChild(document.createTextNode(
+      "\uD83C\uDF81 A friend invited you \u2014 here's \u20B9" + offer.amount +
+      " off your first report or counselling session."));
+
+    var code = document.createElement("span");
+    code.className = "lro-c";
+    code.textContent = offer.code;
+    code.title = "Tap to copy";
+    code.addEventListener("click", function(){
+      try{
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(offer.code);
+          code.textContent = "Copied \u2713";
+          setTimeout(function(){ code.textContent = offer.code; }, 1400);
+        }
+      }catch(e){}
+    });
+    body.appendChild(document.createElement("br"));
+    body.appendChild(code);
+    bar.appendChild(body);
+
+    var x = document.createElement("button");
+    x.className = "lro-x";
+    x.type = "button";
+    x.setAttribute("aria-label", "Dismiss");
+    x.textContent = "\u2715";
+    x.addEventListener("click", function(){
+      bar.classList.remove("on");
+      setTimeout(function(){ if(bar.parentNode) bar.parentNode.removeChild(bar); }, 260);
+    });
+    bar.appendChild(x);
+
+    document.body.appendChild(bar);
+    requestAnimationFrame(function(){ bar.classList.add("on"); });
   }
 
   /* ---------------------------------------------------------------- */
@@ -368,6 +472,7 @@
     mine: function(){ return cached(""); },
     ready: ready,
     stats: stats,
+    friendOffer: friendOffer,
     payout: payout,
     claimWithPhone: claimWithPhone,
     inviteMessage: inviteMessage,

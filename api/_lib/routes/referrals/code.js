@@ -20,6 +20,7 @@ const { json, setCors, readBody } = require("../../http");
 const { requireAccount } = require("../../account");
 const { checkRateLimit, clientKey } = require("../../rateLimit");
 const { ensureCode, isEnabled } = require("../../referrals");
+const { friendOffer } = require("../../coupons");
 
 // Where a referral link lands. The share sheet appends ?ref= to whatever
 // page the student was on, but a code handed over in conversation needs
@@ -77,7 +78,14 @@ module.exports = async function handler(req, res){
       code: result.stats.code,
       url: referralUrl(result.stats.code),
       created: result.created,
-      stats: result.stats
+      stats: result.stats,
+      /*
+        What the FRIEND gets, read from the live coupon catalogue. The
+        dashboard shows it as part of the pitch, and sourcing it here
+        rather than writing "₹100" into the page means switching
+        FRIEND100 off stops the claim being made.
+      */
+      friend_offer: await friendOffer()
     });
   }catch(err){
     console.error("[lume referrals] could not mint a code:", err && err.message);
