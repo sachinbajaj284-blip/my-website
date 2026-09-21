@@ -121,7 +121,7 @@ await test("segment() reads the last path element", () => {
   from the same directory it is checking — a disk-to-disk comparison
   would agree with itself no matter what the catch-all actually wired.
 */
-for(const group of ["coupons", "referrals"]){
+for(const group of ["coupons", "referrals", "auth"]){
   await test("every " + group + " handler on disk is wired, and every wired name resolves", () => {
     const onDisk = readdirSync(new URL("../api/_lib/routes/" + group + "/", import.meta.url))
       .filter(f => f.endsWith(".js"))
@@ -143,6 +143,43 @@ for(const group of ["coupons", "referrals"]){
     }
   });
 }
+
+/*
+  The limit itself, which until now nothing checked.
+
+  api/_lib/dispatch.js exists because Vercel's Hobby plan deploys at most
+  twelve functions and the site once stopped building at exactly that. It
+  happened again: two api/auth/* routes took the count to thirteen and
+  every deploy from fb219bb onwards failed — silently, as far as this
+  repo was concerned, because a green `npm test` said nothing about it.
+
+  The consolidation pattern was already here. What was missing was
+  anything that noticed when somebody didn't use it.
+*/
+await test("the deployment stays inside Vercel's twelve-function limit", () => {
+  const LIMIT = 12;
+
+  function countFunctions(dir, prefix){
+    let n = 0;
+    for(const entry of readdirSync(dir, { withFileTypes: true })){
+      // A leading underscore keeps a path out of routing, so nothing
+      // under api/_lib/ is a function.
+      if(entry.name.startsWith("_")) continue;
+      if(entry.isDirectory()){
+        n += countFunctions(new URL(entry.name + "/", dir), prefix + entry.name + "/");
+      }else if(entry.name.endsWith(".js")){
+        n += 1;
+      }
+    }
+    return n;
+  }
+
+  const count = countFunctions(new URL("../api/", import.meta.url), "");
+  assert.ok(count <= LIMIT,
+    "api/ deploys " + count + " serverless functions, over Vercel's limit of " + LIMIT +
+    ". Every deploy fails at this point, including production. Put the new routes behind a " +
+    "catch-all the way api/coupons, api/referrals and api/auth already are — see api/_lib/dispatch.js.");
+});
 
 await test("the wiring check would notice a route missing from the map", () => {
   // Proves the check above can fail. Same comparison, one route dropped.
