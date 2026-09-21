@@ -979,6 +979,16 @@ var CSS = [
 ".lsTips b{color:#fff}",
 ".lsTips ul{margin:6px 0 0;padding-left:18px}",
 ".lsTips li{margin:3px 0}",
+/* The referral block. Visually quieter than the share buttons on
+   purpose: posting the result is the thing the student came to do, and
+   earning credit is a reason to do it again, not the headline. */
+".lsRef{margin:14px 0 0;padding:13px 14px;border-radius:14px;background:rgba(37,211,102,.10);border:1px solid rgba(37,211,102,.28)}",
+".lsRefHd{margin:0;font:800 .86rem/1.3 inherit;color:#fff}",
+".lsRefSub{margin:4px 0 0;font-size:.79rem;line-height:1.5;color:rgba(255,255,255,.78)}",
+".lsRefWon{margin:7px 0 0;font:800 .79rem/1.3 inherit;color:#7ef0ad}",
+".lsRefLink{display:block;width:100%;margin:10px 0 0;padding:9px 11px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.28);color:#fff;font:700 .78rem/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;text-align:center;overflow:hidden;text-overflow:ellipsis}",
+".lsRefRow{display:flex;gap:8px;margin-top:9px}",
+".lsRefRow .lsBtn{flex:1;padding:11px 8px;font-size:.82rem}",
 ".lsToast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#fff;color:#0e1222;font:800 .85rem/1 inherit;padding:12px 18px;border-radius:999px;z-index:100000;box-shadow:0 12px 34px rgba(0,0,0,.35);opacity:0;transition:opacity .2s ease}",
 ".lsToast.on{opacity:1}",
 "@media (max-width:420px){.lsBox{padding:14px;border-radius:20px}.lsCanvas{width:56vw}}",
@@ -1066,6 +1076,94 @@ function shareToApp(state, app){
       }, 400);
     });
   });
+}
+
+/* ------------------------------------------------------------------ */
+/* The referral block                                                  */
+/* ------------------------------------------------------------------ */
+
+/*
+   Shown inside the share sheet once we know the student has a referral
+   code — which means signed in, so there is an account to credit.
+
+   Until step 1 shipped, the reward was invisible: the code rode along in
+   the caption and the QR, and nothing ever told the student they earned
+   anything for it. An incentive nobody knows about cannot motivate.
+
+   The numbers come from the server (`stats`), never from constants
+   here. A client-side ₹50 that disagrees with the ledger is a support
+   ticket, so when the totals are missing the block says less rather
+   than guessing.
+*/
+function referralBlock(box, d, code){
+  if(!code) return;
+
+  var hi = isHi(d);
+  var stats = (window.LumeReferral && window.LumeReferral.stats && window.LumeReferral.stats()) || null;
+  var url = withRef(d.url, code);
+
+  var wrap = el("div", "lsRef");
+  wrap.appendChild(el("p", "lsRefHd", hi
+    ? "दोस्तों को भेज, credit कमा 🎁"
+    : "Invite friends, earn credit 🎁"));
+
+  /* Said exactly once, in the student's own terms: what they get, what
+     it is (credit, not cash) and what the ceiling is. */
+  var reward = stats && stats.next_reward ? stats.next_reward : null;
+  var cap = stats && stats.credit_cap ? stats.credit_cap : null;
+  var maxed = Boolean(stats && cap && stats.credit_remaining === 0);
+
+  /* At the cap the next friend is worth nothing, so the block must not
+     keep promising a reward. Saying so is also the nicer number: they
+     earned the maximum. */
+  if(maxed){
+    wrap.appendChild(el("p", "lsRefSub", hi
+      ? "तुमने ₹" + cap + " का पूरा credit कमा लिया — ये maximum है. Share करते रहो, दोस्तों के लिए quiz अब भी free है."
+      : "You've earned the full ₹" + cap + " of credit — that's the maximum. Keep sharing anyway: the quiz is still free for them."));
+  }else wrap.appendChild(el("p", "lsRefSub", hi
+    ? (reward
+        ? "जो दोस्त इस link से quiz पूरी करेगा, उस पर ₹" + reward + " का credit मिलेगा — Lume Live पर कुछ भी खरीदने में लगा सकते हो" + (cap ? ", ₹" + cap + " तक." : ".")
+        : "इस link से आए दोस्त quiz पूरी करें, तो तुम्हें credit मिलता है.")
+    : (reward
+        ? "Every friend who finishes the quiz on your link earns you ₹" + reward + " of credit towards anything on Lume Live" + (cap ? ", up to ₹" + cap + "." : ".")
+        : "Friends who finish the quiz on your link earn you credit towards anything on Lume Live.")));
+
+  /* Only once there is something to report. "0 friends joined" is a
+     scoreboard of a failure and reads as one. */
+  if(stats && stats.qualified > 0){
+    wrap.appendChild(el("p", "lsRefWon", hi
+      ? stats.qualified + " दोस्त जुड़ चुके · ₹" + (stats.credit_earned || 0) + " का credit"
+      : stats.qualified + (stats.qualified === 1 ? " friend has" : " friends have") + " joined · ₹" + (stats.credit_earned || 0) + " earned"));
+  }
+
+  var link = el("div", "lsRefLink");
+  link.textContent = url.replace(/^https?:\/\//, "");
+  wrap.appendChild(link);
+
+  var row = el("div", "lsRefRow");
+
+  var wa = el("button", "lsBtn wa", hi ? "💬 WhatsApp पर भेज" : "💬 Invite on WhatsApp");
+  wa.type = "button";
+  wa.addEventListener("click", function(){
+    /* A sentence and a link, not the story card: this is a 1:1 chat, and
+       an image with a caption is a status post in the wrong place. */
+    var text = window.LumeReferral.inviteMessage(hi ? "hi" : "en", url);
+    track("referral_invite", { event_category:"viral_loop", event_label:(d.quiz || "") + ":wa", method:"whatsapp" });
+    window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(text), "_blank", "noopener");
+  });
+  row.appendChild(wa);
+
+  var copy = el("button", "lsBtn dl", hi ? "🔗 Link copy" : "🔗 Copy link");
+  copy.type = "button";
+  copy.addEventListener("click", function(){
+    track("referral_link_copy", { event_category:"viral_loop", event_label:(d.quiz || "") });
+    copyText(url).then(function(){ toast(hi ? "तेरा link copy हो गया" : "Your link copied"); });
+  });
+  row.appendChild(copy);
+
+  wrap.appendChild(row);
+  box.appendChild(wrap);
+  return wrap;
 }
 
 /* ------------------------------------------------------------------ */
@@ -1264,6 +1362,12 @@ function open(data){
   });
   box.appendChild(grid);
 
+  /* Filled in only if this student turns out to have a referral code —
+     see the ready() handler below. Appended here so the block lands
+     under the share buttons rather than at the bottom of the sheet. */
+  var refSlot = el("div");
+  box.appendChild(refSlot);
+
   /* ---- caption ---- */
   var capWrap = el("div", "lsCapWrap");
   capWrap.appendChild(el("p", "lsLbl", isHi(d) ? "Caption — अपने हिसाब से बदल" : "Caption — make it yours"));
@@ -1340,10 +1444,14 @@ function open(data){
          cache: decorate() replaces whatever ref is already on the URL,
          which is what corrects a stale one on a shared device. */
       var next = withRef(d.url, code);
-      if(next === d.url) return;
-      d.url = next;
-      state.render();
-      setCaption();
+      if(next !== d.url){
+        d.url = next;
+        state.render();
+        setCaption();
+      }
+      /* Signed out, no code, no block — a student who cannot be credited
+         is never shown a reward they would not get. */
+      referralBlock(refSlot, d, code);
     }).catch(function(){});
   }
 

@@ -24,6 +24,8 @@
      LumeReferral.inbound()        -> "AARAV7K2" | ""   (who sent me)
      LumeReferral.mine()           -> "AARAV7K2" | ""   (cached, sync)
      LumeReferral.ready()          -> Promise<code|"">  (fetch if needed)
+     LumeReferral.stats()          -> { qualified, credit_earned, … } | null
+     LumeReferral.inviteMessage(lang, url) -> text for a WhatsApp invite
      LumeReferral.decorate(url[,code]) -> url + ?ref= (sync, cached)
      LumeReferral.claim(event)     -> Promise<boolean>  ("snapshot")
      LumeReferral.forget()         -> clear the inbound stash
@@ -35,7 +37,7 @@
   var CLAIM_ENDPOINT = "/api/referrals/claim";
 
   var IN_KEY = "lumeRefInbound";   // { code, ts }
-  var MY_KEY = "lumeRefMine";      // { code, uid }
+  var MY_KEY = "lumeRefMine";      // { code, uid, stats }
   var CLAIMED_KEY = "lumeRefClaimed"; // "snapshot,stream"
 
   /* A friend who takes the quiz a month later is still that friend's
@@ -79,9 +81,17 @@
   /* Inbound                                                           */
   /* ---------------------------------------------------------------- */
 
+  /* The code this page view is carrying, whether or not it could be
+     written down. Storage throws in a private window and silently drops
+     writes when the quota is full; on a quiz page the referral is still
+     perfectly real for the rest of this page view, and the student is
+     usually about to finish the quiz on it. It just will not survive a
+     navigation, which is the part we cannot help. */
+  var memo = "";
+
   function stashed(){
     var row = read(IN_KEY);
-    if(!row || !row.code) return "";
+    if(!row || !row.code) return memo;
     if(!row.ts || (Date.now() - Number(row.ts)) > WINDOW_MS){
       drop(IN_KEY);
       return "";
@@ -103,6 +113,7 @@
     if(existing) return existing;
 
     write(IN_KEY, { code: code, ts: Date.now() });
+    memo = code;
     return code;
   }
 
@@ -167,7 +178,10 @@
         return post(CODE_ENDPOINT, {}, idToken).then(function(data){
           var code = data && looksLikeCode(data.code);
           if(!code) return "";
-          write(MY_KEY, { code: code, uid: user.uid });
+          /* The totals ride along with the code so the share sheet can
+             say "2 friends joined" without a second round trip. They are
+             a cache of a server number, never the source of one. */
+          write(MY_KEY, { code: code, uid: user.uid, stats: (data && data.stats) || null });
           return code;
         });
       });
@@ -196,6 +210,37 @@
       .replace(/\?$/, "");
 
     return clean + (clean.indexOf("?") === -1 ? "?" : "&") + PARAM + "=" + encodeURIComponent(ref);
+  }
+
+  /* What the last fetch said this student has earned. Null until
+     ready() has resolved at least once. Display only — the ledger is
+     the server's, and this is a copy of it that can go stale. */
+  function stats(){
+    var row = read(MY_KEY);
+    return (row && row.stats) || null;
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* The invite                                                        */
+  /* ---------------------------------------------------------------- */
+
+  /*
+     A referral message, not a result. The story card is the right thing
+     to post to a status; a 1:1 WhatsApp chat wants a sentence and a
+     link, which is why this is separate from the card's captions.
+
+     It deliberately does not mention the reward. A friend who is told
+     "take this so I get ₹50" is being asked for a favour; one who is
+     told the quiz is worth two minutes is being given something. The
+     reward is the referrer's business, and it is shown to them.
+  */
+  function inviteMessage(lang, url){
+    var link = String(url || "");
+    return (lang === "hi")
+      ? "मैंने अभी ये 2 मिनट का career quiz किया — बिना पैसे के, और result सच में सटीक था.\n" +
+        "तुम भी करके देखो, फिर बताना क्या आया 👇\n" + link
+      : "Just did this 2-minute career quiz — it's free and honestly a bit too accurate.\n" +
+        "Take it and tell me what you get 👇\n" + link;
   }
 
   /* ---------------------------------------------------------------- */
@@ -249,9 +294,11 @@
     inbound: function(){ return inboundCode; },
     mine: function(){ return cached(""); },
     ready: ready,
+    stats: stats,
+    inviteMessage: inviteMessage,
     decorate: decorate,
     claim: claim,
-    forget: function(){ drop(IN_KEY); inboundCode = ""; },
+    forget: function(){ drop(IN_KEY); memo = ""; inboundCode = ""; },
     PARAM: PARAM
   };
 

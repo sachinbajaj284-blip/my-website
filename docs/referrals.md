@@ -146,6 +146,39 @@ This is the point of the whole design: **we pay for scans, not for
 posts.** There is nothing to verify about an Instagram story, no manual
 review queue, and no reward for posting to an audience of nobody.
 
+### The referral block
+
+Under the share buttons, shown **only once the student turns out to have
+a code** — which means signed in, so there is an account to credit.
+Somebody who cannot be paid is never shown a reward.
+
+It says three things: what a friend is worth, that it is **credit and
+not cash**, and the ceiling. Every number comes from the server's
+`stats`; when they are missing the block says less rather than guessing,
+because a client-side ₹50 that disagrees with the ledger is a support
+ticket. Progress ("2 friends have joined · ₹100 earned") appears only
+once there is something to report — "0 friends joined" is a scoreboard
+of a failure and reads as one.
+
+Until this shipped the reward was invisible: the code rode along in the
+caption and the QR and nothing ever told the student they earned
+anything. An incentive nobody knows about cannot motivate.
+
+### Two different WhatsApp buttons, on purpose
+
+The existing **💬 WhatsApp** button in the share grid posts the *story
+card* — a 1080x1920 image plus caption, aimed at Status.
+
+The **💬 Invite on WhatsApp** button in the referral block sends a
+sentence and a link, no image, aimed at a 1:1 chat or a group. An image
+with a caption is a status post in the wrong place.
+
+The invite text (`LumeReferral.inviteMessage`) deliberately **does not
+mention the reward**. A friend told "take this so I get ₹50" is being
+asked for a favour; one told the quiz is worth two minutes is being given
+something. The reward is the referrer's business, and it is shown to
+them. There is a test that keeps it that way.
+
 ---
 
 ## Operating it
@@ -155,7 +188,8 @@ review queue, and no reward for posting to an audience of nobody.
 | Turn it off | `LUME_REFERRALS_ENABLED=0` — both routes 404, links keep resolving |
 | Change what a referral is worth | `TIERS` in `api/_lib/referrals.js` (a table, so tiering it is an edit in one place) |
 | Change the cap | `CREDIT_CAP` |
-| Tests | `npm run referrals:test` |
+| Change the invite wording | `inviteMessage()` in `lume-referral.js` — shared with `refer.html` when it lands |
+| Tests | `npm run referrals:test` (ledger) and `npm run referrals:client:test` (browser) |
 
 The kill switch exists because this is the one feature on the site that
 gives money away. If something is being abused at 2am the answer should
@@ -178,12 +212,22 @@ Deliberately, and in roughly this order:
    reward, who has joined.
 4. **The friend's side of the offer** (₹100 off their first paid
    product), which is what makes this two-sided.
-5. **WhatsApp share button** in the story sheet. It will out-refer
-   Instagram in India for this audience by a wide margin.
+5. **A referral entry point that is not a quiz result.** Today the only
+   way to reach the block is to finish a quiz and open the share sheet.
+   A student who wants to refer a week later has nowhere to go — that is
+   what `refer.html` is for.
 
 `stream-selector.html` has no `lume-auth.js`, so a student cannot be
-signed in there and `ready()` returns `""`. Inbound capture still works.
-Adding auth to that page is worth doing before step 3.
+signed in there, `ready()` returns `""`, and **the referral block never
+appears on the Stream Selector** — its sharers get an undecorated card.
+Inbound capture still works, so that page can still *receive* referrals;
+it just cannot originate them. Adding auth there is now the single
+cheapest win available, and worth doing before `refer.html`.
+
+Note that `lume-auth.js` imports Firebase the first time an account is
+actually needed, which on that page would be when the share sheet opens
+— not on page load. The cost is one SDK fetch for a student who has
+already finished the quiz.
 
 ---
 
