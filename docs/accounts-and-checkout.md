@@ -19,6 +19,12 @@ Cashfree payment window without signing in first, on any page, for any SKU.
 - **The code proves the inbox**, so accounts made this way are created
   `emailVerified: true` — restore-access works on the first try, and the old
   "check your inbox" panel never appears for them.
+- **Nothing asks for a phone number to buy.** The assessment form asked for a
+  WhatsApp number directly under the Create Account / Sign In buttons, which
+  read as a second sign-in step; it is gone, and `create-order.js` no longer
+  requires one. A number is still accepted and used wherever a page has one,
+  and the booking form still asks — delivery otherwise goes to the verified
+  address on the account.
 
 ---
 

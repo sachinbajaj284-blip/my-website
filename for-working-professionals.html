@@ -2799,8 +2799,13 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
             <div class="sa-gate-2">
               <div class="sa-field"><label for="saName">Name for the report *</label>
                 <input class="sa-input" id="saName" type="text" maxlength="60" placeholder="Full name"></div>
-              <div class="sa-field"><label for="saPhone">WhatsApp number *</label>
-                <input class="sa-input" id="saPhone" type="tel" maxlength="18" placeholder="+91 98765 43210"></div>
+              <!-- The WhatsApp number was asked for here, directly under the
+                   Create Account / Sign In buttons, which made it read as a
+                   second sign-in step. Delivery goes to the account's
+                   verified email instead. The input stays, empty and
+                   hidden, because the page's own script reads its value in
+                   several places and a missing element throws. -->
+              <input id="saPhone" type="hidden" value="">
             </div>
             <div class="sa-profile-grid">
               <div class="sa-field"><label for="saCourse">Current role *</label>
@@ -3218,7 +3223,7 @@ function validateGate(){
  var city=el("saCity").value.trim();
  var role=el("saCourse").value.trim();
  if(!name){err.textContent="Please enter your name.";return false;}
- if(phone.replace(/\D/g,"").length<10){err.textContent="Please enter a valid WhatsApp number.";return false;}
+ if(phone&&phone.replace(/\D/g,"").length<10){err.textContent="Please enter a valid WhatsApp number.";return false;}
  if(!role){err.textContent="Please enter your current role.";return false;}
  if(!industry){err.textContent="Please select your industry.";return false;}
  if(!age||Number(age)<18||Number(age)>70){err.textContent="Please enter a valid age (18 or older).";return false;}

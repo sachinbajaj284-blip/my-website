@@ -112,11 +112,21 @@ module.exports = async function handler(req, res){
   const accountEmail = account ? account.email : "";
   const email = String(customer.email || accountEmail || "hello@lumelive.co.in").slice(0, 120);
   const name = String(customer.name || (account && account.name) || "Lume Live Customer").slice(0, 80);
-  // Only the handbook is bought without a phone number — everything else
-  // is a session or a report we have to be able to deliver.
-  if(!phone && sku !== "parents-handbook"){
-    return json(res, 400, { error: "Customer phone is required." });
-  }
+  /*
+    A phone number is no longer required to buy anything.
+
+    It used to be: a session or a report has to reach somebody, and a
+    WhatsApp number was how. But the number was asked for on the form
+    directly under the Create Account and Sign In buttons, which made it
+    read as a second sign-in step — and since every account now carries
+    an address the person proved they can read, there is somewhere to
+    send the thing they bought without it.
+
+    The number is still accepted and still used when the page has one
+    (checkout fills it from the account where it can, and the booking
+    form still asks). It simply no longer stands between a client and
+    paying.
+  */
 
   /*
     The price is decided here and nowhere else.
