@@ -95,12 +95,18 @@ module.exports = async (req, res) => {
         displayName: name || undefined
       });
     } else {
-      // A returning client keeps the name on their account; someone who
-      // signed up before this existed, and so has none, gets the one
-      // they just typed. An unverified older account becomes verified,
-      // because they just proved the inbox is theirs.
+      /*
+        The form asks for a name on every sign-in, so what was typed is
+        what the account gets — otherwise correcting a name that went in
+        wrong would be impossible, and the field would be a lie. It is
+        their own account and they have just proved it, so there is
+        nobody else's name to overwrite.
+
+        An unverified older account becomes verified here too, because
+        they just proved the inbox is theirs.
+      */
       const patch = {};
-      if(!user.displayName && name){ patch.displayName = name; }
+      if(name && name !== user.displayName){ patch.displayName = name; }
       if(!user.emailVerified){ patch.emailVerified = true; }
       if(Object.keys(patch).length){ user = await auth.updateUser(user.uid, patch); }
     }

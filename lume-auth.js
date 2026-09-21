@@ -13,7 +13,7 @@
 
      Rather than copy a sign-in form onto the pages that lack it, this
      is the one place that knows how to get a signed-in user — and, since
-     the sign-in is a mobile number and an OTP, the only place:
+     the sign-in is an address and an emailed code, the only place:
 
        window.lumeAccount.ready()    -> Promise<user|null>  once known
        window.lumeAccount.current()  -> user|null
@@ -152,7 +152,7 @@
   }
 
   /* ============================================================
-     Sign in / sign up — name, mobile number, OTP
+     Sign in / sign up — name, email address, six-digit code
 
      There is no password: a six-digit code, emailed, proves the same
      thing a password does and is one less thing to remember, forget and
@@ -199,7 +199,8 @@
 ".la-tel span{display:flex;align-items:center;padding:0 10px 0 13px;font-size:.94rem;font-weight:700;color:#56657d;border-right:1.5px solid #E3E9F2}",
 ".la-tel input{border:0;border-radius:0;background:transparent}",
 ".la-tel input:focus{background:transparent}",
-/* The code itself: wide spacing so a 6-digit SMS code is easy to check. */
+/* The code itself: wide spacing so a 6-digit code is easy to check
+   against the email it came in. */
 "#laOtp{letter-spacing:.42em;font-size:1.12rem;font-weight:800;text-align:center}",
 ".la-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;border:0;border-radius:999px;font-size:.94rem;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:10px}",
 ".la-btn.gold{background:linear-gradient(135deg,#C9933A,#E8B95A);color:#0D1B40;box-shadow:0 10px 26px rgba(201,147,58,.32)}",
@@ -254,7 +255,7 @@
         '<div class="la-hd">' +
           '<button class="la-x" type="button" aria-label="Close">✕</button>' +
           '<h3 class="la-title">Create your Lume Live account</h3>' +
-          '<p class="la-sub">Your report, session and receipts stay with your number — on any device.</p>' +
+          '<p class="la-sub">Your report, session and receipts stay with your account — on any device.</p>' +
         '</div>' +
         '<div class="la-body">' +
           '<p class="la-err"></p>' +
@@ -262,13 +263,13 @@
           '<div class="la-field la-name-field"><label for="laName">Full name</label><input id="laName" type="text" autocomplete="name" placeholder="Your name"></div>' +
           '<div class="la-field la-email-field"><label for="laEmail2">Email address</label>' +
             '<input id="laEmail2" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" maxlength="254"></div>' +
-          '<div class="la-field la-otp-field" style="display:none"><label for="laOtp">6-digit OTP</label>' +
+          '<div class="la-field la-otp-field" style="display:none"><label for="laOtp">6-digit code</label>' +
             '<input id="laOtp" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="••••••" maxlength="6"></div>' +
-          '<button class="la-btn gold la-submit" type="button">Send OTP</button>' +
+          '<button class="la-btn gold la-submit" type="button">Email me a code</button>' +
           '<button class="la-alt la-resend" type="button" style="display:none">Didn’t get it? <b>Send again</b></button>' +
           '<button class="la-alt la-edit" type="button" style="display:none">Wrong address? <b>Change it</b></button>' +
           '<button class="la-alt la-signout" type="button" style="display:none">Not you? <b>Sign out</b></button>' +
-          '<p class="la-note">We send one SMS to confirm it’s you. No password to remember, no marketing.</p>' +
+          '<p class="la-note">We email you a code to confirm it’s you. No password to remember, no marketing.</p>' +
           '<div class="la-captcha"></div>' +
         '</div>' +
       '</div>';
@@ -302,7 +303,7 @@
       input.addEventListener("keydown", function(e){ if(e.key === "Enter"){ submit(); } });
     });
     // Six digits is the whole code, so verify as soon as they are there
-    // rather than asking for a tap the SMS autofill has already earned.
+    // rather than asking for a tap the person has already earned.
     EL.otp.addEventListener("input", function(){
       var digits = String(EL.otp.value || "").replace(/\D/g, "").slice(0, 6);
       if(EL.otp.value !== digits){ EL.otp.value = digits; }
@@ -327,10 +328,11 @@
   }
 
 
-  /* One card, three steps: the number, the code, and — only for someone
-     we have never met — their name. Sign-in and sign-up are the same
-     three steps, because a number either has an account behind it or
-     gets one; the person should not have to know which. */
+  /* One card, two steps and a rare third: who you are, the code, and —
+     only for someone who arrived through "Sign in" and turns out to be
+     new — their name. Signing in and signing up are the same steps,
+     because an address either has an account behind it or gets one;
+     the person should not have to know which. */
   function showStep(step){
     EL.step = step;
     var onEmail = step === "email";
@@ -340,7 +342,12 @@
 
     EL.emailField.style.display = onEmail ? "" : "none";
     EL.otpField.style.display   = onCode ? "" : "none";
-    EL.nameField.style.display  = (onName || (onEmail && EL.mode === "signup")) ? "" : "none";
+    /* The name is asked on both sides, not only on Create account: the
+       two buttons lead to one flow, and a form that changes shape
+       depending on which was pressed suggests they are different
+       things. It also lets a returning client fix a name that went in
+       wrong the first time. */
+    EL.nameField.style.display  = (onName || onEmail) ? "" : "none";
     EL.resend.style.display     = onCode ? "" : "none";
     EL.edit.style.display       = onCode ? "" : "none";
     EL.signout.style.display    = onAcct ? "" : "none";
@@ -348,12 +355,12 @@
     if(onEmail){
       EL.title.textContent = EL.mode === "signup" ? "Create your Lume Live account" : "Sign in to continue";
       EL.sub.textContent = EL.mode === "signup"
-        ? "Your report, session and receipts stay with your number — on any device."
-        : "Enter your mobile number. We’ll send you an OTP.";
-      EL.submit.textContent = "Send OTP";
+        ? "Your report, session and receipts stay with your account — on any device."
+        : "Your name and email. We’ll send you a code.";
+      EL.submit.textContent = "Email me a code";
       showSent("");
     } else if(onCode){
-      EL.title.textContent = "Enter the OTP";
+      EL.title.textContent = "Enter the code";
       EL.sub.textContent = "It usually arrives within a few seconds.";
       EL.submit.textContent = "Verify and continue";
     } else if(onName){
@@ -377,8 +384,7 @@
       try{
         if(onCode){ EL.otp.focus(); }
         else if(onName){ EL.name.focus(); }
-        else if(EL.mode === "signup"){ EL.name.focus(); }
-        else { EL.email.focus(); }
+        else { EL.name.focus(); }
       }catch(err){}
     }, 60);
   }
@@ -417,13 +423,14 @@
     EL.sent.classList.toggle("on", Boolean(html));
   }
 
-  /* An SMS costs money and Firebase rate-limits it hard, so a second tap
-     30 seconds in has to read as "not yet" rather than as a dead button.
+  /* A second tap 30 seconds in has to read as "not yet" rather than as
+     a dead button — and a second email would invalidate the code the
+     person is already looking at.
 
      Named apart from the email panel's tickResend below: two function
      declarations of one name in this scope is not two functions, it is
      the second one, and the countdown here silently never ran. */
-  var OTP_COOLDOWN_MS = 45 * 1000;
+  var CODE_COOLDOWN_MS = 45 * 1000;
   var lastOtpAt = 0;
 
   function stopResendTimer(){
@@ -432,7 +439,7 @@
 
   function tickOtpResend(){
     if(!EL.resend){ return; }
-    var left = Math.max(0, OTP_COOLDOWN_MS - (Date.now() - lastOtpAt));
+    var left = Math.max(0, CODE_COOLDOWN_MS - (Date.now() - lastOtpAt));
     if(left <= 0){
       EL.resend.disabled = false;
       EL.resend.innerHTML = "Didn’t get it? <b>Send again</b>";
@@ -440,7 +447,7 @@
       return;
     }
     EL.resend.disabled = true;
-    EL.resend.textContent = "You can ask for another OTP in " + Math.ceil(left / 1000) + "s";
+    EL.resend.textContent = "You can ask for another code in " + Math.ceil(left / 1000) + "s";
     if(!EL.timer){ EL.timer = setInterval(tickOtpResend, 1000); }
   }
 
@@ -481,12 +488,10 @@
   }
 
   function sendOtp(isResend){
-    if(isResend && Math.max(0, OTP_COOLDOWN_MS - (Date.now() - lastOtpAt)) > 0){ return; }
+    if(isResend && Math.max(0, CODE_COOLDOWN_MS - (Date.now() - lastOtpAt)) > 0){ return; }
 
     var name = (EL.name.value || "").trim();
-    // The address is what the account IS, so it is asked for first and
-    // the name is carried along rather than gating the email.
-    if(EL.mode === "signup" && !name){ return showError("Please enter your name."); }
+    if(!name){ return showError("Please enter your name."); }
 
     // On the address step the field is the truth — otherwise "Change it",
     // a new address, "Email me a code" would quietly write to the old
