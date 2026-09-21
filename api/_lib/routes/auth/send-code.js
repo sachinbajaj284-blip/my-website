@@ -16,10 +16,10 @@
 */
 
 const crypto = require("crypto");
-const { json, setCors, readBody } = require("../_lib/http");
-const { checkRateLimit, clientKey } = require("../_lib/rateLimit");
-const { issueCode, normalizeEmail, looksLikeEmail, RESEND_COOLDOWN_MS } = require("../_lib/emailCodes");
-const { sendEmail, codeEmail } = require("../_lib/sendEmail");
+const { json, setCors, readBody } = require("../../http");
+const { checkRateLimit, clientKey } = require("../../rateLimit");
+const { issueCode, normalizeEmail, looksLikeEmail, RESEND_COOLDOWN_MS } = require("../../emailCodes");
+const { sendEmail, codeEmail } = require("../../sendEmail");
 
 const HOUR_MS = 60 * 60 * 1000;
 
