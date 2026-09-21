@@ -115,6 +115,15 @@ function run({ referral, account, qr } = {}){
 
 const CODE = "AARA7K2P";
 
+// A payout summary in the shape api/_lib/referrals.js sends.
+function summary(over){
+  return Object.assign({
+    earned: 250, paid: 0, pending: 0, matured: 250, payable: 250,
+    min_payout: 200, hold_days: 7, can_request: true, upi: ""
+  }, over || {});
+}
+const PAYABLE = summary();
+
 function referralStub(opts = {}){
   let calls = 0;
   const stub = {
@@ -126,7 +135,12 @@ function referralStub(opts = {}){
     },
     stats: () => (typeof opts.stats === "function" ? opts.stats() : (opts.stats || null)),
     decorate: (url, code) => url + "?ref=" + code,
-    inviteMessage: (lang, url) => "invite " + lang + " " + url
+    inviteMessage: (lang, url) => "invite " + lang + " " + url,
+    payout(body){
+      stub.lastPayout = body || null;
+      if(typeof opts.payout === "function") return Promise.resolve(opts.payout(body));
+      return Promise.resolve(opts.payout === undefined ? { ok: true, summary: PAYABLE } : opts.payout);
+    }
   };
   return stub;
 }
@@ -177,7 +191,7 @@ await test("pressing sign in opens the account prompt", async () => {
 await test("signing in loads the dashboard without a reload", async () => {
   const account = accountStub(null);
   const { page } = run({
-    referral: referralStub({ stats: { qualified: 1, credit_earned: 50, credit_cap: 300, credit_remaining: 250, next_reward: 50 } }),
+    referral: referralStub({ stats: { qualified: 1, earned: 50, cap: 300, remaining: 250, next_reward: 50 } }),
     account
   });
   await settle();
@@ -195,7 +209,7 @@ await test("a page whose modules never loaded still shows something correct", as
 
 console.log("\nsigned in");
 
-const FULL = { qualified: 3, credit_earned: 150, credit_cap: 300, credit_remaining: 150, next_reward: 50 };
+const FULL = { qualified: 3, earned: 150, cap: 300, remaining: 150, next_reward: 50 };
 
 await test("the dashboard shows the server's numbers", async () => {
   const { page } = run({
@@ -208,7 +222,7 @@ await test("the dashboard shows the server's numbers", async () => {
   assert.equal(page.byId.sCredit.textContent, "₹150");
   assert.equal(page.byId.bar.style.width, "50%");
   assert.equal(page.byId.barCap.textContent, "of ₹300 max");
-  assert.match(page.byId.rewardLine.textContent, /₹50 of credit/);
+  assert.match(page.byId.rewardLine.textContent, /earns you ₹50/);
 });
 
 await test("the link is shown with the student's own code", async () => {
@@ -219,7 +233,7 @@ await test("the link is shown with the student's own code", async () => {
 });
 
 await test("at the ceiling the page stops promising a reward", async () => {
-  const maxed = { qualified: 6, credit_earned: 300, credit_cap: 300, credit_remaining: 0, next_reward: 0 };
+  const maxed = { qualified: 6, earned: 300, cap: 300, remaining: 0, next_reward: 0 };
   const { page } = run({ referral: referralStub({ stats: maxed }), account: accountStub({ uid: "u1" }) });
   await settle();
   assert.match(page.byId.rewardLine.textContent, /full ₹300/);
@@ -295,6 +309,120 @@ await test("a missing QR encoder is survivable", async () => {
   await settle();
   assert.equal(visible(page, "qrWrap"), false);
   assert.equal(visible(page, "dash"), true);
+});
+
+console.log("\ngetting paid");
+
+const SIGNED_IN = () => accountStub({ uid: "u1" });
+
+await test("a withdrawable balance offers the form", async () => {
+  const { page } = run({
+    referral: referralStub({ stats: FULL, payout: { ok: true, summary: summary() } }),
+    account: SIGNED_IN()
+  });
+  await settle();
+  assert.equal(visible(page, "payoutForm"), true);
+  assert.equal(page.byId.pReady.textContent, "₹250");
+  assert.match(page.byId.payoutState.textContent, /withdraw ₹250/);
+});
+
+await test("money still inside the hold says so, and offers no button", async () => {
+  // The difference between "you have not earned enough" and "you have,
+  // but it is still clearing" is the whole complaint this prevents.
+  const { page } = run({
+    referral: referralStub({ stats: FULL, payout: { ok: true, summary: summary({ matured: 0, payable: 0, can_request: false }) } }),
+    account: SIGNED_IN()
+  });
+  await settle();
+  assert.equal(visible(page, "payoutForm"), false);
+  assert.match(page.byId.payoutState.textContent, /₹250 is still clearing/);
+  assert.match(page.byId.payoutState.textContent, /7 days/);
+});
+
+await test("below the minimum says how far off they are", async () => {
+  const { page } = run({
+    referral: referralStub({ stats: FULL, payout: { ok: true, summary: summary({ earned: 100, matured: 100, payable: 100, can_request: false }) } }),
+    account: SIGNED_IN()
+  });
+  await settle();
+  assert.equal(visible(page, "payoutForm"), false);
+  assert.match(page.byId.payoutState.textContent, /reach ₹200/);
+});
+
+await test("a pending payout is reported, not re-offered", async () => {
+  const { page } = run({
+    referral: referralStub({ stats: FULL, payout: { ok: true, summary: summary({ pending: 250, payable: 0, can_request: false, upi: "aarav@okhdfcbank" }) } }),
+    account: SIGNED_IN()
+  });
+  await settle();
+  assert.equal(visible(page, "payoutForm"), false);
+  assert.match(page.byId.payoutState.textContent, /on its way to aarav@okhdfcbank/);
+});
+
+await test("requesting sends the UPI ID and the age declaration", async () => {
+  const referral = referralStub({ stats: FULL, payout: () => ({ ok: true, requested: 250, summary: summary({ pending: 250, payable: 0, can_request: false }) }) });
+  const { page } = run({ referral, account: SIGNED_IN() });
+  await settle();
+
+  page.byId.upi.value = "aarav@okhdfcbank";
+  page.byId.age.checked = true;
+  page.byId.requestPayout.click();
+  await settle();
+
+  assert.equal(referral.lastPayout.upi, "aarav@okhdfcbank");
+  assert.equal(referral.lastPayout.ageDeclared, true);
+  assert.equal(visible(page, "payoutForm"), false, "and the form goes away once it is in");
+});
+
+await test("an unchecked age box is still sent, so the server decides", async () => {
+  // The checkbox is a prompt, not the control. The refusal that matters
+  // is the server's, and the page must not quietly substitute its own.
+  const referral = referralStub({
+    stats: FULL,
+    payout: (body) => (body && body.upi
+      ? { ok: false, reason: "AGE_NOT_DECLARED", message: "Please confirm you're 18 or older.", summary: summary() }
+      : { ok: true, summary: summary() })
+  });
+  const { page } = run({ referral, account: SIGNED_IN() });
+  await settle();
+
+  page.byId.upi.value = "aarav@okhdfcbank";
+  page.byId.age.checked = false;
+  page.byId.requestPayout.click();
+  await settle();
+
+  assert.equal(referral.lastPayout.ageDeclared, false);
+  assert.match(page.byId.payoutErr.textContent, /18 or older/);
+});
+
+await test("a refusal shows the server's message and redraws from its summary", async () => {
+  const referral = referralStub({
+    stats: FULL,
+    payout: (body) => (body && body.upi
+      ? { ok: false, reason: "BAD_UPI", message: "That doesn't look like a UPI ID.", summary: summary({ payable: 250 }) }
+      : { ok: true, summary: summary() })
+  });
+  const { page } = run({ referral, account: SIGNED_IN() });
+  await settle();
+
+  page.byId.upi.value = "nope";
+  page.byId.age.checked = true;
+  page.byId.requestPayout.click();
+  await settle();
+
+  assert.match(page.byId.payoutErr.textContent, /UPI ID/);
+  assert.equal(page.byId.requestPayout.disabled, false, "the button comes back");
+  assert.equal(visible(page, "payoutForm"), true, "and they can fix it and retry");
+});
+
+await test("an unreachable payout endpoint hides the card rather than guessing", async () => {
+  const { page } = run({
+    referral: referralStub({ stats: FULL, payout: null }),
+    account: SIGNED_IN()
+  });
+  await settle();
+  assert.equal(visible(page, "payoutCard"), false);
+  assert.equal(visible(page, "dash"), true, "the rest of the dashboard still works");
 });
 
 console.log("");

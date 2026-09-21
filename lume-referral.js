@@ -26,6 +26,7 @@
      LumeReferral.ready()          -> Promise<code|"">  (fetch if needed)
      LumeReferral.stats()          -> { qualified, credit_earned, … } | null
      LumeReferral.inviteMessage(lang, url) -> text for a WhatsApp invite
+     LumeReferral.payout([{upi, ageDeclared}]) -> Promise<answer|null>
      LumeReferral.decorate(url[,code]) -> url + ?ref= (sync, cached)
      LumeReferral.claim(event)     -> Promise<boolean>  ("snapshot")
      LumeReferral.forget()         -> clear the inbound stash
@@ -35,6 +36,7 @@
 
   var CODE_ENDPOINT = "/api/referrals/code";
   var CLAIM_ENDPOINT = "/api/referrals/claim";
+  var PAYOUT_ENDPOINT = "/api/referrals/payout";
 
   var IN_KEY = "lumeRefInbound";   // { code, ts }
   var MY_KEY = "lumeRefMine";      // { code, uid, stats }
@@ -256,6 +258,34 @@
   }
 
   /* ---------------------------------------------------------------- */
+  /* Payouts                                                           */
+  /* ---------------------------------------------------------------- */
+
+  /*
+     Ask the server what this student can be paid, or ask to be paid.
+
+       payout()                                  -> { summary }
+       payout({ upi, ageDeclared: true })        -> { ok, reason, summary }
+
+     Never cached. A balance is the one number on the dashboard that
+     must not be a moment out of date, and this is called rarely.
+  */
+  function payout(opts){
+    var o = opts || {};
+    var body = o.upi
+      ? { request: true, upi: o.upi, age_declared: o.ageDeclared === true }
+      : {};
+
+    return account().then(function(user){
+      if(!user || !user.uid) return null;
+      return token().then(function(idToken){
+        if(!idToken) return null;
+        return post(PAYOUT_ENDPOINT, body, idToken);
+      });
+    }).catch(function(){ return null; });
+  }
+
+  /* ---------------------------------------------------------------- */
   /* Claiming                                                          */
   /* ---------------------------------------------------------------- */
 
@@ -307,6 +337,7 @@
     mine: function(){ return cached(""); },
     ready: ready,
     stats: stats,
+    payout: payout,
     inviteMessage: inviteMessage,
     decorate: decorate,
     claim: claim,

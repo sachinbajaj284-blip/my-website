@@ -1,10 +1,10 @@
 /*
   Lume Live — the referral ledger.
 
-  A student who sends a friend to the free Career Snapshot earns credit
-  towards something we actually sell. Three rules shape everything here,
-  and they are the reason this is a server-side module rather than a
-  counter in localStorage:
+  A student who sends a friend to the free Career Snapshot earns ₹50,
+  paid out in cash over UPI. Three rules shape everything here, and they
+  are the reason this is a server-side module rather than a counter in
+  localStorage:
 
   1. A referral is worth something, so the browser never decides that one
      happened. The client reports "I arrived with code X"; this module
@@ -18,27 +18,52 @@
      is safe.
 
   3. Credit is capped. The worst case for a farm that defeats every other
-     control is CREDIT_CAP rupees of discount on our own products, which
+     control is EARNINGS_CAP rupees of discount on our own products, which
      they can only use by paying us the rest.
 
-  Nothing here pays anyone cash, and nothing here mints a coupon yet.
-  This is the ledger: who referred whom, how much they have earned. The
-  redemption side (turning credit into a flat-discount coupon through
-  api/_lib/coupons.js, with the 7-day hold before credit is spendable)
-  is a separate step and deliberately not wired in here — a ledger that
-  cannot spend is a ledger that cannot be drained while we watch it.
+  ───────────────────────────────────────────────────────────────────────
+  Money leaves this building by hand
+  ───────────────────────────────────────────────────────────────────────
+  Nothing in this file moves money. It records what is owed, what has
+  been asked for and what has been settled; the transfer itself is made
+  by a human running tools/referral-payouts.mjs and paying the UPI IDs it
+  prints. That is deliberate, and it is not laziness:
+
+  * An automated payout rail needs a funded balance sitting behind an
+    API key. A bug, or a farm that beats the other controls, drains a
+    real bank account rather than over-issuing a discount.
+  * Money that has left cannot be clawed back. Everything below — the
+    hold, the threshold, the caps — exists to make the window between
+    "earned" and "paid" long enough for a human to notice a pattern.
+
+  Two protections exist here that credit never needed:
+
+    HOLD_MS         earnings are not payable until they have aged. A
+                    burst of referrals on Tuesday cannot be cashed out
+                    on Tuesday.
+    MIN_PAYOUT      a payout is a manual UPI transfer, so forty ₹50
+                    transfers is not a workflow. Earnings accumulate
+                    until they are worth one transfer.
 
   Firestore layout
   ────────────────────────────────────────────────────────────────────
     referrers/{uid}
-      { code, name, created_at, qualified, credit_earned,
+      { code, name, created_at, qualified, earned, paid, requested,
         day, day_count }
 
     referralCodes/{CODE}          index, so a link resolves in one read
       { uid, created_at }
 
     referralAttributions/{referredUid}
-      { code, referrer_uid, event, credit, created_at }
+      { code, referrer_uid, event, amount, created_at }
+
+    referralPayouts/{uid}_{requestedAt}
+      { uid, code, amount, upi, status, requested_at, settled_at, note }
+
+  `earned` on the referrer is the lifetime total. `paid` is what has
+  actually been transferred and `requested` is what is sitting in an
+  unsettled request — the difference between them and the matured
+  earnings is what a student may ask for next.
 
   The index is a separate collection rather than a query on `referrers`
   because a code lookup happens on every inbound link and a keyed read
@@ -50,6 +75,7 @@ const crypto = require("crypto");
 const REFERRERS = "referrers";
 const CODES = "referralCodes";
 const ATTRIBUTIONS = "referralAttributions";
+const PAYOUTS = "referralPayouts";
 
 /*
   What a referral is worth, in whole rupees. One place, because the
@@ -67,11 +93,26 @@ const TIERS = [
 // The most any one account can accrue. Six referrals at the current
 // rate — enough to cover half a ₹999 report, bounded enough that a farm
 // that beats every other control is not an open tap.
-const CREDIT_CAP = 300;
+const EARNINGS_CAP = 300;
 
 // A real student does not refer six people in an afternoon. This is the
 // burst control; the cap above is the total control.
 const DAILY_QUALIFY_LIMIT = 5;
+
+/*
+  How long an earning has to sit before it can be asked for.
+
+  This is the only control that still works after every other one has
+  been beaten: a farm that manufactures referrals has to wait a week
+  with the evidence sitting in Firestore before any money moves, and a
+  week is long enough for a human to look at a referrer whose numbers
+  went strange.
+*/
+const HOLD_MS = 7 * 24 * 60 * 60 * 1000;
+
+// Each payout is a manual UPI transfer. Paying ₹50 six times costs more
+// in attention than the ₹300 is worth, so earnings bank up first.
+const MIN_PAYOUT = 200;
 
 /*
   Which client-reported events are allowed to qualify a referral. The
@@ -145,9 +186,9 @@ function makeCode(name, random){
 
 // What the next referral is worth to someone who has already qualified
 // `alreadyQualified` of them, given what they have banked so far.
-function rewardFor(alreadyQualified, creditSoFar){
+function rewardFor(alreadyQualified, earnedSoFar){
   const done = Math.max(0, Number(alreadyQualified) || 0);
-  const banked = Math.max(0, Number(creditSoFar) || 0);
+  const banked = Math.max(0, Number(earnedSoFar) || 0);
 
   let amount = 0;
   for(const tier of TIERS){
@@ -156,7 +197,7 @@ function rewardFor(alreadyQualified, creditSoFar){
 
   // Never accrue past the cap: the last referral before it is worth the
   // remainder, not the full tier.
-  return Math.max(0, Math.min(amount, CREDIT_CAP - banked));
+  return Math.max(0, Math.min(amount, EARNINGS_CAP - banked));
 }
 
 function todayKey(now){
@@ -194,13 +235,13 @@ function firestore(){
 
 function publicStats(doc){
   const data = doc || {};
-  const earned = Math.max(0, Number(data.credit_earned) || 0);
+  const earned = Math.max(0, Number(data.earned) || 0);
   return {
     code: data.code || "",
     qualified: Math.max(0, Number(data.qualified) || 0),
-    credit_earned: earned,
-    credit_cap: CREDIT_CAP,
-    credit_remaining: Math.max(0, CREDIT_CAP - earned),
+    earned: earned,
+    cap: EARNINGS_CAP,
+    remaining: Math.max(0, EARNINGS_CAP - earned),
     next_reward: rewardFor(Number(data.qualified) || 0, earned)
   };
 }
@@ -250,7 +291,7 @@ async function ensureCode({ uid, name, attempts }, options){
       name: String(name || "").slice(0, 80),
       created_at: now,
       qualified: 0,
-      credit_earned: 0,
+      earned: 0,
       day: todayKey(now),
       day_count: 0
     };
@@ -286,7 +327,7 @@ async function lookupCode(code, options){
   their own link — and the route answers 200 to all of them. The client
   must not be able to tell a farm-detection refusal from a duplicate.
 
-  Resolves { ok, reason, credit, stats }.
+  Resolves { ok, reason, amount, stats }.
 */
 async function recordQualified({ code, referredUid, event, now }, options){
   const opts = options || {};
@@ -326,53 +367,236 @@ async function recordQualified({ code, referredUid, event, now }, options){
     }
 
     const qualified = Number(data.qualified) || 0;
-    const earned = Number(data.credit_earned) || 0;
-    const credit = rewardFor(qualified, earned);
+    const earned = Number(data.earned) || 0;
+    const amount = rewardFor(qualified, earned);
 
     // At the cap the referral is still recorded — we want the count, and
     // recording it stops the same friend being re-used once the cap
     // lifts — but it is worth nothing.
-    if(credit <= 0 && earned >= CREDIT_CAP){
+    if(amount <= 0 && earned >= EARNINGS_CAP){
       tx.set(attributionRef, {
         code: found.code, referrer_uid: found.uid,
-        event: String(event), credit: 0, created_at: at
+        event: String(event), amount: 0, created_at: at
       });
       tx.set(referrerRef, {
         qualified: qualified + 1, day, day_count: dayCount + 1
       }, { merge: true });
-      return { ok: true, reason: "CAP_REACHED", credit: 0,
+      return { ok: true, reason: "CAP_REACHED", amount: 0,
                stats: publicStats(Object.assign({}, data, { qualified: qualified + 1 })) };
     }
 
     tx.set(attributionRef, {
       code: found.code, referrer_uid: found.uid,
-      event: String(event), credit, created_at: at
+      event: String(event), amount, created_at: at
     });
 
     const next = Object.assign({}, data, {
       qualified: qualified + 1,
-      credit_earned: earned + credit,
+      earned: earned + amount,
       day,
       day_count: dayCount + 1
     });
     tx.set(referrerRef, {
       qualified: next.qualified,
-      credit_earned: next.credit_earned,
+      earned: next.earned,
       day: next.day,
       day_count: next.day_count
     }, { merge: true });
 
-    return { ok: true, reason: "QUALIFIED", credit, stats: publicStats(next) };
+    return { ok: true, reason: "QUALIFIED", amount, stats: publicStats(next) };
   });
+}
+
+/* ------------------------------------------------------------------ */
+/* Payouts                                                             */
+/* ------------------------------------------------------------------ */
+
+/*
+  A UPI ID, loosely. We cannot tell whether an address exists — only the
+  bank can, at transfer time — so this rejects what is obviously not one
+  and lets the human making the transfer catch the rest. Being strict
+  here would reject valid handles we have not heard of; being absent
+  would let "i'll tell you later" through as an address.
+*/
+function normalizeUpi(value){
+  return String(value == null ? "" : value).trim().toLowerCase().slice(0, 128);
+}
+
+function isValidUpi(value){
+  return /^[a-z0-9][a-z0-9.\-_]{1,64}@[a-z]{2,32}$/.test(normalizeUpi(value));
+}
+
+/*
+  What this student may actually ask for right now.
+
+  Deliberately computed from the attribution rows rather than from a
+  running balance on the referrer: the hold means the answer depends on
+  WHEN each referral happened, and a single number cannot carry that.
+  Reading the rows also means a correction — deleting a fraudulent
+  attribution — takes effect immediately, with no counter to fix up.
+*/
+async function payoutSummary(uid, options){
+  const opts = options || {};
+  const db = opts.db || firestore();
+  const now = opts.now == null ? Date.now() : opts.now;
+  const id = String(uid || "");
+
+  const snap = await db.collection(REFERRERS).doc(id).get();
+  if(!snap.exists) return null;
+  const data = snap.data() || {};
+
+  const rows = await db.collection(ATTRIBUTIONS).where("referrer_uid", "==", id).get();
+  let matured = 0;
+  rows.forEach(function(row){
+    const r = row.data() || {};
+    if((now - Number(r.created_at || 0)) >= HOLD_MS) matured += Number(r.amount) || 0;
+  });
+
+  const paid = Math.max(0, Number(data.paid) || 0);
+  const requested = Math.max(0, Number(data.requested) || 0);
+  const payable = Math.max(0, matured - paid - requested);
+
+  return {
+    earned: Math.max(0, Number(data.earned) || 0),
+    paid,
+    pending: requested,
+    matured,
+    payable,
+    min_payout: MIN_PAYOUT,
+    hold_days: Math.round(HOLD_MS / (24 * 60 * 60 * 1000)),
+    can_request: payable >= MIN_PAYOUT,
+    upi: String(data.upi || "")
+  };
+}
+
+/*
+  Ask to be paid.
+
+  Refusals are named and ordinary. The age declaration is a deliberate
+  speed bump rather than a control: we cannot verify it, and it is here
+  so that nobody is paid without having been asked the question.
+
+  Resolves { ok, reason, amount }.
+*/
+async function requestPayout({ uid, upi, ageDeclared, now }, options){
+  const opts = options || {};
+  const db = opts.db || firestore();
+  const at = now == null ? Date.now() : now;
+  const id = String(uid || "");
+
+  if(!id) return { ok: false, reason: "NO_ACCOUNT" };
+  if(!ageDeclared) return { ok: false, reason: "AGE_NOT_DECLARED" };
+
+  const address = normalizeUpi(upi);
+  if(!isValidUpi(address)) return { ok: false, reason: "BAD_UPI" };
+
+  // Read the rows OUTSIDE the transaction: a Firestore transaction may
+  // not run a query, and the referrer document read inside it is what
+  // actually guards against two requests racing.
+  const summary = await payoutSummary(id, { db, now: at });
+  if(!summary) return { ok: false, reason: "NO_CODE" };
+  if(summary.pending > 0) return { ok: false, reason: "ALREADY_PENDING" };
+  if(summary.payable < MIN_PAYOUT) return { ok: false, reason: "MIN_NOT_MET", payable: summary.payable };
+
+  const referrerRef = db.collection(REFERRERS).doc(id);
+  const payoutRef = db.collection(PAYOUTS).doc(id + "_" + at);
+
+  return db.runTransaction(async (tx) => {
+    const snap = await tx.get(referrerRef);
+    if(!snap.exists) return { ok: false, reason: "NO_CODE" };
+    const data = snap.data() || {};
+
+    // Re-checked against the document the transaction actually read, so
+    // two requests sent at once cannot both pass the check above.
+    if((Number(data.requested) || 0) > 0) return { ok: false, reason: "ALREADY_PENDING" };
+
+    const amount = summary.payable;
+    tx.set(payoutRef, {
+      uid: id,
+      code: String(data.code || ""),
+      amount,
+      upi: address,
+      status: "pending",
+      requested_at: at,
+      settled_at: null,
+      note: ""
+    });
+    tx.set(referrerRef, {
+      requested: amount,
+      upi: address,
+      age_declared_at: at
+    }, { merge: true });
+
+    return { ok: true, reason: "REQUESTED", amount, id: id + "_" + at };
+  });
+}
+
+/*
+  Settle a request: "paid" once the money has actually been sent,
+  "rejected" when it has not and will not be.
+
+  A rejection releases the amount back to payable rather than destroying
+  it — the student keeps what they earned, and whoever rejected it should
+  say why in the note. Only a payout that is still pending can be
+  settled, so running the CLI twice cannot pay twice.
+*/
+async function settlePayout({ id, status, note, now }, options){
+  const opts = options || {};
+  const db = opts.db || firestore();
+  const at = now == null ? Date.now() : now;
+  const state = status === "paid" ? "paid" : "rejected";
+
+  const payoutRef = db.collection(PAYOUTS).doc(String(id || ""));
+
+  return db.runTransaction(async (tx) => {
+    const snap = await tx.get(payoutRef);
+    if(!snap.exists) return { ok: false, reason: "NOT_FOUND" };
+    const payout = snap.data() || {};
+    if(payout.status !== "pending") return { ok: false, reason: "ALREADY_SETTLED", status: payout.status };
+
+    const referrerRef = db.collection(REFERRERS).doc(String(payout.uid || ""));
+    const referrer = await tx.get(referrerRef);
+    const data = referrer.exists ? (referrer.data() || {}) : {};
+    const amount = Math.max(0, Number(payout.amount) || 0);
+
+    tx.set(payoutRef, {
+      status: state,
+      settled_at: at,
+      note: String(note || "").slice(0, 300)
+    }, { merge: true });
+
+    tx.set(referrerRef, {
+      // Cleared either way: the money is no longer "asked for".
+      requested: Math.max(0, (Number(data.requested) || 0) - amount),
+      // Only a real transfer moves `paid`.
+      paid: (Number(data.paid) || 0) + (state === "paid" ? amount : 0)
+    }, { merge: true });
+
+    return { ok: true, reason: state.toUpperCase(), amount, uid: payout.uid };
+  });
+}
+
+// Every payout in a given state, oldest first. For the CLI, which is the
+// only thing that reads this.
+async function listPayouts(status, options){
+  const db = (options || {}).db || firestore();
+  const wanted = String(status || "pending");
+  const rows = await db.collection(PAYOUTS).where("status", "==", wanted).get();
+  const out = [];
+  rows.forEach(function(row){ out.push(Object.assign({ id: row.id }, row.data())); });
+  return out.sort(function(a, b){ return (a.requested_at || 0) - (b.requested_at || 0); });
 }
 
 module.exports = {
   REFERRERS,
   CODES,
   ATTRIBUTIONS,
+  PAYOUTS,
   TIERS,
-  CREDIT_CAP,
+  EARNINGS_CAP,
   DAILY_QUALIFY_LIMIT,
+  HOLD_MS,
+  MIN_PAYOUT,
   QUALIFYING_EVENTS,
   CODE_MIN,
   CODE_MAX,
@@ -386,5 +610,11 @@ module.exports = {
   ensureCode,
   statsFor,
   lookupCode,
-  recordQualified
+  recordQualified,
+  normalizeUpi,
+  isValidUpi,
+  payoutSummary,
+  requestPayout,
+  settlePayout,
+  listPayouts
 };

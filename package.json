@@ -26,7 +26,8 @@
     "quiz:test": "node tools/quiz-stats.test.mjs",
     "coupons:list": "node tools/seed-coupons.mjs --dry-run",
     "coupons:seed": "node tools/seed-coupons.mjs",
-    "coupons:issue": "node tools/issue-coupon.mjs"
+    "coupons:issue": "node tools/issue-coupon.mjs",
+    "referrals:payouts": "node tools/referral-payouts.mjs"
   },
   "engines": {
     "node": ">=18"

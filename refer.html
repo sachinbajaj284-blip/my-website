@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' www.gstatic.com www.googletagmanager.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; img-src 'self' data: blob: www.google-analytics.com www.googletagmanager.com; connect-src 'self' *.googleapis.com *.firebaseio.com *.firebaseapp.com www.gstatic.com www.googletagmanager.com *.google-analytics.com *.analytics.google.com; object-src 'none'; base-uri 'self';">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Your Referral Link | Lume Live</title>
-<meta name="description" content="Share your link. Every friend who finishes the free Career Snapshot earns you credit towards anything on Lume Live.">
+<meta name="description" content="Share your link. Every friend who finishes the free Career Snapshot earns you ₹50, paid to your UPI.">
 <!-- A signed-in dashboard: there is nothing here for a crawler, and an
      indexed page that only says "sign in" is thin content. noindex also
      keeps it out of the sitemap, which is generated from this tag. -->
@@ -15,8 +15,8 @@
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
 <link rel="icon" href="favicon.ico" sizes="any">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Invite friends, earn credit — Lume Live">
-<meta property="og:description" content="Every friend who finishes the free Career Snapshot on your link earns you credit.">
+<meta property="og:title" content="Invite friends, earn ₹50 each — Lume Live">
+<meta property="og:description" content="Every friend who finishes the free Career Snapshot on your link earns you ₹50.">
 <meta property="og:url" content="https://lumelive.co.in/refer.html">
 <meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -69,6 +69,13 @@ a{color:var(--teal);text-decoration:none}
 .steps li::before{content:counter(s);flex-shrink:0;width:25px;height:25px;border-radius:50%;background:var(--navy);color:#fff;font-weight:800;font-size:.79rem;display:flex;align-items:center;justify-content:center}
 .rules{font-size:.86rem;color:var(--muted);padding-left:19px}
 .rules li{margin:6px 0}
+.fld{display:block;margin-top:14px}
+.fld span{display:block;font-size:.74rem;font-weight:800;letter-spacing:.3px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.fld input{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:12px;font-size:.94rem;font-family:inherit;color:var(--ink);background:#FBFCFE}
+.fld input:focus{outline:0;border-color:var(--teal);background:#fff}
+.check{display:flex;gap:9px;align-items:flex-start;margin-top:12px;font-size:.85rem;color:var(--muted);cursor:pointer}
+.check input{margin-top:3px;flex-shrink:0;width:17px;height:17px;accent-color:var(--teal)}
+.fine{margin-top:10px;font-size:.82rem;font-weight:700;color:#B3261E;min-height:1px}
 .note{margin-top:16px;padding:13px 15px;border-radius:12px;background:#FFF8E9;border:1px solid #EBD9AE;font-size:.85rem;color:#6B5522}
 .note b{color:#4A3A12}
 .foot{background:var(--navy);color:rgba(255,255,255,.72);padding:26px 18px;text-align:center;font-size:.82rem;margin-top:20px}
@@ -89,8 +96,8 @@ a{color:var(--teal);text-decoration:none}
 
 <section class="hero"><div class="in">
   <span class="eyebrow">Referrals</span>
-  <h1>Invite friends. Earn credit.</h1>
-  <p>Every friend who finishes the free Career Snapshot on your link earns you credit towards anything on Lume Live.</p>
+  <h1>Invite friends. Get paid.</h1>
+  <p>Every friend who finishes the free Career Snapshot on your link earns you ₹50, sent straight to your UPI.</p>
 </div></section>
 
 <main class="wrap">
@@ -138,16 +145,41 @@ a{color:var(--teal);text-decoration:none}
       <h2>Where you're at</h2>
       <div class="stats">
         <div class="stat"><b id="sFriends">0</b><span>friends joined</span></div>
-        <div class="stat"><b id="sCredit">₹0</b><span>credit earned</span></div>
+        <div class="stat"><b id="sCredit">₹0</b><span>earned</span></div>
       </div>
       <div class="bar"><i id="bar" style="width:0%"></i></div>
       <div class="barlbl"><span id="barNow">₹0 earned</span><span id="barCap">of ₹0</span></div>
 
-      <div class="note">
-        <b>How you use it:</b> your credit comes off anything you buy on
-        Lume Live. We're still finishing the automatic version — until
-        then, message us on WhatsApp with your code before you pay and
-        we'll apply it to your order.
+    </div>
+
+    <div class="card" id="payoutCard">
+      <h2>Get paid</h2>
+      <p id="payoutState">&nbsp;</p>
+
+      <div class="stats" id="payoutStats">
+        <div class="stat"><b id="pReady">₹0</b><span>ready to withdraw</span></div>
+        <div class="stat"><b id="pPaid">₹0</b><span>paid out so far</span></div>
+      </div>
+
+      <div id="payoutForm" class="hide">
+        <label class="fld">
+          <span>Your UPI ID</span>
+          <input id="upi" type="text" inputmode="email" autocomplete="off"
+                 placeholder="yourname@bank" maxlength="128">
+        </label>
+        <label class="check">
+          <input id="age" type="checkbox">
+          <span>I'm 18 or older, or a parent is happy for me to be paid.</span>
+        </label>
+        <div class="row"><button class="btn go" id="requestPayout" type="button">Request payout</button></div>
+        <p class="fine" id="payoutErr"></p>
+      </div>
+
+      <div class="note" id="payoutHow">
+        <b>How it works:</b> earnings become withdrawable
+        <b id="holdDays">7</b> days after the friend takes the quiz, and
+        you can withdraw once you've reached <b id="minPayout">₹200</b>.
+        We send it by UPI by hand, usually within a few working days.
       </div>
     </div>
 
@@ -156,14 +188,15 @@ a{color:var(--teal);text-decoration:none}
       <ol class="steps">
         <li>Send your link to a friend.</li>
         <li>They open it and finish the free Career Snapshot — it takes about two minutes and costs them nothing.</li>
-        <li>Your credit goes up. You'll see it here.</li>
+        <li>Your balance goes up. Withdraw it to your UPI once you've reached the minimum.</li>
       </ol>
     </div>
 
     <div class="card">
       <h2>The rules, plainly</h2>
       <ul class="rules">
-        <li><b>It's credit, not cash.</b> It comes off something you buy from us. We don't send money.</li>
+        <li><b>We pay by UPI.</b> Only to a UPI ID you give us, and only after you've confirmed your age.</li>
+        <li><b>There's a waiting period.</b> Earnings become withdrawable a few days after your friend takes the quiz — that's so we can spot anything odd first.</li>
         <li><b>A friend counts once</b> — the first time they finish a quiz, for whoever's link they arrived on.</li>
         <li><b>It has to be a real friend.</b> Your own second account doesn't count, and we check.</li>
         <li><b>There's a ceiling</b> on how much one account can earn, shown in the bar above.</li>
@@ -253,16 +286,16 @@ a{color:var(--teal);text-decoration:none}
     $("linkText").textContent = url.replace(/^https?:\/\//, "");
 
     var reward = stats && stats.next_reward;
-    var cap = stats && stats.credit_cap;
-    var earned = (stats && stats.credit_earned) || 0;
-    var maxed = Boolean(stats && cap && stats.credit_remaining === 0);
+    var cap = stats && stats.cap;
+    var earned = (stats && stats.earned) || 0;
+    var maxed = Boolean(stats && cap && stats.remaining === 0);
 
     /* At the ceiling the next friend is worth nothing, and the page must
        stop promising otherwise. */
     $("rewardLine").textContent = maxed
-      ? "You've earned the full " + inr(cap) + " of credit — that's the maximum one account can earn. Keep sharing anyway: the quiz is still free for them."
+      ? "You've earned the full " + inr(cap) + " — that's the maximum one account can earn. Keep sharing anyway: the quiz is still free for them."
       : (reward
-          ? "Every friend who finishes the quiz on your link earns you " + inr(reward) + " of credit."
+          ? "Every friend who finishes the quiz on your link earns you " + inr(reward) + "."
           : "Share it anywhere — WhatsApp, Instagram story, in person.");
 
     $("sFriends").textContent = (stats && stats.qualified) || 0;
@@ -300,6 +333,92 @@ a{color:var(--teal);text-decoration:none}
     show("dash");
     track("referral_dashboard_view", { event_category:"viral_loop",
       event_label: ((stats && stats.qualified) || 0) + " referred" });
+
+    loadPayout();
+  }
+
+  /* ---- payouts ---------------------------------------------------- */
+
+  /*
+     Balances are never cached and never computed here. What can be
+     withdrawn depends on when each referral happened — the hold — and
+     on what has already been asked for, and only the server knows both.
+     This draws whatever it is told and nothing else.
+  */
+  function renderPayout(summary){
+    if(!summary){
+      /* No summary means the endpoint is unreachable or the programme is
+         off. Hide the controls rather than offer a button that cannot
+         work; the rest of the dashboard is still true. */
+      $("payoutCard").classList.add("hide");
+      return;
+    }
+    $("payoutCard").classList.remove("hide");
+
+    $("pReady").textContent = inr(summary.payable);
+    $("pPaid").textContent = inr(summary.paid);
+    $("holdDays").textContent = summary.hold_days;
+    $("minPayout").textContent = inr(summary.min_payout);
+
+    var held = Math.max(0, (summary.matured === undefined ? 0 : summary.earned - summary.matured));
+
+    if(summary.pending > 0){
+      $("payoutState").textContent = inr(summary.pending) + " is on its way to " +
+        (summary.upi || "your UPI") + ". We'll message you when it's sent.";
+      $("payoutForm").classList.add("hide");
+    }else if(summary.can_request){
+      $("payoutState").textContent = "You can withdraw " + inr(summary.payable) + " now.";
+      $("payoutForm").classList.remove("hide");
+      if(summary.upi) $("upi").value = summary.upi;
+    }else if(held > 0){
+      /* The difference between "you have not earned enough" and "you have,
+         but it has not cleared yet" matters a lot to someone looking at a
+         number they cannot touch. */
+      $("payoutState").textContent = inr(held) + " is still clearing. Earnings can be withdrawn " +
+        summary.hold_days + " days after your friend takes the quiz, once you reach " + inr(summary.min_payout) + ".";
+      $("payoutForm").classList.add("hide");
+    }else{
+      $("payoutState").textContent = "Withdraw once you reach " + inr(summary.min_payout) +
+        ". You're at " + inr(summary.payable) + ".";
+      $("payoutForm").classList.add("hide");
+    }
+  }
+
+  function loadPayout(){
+    window.LumeReferral.payout().then(function(answer){
+      renderPayout(answer && answer.summary);
+    }).catch(function(){ renderPayout(null); });
+  }
+
+  function requestPayout(){
+    var btn = $("requestPayout"), err = $("payoutErr");
+    err.textContent = "";
+    btn.disabled = true;
+
+    window.LumeReferral.payout({
+      upi: $("upi").value,
+      ageDeclared: $("age").checked
+    }).then(function(answer){
+      btn.disabled = false;
+      if(!answer){
+        err.textContent = "We couldn't reach the server. Please try again in a moment.";
+        return;
+      }
+      /* The server sends a fresh summary with every answer, refusal
+         included, so the page redraws from what is true rather than from
+         what it hoped happened. */
+      renderPayout(answer.summary);
+      if(answer.ok){
+        toast("Payout requested");
+        track("referral_payout_request", { event_category:"viral_loop",
+          event_label: String(answer.requested || "") });
+      }else{
+        err.textContent = answer.message || "We couldn't request that payout.";
+      }
+    }).catch(function(){
+      btn.disabled = false;
+      err.textContent = "We couldn't reach the server. Please try again in a moment.";
+    });
   }
 
   function load(){
@@ -321,6 +440,7 @@ a{color:var(--teal);text-decoration:none}
       window.lumeAccount.prompt();
     };
     $("retry").onclick = load;
+    $("requestPayout").onclick = requestPayout;
 
     /* Signed in already — straight to the dashboard. Otherwise wait for
        the sign-in to land rather than polling for it. */

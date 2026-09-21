@@ -981,7 +981,7 @@ var CSS = [
 ".lsTips li{margin:3px 0}",
 /* The referral block. Visually quieter than the share buttons on
    purpose: posting the result is the thing the student came to do, and
-   earning credit is a reason to do it again, not the headline. */
+   earning money is a reason to do it again, not the headline. */
 ".lsRef{margin:14px 0 0;padding:13px 14px;border-radius:14px;background:rgba(37,211,102,.10);border:1px solid rgba(37,211,102,.28)}",
 ".lsRefHd{margin:0;font:800 .86rem/1.3 inherit;color:#fff}",
 ".lsRefSub{margin:4px 0 0;font-size:.79rem;line-height:1.5;color:rgba(255,255,255,.78)}",
@@ -1106,36 +1106,39 @@ function referralBlock(box, d, code){
 
   var wrap = el("div", "lsRef");
   wrap.appendChild(el("p", "lsRefHd", hi
-    ? "दोस्तों को भेज, credit कमा 🎁"
-    : "Invite friends, earn credit 🎁"));
+    ? "दोस्तों को भेज, पैसे कमा 🎁"
+    : "Invite friends, get paid 🎁"));
 
-  /* Said exactly once, in the student's own terms: what they get, what
-     it is (credit, not cash) and what the ceiling is. */
+  /* Said exactly once, in the student's own terms: what a friend is
+     worth and what the ceiling is. The hold and the withdrawal minimum
+     are not mentioned here — this is the moment somebody is deciding
+     whether to post, and the payout rules belong on refer.html where
+     they are actually acted on. */
   var reward = stats && stats.next_reward ? stats.next_reward : null;
-  var cap = stats && stats.credit_cap ? stats.credit_cap : null;
-  var maxed = Boolean(stats && cap && stats.credit_remaining === 0);
+  var cap = stats && stats.cap ? stats.cap : null;
+  var maxed = Boolean(stats && cap && stats.remaining === 0);
 
   /* At the cap the next friend is worth nothing, so the block must not
      keep promising a reward. Saying so is also the nicer number: they
      earned the maximum. */
   if(maxed){
     wrap.appendChild(el("p", "lsRefSub", hi
-      ? "तुमने ₹" + cap + " का पूरा credit कमा लिया — ये maximum है. Share करते रहो, दोस्तों के लिए quiz अब भी free है."
-      : "You've earned the full ₹" + cap + " of credit — that's the maximum. Keep sharing anyway: the quiz is still free for them."));
+      ? "तुमने पूरे ₹" + cap + " कमा लिए — ये maximum है. Share करते रहो, दोस्तों के लिए quiz अब भी free है."
+      : "You've earned the full ₹" + cap + " — that's the maximum. Keep sharing anyway: the quiz is still free for them."));
   }else wrap.appendChild(el("p", "lsRefSub", hi
     ? (reward
-        ? "जो दोस्त इस link से quiz पूरी करेगा, उस पर ₹" + reward + " का credit मिलेगा — Lume Live पर कुछ भी खरीदने में लगा सकते हो" + (cap ? ", ₹" + cap + " तक." : ".")
-        : "इस link से आए दोस्त quiz पूरी करें, तो तुम्हें credit मिलता है.")
+        ? "जो दोस्त इस link से quiz पूरी करेगा, उस पर ₹" + reward + " मिलेंगे — सीधे तुम्हारे UPI पर" + (cap ? ", ₹" + cap + " तक." : ".")
+        : "इस link से आए दोस्त quiz पूरी करें, तो तुम्हें पैसे मिलते हैं.")
     : (reward
-        ? "Every friend who finishes the quiz on your link earns you ₹" + reward + " of credit towards anything on Lume Live" + (cap ? ", up to ₹" + cap + "." : ".")
-        : "Friends who finish the quiz on your link earn you credit towards anything on Lume Live.")));
+        ? "Every friend who finishes the quiz on your link earns you ₹" + reward + ", paid to your UPI" + (cap ? ", up to ₹" + cap + "." : ".")
+        : "Friends who finish the quiz on your link earn you money, paid to your UPI.")));
 
   /* Only once there is something to report. "0 friends joined" is a
      scoreboard of a failure and reads as one. */
   if(stats && stats.qualified > 0){
     wrap.appendChild(el("p", "lsRefWon", hi
-      ? stats.qualified + " दोस्त जुड़ चुके · ₹" + (stats.credit_earned || 0) + " का credit"
-      : stats.qualified + (stats.qualified === 1 ? " friend has" : " friends have") + " joined · ₹" + (stats.credit_earned || 0) + " earned"));
+      ? stats.qualified + " दोस्त जुड़ चुके · ₹" + (stats.earned || 0) + " कमाए"
+      : stats.qualified + (stats.qualified === 1 ? " friend has" : " friends have") + " joined · ₹" + (stats.earned || 0) + " earned"));
   }
 
   var link = el("div", "lsRefLink");

@@ -10,9 +10,10 @@ money can and cannot leak.
 
 - A student gets a **code** (`AARA7K2P`) and a link (`?ref=AARA7K2P`).
 - A friend who arrives on that link and **finishes a quiz** qualifies it.
-- The referrer accrues **₹50** of credit, capped at **₹300** per account.
-- The credit is a **number in a ledger**. Nothing spends it yet — see
-  *Not built yet* below. Nobody is paid cash at any point.
+- The referrer earns **₹50**, capped at **₹300** per account.
+- Earnings become withdrawable **7 days** later, from **₹200** up.
+- **A human makes every transfer**, from `npm run referrals:payouts`.
+  Nothing on the site can move money.
 
 The browser reports; the server decides. `/api/referrals/claim` takes the
 code and the event as a *request* to qualify a referral and checks it
@@ -20,17 +21,35 @@ against every rule in `api/_lib/referrals.js` before anything is written.
 
 ---
 
-## Why credit and not ₹50 cash
+## Cash, and what it costs us
 
-The Career Snapshot is free, so a referral to it generates ₹0 of revenue.
-Paying cash for one means paying real money for an action that a student
-with ten throwaway Gmail addresses can perform ten times in ten minutes.
-Credit against our own products inverts that: a fake referral earns a
-discount the faker can only use by paying us the rest of the price, and
-it pulls the genuine referrer towards the ₹999 report.
+This pays ₹50 in cash. That was a deliberate call, made with the
+alternative on the table, and it is worth writing down what it buys and
+what it costs so the trade is not rediscovered later.
 
-Cash payouts also mean KYC and TDS on money sent to people who are mostly
-minors. That is a decision to take deliberately, not to back into.
+**What it costs.** The Career Snapshot is free, so a referral to it
+generates ₹0 of revenue — every ₹50 is real money out with no matching
+money in. Store credit would have been self-limiting, because a fake
+referral earns a discount the faker can only use by paying us the rest.
+Cash has no such floor: a farm that beats the controls below takes money.
+
+**What that means in practice.** Three things carry the weight:
+
+| | |
+|---|---|
+| `HOLD_MS` (7 days) | Earnings cannot be withdrawn the day they are made. This is the only control that still works after all the others have been beaten — a week is long enough for a human to notice a referrer whose numbers went strange. |
+| `MIN_PAYOUT` (₹200) | Each payout is a manual transfer. Four ₹50 referrals per transfer instead of one keeps the queue readable, and a queue nobody reads is a queue nobody checks. |
+| `EARNINGS_CAP` (₹300) | The most any one account can ever take. |
+
+**The part code cannot fix.** Most of the people earning here are
+school students. Paying an individual a referral benefit in India raises
+TDS questions (s.194R covers benefits arising from a referral
+arrangement, with a threshold), and paying a minor raises guardian
+consent. `refer.html` asks for an age declaration before a payout can be
+requested, and that is a speed bump, not compliance — it is unverified
+and self-reported. **Get an accountant's view before this runs at any
+volume.** ASCI disclosure is a separate question and is covered at the
+bottom of this file.
 
 ---
 
@@ -45,7 +64,10 @@ All of these live in `api/_lib/referrals.js` and are covered by
 | **No self-referral** | code's uid vs. the caller's uid |
 | **Only allow-listed events qualify** (`snapshot`, `stream`) | `QUALIFYING_EVENTS` — an allow-list, never a pass-through |
 | **5 qualified referrals per day** per referrer | `DAILY_QUALIFY_LIMIT`, checked inside the transaction |
-| **₹300 lifetime cap** per referrer | `CREDIT_CAP`; the last referral before it is worth the remainder |
+| **₹300 lifetime cap** per referrer | `EARNINGS_CAP`; the last referral before it is worth the remainder |
+| **7-day hold** before earnings can be withdrawn | `HOLD_MS`, applied per attribution row at payout time |
+| **₹200 minimum withdrawal** | `MIN_PAYOUT` |
+| **One pending payout at a time** | re-checked inside the transaction, so two requests cannot race |
 | The code must be real | `referralCodes/{CODE}` lookup |
 
 The attribution document is keyed by the **referred** person rather than
@@ -63,17 +85,30 @@ previously-capped friend claimable again.
 
 ```
 referrers/{uid}
-  { code, name, created_at, qualified, credit_earned, day, day_count }
+  { code, name, created_at, qualified, earned, paid, requested,
+    day, day_count, upi, age_declared_at }
 
 referralCodes/{CODE}            index: one keyed read per inbound link
   { uid, created_at }
 
 referralAttributions/{referredUid}
-  { code, referrer_uid, event, credit, created_at }
+  { code, referrer_uid, event, amount, created_at }
+
+referralPayouts/{uid}_{requestedAt}
+  { uid, code, amount, upi, status, requested_at, settled_at, note }
 ```
 
-To see what one student has earned: `referrers/{uid}`. To see who they
-referred: query `referralAttributions` on `referrer_uid`.
+`earned` is the lifetime total, `paid` is what has actually been
+transferred, `requested` is sitting in an unsettled request.
+
+**What can be withdrawn is computed from the attribution rows, not from
+a balance.** The hold means the answer depends on *when* each referral
+happened, and one number cannot carry that. Reading the rows also means
+deleting a fraudulent attribution takes effect immediately, with no
+counter to fix up afterwards.
+
+To see who one student referred: query `referralAttributions` on
+`referrer_uid`.
 
 ---
 
@@ -93,6 +128,25 @@ call writes.
 200 { ok:true, code:"AARA7K2P", url:"https://lumelive.co.in/start.html?ref=AARA7K2P", stats:{…} }
 401 not signed in     404 programme off     503 Firebase down
 ```
+
+### `POST /api/referrals/payout` — signed in
+
+```json
+{}                                                    → what can I withdraw?
+{ "request": true, "upi": "…", "age_declared": true } → withdraw it
+```
+
+The read is folded into the POST so the dashboard makes one call, and so
+nothing about a person's earnings is reachable by a URL that could be
+prefetched, logged or shared.
+
+Unlike `/claim`, refusals here are **named and explained** — every one of
+them is something the student can act on (wrong UPI format, not enough
+yet, already pending, age not declared). A fresh summary rides back with
+every answer, refusal included, so the page redraws from what is true
+rather than from what it hoped happened.
+
+**This endpoint does not move money.** It writes a request.
 
 ### `POST /api/referrals/claim` — signed in
 
@@ -209,13 +263,51 @@ ids, so a renamed element fails there rather than silently in a browser.
 
 ---
 
+## Paying people
+
+```
+npm run referrals:payouts                                  # what is owed
+npm run referrals:payouts -- --list paid
+npm run referrals:payouts -- --pay <id> --note "UTR 402913"
+npm run referrals:payouts -- --reject <id> --note "why"
+```
+
+The flow is two-handed on purpose: the CLI prints a UPI ID and an amount,
+**you** make the transfer in your banking app, then you come back and
+mark it paid. `--pay` refuses without a `--note`, because a transfer with
+no reference is one you cannot reconcile later.
+
+**Why there is no payout API.** An automated rail needs a funded balance
+behind a key living in the same environment as the website. A bug, or a
+farm that beats the controls, then drains a bank account rather than
+over-issuing a discount — and transferred money does not come back. The
+manual step is the last place a human sees the numbers before they
+become irreversible.
+
+**What to look for before paying.** The CLI prints each referrer's
+lifetime totals next to the request for exactly this reason:
+
+- friends who all joined within a few minutes of each other
+- the same UPI ID under two different referrers
+- anyone at the cap within a day of signing up
+
+`--reject` returns the money to the student's payable balance rather than
+destroying it, so they can ask again and a rejection you get wrong is
+recoverable. **Paying someone you should not have is not.** When in
+doubt, reject with a note and ask them.
+
+---
+
 ## Operating it
 
 | | |
 |---|---|
 | Turn it off | `LUME_REFERRALS_ENABLED=0` — both routes 404, links keep resolving |
 | Change what a referral is worth | `TIERS` in `api/_lib/referrals.js` (a table, so tiering it is an edit in one place) |
-| Change the cap | `CREDIT_CAP` |
+| Change the cap | `EARNINGS_CAP` |
+| Change the hold | `HOLD_MS` — applies to unpaid earnings immediately, including ones already banked |
+| Change the withdrawal minimum | `MIN_PAYOUT` |
+| Pay people | `npm run referrals:payouts` — see above |
 | Change the invite wording | `inviteMessage()` in `lume-referral.js` — shared with `refer.html` when it lands |
 | Tests | `npm run referrals:test` (ledger), `npm run referrals:client:test` (browser), `npm run refer:test` (dashboard) |
 
@@ -229,24 +321,15 @@ be one environment variable, not a revert.
 
 Deliberately, and in roughly this order:
 
-1. **Spending the credit — now the blocking gap.** Minting a
-   flat-discount coupon from `credit_earned` through
-   `api/_lib/coupons.js`, with the **7-day hold** before credit becomes
-   spendable so a burst can be clawed back.
-
-   This was a reasonable thing to defer while the credit was invisible.
-   It is not any more: `refer.html` now shows a student a rupee figure,
-   and the page currently has to tell them to message us on WhatsApp so
-   we can apply it by hand. That is an honest answer and a bad one — it
-   is manual work per redemption, and it scales exactly as badly as the
-   programme succeeds.
-2. **Phone OTP on the referred account.** The single highest-leverage
-   control left — it kills most throwaway-email farming. Nothing today
-   checks how old the referred account is.
-3. **The friend's side of the offer** (₹100 off their first paid
+1. **Phone OTP on the referred account.** Was second while this paid
+   credit. With cash it is the one that matters: nothing today checks
+   how old a referred account is, and throwaway-email farming is the
+   cheapest attack on a ₹50 payout. The 7-day hold buys time to notice
+   it; OTP would stop it.
+2. **The friend's side of the offer** (₹100 off their first paid
    product), which is what makes this two-sided. Today the friend gets
    nothing for arriving on a link, which is half a referral programme.
-4. **A "who joined" list on `refer.html`.** The page shows totals; it
+3. **A "who joined" list on `refer.html`.** The page shows totals; it
    cannot yet name the friends behind them, because `/api/referrals/code`
    returns counts only. A student chasing the last ₹50 wants to know who
    has not finished yet.
@@ -256,7 +339,7 @@ signed in there, `ready()` returns `""`, and **the referral block never
 appears on the Stream Selector** — its sharers get an undecorated card.
 Inbound capture still works, so that page can still *receive* referrals;
 it just cannot originate them. Adding auth there is now the single
-cheapest win available, and worth doing before `refer.html`.
+cheapest win available.
 
 Note that `lume-auth.js` imports Firebase the first time an account is
 actually needed, which on that page would be when the share sheet opens
@@ -269,6 +352,18 @@ already finished the quiz.
 
 ASCI requires disclosure when someone is **paid to promote** a brand.
 Rewarding a referral that converts is closer to affiliate than to paid
-promotion; rewarding the act of posting is not. That is another reason
-the reward is attached to the scan and not to the story. Set a minimum
-age before anything here pays cash.
+promotion; rewarding the act of posting is not. That is one reason the
+reward is attached to the scan and not to the story.
+
+This now pays **cash**, which sharpens two things that were theoretical
+while it paid credit:
+
+- **TDS.** s.194R covers benefits arising from a referral arrangement,
+  with a threshold. Money going to individuals is the accountant's
+  question, not this file's.
+- **Minors.** Most people earning here are school students. The age
+  declaration on `refer.html` is self-reported and unverified — it
+  ensures nobody is paid without having been *asked*, and that is all it
+  does.
+
+Neither is solved in code, and neither should be discovered at volume.
