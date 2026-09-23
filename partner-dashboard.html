@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' sdk.cashfree.com *.cashfree.com www.gstatic.com www.googletagmanager.com www.google.com apis.google.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; img-src 'self' data: blob: www.google-analytics.com www.googletagmanager.com *.cashfree.com; connect-src 'self' *.cashfree.com *.googleapis.com *.firebaseio.com *.firebaseapp.com www.gstatic.com www.googletagmanager.com *.google-analytics.com *.analytics.google.com; frame-src *.cashfree.com www.google.com *.firebaseapp.com; object-src 'none'; base-uri 'self';">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Partner Dashboard | Lume Live</title>
+<meta name="description" content="Your Lume Live partner link, your clients' reports and the commission you've earned.">
+<!-- A signed-in dashboard: nothing here for a crawler. noindex also keeps
+     it out of the sitemap, which is generated from this tag. -->
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://lumelive.co.in/partner-dashboard.html">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0D1B40;--navy2:#1A2E5E;--teal:#0A6E6E;--gold:#C9933A;--gold2:#E8B95A;--paper:#F7FAF9;--ink:#1A2C2C;--muted:#4A6060;--line:#DDE7E5;--green:#0F9D58}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter','Segoe UI',system-ui,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.6}
+a{color:var(--teal);text-decoration:none}
+.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav{max-width:720px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 18px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;color:var(--navy)}
+.brand img{width:36px;height:36px;border-radius:50%;border:2px solid var(--gold)}
+.nav .who{font-size:.78rem;font-weight:700;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:55%}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px}
+.hero{background:var(--navy);color:#fff;text-align:center;padding:42px 18px 34px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(55% 70% at 50% -10%,rgba(10,110,110,.45),transparent 60%),radial-gradient(40% 60% at 90% 120%,rgba(201,147,58,.2),transparent 60%);pointer-events:none}
+.hero .in{position:relative;max-width:560px;margin:0 auto}
+.eyebrow{display:inline-block;color:var(--gold2);font-size:.7rem;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:12px}
+.hero h1{font-family:Georgia,serif;font-size:clamp(1.6rem,4.4vw,2.3rem);line-height:1.15;margin-bottom:10px}
+.hero p{color:rgba(255,255,255,.78);font-size:.98rem}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:24px 22px;margin:22px 0;box-shadow:0 18px 50px rgba(13,27,64,.06)}
+.card h2{font-family:Georgia,serif;color:var(--navy);font-size:1.12rem;margin-bottom:8px}
+.card p{font-size:.92rem;color:var(--muted)}
+.card p + p{margin-top:8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;border-radius:999px;padding:14px 26px;font-weight:800;font-size:.95rem;border:0;cursor:pointer;font-family:inherit;text-decoration:none;line-height:1.2}
+.btn.go{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy)}
+.btn.wa{background:#25d366;color:#04311a}
+.btn.ghost{background:#fff;border:1.5px solid var(--line);color:var(--navy)}
+.btn:disabled{opacity:.55;cursor:default}
+.row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.row .btn{flex:1;min-width:150px}
+.link{display:flex;align-items:center;gap:10px;margin-top:14px;padding:12px 14px;border-radius:12px;background:#F2F7F6;border:1px solid var(--line)}
+.link code{flex:1;font:700 .84rem/1.35 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--navy);word-break:break-all}
+.code-tag{display:inline-block;margin-top:10px;font:800 .78rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--navy);background:#FFF8E9;border:1px solid #EBD9AE;border-radius:8px;padding:6px 9px;letter-spacing:.06em}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.stat{background:#F2F7F6;border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center}
+.stat b{display:block;font-family:Georgia,serif;font-size:1.7rem;color:var(--navy);line-height:1.1}
+.stat span{font-size:.76rem;font-weight:700;color:var(--muted)}
+.qr{margin-top:16px;text-align:center}
+.qr canvas{width:168px;height:168px;border-radius:12px;border:1px solid var(--line);background:#fff;padding:8px}
+.qr p{font-size:.78rem;margin-top:8px}
+.terms{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.terms div{background:#F2F7F6;border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center}
+.terms b{display:block;font-family:Georgia,serif;font-size:1.3rem;color:var(--navy)}
+.terms span{font-size:.72rem;font-weight:700;color:var(--muted)}
+.rules{font-size:.86rem;color:var(--muted);padding-left:19px}
+.rules li{margin:6px 0}
+.fld{display:block;margin-top:14px}
+.fld span{display:block;font-size:.74rem;font-weight:800;letter-spacing:.3px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.fld input{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:12px;font-size:.94rem;font-family:inherit;color:var(--ink);background:#FBFCFE}
+.fld input:focus{outline:0;border-color:var(--teal);background:#fff}
+.fine{margin-top:10px;font-size:.82rem;font-weight:700;color:#B3261E;min-height:1px}
+.note{margin-top:16px;padding:13px 15px;border-radius:12px;background:#FFF8E9;border:1px solid #EBD9AE;font-size:.85rem;color:#6B5522}
+.note b{color:#4A3A12}
+.foot{background:var(--navy);color:rgba(255,255,255,.72);padding:26px 18px;text-align:center;font-size:.82rem;margin-top:20px}
+.foot a{color:var(--gold2)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,16px);background:var(--navy);color:#fff;padding:11px 20px;border-radius:999px;font-size:.85rem;font-weight:700;opacity:0;pointer-events:none;transition:.22s;z-index:50}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.hide{display:none!important}
+@media(max-width:420px){.row .btn{min-width:100%}.terms{grid-template-columns:1fr}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1CZ93P4P3V"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1CZ93P4P3V');</script>
+</head>
+<body>
+<header class="top"><nav class="nav">
+  <a class="brand" href="index.html"><img src="logo.png" alt="Lume Live logo" decoding="async"><span>LUME LIVE</span></a>
+  <span class="who hide" id="who"></span>
+</nav></header>
+
+<section class="hero"><div class="in">
+  <span class="eyebrow">Partner dashboard</span>
+  <h1>Your clients. Your price. Our assessment.</h1>
+  <p>Share your link with clients. Every ₹999 Full Clarity Report they buy earns you ₹300, and your session fees stay 100% yours.</p>
+</div></section>
+
+<main class="wrap">
+
+  <div class="card" id="signedOut">
+    <h2>Sign in to open your dashboard</h2>
+    <p>Use the Google account you gave us on your vetting call — that's the one we approve.</p>
+    <div class="row"><button class="btn go" id="signIn" type="button">Sign in with Google</button></div>
+    <p class="note">Not a partner yet? <a href="partner-with-us.html#apply">Apply on the Partner With Us page</a> — applying is free.</p>
+  </div>
+
+  <div class="card hide" id="loading">
+    <h2>Opening your dashboard&hellip;</h2>
+    <p>One moment.</p>
+  </div>
+
+  <div class="card hide" id="failed">
+    <h2>We couldn't load your dashboard</h2>
+    <p id="failedMsg">Please try again in a few minutes, or message us on WhatsApp and we'll sort it out.</p>
+    <div class="row">
+      <button class="btn ghost" id="retry" type="button">Try again</button>
+      <a class="btn wa" href="https://wa.me/917015671280">Message us</a>
+    </div>
+  </div>
+
+  <!-- Signed in, not approved. Most often: they haven't had the vetting
+       call yet, or they signed in with a different Google account from
+       the one we approved. -->
+  <div class="card hide" id="notApproved">
+    <h2>This account isn't approved yet</h2>
+    <p>You're signed in as <b id="naEmail"></b>. We approve partners after a short vetting call, using the Google account you'll sign in with.</p>
+    <p>Already had your call? You may have signed in with a different Google account — sign in with the one you gave us, or message us to switch it.</p>
+    <div class="row">
+      <a class="btn go" href="partner-with-us.html#apply">Apply to partner</a>
+      <button class="btn ghost" id="switchAccount" type="button">Use another account</button>
+    </div>
+  </div>
+
+  <!-- Approved: one step left. -->
+  <div class="card hide" id="approved">
+    <h2>You're approved — one step left</h2>
+    <p>Pay the one-time joining fee and your partner link is ready straight away.</p>
+    <div class="terms">
+      <div><b id="joinAmount">₹1,999</b><span>once, to join</span></div>
+      <div><b>₹300</b><span>per ₹999 report</span></div>
+      <div><b>100%</b><span>of your session fees</span></div>
+    </div>
+    <div class="row"><button class="btn go" id="payJoin" type="button">Pay the joining fee</button></div>
+    <p class="fine" id="joinErr"></p>
+  </div>
+
+  <!-- A partner. -->
+  <div id="dash" class="hide">
+
+    <div class="card">
+      <h2>Your partner link</h2>
+      <p>Send it to every client before your first session. Reports bought through it are credited to you.</p>
+      <div class="link"><code id="linkText">&nbsp;</code></div>
+      <span class="code-tag">Your code: <span id="codeText"></span></span>
+      <div class="row">
+        <button class="btn wa" id="waShare" type="button">Send on WhatsApp</button>
+        <button class="btn ghost" id="copyLink" type="button">Copy link</button>
+      </div>
+      <div class="qr hide" id="qrWrap">
+        <canvas id="qr" width="336" height="336" role="img" aria-label="QR code for your partner link"></canvas>
+        <p>Clients can scan this in a session, too.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Your clients</h2>
+      <div class="stats">
+        <div class="stat"><b id="sClients">0</b><span>clients</span></div>
+        <div class="stat"><b id="sReports">0</b><span>reports bought</span></div>
+        <div class="stat"><b id="sEarned">₹0</b><span>earned in total</span></div>
+        <div class="stat"><b id="sPaid">₹0</b><span>paid to you</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Your payouts</h2>
+      <p id="payoutState">&nbsp;</p>
+      <label class="fld"><span>UPI ID for your payouts</span>
+        <input id="upi" type="text" inputmode="email" autocomplete="off" placeholder="yourname@bank"></label>
+      <div class="row"><button class="btn ghost" id="saveUpi" type="button">Save UPI ID</button></div>
+      <p class="fine" id="upiErr"></p>
+    </div>
+
+    <div class="card">
+      <h2>How it works</h2>
+      <ul class="rules">
+        <li><b>Your client pays Lume Live ₹999</b> for the Full Clarity Report. You pay nothing per client.</li>
+        <li><b>You earn ₹300 per report</b> — 30% of what the client paid, up to ₹300. If they used a discount code, it's 30% of the lower price.</li>
+        <li><b>We pay monthly, by UPI,</b> once a report is <span id="holdDays">7</span> days old.</li>
+        <li><b>Your sessions are yours.</b> Charge what you like; your clients pay you directly.</li>
+        <li><b>A client stays yours.</b> Once a client buys through your link, their later reports count for you too — and another counsellor's link doesn't change that.</li>
+        <li><b>Your clients don't see Lume Live's own session offers</b> when they arrive on your link.</li>
+        <li><b>Buying a report for yourself</b> on your own link doesn't earn commission.</li>
+      </ul>
+    </div>
+
+  </div>
+</main>
+
+<footer class="foot">
+  Lume Live &middot; Partnering with career counsellors across India &middot; WhatsApp +91 70156 71280<br>
+  <a href="partner-with-us.html">Partner With Us</a> &middot; <a href="terms.html">Terms</a> &middot; <a href="refund-policy.html">Refund Policy</a>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="lume-qr.js" defer></script>
+<script src="lume-auth.js" defer></script>
+<script src="cashfree-payments.js" defer></script>
+<script>
+/*
+  The partner dashboard.
+
+  Every number here comes from /api/partners/me — nothing is worked out
+  in the page, because the numbers a partner sees are the ones they will
+  hold us to. The page only chooses which card to show.
+*/
+(function(){
+  "use strict";
+
+  var ENDPOINT = "/api/partners/me";
+  var $ = function(id){ return document.getElementById(id); };
+  var views = { out: $("signedOut"), loading: $("loading"), failed: $("failed"),
+                none: $("notApproved"), approved: $("approved"), dash: $("dash") };
+  var last = null;
+
+  function show(name){
+    Object.keys(views).forEach(function(k){ views[k].classList.toggle("hide", k !== name); });
+  }
+
+  function toast(msg){
+    var n = $("toast");
+    n.textContent = msg;
+    n.classList.add("on");
+    clearTimeout(n._t);
+    n._t = setTimeout(function(){ n.classList.remove("on"); }, 2200);
+  }
+
+  function track(name, params){
+    try{ if(window.gtag) window.gtag("event", name, params || {}); }catch(e){}
+  }
+
+  function inr(n){ return "₹" + (Number(n) || 0).toLocaleString("en-IN"); }
+
+  function call(body){
+    return window.lumeAccount.token().then(function(token){
+      if(!token) return { status: 401, data: {} };
+      return fetch(ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify(body || {})
+      }).then(function(res){
+        return res.json().catch(function(){ return {}; }).then(function(data){
+          return { status: res.status, data: data };
+        });
+      });
+    });
+  }
+
+  function drawQR(text){
+    var wrap = $("qrWrap"), canvas = $("qr"), m = null;
+    try{ m = window.LumeQR && window.LumeQR.matrix(text); }catch(e){ m = null; }
+    if(!m){ wrap.classList.add("hide"); return; }
+    var quiet = 4, px = Math.floor(canvas.width / (m.size + quiet * 2));
+    var off = Math.floor((canvas.width - px * (m.size + quiet * 2)) / 2);
+    var c = canvas.getContext("2d");
+    c.fillStyle = "#ffffff";
+    c.fillRect(0, 0, canvas.width, canvas.height);
+    c.fillStyle = "#0D1B40";
+    for(var y = 0; y < m.size; y++){
+      for(var x = 0; x < m.size; x++){
+        if(m.get(x, y)) c.fillRect(off + (x + quiet) * px, off + (y + quiet) * px, px, px);
+      }
+    }
+    wrap.classList.remove("hide");
+  }
+
+  function clientMessage(url){
+    return "Hi! Before our session, please take the Lume Live career assessment on this link: " + url +
+      "\n\nIt takes about 20 minutes. The Full Clarity Report (₹999) gives us a detailed profile of your " +
+      "interests, personality and learning style to work from when we meet.";
+  }
+
+  function renderPayout(p){
+    var state;
+    if(p.payable > 0){
+      state = inr(p.payable) + " is ready and will be in our next monthly payout" +
+        (p.upi ? " to " + p.upi + "." : " — add your UPI ID below so we can send it.");
+    }else if(p.clearing > 0){
+      state = inr(p.clearing) + " is clearing. Commission is paid once a report is " + p.hold_days + " days old.";
+    }else if(p.earned > 0){
+      state = "You're all paid up — " + inr(p.paid) + " sent so far.";
+    }else{
+      state = "No commission yet. Your first ₹300 arrives when a client buys their report through your link.";
+    }
+    if(p.clearing > 0 && p.payable > 0){
+      state += " Another " + inr(p.clearing) + " is still clearing.";
+    }
+    $("payoutState").textContent = state;
+    if(p.upi && document.activeElement !== $("upi")) $("upi").value = p.upi;
+    $("holdDays").textContent = p.hold_days;
+  }
+
+  function renderPartner(p){
+    $("linkText").textContent = p.url.replace(/^https?:\/\//, "");
+    $("codeText").textContent = p.code;
+    $("sClients").textContent = p.clients;
+    $("sReports").textContent = p.reports;
+    $("sEarned").textContent = inr(p.earned);
+    $("sPaid").textContent = inr(p.paid);
+    renderPayout(p);
+    drawQR(p.url);
+
+    $("waShare").onclick = function(){
+      track("partner_link_share", { event_category:"partners", method:"whatsapp" });
+      window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(clientMessage(p.url)), "_blank", "noopener");
+    };
+    $("copyLink").onclick = function(){
+      track("partner_link_copy", { event_category:"partners" });
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(p.url).then(function(){ toast("Link copied"); },
+          function(){ window.prompt("Copy this:", p.url); });
+      }else{
+        window.prompt("Copy this:", p.url);
+      }
+    };
+    show("dash");
+  }
+
+  function render(answer){
+    last = answer;
+    if(answer.email){
+      $("who").textContent = answer.email;
+      $("who").classList.remove("hide");
+    }
+    if(answer.state === "active" && answer.partner) return renderPartner(answer.partner);
+    if(answer.state === "approved"){
+      if(answer.join && answer.join.amount) $("joinAmount").textContent = inr(answer.join.amount);
+      return show("approved");
+    }
+    $("naEmail").textContent = answer.email || "this account";
+    show("none");
+  }
+
+  function load(){
+    show("loading");
+    call({}).then(function(r){
+      if(r.status === 401) return show("out");
+      if(r.status !== 200 || !r.data || !r.data.state){
+        $("failedMsg").textContent = (r.data && r.data.error) ||
+          "Please try again in a few minutes, or message us on WhatsApp and we'll sort it out.";
+        return show("failed");
+      }
+      render(r.data);
+      track("partner_dashboard_view", { event_category:"partners", event_label: r.data.state });
+    }).catch(function(){ show("failed"); });
+  }
+
+  function payJoin(){
+    var err = $("joinErr");
+    err.textContent = "";
+    if(typeof window.lumeCashfreePay !== "function"){
+      err.textContent = "Checkout is still loading. Please try again in a moment.";
+      return;
+    }
+    var join = (last && last.join) || {};
+    track("partner_join_pay_click", { event_category:"partners" });
+    /* The amount is the server's, from /me — create-order charges the
+       catalogue price whatever this says, but the two should agree. */
+    window.lumeCashfreePay({
+      sku: join.sku || "partner-joining-fee",
+      amount: join.amount,
+      label: join.label || "Lume Live Partner Joining Fee",
+      continueUrl: "partner-dashboard.html"
+    });
+  }
+
+  function saveUpi(){
+    var btn = $("saveUpi"), err = $("upiErr");
+    err.textContent = "";
+    btn.disabled = true;
+    call({ upi: $("upi").value }).then(function(r){
+      btn.disabled = false;
+      if(r.status !== 200 || !r.data){
+        err.textContent = (r.data && r.data.error) || "We couldn't reach the server. Please try again in a moment.";
+        return;
+      }
+      if(r.data.partner) renderPayout(r.data.partner);
+      if(r.data.ok){ toast("UPI ID saved"); }
+      else{ err.textContent = r.data.message || "We couldn't save that UPI ID."; }
+    }).catch(function(){
+      btn.disabled = false;
+      err.textContent = "We couldn't reach the server. Please try again in a moment.";
+    });
+  }
+
+  function boot(){
+    /* Every script here is deferred, so a slow one must not leave the
+       page blank. Without the sign-in module the signed-out card is still
+       the right thing to show. */
+    if(!window.lumeAccount){ show("out"); return; }
+
+    $("signIn").onclick = function(){
+      track("partner_signin_click", { event_category:"partners" });
+      window.lumeAccount.prompt();
+    };
+    /* The account modal lets them sign out and back in, but says nothing
+       to this page when they do — so watch for the account to change and
+       reload the dashboard for whoever is signed in afterwards. */
+    $("switchAccount").onclick = function(){
+      var before = (window.lumeAccount.current() || {}).uid || "";
+      var started = Date.now();
+      clearInterval(boot._switch);
+      boot._switch = setInterval(function(){
+        var now = window.lumeAccount.current();
+        if(Date.now() - started > 10 * 60 * 1000){ clearInterval(boot._switch); return; }
+        if(!now){
+          clearInterval(boot._switch);
+          show("out");
+          window.lumeAccount.onSignIn(function(){ load(); });
+        }else if(now.uid !== before){
+          clearInterval(boot._switch);
+          load();
+        }
+      }, 1500);
+      window.lumeAccount.prompt();
+    };
+    $("retry").onclick = load;
+    $("payJoin").onclick = payJoin;
+    $("saveUpi").onclick = saveUpi;
+
+    window.lumeAccount.ready().then(function(user){
+      if(user && user.uid) return load();
+      show("out");
+      window.lumeAccount.onSignIn(function(){ load(); });
+    }).catch(function(){ show("out"); });
+  }
+
+  if(document.readyState === "loading"){
+    window.addEventListener("DOMContentLoaded", boot);
+  }else{
+    boot();
+  }
+})();
+</script>
+</body>
+</html>

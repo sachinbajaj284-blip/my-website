@@ -205,6 +205,44 @@ await test("the amount the server priced replaces the page's", async () => {
 
 // --- the account behind the purchase -------------------------------------
 
+group("partner links");
+
+await test("a partner's link is remembered and sent with the checkout", async () => {
+  const fetch = fetchStub();
+  const win = loadCheckoutHelper(HELPER, { fetch, search: "?partner=asha-7k2p", onScript: sdkThatWorks({}) });
+  assert.equal(win.lumePartnerCode(), "ASHA7K2P");
+  assert.equal(win.document.documentElement.classList.contains("lume-partner-client"), true,
+    "the page must know to hide Lume's own session offers");
+  win.lumeCashfreePay(Object.assign({}, PAYMENT, { sku:"student-full-report", amount:999 }));
+  await waitFor(() => fetch.calls.length, "create-order to be called");
+  assert.equal(fetch.calls[0].body.partner_code, "ASHA7K2P");
+});
+
+await test("the first partner link wins over a later one", async () => {
+  const win = loadCheckoutHelper(HELPER, {
+    search: "?partner=BELA9QRT",
+    storage: { lumePartnerInbound: JSON.stringify({ code: "ASHA7K2P", ts: Date.now() }) }
+  });
+  assert.equal(win.lumePartnerCode(), "ASHA7K2P");
+});
+
+await test("a partner link older than 90 days is forgotten", async () => {
+  const old = Date.now() - 91 * 24 * 60 * 60 * 1000;
+  const win = loadCheckoutHelper(HELPER, {
+    storage: { lumePartnerInbound: JSON.stringify({ code: "ASHA7K2P", ts: old }) }
+  });
+  assert.equal(win.lumePartnerCode(), "");
+  assert.equal(win.document.documentElement.classList.contains("lume-partner-client"), false);
+});
+
+await test("a checkout with no partner link sends no code", async () => {
+  const fetch = fetchStub();
+  const win = loadCheckoutHelper(HELPER, { fetch, onScript: sdkThatWorks({}) });
+  win.lumeCashfreePay(Object.assign({}, PAYMENT));
+  await waitFor(() => fetch.calls.length, "create-order to be called");
+  assert.equal(fetch.calls[0].body.partner_code, "");
+});
+
 group("every purchase belongs to an account");
 
 await test("a signed-out client is asked for an account, and no order is created", async () => {

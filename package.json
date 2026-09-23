@@ -13,7 +13,7 @@
     "sitemap": "node tools/sitemap.mjs",
     "sitemap:check": "node tools/sitemap.mjs --check",
     "og:images": "node tools/og-images.mjs",
-    "test": "npm run checkout:test && npm run account:test && npm run auth:test && npm run authcodes:test && npm run sendmail:test && npm run coupons:test && npm run referrals:test && npm run referrals:client:test && npm run refer:test && npm run dispatch:test && npm run entitlements:test && npm run webhook:test && npm run quiz:test && npm run josaa:test",
+    "test": "npm run checkout:test && npm run account:test && npm run auth:test && npm run authcodes:test && npm run sendmail:test && npm run coupons:test && npm run referrals:test && npm run partners:test && npm run referrals:client:test && npm run refer:test && npm run dispatch:test && npm run entitlements:test && npm run webhook:test && npm run quiz:test && npm run josaa:test",
     "checkout:test": "node tools/checkout.test.mjs",
     "account:test": "node tools/account.test.mjs",
     "auth:test": "node tools/auth.test.mjs",
@@ -30,7 +30,9 @@
     "coupons:list": "node tools/seed-coupons.mjs --dry-run",
     "coupons:seed": "node tools/seed-coupons.mjs",
     "coupons:issue": "node tools/issue-coupon.mjs",
-    "referrals:payouts": "node tools/referral-payouts.mjs"
+    "referrals:payouts": "node tools/referral-payouts.mjs",
+    "partners:test": "node tools/partners.test.mjs",
+    "partners": "node tools/partners.mjs"
   },
   "engines": {
     "node": ">=18"

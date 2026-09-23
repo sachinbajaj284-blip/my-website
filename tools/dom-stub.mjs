@@ -123,10 +123,12 @@ export function loadCheckoutHelper(file, options = {}){
     return node;
   };
 
-  const store = {};
+  // options.storage lets a test start with something already stashed —
+  // a partner link followed on an earlier visit, say.
+  const store = Object.assign({}, options.storage || {});
   const win = {
     document: doc,
-    location: { protocol:"https:", href:"https://lumelive.co.in/index.html", pathname:"/index.html", search:"", hash:"" },
+    location: { protocol:"https:", href:"https://lumelive.co.in/index.html" + (options.search || ""), pathname:"/index.html", search: options.search || "", hash:"" },
     navigator: { userAgent:"node-test", clipboard:null },
     localStorage: {
       getItem: k => (Object.prototype.hasOwnProperty.call(store, k) ? store[k] : null),
@@ -140,7 +142,7 @@ export function loadCheckoutHelper(file, options = {}){
     console: options.verbose ? console : { log(){}, warn(){}, error(){}, info(){} },
     setTimeout, clearTimeout, setInterval, clearInterval,
     Promise, JSON, Math, Date, Object, Array, String, Number, Boolean, Error, Set, Map, RegExp,
-    encodeURIComponent, decodeURIComponent, isNaN, parseInt, parseFloat,
+    encodeURIComponent, decodeURIComponent, isNaN, parseInt, parseFloat, URLSearchParams,
     CustomEvent: class { constructor(type, init){ this.type = type; Object.assign(this, init || {}); } },
     dispatchEvent(){ return true; },
     addEventListener(){},

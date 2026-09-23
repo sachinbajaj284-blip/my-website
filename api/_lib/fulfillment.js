@@ -21,6 +21,7 @@
 const { recordPaidEntitlement, claimPaidNotification } = require("./entitlements");
 const { recordRedemption } = require("./coupons");
 const { notifyOwner } = require("./notify");
+const partners = require("./partners");
 
 // SKUs where the client books their own slot on the Google Calendar page,
 // so the owner knows not to chase them for a date and time.
@@ -59,6 +60,10 @@ function readOrder(data){
       overstates the books; mistaking a sale for a demo hides money.
     */
     isDemo: tags.demo === "1",
+    // The partner link the client arrived on, if any. Shape-checked by
+    // create-order.js; whether it earns anything is decided by
+    // creditReport() below, never by the tag alone.
+    partnerCode: tags.partner_code ? String(tags.partner_code).slice(0, 12) : "",
     // The account that paid, stamped onto the order by create-order.js from
     // a verified sign-in. Contact details can be typed wrong or changed
     // later; this doesn't.
@@ -83,7 +88,7 @@ function readOrder(data){
   that wants to know whether anything happened can read the returned
   flags, which is what the tests assert on.
 
-  Returns { fulfilled, recorded, notified, sku }.
+  Returns { fulfilled, recorded, notified, sku, partner? }.
 */
 async function fulfillPaidOrder(data){
   const order = readOrder(data);
@@ -168,6 +173,50 @@ async function fulfillPaidOrder(data){
     }
   }
 
+  /*
+    Partners. A paid joining fee makes its buyer a partner; a paid report
+    may earn the partner who brought the client their commission. Both
+    are idempotent — keyed by the account and by the order — so a poll
+    and a webhook for the same order still do each once.
+
+    Guarded like the effects above: a Firestore hiccup here must not fail
+    the client's status check. The ledger can be corrected by hand; a
+    checkout that errors after taking money cannot.
+  */
+  let partnerLine = "";
+  if(order.sku === partners.JOIN_SKU){
+    try{
+      const joined = await partners.activate({
+        uid: order.uid,
+        email: order.accountEmail || order.email,
+        name: order.name,
+        orderId: order.orderId
+      });
+      result.partner = joined;
+      partnerLine = joined.ok
+        ? " New partner — their code is " + joined.code + "."
+        : " Joining fee paid but no account on the order, so no partner was activated — sort this out by hand.";
+    }catch(err){
+      console.error("[lume fulfilment] partner activation failed:", String(err && err.message || err));
+      partnerLine = " Partner activation FAILED — check the logs and activate by hand.";
+    }
+  }else if(partners.earnsCommission(order.sku) && partners.isEnabled()){
+    try{
+      const credit = await partners.creditReport({
+        orderId: order.orderId,
+        sku: order.sku,
+        amountPaid: order.amount,
+        clientUid: order.uid,
+        partnerCode: order.partnerCode,
+        isDemo: order.isDemo
+      });
+      result.partner = credit;
+      if(credit.ok) partnerLine = " Partner " + credit.code + " earns ₹" + credit.commission + ".";
+    }catch(err){
+      console.error("[lume fulfilment] partner commission failed:", String(err && err.message || err));
+    }
+  }
+
   // Tell the owner a booking has been paid for, once per order. This is
   // the trustworthy copy of the client's details — Cashfree has verified
   // the payment, and these fields come from Cashfree rather than from
@@ -187,7 +236,8 @@ async function fulfillPaidOrder(data){
           " (₹" + (order.amount != null ? order.amount : "?") + ")." +
           (order.couponCode ? " Coupon " + order.couponCode + " applied (₹" + order.couponDiscount + " off)." : "") +
           (order.sessionMode ? " Preferred mode: " + order.sessionMode + "." : "") +
-          (BOOKING_SKUS.has(order.sku) ? " They now pick their own slot on the Google Calendar link." : ""),
+          (BOOKING_SKUS.has(order.sku) ? " They now pick their own slot on the Google Calendar link." : "") +
+          partnerLine,
         details: {
           cf_order_id: order.cfOrderId,
           currency: order.currency,
@@ -198,6 +248,7 @@ async function fulfillPaidOrder(data){
           // A column to filter or sum on, so the Sheet can exclude these
           // without anyone having to recognise the coupon code by eye.
           demo: order.isDemo ? "yes" : "no",
+          partner_code: result.partner && result.partner.ok ? result.partner.code : "",
           note: order.note
         }
       });
