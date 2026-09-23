@@ -708,7 +708,10 @@
     }).catch(function(err){
       EL.google.disabled = false;
       var message = googleError(err);
-      if(message){ showError(message); }
+      // The code goes on the card too: a screenshot of it is the whole
+      // bug report, and "didn't work" alone could be any of a dozen things.
+      var code = (err && err.code) || "";
+      if(message){ showError(code ? message + " (" + code + ")" : message); }
     });
   }
 
