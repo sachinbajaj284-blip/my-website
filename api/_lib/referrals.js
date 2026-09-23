@@ -545,6 +545,52 @@ async function recordQualified({ code, referredUid, event, referredPhone, now },
   });
 }
 
+/*
+  Who this student actually referred.
+
+  Only people who QUALIFIED are here, because an attribution row is
+  written at the moment a referral counts and never before. There is no
+  record of somebody who opened a link and did not finish, so this cannot
+  answer "who hasn't taken it yet" — it answers "who counted, when, and
+  has it cleared the hold".
+
+  Deliberately returns uids and nothing else. Turning a uid into a name
+  needs Firebase Auth, which this module does not touch: resolving it
+  here would drag firebase-admin into a file that has to stay loadable
+  without it, and it would put a decision about whose name is shown to
+  whom inside the ledger. The route above it makes that call.
+*/
+async function friendsFor(uid, options){
+  const opts = options || {};
+  const db = opts.db || firestore();
+  const now = opts.now == null ? Date.now() : opts.now;
+  const limit = Math.max(1, Math.min(Number(opts.limit) || 50, 100));
+  const id = String(uid || "");
+  if(!id) return [];
+
+  const rows = await db.collection(ATTRIBUTIONS).where("referrer_uid", "==", id).get();
+
+  const out = [];
+  rows.forEach(function(row){
+    const r = row.data() || {};
+    const at = Number(r.created_at) || 0;
+    out.push({
+      // The document id IS the referred account. Nothing else in the row
+      // identifies them.
+      uid: row.id,
+      amount: Math.max(0, Number(r.amount) || 0),
+      created_at: at,
+      // Whether this one is past the hold, which is the question a
+      // student staring at a balance they cannot withdraw is asking.
+      cleared: (now - at) >= HOLD_MS
+    });
+  });
+
+  // Newest first: the one they just earned is the one they are looking for.
+  out.sort(function(a, b){ return b.created_at - a.created_at; });
+  return out.slice(0, limit);
+}
+
 /* ------------------------------------------------------------------ */
 /* Payouts                                                             */
 /* ------------------------------------------------------------------ */
@@ -756,6 +802,7 @@ module.exports = {
   isEnabled,
   ensureCode,
   statsFor,
+  friendsFor,
   lookupCode,
   recordQualified,
   normalizeUpi,

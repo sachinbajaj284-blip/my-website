@@ -5,9 +5,10 @@
 const { dispatcher } = require("../_lib/dispatch");
 
 const routes = {
-  "code":   require("../_lib/routes/referrals/code.js"),
-  "claim":  require("../_lib/routes/referrals/claim.js"),
-  "payout": require("../_lib/routes/referrals/payout.js")
+  "code":    require("../_lib/routes/referrals/code.js"),
+  "claim":   require("../_lib/routes/referrals/claim.js"),
+  "payout":  require("../_lib/routes/referrals/payout.js"),
+  "friends": require("../_lib/routes/referrals/friends.js")
 };
 
 module.exports = dispatcher("referrals", routes);
