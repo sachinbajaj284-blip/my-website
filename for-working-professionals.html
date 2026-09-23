@@ -2386,7 +2386,9 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
 .ft-gate-input:focus{outline:none;border-color:#0A6E6E;box-shadow:0 0 0 4px rgba(10,110,110,.10);}
 .ft-gate-submit{background:linear-gradient(135deg,#C9933A,#E8B95A);color:#fff;border:none;font-size:.95rem;font-weight:800;padding:14px 22px;border-radius:12px;cursor:pointer;box-shadow:0 8px 22px rgba(201,147,58,.32);transition:all .25s;letter-spacing:.3px;margin-top:4px;}
 .ft-gate-submit:hover{transform:translateY(-1px);box-shadow:0 12px 28px rgba(201,147,58,.42);}
-.ft-gate-skip{background:none;border:none;color:#4A6060;font-size:.78rem;font-weight:600;text-decoration:underline;cursor:pointer;margin-top:10px;}
+.ft-gate-skip{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:rgba(10,110,110,.08);border:2px solid #0A6E6E;color:#0A6E6E;font-size:.9rem;font-weight:800;text-decoration:none;cursor:pointer;margin-top:14px;padding:11px 26px;border-radius:999px;box-shadow:0 4px 14px rgba(10,110,110,.15);transition:background .2s,color .2s,transform .2s,box-shadow .2s;}
+.ft-gate-skip:hover{background:#0A6E6E;color:#fff;transform:translateY(-1px);box-shadow:0 6px 18px rgba(10,110,110,.28);}
+.ft-gate-skip:focus-visible{outline:3px solid rgba(10,110,110,.4);outline-offset:3px;}
 .ft-gate-err{color:#dc2626;font-size:.78rem;font-weight:600;margin-top:8px;display:none;}
 .ft-gate-bullets{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:16px;font-size:.74rem;color:#4A6060;font-weight:600;}
 .ft-gate-bullets span::before{content:'·';margin-right:5px;color:#0A6E6E;}
