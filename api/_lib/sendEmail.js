@@ -74,6 +74,23 @@ async function sendEmail({ to, subject, text }){
       console.error("[lume email] webhook returned", res.status);
       return { ok:false, reason:"WEBHOOK_" + res.status };
     }
+
+    /*
+      A 200 is not proof it sent.
+
+      An Apps Script Web App deployed as "Anyone with a Google Account"
+      answers an anonymous POST with a sign-in *page* — status 200, and
+      our script never ran. So the body is checked: the snippet in the
+      docs answers "sent", and the notification path answers with its own
+      short string. An HTML document coming back means we reached
+      Google's login screen rather than the script.
+    */
+    const body = (await res.text().catch(function(){ return ""; })).trim();
+    if(/^\s*<(!doctype|html)/i.test(body)){
+      console.error("[lume email] the webhook answered with a sign-in page, so the script never ran. Set the deployment's access to \"Anyone\".");
+      return { ok:false, reason:"WEBHOOK_NEEDS_ANYONE_ACCESS" };
+    }
+
     return { ok:true };
   }catch(err){
     console.error("[lume email] webhook failed:", String(err && err.message || err));
