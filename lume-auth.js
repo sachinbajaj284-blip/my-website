@@ -277,7 +277,6 @@
           '<p class="la-sent"></p>' +
           '<div class="la-google-wrap">' +
             '<button class="la-google" type="button">' + GOOGLE_G + '<span>Continue with Google</span></button>' +
-            '<div class="la-or">or use your email</div>' +
           '</div>' +
           '<div class="la-field la-name-field"><label for="laName">Full name</label><input id="laName" type="text" autocomplete="name" placeholder="Your name"></div>' +
           '<div class="la-field la-email-field"><label for="laEmail2">Email address</label>' +
@@ -288,7 +287,7 @@
           '<button class="la-alt la-resend" type="button" style="display:none">Didn’t get it? <b>Send again</b></button>' +
           '<button class="la-alt la-edit" type="button" style="display:none">Wrong address? <b>Change it</b></button>' +
           '<button class="la-alt la-signout" type="button" style="display:none">Not you? <b>Sign out</b></button>' +
-          '<p class="la-note">We email you a code to confirm it’s you. No password to remember, no marketing.</p>' +
+          '<p class="la-note la-main-note">We only use your name and email address from Google. No password to remember, no marketing.</p>' +
           '<div class="la-captcha"></div>' +
         '</div>' +
       '</div>';
@@ -309,6 +308,7 @@
     EL.edit = o.querySelector(".la-edit");
     EL.signout = o.querySelector(".la-signout");
     EL.googleWrap = o.querySelector(".la-google-wrap");
+    EL.note = o.querySelector(".la-main-note");
     EL.google = o.querySelector(".la-google");
     EL.google.addEventListener("click", signInWithGoogle);
 
@@ -362,14 +362,15 @@
     var onName  = step === "name";
     var onAcct  = step === "account";
 
-    EL.emailField.style.display = onEmail ? "" : "none";
+    /* Sign-in is Google only. The email-code steps below are kept
+       for now (and /api/auth/send-code still works) so they can be
+       switched back on by showing these fields again, but the first
+       step no longer offers them: the Google button is the whole form. */
+    EL.emailField.style.display = "none";
     EL.otpField.style.display   = onCode ? "" : "none";
-    /* The name is asked on both sides, not only on Create account: the
-       two buttons lead to one flow, and a form that changes shape
-       depending on which was pressed suggests they are different
-       things. It also lets a returning client fix a name that went in
-       wrong the first time. */
-    EL.nameField.style.display  = (onName || onEmail) ? "" : "none";
+    EL.nameField.style.display  = onName ? "" : "none";
+    EL.submit.style.display     = onEmail ? "none" : "";
+    EL.note.style.display       = onEmail ? "" : "none";
     EL.resend.style.display     = onCode ? "" : "none";
     EL.edit.style.display       = onCode ? "" : "none";
     EL.signout.style.display    = onAcct ? "" : "none";
@@ -379,7 +380,7 @@
       EL.title.textContent = EL.mode === "signup" ? "Create your Lume Live account" : "Sign in to continue";
       EL.sub.textContent = EL.mode === "signup"
         ? "Your report, session and receipts stay with your account — on any device."
-        : "Your name and email. We’ll send you a code.";
+        : "Continue with your Google account.";
       EL.submit.textContent = "Email me a code";
       showSent("");
     } else if(onCode){
@@ -407,6 +408,7 @@
       try{
         if(onCode){ EL.otp.focus(); }
         else if(onName){ EL.name.focus(); }
+        else if(onEmail){ EL.google.focus(); }
         else { EL.name.focus(); }
       }catch(err){}
     }, 60);
@@ -646,8 +648,8 @@
      lume-live-cf865.firebaseapp.com, and browsers that partition
      third-party storage (Safari, Chrome's newer defaults) lose the
      result on the way back unless the site proxies /__/auth. The popup
-     has no such problem. If it is blocked, the person is told and the
-     email code is right there underneath.
+     has no such problem. If it is blocked, the person is told how to
+     allow it.
      ============================================================ */
   var readyAuth = null;
 
@@ -660,17 +662,17 @@
       case "auth/user-cancelled":
         return "";
       case "auth/popup-blocked":
-        return "Your browser blocked the Google window. Allow pop-ups for this site, or use your email below.";
+        return "Your browser blocked the Google window. Allow pop-ups for this site and try again.";
       case "auth/unauthorized-domain":
-        return "Google sign-in isn\u2019t enabled for this web address yet. Please use your email below.";
+        return "Google sign-in isn\u2019t enabled for this web address yet. Please message us on WhatsApp and we\u2019ll help.";
       case "auth/operation-not-allowed":
-        return "Google sign-in isn\u2019t switched on yet. Please use your email below.";
+        return "Google sign-in isn\u2019t switched on yet. Please message us on WhatsApp and we\u2019ll help.";
       case "auth/network-request-failed":
         return "We couldn\u2019t reach Google. Check your connection and try again.";
       case "auth/account-exists-with-different-credential":
-        return "This email already has a Lume Live account. Please sign in with your email code below instead.";
+        return "This email already has a Lume Live account under a different sign-in. Please message us on WhatsApp and we\u2019ll sort it out.";
       default:
-        return "Google sign-in didn\u2019t work just now. Please try again, or use your email below.";
+        return "Google sign-in didn\u2019t work just now. Please try again in a moment.";
     }
   }
 

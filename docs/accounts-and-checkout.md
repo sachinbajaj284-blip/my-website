@@ -13,7 +13,7 @@ Cashfree payment window without signing in first, on any page, for any SKU.
   same modal, with the same item and coupon. The client does not start over.
 - The order carries the account: `order_tags.account_uid` comes from a
   verified Firebase ID token, never from the page.
-- **An account is a name, an email address and a six-digit code.** No
+- **An account is a Google sign-in** (see below). It was previously a name, an email address and a six-digit code. No
   password, and no separate sign-up: an address either has an account behind
   it or gets one the moment the code checks out.
 - **The code proves the inbox**, so accounts made this way are created
@@ -90,36 +90,28 @@ leaves it on. Switch it back the moment the real problem is fixed.
 
 ---
 
-## Setup checklist (Google + email code)
+## Sign-in is "Continue with Google"
 
-The sign-in card offers **Continue with Google** first and the emailed
-6-digit code underneath. Both end in the same kind of Firebase account, and
-the same address is the same account either way.
+The sign-in card is one button: **Continue with Google** (Firebase's built-in
+Google provider, popup flow, free on the Spark plan). Google accounts arrive
+with `email_verified: true`, so `create-order` and restore-access accept them
+exactly as they accepted email-code accounts.
 
-**1. Turn on Google sign-in (Firebase console, free)**
+The email-code form described below is hidden, not deleted: the fields are
+still in `lume-auth.js` and `/api/auth/send-code` + `verify-code` still work,
+so it can be brought back by showing them again in `showStep()`.
 
-- Authentication → Sign-in method → **Google** → Enable → pick a support
+**Firebase console setup (one time):**
+
+- Authentication → Sign-in method → **Google** → Enable → choose a support
   email → Save.
 - Authentication → Settings → **Authorized domains** → make sure
-  `lumelive.co.in` and `www.lumelive.co.in` are listed (plus any
-  `*.vercel.app` preview domain you test on). Without this the card says
-  "Google sign-in isn't enabled for this web address yet".
+  `lumelive.co.in` and `www.lumelive.co.in` are listed (and any
+  `*.vercel.app` preview you test on). Otherwise the card says "Google
+  sign-in isn't enabled for this web address yet".
 - Authentication → Settings → User account linking → keep **Link accounts
-  that use the same email** (the default).
-
-**2. Send the codes through a real mail service** — pick one:
-
-| | Resend | Brevo |
-|---|---|---|
-| Free tier | 3,000/month, 100/day | 300/day |
-| Vercel variable | `RESEND_API_KEY` | `BREVO_API_KEY` |
-| Domain setup | Domains → Add `lumelive.co.in` → add the DNS records it shows | Senders & Domains → add and authenticate `lumelive.co.in` |
-
-Then in Vercel set `AUTH_EMAIL_FROM` to an address on that verified domain,
-e.g. `Lume Live <login@lumelive.co.in>`, and redeploy. If both keys are set,
-Resend is used. With neither, codes fall back to the Apps Script webhook below.
-A failed send shows its reason on the card (`FROM_NOT_SET`, `RESEND_403`,
-`BREVO_401`, …) and the provider's own error is in the Vercel function logs.
+  that use the same email** (the default), so people who signed in with an
+  email code before land in the same account.
 
 ---
 
@@ -151,10 +143,9 @@ Rate limits are per address and per IP, reusing `api/_lib/rateLimit.js`. The
 account is created at *verification*, never at send — so the send endpoint
 cannot be used to find out who has an account.
 
-Emails go out through Resend or Brevo when a key is set (see the setup
-checklist above); otherwise through the Apps Script that already sends owner
-notifications — see "Sending the sign-in code" in `docs/owner-notifications.md`
-for the snippet it needs. Set `LUME_AUTH_CODE_PEPPER` to a long random string in Vercel;
+Emails go out through the Apps Script that already sends owner notifications —
+see "Sending the sign-in code" in `docs/owner-notifications.md` for the snippet
+it needs. Set `LUME_AUTH_CODE_PEPPER` to a long random string in Vercel;
 without it the codes still expire, lock out and are single-use, but the stored
 hashes are weaker.
 
