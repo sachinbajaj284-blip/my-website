@@ -246,6 +246,21 @@ Then **Deploy → Manage deployments → edit → Version: New version → Deplo
 A script edit does nothing until it is redeployed, and a code that never
 arrives is indistinguishable from a broken site.
 
+**Then authorise it.** `MailApp.sendEmail` needs a permission the script did
+not have before — sending mail as you — and Apps Script cannot ask for it
+mid-request. Until you grant it, every send throws and the site reports
+"We couldn't send the email just now". To grant it: in the editor, pick any
+function in the dropdown, press **Run**, and accept the prompts (including
+**Advanced → Go to … (unsafe)**, which is what an unverified personal script
+looks like). Run it once and the deployment can send from then on.
+
+Two more settings that silently break sending, both under
+**Deploy → Manage deployments → edit**:
+
+- **Execute as:** *Me*. Anything else has no mailbox to send from.
+- **Who has access:** *Anyone*. With "Anyone with a Google Account", our POST
+  is answered with a sign-in page rather than running the script.
+
 Nothing else changes: `AUTH_EMAIL_WEBHOOK_URL` defaults to the
 `OWNER_WEBHOOK_URL` you already have, so if your notifications work, the codes
 will too.

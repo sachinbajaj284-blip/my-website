@@ -411,16 +411,34 @@
     stopResendTimer();
   }
 
+  /*
+    The two banners are mutually exclusive, and that has to be enforced
+    here rather than remembered at every call site.
+
+    The card has shown both at once: "We couldn't send the email just
+    now" in red, directly above "We've already sent you a code" in
+    green. Each was true of a different attempt — the first send failed,
+    the second was refused as a resend — but together they are a card
+    telling somebody two opposite things and leaving them to guess.
+  */
   function showError(message){
     if(!EL.err){ return; }
     EL.err.textContent = message || "";
     EL.err.classList.toggle("on", Boolean(message));
+    if(message && EL.sent){
+      EL.sent.innerHTML = "";
+      EL.sent.classList.remove("on");
+    }
   }
 
   function showSent(html){
     if(!EL.sent){ return; }
     EL.sent.innerHTML = html || "";
     EL.sent.classList.toggle("on", Boolean(html));
+    if(html && EL.err){
+      EL.err.textContent = "";
+      EL.err.classList.remove("on");
+    }
   }
 
   /* A second tap 30 seconds in has to read as "not yet" rather than as
