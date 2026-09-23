@@ -17,10 +17,10 @@
   FIREBASE_PRIVATE_KEY=...
 */
 
-const { isManualOrderId, findManualEntitlement } = require("../_lib/entitlements");
-const { json, setCors } = require("../_lib/http");
-const { fulfillPaidOrder, readOrder } = require("../_lib/fulfillment");
-const { fetchCashfreeOrder, hasCredentials } = require("../_lib/cashfree");
+const { isManualOrderId, findManualEntitlement } = require("../../entitlements");
+const { json, setCors } = require("../../http");
+const { fulfillPaidOrder, readOrder } = require("../../fulfillment");
+const { fetchCashfreeOrder, hasCredentials } = require("../../cashfree");
 
 function getOrderId(req){
   try{

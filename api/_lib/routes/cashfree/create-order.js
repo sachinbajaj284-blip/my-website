@@ -13,11 +13,11 @@
 */
 
 const crypto = require("crypto");
-const { checkRateLimit, clientKey } = require("../_lib/rateLimit");
-const { json, setCors, readBody } = require("../_lib/http");
-const { getProduct } = require("../_lib/catalog");
-const { quote } = require("../_lib/coupons");
-const { requireAccount } = require("../_lib/account");
+const { checkRateLimit, clientKey } = require("../../rateLimit");
+const { json, setCors, readBody } = require("../../http");
+const { getProduct } = require("../../catalog");
+const { quote } = require("../../coupons");
+const { requireAccount } = require("../../account");
 
 /*
   Before paying, the client chooses how they want the session to happen —
