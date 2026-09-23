@@ -13,7 +13,7 @@ Cashfree payment window without signing in first, on any page, for any SKU.
   same modal, with the same item and coupon. The client does not start over.
 - The order carries the account: `order_tags.account_uid` comes from a
   verified Firebase ID token, never from the page.
-- **An account is a name, an email address and a six-digit code.** No
+- **An account is a Google sign-in** (see below). It was previously a name, an email address and a six-digit code. No
   password, and no separate sign-up: an address either has an account behind
   it or gets one the moment the code checks out.
 - **The code proves the inbox**, so accounts made this way are created
@@ -87,6 +87,31 @@ variable instead of leaving the site unable to take money.
 
 It is **on by default**, and any value other than `0`/`false`/`off`/`no`
 leaves it on. Switch it back the moment the real problem is fixed.
+
+---
+
+## Sign-in is "Continue with Google"
+
+The sign-in card is one button: **Continue with Google** (Firebase's built-in
+Google provider, popup flow, free on the Spark plan). Google accounts arrive
+with `email_verified: true`, so `create-order` and restore-access accept them
+exactly as they accepted email-code accounts.
+
+The email-code form described below is hidden, not deleted: the fields are
+still in `lume-auth.js` and `/api/auth/send-code` + `verify-code` still work,
+so it can be brought back by showing them again in `showStep()`.
+
+**Firebase console setup (one time):**
+
+- Authentication → Sign-in method → **Google** → Enable → choose a support
+  email → Save.
+- Authentication → Settings → **Authorized domains** → make sure
+  `lumelive.co.in` and `www.lumelive.co.in` are listed (and any
+  `*.vercel.app` preview you test on). Otherwise the card says "Google
+  sign-in isn't enabled for this web address yet".
+- Authentication → Settings → User account linking → keep **Link accounts
+  that use the same email** (the default), so people who signed in with an
+  email code before land in the same account.
 
 ---
 
