@@ -85,11 +85,26 @@ module.exports = async (req, res) => {
     */
     await dropCode(email);
 
-    // Honest failure. Telling someone to check an inbox for an email
-    // that was never sent is the cruellest possible version of this.
+    /*
+      Honest failure — telling someone to check an inbox for an email
+      that was never sent is the cruellest possible version of this —
+      and specific about which failure it was.
+
+      The reason is our own plumbing's status, not anything about the
+      person or their address, so there is nothing to leak by saying it
+      out loud. Swallowing it means the only way to tell "nobody
+      configured the mail webhook" from "the script is not authorised to
+      send mail" is a trip to the runtime logs, which is a trip the
+      person hitting the error cannot make.
+    */
+    const why = String(sent.reason || "");
+    const detail = why === "NOT_CONFIGURED"
+      ? "This site has no mail sender configured yet, so no code can be sent."
+      : "We couldn't send the email just now. Please try again in a minute, or message us on WhatsApp.";
+
     return json(res, 502, {
-      ok:false, code:"SEND_FAILED",
-      error:"We couldn't send the email just now. Please try again in a minute, or message us on WhatsApp."
+      ok:false, code:"SEND_FAILED", reason:why,
+      error: why && why !== "NOT_CONFIGURED" ? detail + " (" + why + ")" : detail
     });
   }
 
