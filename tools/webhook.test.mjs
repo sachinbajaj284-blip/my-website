@@ -30,7 +30,7 @@ process.env.CASHFREE_CLIENT_SECRET = "test_client_secret";
 delete process.env.LUME_NOTIFY_WEBHOOK;
 delete process.env.LUME_NOTIFY_URL;
 
-const handler = require("../api/cashfree/webhook.js");
+const handler = require("../api/_lib/routes/cashfree/webhook.js");
 const { signatureMatches, readOrderId, actsOn } = handler;
 
 let passed = 0;
@@ -537,10 +537,30 @@ await test("an ordinary sale's notification is not labelled a demo", async () =>
 
 console.log("\nwiring");
 
-await test("the body parser is disabled, or every signature would fail", () => {
+await test("the handler is exported as the handler itself", () => {
   assert.equal(typeof handler, "function", "the module must export the handler itself");
-  assert.ok(handler.config && handler.config.api && handler.config.api.bodyParser === false,
-    "bodyParser must be false — the signature is over the raw bytes");
+});
+
+/*
+  The config that keeps the raw bytes is checked on the CATCH-ALL, not on
+  this handler, because Vercel reads it from the file it routes to and
+  that is no longer this one. Asserting it here would pass against a dead
+  export while production rejected every delivery for a bad signature —
+  which is the failure this test exists to prevent, so it has to follow
+  the config rather than the file it used to live in.
+*/
+await test("the body parser is disabled on the route, or every signature would fail", () => {
+  const route = require("../api/cashfree/[...route].js");
+  assert.ok(route.config && route.config.api && route.config.api.bodyParser === false,
+    "bodyParser must be false on api/cashfree/[...route].js — the signature is over the raw bytes");
+});
+
+await test("the webhook is actually wired into that route", () => {
+  // The config above is worth nothing if deliveries never reach this
+  // handler through it.
+  const route = require("../api/cashfree/[...route].js");
+  assert.equal(route.routes.webhook, handler,
+    "api/cashfree/[...route].js must dispatch /webhook to this exact handler");
 });
 
 console.log("\n" + passed + " passed, " + failed + " failed\n");

@@ -1,8 +1,10 @@
 # Reference implementations — not deployed
 
 These two files are examples showing how a Cashfree order endpoint is
-put together. The working endpoints are `api/cashfree/create-order.js`
-and `api/cashfree/order-status.js`; these are here to be read.
+put together. The working endpoints are
+`api/_lib/routes/cashfree/create-order.js` and
+`api/_lib/routes/cashfree/order-status.js`, reached through the
+`api/cashfree/[...route].js` catch-all; these are here to be read.
 
 They used to live in `api/` as `*.example.js`, where the extension made
 them look inert but did not make them inert — Vercel routes on the

@@ -12,8 +12,8 @@
   entitlement-restore issues.
 */
 
-const { db } = require("../_lib/firebaseAdmin");
-const { isEnforced } = require("../_lib/account");
+const { db } = require("../../firebaseAdmin");
+const { isEnforced } = require("../../account");
 
 function json(res, status, body){
   res.statusCode = status;

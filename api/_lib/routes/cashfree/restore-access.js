@@ -26,8 +26,8 @@
   FIREBASE_PRIVATE_KEY=...
 */
 
-const { auth } = require("../_lib/firebaseAdmin");
-const { findPaidEntitlements } = require("../_lib/entitlements");
+const { auth } = require("../../firebaseAdmin");
+const { findPaidEntitlements } = require("../../entitlements");
 
 function json(res, status, body){
   res.statusCode = status;

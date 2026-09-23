@@ -20,8 +20,9 @@ five-minute change in your Google Calendar settings.
 ## 1. Your Sheet / webhook — automatic
 
 The mode is now tagged onto the Cashfree order at checkout
-(`api/cashfree/create-order.js`), and read back when Cashfree confirms the
-payment (`api/cashfree/order-status.js`). It arrives in the `payment` row as:
+(`api/_lib/routes/cashfree/create-order.js`), and read back when Cashfree
+confirms the payment (`api/_lib/routes/cashfree/order-status.js`). It
+arrives in the `payment` row as:
 
 - the `summary` line — *"Payment confirmed for wellness-session (₹249). Coupon FIRST50 applied (₹250 off). Preferred
   mode: Voice call. They now pick their own slot on the Google Calendar link."*

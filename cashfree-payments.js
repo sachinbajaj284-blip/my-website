@@ -355,7 +355,7 @@
      or email string — so this can't be used to pull up someone else's
      paid content just by knowing their contact details. Looks up
      purchases against that verified email (written by
-     /api/cashfree/order-status.js when Cashfree confirms PAID) and, if
+     api/_lib/routes/cashfree/order-status.js when Cashfree confirms PAID) and, if
      found, repopulates local storage with the real order_id(s) so
      lumeCashfreeVerifyAccess() can confirm them the normal way.
      Returns { ok, count, needsAuth?, needsVerification?, error? }.

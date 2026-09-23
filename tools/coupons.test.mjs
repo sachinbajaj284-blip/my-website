@@ -974,7 +974,7 @@ await test("create-order tags the order from the coupon, not from a code name", 
     would be a second place to edit for every demo code added later, and
     the failure mode of forgetting is a demo counted as revenue.
   */
-  const source = fs.readFileSync(new URL("../api/cashfree/create-order.js", import.meta.url), "utf8");
+  const source = fs.readFileSync(new URL("../api/_lib/routes/cashfree/create-order.js", import.meta.url), "utf8");
   assert.ok(/const isDemo = Boolean\(couponApplied && priced\.coupon\.is_demo\)/.test(source),
     "create-order must decide isDemo from the applied coupon's is_demo flag");
   assert.ok(/isDemo \? \{ demo: "1" \} : \{\}/.test(source),
@@ -996,7 +996,7 @@ await test("a typed address cannot satisfy an issued LUMEDEMO", async () => {
     not fail this test for the wrong reason — while a field that starts
     coming from the body still does.
   */
-  const source = fs.readFileSync(new URL("../api/cashfree/create-order.js", import.meta.url), "utf8");
+  const source = fs.readFileSync(new URL("../api/_lib/routes/cashfree/create-order.js", import.meta.url), "utf8");
   const call = /const priced = await quote\(\{[\s\S]*?\n  \}\);/.exec(source);
   assert.ok(call, "could not find the quote() call in create-order.js");
   const customerLine = /customer:\s*\{[\s\S]*?\n    \}/.exec(call[0]);

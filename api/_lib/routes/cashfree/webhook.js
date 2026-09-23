@@ -65,9 +65,9 @@
 */
 
 const crypto = require("crypto");
-const { json, setCors } = require("../_lib/http");
-const { fulfillPaidOrder } = require("../_lib/fulfillment");
-const { fetchCashfreeOrder, hasCredentials } = require("../_lib/cashfree");
+const { json, setCors } = require("../../http");
+const { fulfillPaidOrder } = require("../../fulfillment");
+const { fetchCashfreeOrder, hasCredentials } = require("../../cashfree");
 
 // Deliveries are small. A cap keeps an oversized body from being buffered
 // and HMAC'd before anything has established that it's really Cashfree.
@@ -292,16 +292,20 @@ module.exports = async function handler(req, res){
 
 /*
   Vercel parses a JSON body by default and throws the raw bytes away. The
-  signature is over those bytes, so the parsing has to be turned off and
-  done by us, after the signature has been checked.
+  signature is over those bytes, so the parsing has to be turned off.
 
-  This has to be assigned after `module.exports = handler` above, not
-  before it — assigning the handler replaces the exports object wholesale,
-  and a config set first would go with it. Silently: the endpoint would
-  still deploy, still receive deliveries, and reject every one of them for
-  a bad signature.
+  That config does NOT live here any more. Vercel reads it from the file
+  it routes to, and this file is no longer one — api/cashfree/[...route].js
+  is, so the config sits there. Setting it here as well would look
+  load-bearing while doing nothing, which is worse than not setting it:
+  the endpoint would still deploy, still receive deliveries, and reject
+  every one of them for a bad signature while a reader saw a line that
+  appeared to prevent exactly that.
+
+  readRawBody() above is the backstop either way. If something does parse
+  the body first it answers 503 rather than waiting on a stream that has
+  already ended — a hang reads to Cashfree as a timeout and burns a retry.
 */
-module.exports.config = { api: { bodyParser: false } };
 
 // Exported for tools/webhook.test.mjs. The signature check is the whole
 // security boundary here, so it is tested directly rather than only
