@@ -412,6 +412,41 @@ await atest("a page with no auth module cannot ask, and does not fail", async ()
   assert.equal(fetch.calls.length, 1);
 });
 
+await atest("claimWithPhone still hands back the friend's offer", async () => {
+  /*
+    The path the quiz pages actually call. It lost its phone-card detour
+    when sign-in became an email code; the offer must have survived that,
+    because announcing it is the only thing claimWithPhone now adds over
+    claim(). There is no document in this harness, so the bar does not
+    render — what is pinned here is that the answer comes back intact
+    and nothing throws on the way.
+  */
+  const fetch = claimFetch([{ ok: true, counted: true, needs_phone: false,
+    offer: { code: "FRIEND100", amount: 100 } }]);
+  const { api } = load({ search: "?ref=AARA7K2P", account: signedIn("friend"), fetch });
+  const answer = await api.claimWithPhone("snapshot");
+  assert.equal(answer.counted, true);
+  assert.equal(answer.offer.code, "FRIEND100");
+});
+
+await atest("a counted claim carries the friend's own offer", async () => {
+  const fetch = claimFetch([{ ok: true, counted: true, needs_phone: false,
+    offer: { code: "FRIEND100", amount: 100 } }]);
+  const { api } = load({ search: "?ref=AARA7K2P", account: signedIn("friend"), fetch });
+  const answer = await api.claim("snapshot");
+  assert.equal(answer.offer.code, "FRIEND100");
+  assert.equal(answer.offer.amount, 100);
+});
+
+await atest("no offer comes back when the server sends none", async () => {
+  // FRIEND100 switched off: nothing is promised rather than a stale ₹100
+  // baked into the browser.
+  const fetch = claimFetch([{ ok: true, counted: true, needs_phone: false, offer: null }]);
+  const { api } = load({ search: "?ref=AARA7K2P", account: signedIn("friend"), fetch });
+  const answer = await api.claim("snapshot");
+  assert.equal(answer.offer, null);
+});
+
 await atest("nothing is claimed without an inbound code", async () => {
   const fetch = claimFetch([{ ok: true, counted: true }]);
   const { api } = load({ search: "", account: signedIn("friend"), fetch });

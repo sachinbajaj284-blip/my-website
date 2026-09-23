@@ -137,6 +137,7 @@ function referralStub(opts = {}){
     stats: () => (typeof opts.stats === "function" ? opts.stats() : (opts.stats || null)),
     decorate: (url, code) => url + "?ref=" + code,
     inviteMessage: (lang, url) => "invite " + lang + " " + url,
+    friendOffer: () => (opts.friendOffer === undefined ? null : opts.friendOffer),
     payout(body){
       stub.lastPayout = body || null;
       if(typeof opts.payout === "function") return Promise.resolve(opts.payout(body));
@@ -314,6 +315,45 @@ await test("a missing QR encoder is survivable", async () => {
   await settle();
   assert.equal(visible(page, "qrWrap"), false);
   assert.equal(visible(page, "dash"), true);
+});
+
+console.log("\nwhat the friend gets");
+
+await test("the friend's discount is named in the pitch when there is one", async () => {
+  const { page } = run({
+    referral: referralStub({ stats: FULL, friendOffer: { code: "FRIEND100", amount: 100 } }),
+    account: accountStub({ uid: "u1" })
+  });
+  await settle();
+  assert.match(page.byId.stepFriend.textContent, /₹100 off/);
+});
+
+await test("no live offer means no claim about one", async () => {
+  /*
+    FRIEND100 switched off. The page must leave the step alone so the
+    wording already in the markup stands, rather than promising a
+    discount the checkout would refuse.
+
+    Asserted as "the script wrote nothing" because this DOM is built from
+    the page's ids and does not carry its static text — checking for the
+    fallback wording here would be testing the harness. The markup itself
+    is pinned by the next assertion.
+  */
+  const { page } = run({
+    referral: referralStub({ stats: FULL, friendOffer: null }),
+    account: accountStub({ uid: "u1" })
+  });
+  await settle();
+  assert.equal(page.byId.stepFriend.textContent, "");
+});
+
+await test("the untouched wording in the markup is still true on its own", () => {
+  // What a student reads when there is no live offer.
+  const step = /<li id="stepFriend">([\s\S]*?)<\/li>/.exec(HTML);
+  assert.ok(step, "stepFriend must exist in refer.html");
+  assert.match(step[1], /costs them nothing/);
+  assert.equal(/₹\d/.test(step[1]), false,
+    "the static wording must not hard-code a discount the server may have switched off");
 });
 
 console.log("\ngetting paid");

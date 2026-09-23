@@ -98,7 +98,7 @@ a{color:var(--teal);text-decoration:none}
 <section class="hero"><div class="in">
   <span class="eyebrow">Referrals</span>
   <h1>Invite friends. Get paid.</h1>
-  <p>Every friend who finishes the free Career Snapshot on your link earns you ₹50, sent straight to your UPI.</p>
+  <p>Every friend who finishes the free Career Snapshot on your link earns you ₹50, sent straight to your UPI — and they get a discount too.</p>
 </div></section>
 
 <main class="wrap">
@@ -193,7 +193,7 @@ a{color:var(--teal);text-decoration:none}
       <h2>How it works</h2>
       <ol class="steps">
         <li>Send your link to a friend.</li>
-        <li>They open it and finish the free Career Snapshot — it takes about two minutes and costs them nothing.</li>
+        <li id="stepFriend">They open it and finish the free Career Snapshot — it takes about two minutes and costs them nothing.</li>
         <li>Your balance goes up. Withdraw it to your UPI once you've reached the minimum.</li>
       </ol>
     </div>
@@ -201,6 +201,7 @@ a{color:var(--teal);text-decoration:none}
     <div class="card">
       <h2>The rules, plainly</h2>
       <ul class="rules">
+        <li><b>Your friend gets something too.</b> A discount on their first paid report or session, applied at checkout — they don't have to do anything to claim it beyond using your link.</li>
         <li><b>We pay by UPI.</b> Only to a UPI ID you give us, and only after you've confirmed your age.</li>
         <li><b>There's a waiting period.</b> Earnings become withdrawable a few days after your friend takes the quiz — that's so we can spot anything odd first.</li>
         <li><b>A friend counts once</b> — the first time they finish a quiz, for whoever's link they arrived on.</li>
@@ -303,6 +304,15 @@ a{color:var(--teal);text-decoration:none}
       : (reward
           ? "Every friend who finishes the quiz on your link earns you " + inr(reward) + "."
           : "Share it anywhere — WhatsApp, Instagram story, in person.");
+
+    /* What the friend gets, if there is a live offer to promise. Said
+       here because it is the strongest thing in the pitch — "free for
+       them" is good, "free AND ₹100 off" is what gets sent. */
+    var gift = window.LumeReferral.friendOffer && window.LumeReferral.friendOffer();
+    if(gift && gift.amount > 0){
+      $("stepFriend").textContent = "They open it and finish the free Career Snapshot — two minutes, costs them nothing, " +
+        "and it gets them " + inr(gift.amount) + " off their first report or session.";
+    }
 
     $("sFriends").textContent = (stats && stats.qualified) || 0;
     $("sCredit").textContent = inr(earned);
