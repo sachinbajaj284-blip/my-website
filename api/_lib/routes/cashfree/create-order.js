@@ -18,6 +18,8 @@ const { json, setCors, readBody } = require("../../http");
 const { getProduct } = require("../../catalog");
 const { quote } = require("../../coupons");
 const { requireAccount } = require("../../account");
+const { normalizeCode, isValidCode } = require("../../referrals");
+const partners = require("../../partners");
 
 /*
   Before paying, the client chooses how they want the session to happen —
@@ -99,6 +101,50 @@ module.exports = async function handler(req, res){
   if(!product){
     return json(res, 400, { error: "Unknown payment item." });
   }
+
+  /*
+    The partner joining fee is only sold to someone the owner approved
+    after their vetting call — partner-with-us.html promises "you pay only
+    after the call", and this is what keeps that true for a request that
+    skips the dashboard.
+
+    412 rather than 401/403: cashfree-payments.js reads those two as
+    "show the sign-in screen", and this person is signed in. The
+    dashboard checks the same rule before it offers the button, so in
+    normal use this never fires.
+  */
+  if(sku === partners.JOIN_SKU){
+    if(!account){
+      return json(res, 412, { error: "Sign in with the Google account we approved to pay the joining fee.", code: "NO_ACCOUNT" });
+    }
+    let gate;
+    try{
+      gate = await partners.canJoin({ uid: account.uid, email: account.email });
+    }catch(err){
+      console.error("[lume create-order] partner approval check failed:", String(err && err.message || err));
+      return json(res, 503, { error: "We can't check your partner approval right now. Please try again in a few minutes." });
+    }
+    if(!gate.ok){
+      return json(res, 412, {
+        error: gate.reason === "ALREADY_PARTNER"
+          ? "You're already a Lume Live partner — there's nothing more to pay."
+          : "The joining fee opens after your vetting call. Apply on the Partner With Us page and we'll set one up.",
+        code: gate.reason
+      });
+    }
+  }
+
+  /*
+    A partner's link, if the client arrived on one. Only the shape is
+    checked here — no lookup, so a report sale never waits on it or fails
+    over it. Fulfilment decides whether it earns anything, once the money
+    has arrived (see creditReport in api/_lib/partners.js).
+
+    Only tagged on the SKUs that pay commission, which also keeps the
+    other orders' tag count where it was.
+  */
+  const rawPartnerCode = partners.earnsCommission(sku) ? normalizeCode(body.partner_code) : "";
+  const partnerCode = isValidCode(rawPartnerCode) ? rawPartnerCode : "";
 
   const customer = body.customer || {};
   // The account's number is the one Firebase sent an OTP to, so it is a
@@ -267,6 +313,7 @@ module.exports = async function handler(req, res){
       // real sale, which is the right default for every order that does
       // not come from a demo code.
       isDemo ? { demo: "1" } : {},
+      partnerCode ? { partner_code: partnerCode } : {},
       couponCode ? {
         coupon_code: couponCode,
         coupon_discount: String(priced.discount_amount),

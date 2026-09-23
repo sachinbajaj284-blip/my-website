@@ -51,6 +51,11 @@ jobs:
       - name: Coupon rules
         run: npm run coupons:test
 
+      # The partner ledger pays real money out by hand every month, and
+      # decides who may pay the joining fee. Same stub, no install.
+      - name: Partner programme
+        run: npm run partners:test
+
       - name: Owner dispatch
         run: npm run dispatch:test
 

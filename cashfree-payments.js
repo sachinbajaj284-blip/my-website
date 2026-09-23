@@ -96,6 +96,63 @@
     return sdkPromise;
   }
 
+  /* ------------------------------------------------------ partner links --
+     A Lume Live partner counsellor shares assessment.html?partner=CODE with
+     their client. The code is stashed here on arrival and sent with every
+     checkout; create-order.js tags it onto the order and the server decides,
+     once the payment is confirmed, whether it earns the partner anything
+     (api/_lib/partners.js). The browser only ever reports a code.
+
+     First link wins for 90 days — a client who follows a second
+     counsellor's link does not move. The server keeps a client with the
+     first partner they paid through for good, whatever this says.
+
+     A partner's client is also not shown Lume's own session offers
+     (partner-with-us.html promises that): anything marked
+     data-lume-session-offer is hidden once a code is stashed. */
+  var PARTNER_KEY = "lumePartnerInbound";
+  var PARTNER_WINDOW_MS = 90 * 24 * 60 * 60 * 1000;
+
+  function normalizePartnerCode(value){
+    var code = String(value == null ? "" : value).toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 12);
+    return code.length >= 6 ? code : "";
+  }
+
+  function readPartnerStash(){
+    try{
+      var raw = JSON.parse(window.localStorage.getItem(PARTNER_KEY) || "null");
+      if(!raw || !raw.code){ return null; }
+      if(Date.now() - Number(raw.ts || 0) > PARTNER_WINDOW_MS){
+        window.localStorage.removeItem(PARTNER_KEY);
+        return null;
+      }
+      return raw;
+    }catch(err){ return null; }
+  }
+
+  function partnerCode(){
+    var stash = readPartnerStash();
+    return stash ? normalizePartnerCode(stash.code) : "";
+  }
+
+  function capturePartnerLink(){
+    var fromUrl = "";
+    try{ fromUrl = normalizePartnerCode(new URLSearchParams(window.location.search).get("partner")); }catch(err){}
+    if(fromUrl && !readPartnerStash()){
+      try{ window.localStorage.setItem(PARTNER_KEY, JSON.stringify({ code: fromUrl, ts: Date.now() })); }catch(err){}
+    }
+    if(partnerCode() && document.documentElement){
+      document.documentElement.classList.add("lume-partner-client");
+      try{
+        var style = document.createElement("style");
+        style.textContent = ".lume-partner-client [data-lume-session-offer]{display:none!important}";
+        (document.head || document.documentElement).appendChild(style);
+      }catch(err){}
+    }
+  }
+  capturePartnerLink();
+  window.lumePartnerCode = partnerCode;
+
   var DEFAULTS = {
     mode: "production",
     createOrderEndpoint: "/api/cashfree/create-order",
@@ -132,7 +189,8 @@
     "internship-2-month":         { cta:"Confirm on WhatsApp",        href:"https://wa.me/917015671280", steps:["Your seat in the Advanced Fellowship (120 supervised hours) is reserved.","We call you within 24 hours for your 15-minute screening conversation.","If we don't select you, your fee is refunded in full — the seat is held, not sold."] },
     "internship-240-hour":        { cta:"Confirm on WhatsApp",        href:"https://wa.me/917015671280", steps:["Your seat in the University Credit Track (240 supervised hours) is reserved.","We call you within 24 hours to confirm your department's submission format before the cohort starts.","If we don't select you, or the format your university needs isn't one we can document, you're refunded in full."] },
     "industry-expert-session":    { cta:"Pick Your Slot",             href:"assessment.html#self-assessments", book:true, steps:["Your \u20b97,500 session with Dheeraj Ghughtyal is confirmed.","Pick your slot below \u2014 you'll get a Google Calendar invite with the video-call link.","Your Full Clarity Report is unlocked too: finish the 4-part assessment before the call so the hour starts with your profile in hand."] },
-    "internship-lume-lens":       { cta:"Start Lume Lens Now",        href:"for-working-professionals.html#self-assessments", steps:["Your intern-priced Lume Lens report is unlocked.","Complete the assessment to generate your own profile report.","Bring your result to your next supervision session — it's the first case you'll debrief."] }
+    "internship-lume-lens":       { cta:"Start Lume Lens Now",        href:"for-working-professionals.html#self-assessments", steps:["Your intern-priced Lume Lens report is unlocked.","Complete the assessment to generate your own profile report.","Bring your result to your next supervision session — it's the first case you'll debrief."] },
+    "partner-joining-fee":        { cta:"Open Your Partner Dashboard", href:"partner-dashboard.html", steps:["Your ₹1,999 joining fee is paid — welcome to Lume Live.","Open your dashboard to get your partner link.","Share it with your clients: every ₹999 report they buy earns you ₹300."] }
   };
 
   function bookingUrl(){ return getConfig().bookingCalendarUrl || ""; }
@@ -1054,6 +1112,9 @@
       // discount itself — sending an amount alongside it would be
       // pointless, since the server ignores every number we send here.
       coupon_code: options.couponCode || "",
+      // The partner link this client arrived on, if any. Only a code — the
+      // server works out whether it earns anything once the money lands.
+      partner_code: partnerCode(),
       customer: { name:options.customerName || "", phone:options.customerPhone || "", email:options.customerEmail || "" },
       notes: options.notes || {},
       pageUrl: window.location.href,

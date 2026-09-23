@@ -44,7 +44,13 @@ const SKU_PRICES = {
     Full Clarity Report. Priced once here, like everything else.
   */
   "industry-expert-session": { amount: 7500, label: "Talk to Industry Expert - Dheeraj Ghughtyal", alias: "expert7500" },
-  "internship-lume-lens": { amount: 500, label: "Lume Lens Report (Intern Add-On)", alias: "internlens500" }
+  "internship-lume-lens": { amount: 500, label: "Lume Lens Report (Intern Add-On)", alias: "internlens500" },
+  /*
+    The one-time fee a counsellor pays to become a Lume Live partner.
+    Only sold to accounts the owner has approved after the vetting call —
+    create-order.js asks api/_lib/partners.js before pricing it.
+  */
+  "partner-joining-fee": { amount: 1999, label: "Lume Live Partner Joining Fee", alias: "partner1999" }
 };
 
 function getProduct(sku){
