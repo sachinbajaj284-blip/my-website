@@ -177,6 +177,15 @@
      ============================================================ */
   var EL = {};
 
+  // Google's "G", as their branding guidelines ask for it: four colours,
+  // on white, left of the words.
+  var GOOGLE_G = '<svg viewBox="0 0 48 48" aria-hidden="true">' +
+    '<path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>' +
+    '<path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>' +
+    '<path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>' +
+    '<path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>' +
+    '</svg>';
+
   function injectStyles(){
     if(document.getElementById("la-styles")){ return; }
     var css = [
@@ -235,6 +244,12 @@
 ".lv-msg.on{display:block}",
 ".lv-msg.ok{background:#E9F7F0;color:#186A4B}",
 ".lv-msg.bad{background:#FDECEC;color:#933}",
+".la-google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:48px;border:1.5px solid #D9E1EE;border-radius:999px;background:#fff;color:#1f1f1f;font-size:.94rem;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:4px}",
+".la-google:hover{background:#F7F9FC}",
+".la-google:disabled{opacity:.6;cursor:default}",
+".la-google svg{width:18px;height:18px;flex:none}",
+".la-or{display:flex;align-items:center;gap:10px;margin:12px 0 14px;font-size:.72rem;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:#8493ab}",
+".la-or:before,.la-or:after{content:\"\";flex:1;height:1px;background:#E3E9F2}",
 "@media(max-width:420px){.lv-row{flex-direction:column}}"
     ].join("\n");
     var s = document.createElement("style");
@@ -260,6 +275,10 @@
         '<div class="la-body">' +
           '<p class="la-err"></p>' +
           '<p class="la-sent"></p>' +
+          '<div class="la-google-wrap">' +
+            '<button class="la-google" type="button">' + GOOGLE_G + '<span>Continue with Google</span></button>' +
+            '<div class="la-or">or use your email</div>' +
+          '</div>' +
           '<div class="la-field la-name-field"><label for="laName">Full name</label><input id="laName" type="text" autocomplete="name" placeholder="Your name"></div>' +
           '<div class="la-field la-email-field"><label for="laEmail2">Email address</label>' +
             '<input id="laEmail2" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" maxlength="254"></div>' +
@@ -289,6 +308,9 @@
     EL.resend = o.querySelector(".la-resend");
     EL.edit = o.querySelector(".la-edit");
     EL.signout = o.querySelector(".la-signout");
+    EL.googleWrap = o.querySelector(".la-google-wrap");
+    EL.google = o.querySelector(".la-google");
+    EL.google.addEventListener("click", signInWithGoogle);
 
     o.querySelector(".la-x").addEventListener("click", closeFallback);
     o.addEventListener("click", function(e){ if(e.target === o){ closeFallback(); } });
@@ -351,6 +373,7 @@
     EL.resend.style.display     = onCode ? "" : "none";
     EL.edit.style.display       = onCode ? "" : "none";
     EL.signout.style.display    = onAcct ? "" : "none";
+    EL.googleWrap.style.display = onEmail ? "" : "none";
 
     if(onEmail){
       EL.title.textContent = EL.mode === "signup" ? "Create your Lume Live account" : "Sign in to continue";
@@ -404,6 +427,10 @@
        out, so they get told who they are and how to leave instead. */
     showStep(activeUser() ? "account" : "email");
     EL.overlay.classList.add("la-open");
+    // Start loading Firebase now, so that by the time "Continue with
+    // Google" is tapped the popup can open inside the tap itself —
+    // a popup opened after a slow import is one a browser blocks.
+    ensureAuth().then(function(auth){ readyAuth = auth; watch(auth); }).catch(function(){});
   }
 
   function closeFallback(){
@@ -601,6 +628,85 @@
       EL.submit.textContent = "Verify and continue";
       try{ console.error("[lume auth] could not finish signing in:", err && (err.code || err.message)); }catch(e){}
       showError("We couldn\u2019t finish signing you in. Please try again in a moment.");
+    });
+  }
+
+  /* ============================================================
+     Continue with Google
+
+     One tap, no code, no email to wait for. Google has already checked
+     the address, so the account arrives with emailVerified: true and
+     api/_lib/account.js and restore-access treat it exactly like one
+     made with a code. Same address, same account: Firebase links a
+     Google sign-in and an email-code sign-in for one address to one
+     user (Authentication → Settings → "Link accounts that use the same
+     email", the default).
+
+     A popup, never a redirect: the redirect flow round-trips through
+     lume-live-cf865.firebaseapp.com, and browsers that partition
+     third-party storage (Safari, Chrome's newer defaults) lose the
+     result on the way back unless the site proxies /__/auth. The popup
+     has no such problem. If it is blocked, the person is told and the
+     email code is right there underneath.
+     ============================================================ */
+  var readyAuth = null;
+
+  function googleError(err){
+    var code = (err && err.code) || "";
+    try{ console.error("[lume auth] Google sign-in failed:", code || (err && err.message)); }catch(e){}
+    switch(code){
+      case "auth/popup-closed-by-user":
+      case "auth/cancelled-popup-request":
+      case "auth/user-cancelled":
+        return "";
+      case "auth/popup-blocked":
+        return "Your browser blocked the Google window. Allow pop-ups for this site, or use your email below.";
+      case "auth/unauthorized-domain":
+        return "Google sign-in isn\u2019t enabled for this web address yet. Please use your email below.";
+      case "auth/operation-not-allowed":
+        return "Google sign-in isn\u2019t switched on yet. Please use your email below.";
+      case "auth/network-request-failed":
+        return "We couldn\u2019t reach Google. Check your connection and try again.";
+      case "auth/account-exists-with-different-credential":
+        return "This email already has a Lume Live account. Please sign in with your email code below instead.";
+      default:
+        return "Google sign-in didn\u2019t work just now. Please try again, or use your email below.";
+    }
+  }
+
+  function signInWithGoogle(){
+    if(EL.google.disabled){ return; }
+    showError("");
+    EL.google.disabled = true;
+
+    function popup(auth){
+      readyAuth = auth;
+      watch(auth);
+      var provider = new authMod.GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: "select_account" });
+      return authMod.signInWithPopup(auth, provider);
+    }
+
+    // With Firebase already loaded (the usual case — opening the card
+    // started it) the popup opens synchronously, inside the click.
+    var attempt;
+    try{
+      attempt = readyAuth && authMod ? popup(readyAuth) : ensureAuth().then(popup);
+    }catch(err){
+      attempt = Promise.reject(err);
+    }
+
+    attempt.then(function(result){
+      var user = (result && result.user) || activeUser();
+      currentUser = user || currentUser;
+      window.currentFirebaseUser = currentUser;
+      EL.google.disabled = false;
+      showSent("");
+      closeFallback();
+    }).catch(function(err){
+      EL.google.disabled = false;
+      var message = googleError(err);
+      if(message){ showError(message); }
     });
   }
 

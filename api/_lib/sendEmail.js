@@ -8,24 +8,27 @@
   notify.js, this one reports failure honestly and the caller tells the
   client rather than pretending the email is on its way.
 
-  It goes through the same Google Apps Script Web App that already sends
-  your owner alerts, which means no new account, no new bill and one
-  place that holds the sending credentials. The script needs the small
-  addition in docs/owner-notifications.md ("Sending a sign-in code") to
-  recognise type:"auth_email" and call MailApp.sendEmail.
+  Three ways to send, tried in this order — the first one configured
+  is the one used, and there is no silent fall-through between them
+  (a code that went out twice, or through the provider you thought you
+  had switched off, is harder to debug than one that failed loudly):
 
-  Set in Vercel → Project → Settings → Environment Variables:
+  1. Resend (resend.com)    RESEND_API_KEY
+  2. Brevo  (brevo.com)     BREVO_API_KEY
+       Both need AUTH_EMAIL_FROM, e.g.  Lume Live <login@lumelive.co.in>
+       — an address on a domain you have verified with that provider.
+       A real mail service is the recommended path: it signs mail for
+       your domain (SPF/DKIM), so codes land in the inbox instead of
+       Spam, and there is no Gmail daily cap.
 
-  AUTH_EMAIL_WEBHOOK_URL  The Apps Script Web App URL. Falls back to
-                          OWNER_WEBHOOK_URL, so if your notifications
-                          already work, this does too once the script is
-                          updated.
-  OWNER_WEBHOOK_TOKEN     The same shared secret the notifications use.
+  3. The Google Apps Script Web App that already sends your owner
+     alerts — AUTH_EMAIL_WEBHOOK_URL, falling back to OWNER_WEBHOOK_URL,
+     with OWNER_WEBHOOK_TOKEN. Needs the snippet in
+     docs/owner-notifications.md ("Sending the sign-in code"). Gmail caps
+     it at roughly 100 recipients a day, and hitting that looks like
+     "the code never came".
 
-  Gmail caps a free account at roughly 100 recipients a day (1,500 on
-  Workspace). That is a ceiling on sign-ups per day, not on page views,
-  and hitting it looks like "the code never came" — so it is logged
-  loudly enough to recognise.
+  See docs/accounts-and-checkout.md for the setup steps.
 */
 
 const TIMEOUT_MS = 8000;
@@ -34,26 +37,107 @@ function webhookUrl(){
   return process.env.AUTH_EMAIL_WEBHOOK_URL || process.env.OWNER_WEBHOOK_URL || "";
 }
 
+function provider(){
+  if(process.env.RESEND_API_KEY){ return "resend"; }
+  if(process.env.BREVO_API_KEY){ return "brevo"; }
+  if(webhookUrl()){ return "webhook"; }
+  return "";
+}
+
 function isConfigured(){
-  return Boolean(webhookUrl());
+  return Boolean(provider());
+}
+
+/* "Lume Live <login@lumelive.co.in>" -> { name, email }. A bare address
+   is accepted too, and gets the brand name. */
+function parseFrom(raw){
+  const value = String(raw || "").trim();
+  const m = value.match(/^(.*?)\s*<([^<>\s]+@[^<>\s]+)>$/);
+  if(m){ return { name: m[1].replace(/^"|"$/g, "").trim() || "Lume Live", email: m[2] }; }
+  if(/^[^\s@]+@[^\s@]+$/.test(value)){ return { name: "Lume Live", email: value }; }
+  return null;
+}
+
+async function withTimeout(fn){
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  try{ return await fn(controller.signal); }
+  finally{ clearTimeout(timer); }
 }
 
 /*
   Resolves { ok:true } or { ok:false, reason } — never throws, because a
   thrown error here becomes a 500 and the client learns nothing useful.
 */
-async function sendEmail({ to, subject, text }){
-  const url = webhookUrl();
-  if(!url){
-    console.error("[lume email] AUTH_EMAIL_WEBHOOK_URL / OWNER_WEBHOOK_URL is not set, so no sign-in code can be sent.");
+async function sendEmail(msg){
+  const which = provider();
+  if(!which){
+    console.error("[lume email] no mail sender is configured (RESEND_API_KEY, BREVO_API_KEY or AUTH_EMAIL_WEBHOOK_URL), so no sign-in code can be sent.");
     return { ok:false, reason:"NOT_CONFIGURED" };
   }
+  if(which === "webhook"){ return sendViaWebhook(msg); }
 
-  const token = process.env.OWNER_WEBHOOK_TOKEN || "";
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  const from = parseFrom(process.env.AUTH_EMAIL_FROM);
+  if(!from){
+    console.error("[lume email] " + which + " is configured but AUTH_EMAIL_FROM is missing or malformed. Set it to e.g. \"Lume Live <login@lumelive.co.in>\".");
+    return { ok:false, reason:"FROM_NOT_SET" };
+  }
+  return which === "resend" ? sendViaResend(msg, from) : sendViaBrevo(msg, from);
+}
+
+/* The provider's own error body is logged (it names the fix — "domain is
+   not verified", "invalid key"), but the recipient never is: a failure
+   report should not become a record of who tried to sign in. */
+async function providerFailure(name, res){
+  const detail = (await res.text().catch(function(){ return ""; })).slice(0, 300);
+  console.error("[lume email] " + name + " returned", res.status, detail);
+  return { ok:false, reason: name.toUpperCase() + "_" + res.status };
+}
+
+async function sendViaResend({ to, subject, text }, from){
   try{
-    const res = await fetch(url, {
+    const res = await withTimeout((signal) => fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer " + process.env.RESEND_API_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ from: from.name + " <" + from.email + ">", to: [to], subject, text }),
+      signal
+    }));
+    if(!res.ok){ return providerFailure("resend", res); }
+    return { ok:true };
+  }catch(err){
+    console.error("[lume email] resend unreachable:", String(err && err.message || err));
+    return { ok:false, reason:"RESEND_UNREACHABLE" };
+  }
+}
+
+async function sendViaBrevo({ to, subject, text }, from){
+  try{
+    const res = await withTimeout((signal) => fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: {
+        "api-key": process.env.BREVO_API_KEY,
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({ sender: from, to: [{ email: to }], subject, textContent: text }),
+      signal
+    }));
+    if(!res.ok){ return providerFailure("brevo", res); }
+    return { ok:true };
+  }catch(err){
+    console.error("[lume email] brevo unreachable:", String(err && err.message || err));
+    return { ok:false, reason:"BREVO_UNREACHABLE" };
+  }
+}
+
+async function sendViaWebhook({ to, subject, text }){
+  const url = webhookUrl();
+  const token = process.env.OWNER_WEBHOOK_TOKEN || "";
+  try{
+    const res = await withTimeout((signal) => fetch(url, {
       method: "POST",
       headers: Object.assign(
         { "Content-Type": "application/json" },
@@ -65,12 +149,10 @@ async function sendEmail({ to, subject, text }){
         { type: "auth_email", to: to, subject: subject, text: text },
         token ? { token } : {}
       )),
-      signal: controller.signal,
+      signal,
       redirect: "follow" // Apps Script answers with a 302 to script.googleusercontent.com
-    });
+    }));
     if(!res.ok){
-      // The address is not logged: a failure report should not become a
-      // record of who tried to sign in.
       console.error("[lume email] webhook returned", res.status);
       return { ok:false, reason:"WEBHOOK_" + res.status };
     }
@@ -95,8 +177,6 @@ async function sendEmail({ to, subject, text }){
   }catch(err){
     console.error("[lume email] webhook failed:", String(err && err.message || err));
     return { ok:false, reason:"WEBHOOK_UNREACHABLE" };
-  }finally{
-    clearTimeout(timer);
   }
 }
 
@@ -123,4 +203,4 @@ function codeEmail(code){
   };
 }
 
-module.exports = { sendEmail, codeEmail, isConfigured };
+module.exports = { sendEmail, codeEmail, isConfigured, provider, parseFrom };

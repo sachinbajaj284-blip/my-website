@@ -90,6 +90,39 @@ leaves it on. Switch it back the moment the real problem is fixed.
 
 ---
 
+## Setup checklist (Google + email code)
+
+The sign-in card offers **Continue with Google** first and the emailed
+6-digit code underneath. Both end in the same kind of Firebase account, and
+the same address is the same account either way.
+
+**1. Turn on Google sign-in (Firebase console, free)**
+
+- Authentication → Sign-in method → **Google** → Enable → pick a support
+  email → Save.
+- Authentication → Settings → **Authorized domains** → make sure
+  `lumelive.co.in` and `www.lumelive.co.in` are listed (plus any
+  `*.vercel.app` preview domain you test on). Without this the card says
+  "Google sign-in isn't enabled for this web address yet".
+- Authentication → Settings → User account linking → keep **Link accounts
+  that use the same email** (the default).
+
+**2. Send the codes through a real mail service** — pick one:
+
+| | Resend | Brevo |
+|---|---|---|
+| Free tier | 3,000/month, 100/day | 300/day |
+| Vercel variable | `RESEND_API_KEY` | `BREVO_API_KEY` |
+| Domain setup | Domains → Add `lumelive.co.in` → add the DNS records it shows | Senders & Domains → add and authenticate `lumelive.co.in` |
+
+Then in Vercel set `AUTH_EMAIL_FROM` to an address on that verified domain,
+e.g. `Lume Live <login@lumelive.co.in>`, and redeploy. If both keys are set,
+Resend is used. With neither, codes fall back to the Apps Script webhook below.
+A failed send shows its reason on the card (`FROM_NOT_SET`, `RESEND_403`,
+`BREVO_401`, …) and the provider's own error is in the Vercel function logs.
+
+---
+
 ## Signing in, on six different pages
 
 Three pages used to run their own email-and-password modal (`index.html`,
@@ -118,9 +151,10 @@ Rate limits are per address and per IP, reusing `api/_lib/rateLimit.js`. The
 account is created at *verification*, never at send — so the send endpoint
 cannot be used to find out who has an account.
 
-Emails go out through the Apps Script that already sends owner notifications —
-see "Sending the sign-in code" in `docs/owner-notifications.md` for the snippet
-it needs. Set `LUME_AUTH_CODE_PEPPER` to a long random string in Vercel;
+Emails go out through Resend or Brevo when a key is set (see the setup
+checklist above); otherwise through the Apps Script that already sends owner
+notifications — see "Sending the sign-in code" in `docs/owner-notifications.md`
+for the snippet it needs. Set `LUME_AUTH_CODE_PEPPER` to a long random string in Vercel;
 without it the codes still expire, lock out and are single-use, but the stored
 hashes are weaker.
 
