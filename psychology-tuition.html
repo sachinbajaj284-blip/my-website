@@ -93,16 +93,46 @@ body{background:#fff}
 .mc p{font-size:.92rem;color:var(--muted);line-height:1.65;margin:0}
 
 /* ---------- teacher ---------- */
-.teach{display:grid;grid-template-columns:.9fr 1.1fr;gap:40px;align-items:center}
-.quote{position:relative;background:var(--navy);color:#fff;border-radius:22px;padding:36px 32px;overflow:hidden}
-.quote::before{content:"Ψ";position:absolute;right:-10px;bottom:-60px;font-family:Georgia,serif;font-size:14rem;line-height:1;color:rgba(255,255,255,.06)}
-.teach .quote p{color:#fff;font-family:Georgia,serif;font-size:1.28rem;line-height:1.5;margin:0 0 18px;position:relative}
-.quote small{color:var(--gold2);font-weight:800;letter-spacing:1px;text-transform:uppercase;font-size:.72rem}
-.teach h2{font-family:Georgia,serif;color:var(--navy);font-size:clamp(1.5rem,3vw,2rem);line-height:1.2;margin:10px 0 14px}
-.teach p{color:var(--ink);margin-bottom:14px}
-.ticks{list-style:none;margin:6px 0 0;padding:0}
-.ticks li{position:relative;padding-left:30px;margin:0 0 10px;color:var(--ink)}
-.ticks li::before{content:"";position:absolute;left:0;top:5px;width:18px;height:18px;border-radius:50%;background:var(--teal) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5L20 7'/%3E%3C/svg%3E") center/11px no-repeat}
+.teach{display:grid;grid-template-columns:.95fr 1.05fr;gap:44px;align-items:center}
+.prof{position:relative;border-radius:26px;overflow:hidden;background:#fff;border:1px solid var(--line);box-shadow:0 30px 60px rgba(13,27,64,.12)}
+.prof-top{position:relative;height:150px;background:radial-gradient(80% 120% at 0% 0%,rgba(10,110,110,.9),transparent 60%),radial-gradient(70% 120% at 100% 100%,rgba(91,79,201,.85),transparent 60%),var(--navy);overflow:hidden}
+.prof-top svg{position:absolute;inset:0;width:100%;height:100%;opacity:.22}
+.prof-top .yr{position:absolute;right:22px;top:18px;color:#fff;text-align:right}
+.prof-top .yr b{display:block;font-family:Georgia,serif;font-size:2.6rem;line-height:1}
+.prof-top .yr span{font-size:.68rem;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--gold2)}
+.avatar{position:absolute;left:28px;top:84px;width:120px;height:120px;border-radius:50%;background:#fff;padding:6px;box-shadow:0 14px 30px rgba(13,27,64,.22);z-index:2}
+.avatar svg{width:100%;height:100%;display:block}
+.prof-body{padding:66px 28px 26px}
+.prof-body h3{font-family:Georgia,serif;color:var(--navy);font-size:1.35rem;margin:0}
+.prof-body .role{display:block;font-size:.86rem;color:var(--muted);margin:2px 0 14px}
+.creds{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;padding:0;list-style:none}
+.creds li{display:inline-flex;align-items:center;gap:6px;font-size:.76rem;font-weight:800;border-radius:999px;padding:6px 11px;background:var(--teal-soft);color:var(--teal)}
+.creds li:nth-child(2){background:var(--violet-soft);color:var(--violet)}
+.creds li:nth-child(3){background:var(--gold-soft);color:#A8741F}
+.creds svg{width:14px;height:14px}
+.teach .quote{position:relative;margin:0;padding:18px 20px 18px 22px;border-radius:16px;background:linear-gradient(135deg,#F4F2FF,#EEF8F7);border-left:4px solid var(--gold)}
+.teach .quote p{font-family:Georgia,serif;font-size:1.06rem;line-height:1.55;color:var(--navy);margin:0;font-style:italic}
+.teach .quote::before{content:"\201C";position:absolute;right:14px;top:-18px;font-family:Georgia,serif;font-size:5rem;line-height:1;color:rgba(201,147,58,.35)}
+.teach h2{font-family:Georgia,serif;color:var(--navy);font-size:clamp(1.5rem,3vw,2.1rem);line-height:1.2;margin:10px 0 14px}
+.teach .lede{color:var(--ink);margin-bottom:20px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;transition:transform .2s,box-shadow .2s}
+.tile:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(13,27,64,.08)}
+.tile .ic{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center}
+.tile .ic svg{width:21px;height:21px}
+.tile:nth-child(1) .ic{background:var(--teal-soft);color:var(--teal)}
+.tile:nth-child(2) .ic{background:var(--violet-soft);color:var(--violet)}
+.tile:nth-child(3) .ic{background:var(--gold-soft);color:#A8741F}
+.tile:nth-child(4) .ic{background:#FDEEF3;color:#B8336A}
+.tile b{display:block;color:var(--navy);font-size:.93rem;line-height:1.3;margin-bottom:2px}
+.tile span{display:block;font-size:.84rem;color:var(--muted);line-height:1.5}
+.team-strip{display:flex;align-items:center;gap:14px;margin-top:18px;padding:12px 16px;border-radius:14px;background:var(--navy);color:#fff;font-size:.88rem}
+.dots{display:flex}
+.dots i{width:30px;height:30px;border-radius:50%;border:2px solid var(--navy);display:grid;place-items:center;font-style:normal;font-family:Georgia,serif;font-size:.9rem;margin-left:-8px}
+.dots i:first-child{margin-left:0;background:var(--teal)}
+.dots i:nth-child(2){background:var(--violet)}
+.dots i:nth-child(3){background:var(--gold);color:var(--navy)}
+.team-strip b{color:var(--gold2)}
 
 /* ---------- samples ---------- */
 .samples{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
@@ -219,7 +249,8 @@ body{background:#fff}
   .stats{grid-template-columns:1fr 1fr;margin:-30px 16px 0}
   .stats div:nth-child(2){border-right:0}
   .stats div:nth-child(-n+2){border-bottom:1px solid var(--line)}
-  .method,.samples,.who,.syl,.teach,.price-wrap{grid-template-columns:1fr}
+  .method,.samples,.who,.syl,.teach,.price-wrap,.tiles{grid-template-columns:1fr}
+  .prof-top{height:130px}.avatar{width:104px;height:104px;top:74px;left:22px}.prof-body{padding:58px 22px 22px}
   .pcard{padding:28px 22px}
   .final{padding:36px 20px;border-radius:20px}
   .mbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:900;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.97);border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(13,27,64,.1)}
@@ -359,20 +390,40 @@ body{background:#fff}
 
 <section class="sec tint" id="teacher">
   <div class="sec-in teach">
-    <div class="quote">
-      <p>&ldquo;Psychology is the one subject where you can understand every answer, not just memorise it. My job is to make that happen, chapter by chapter.&rdquo;</p>
-      <small>Your lead psychology tutor · 6 years teaching in CBSE schools</small>
+    <div class="prof">
+      <div class="prof-top">
+        <svg viewBox="0 0 400 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="1.2"><path d="M0 120 C80 80 120 40 200 60 S320 20 400 40"/><path d="M0 60 C60 40 110 90 180 100 S300 120 400 90"/></g><g fill="#fff"><circle cx="200" cy="60" r="4"/><circle cx="180" cy="100" r="3"/><circle cx="320" cy="30" r="3"/><circle cx="90" cy="85" r="3"/></g></svg>
+        <div class="yr"><b>6</b><span>years in CBSE classrooms</span></div>
+      </div>
+      <div class="avatar" aria-hidden="true">
+        <svg viewBox="0 0 120 120"><defs><linearGradient id="avg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0A6E6E"/><stop offset="1" stop-color="#5B4FC9"/></linearGradient></defs>
+          <circle cx="60" cy="60" r="57" fill="url(#avg)"/>
+          <circle cx="60" cy="60" r="57" fill="none" stroke="#E8B95A" stroke-width="4" stroke-dasharray="358" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+          <text x="60" y="78" text-anchor="middle" font-family="Georgia,serif" font-size="56" fill="#fff">&#936;</text>
+        </svg>
+      </div>
+      <div class="prof-body">
+        <h3>Your Lead Psychology Tutor</h3>
+        <span class="role">CBSE Psychology Teacher &middot; Class 11 &amp; 12</span>
+        <ul class="creds">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg>6 yrs CBSE schools</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/></svg>NCERT specialist</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Board exam prep</li>
+        </ul>
+        <blockquote class="quote"><p>&ldquo;Psychology is the one subject where you can understand every answer, not just memorise it. My job is to make that happen, chapter by chapter.&rdquo;</p></blockquote>
+      </div>
     </div>
     <div>
       <span class="kicker">Who teaches you</span>
       <h2>A CBSE classroom teacher, not just a tutor</h2>
-      <p>Classes are led by a psychology educator with <strong>6 years of experience teaching Psychology in CBSE schools</strong>. They have taught the NCERT chapters year after year, set and checked school exams, and guided students through Class 12 practical files and board papers.</p>
-      <ul class="ticks">
-        <li>Knows which concepts students find confusing, and how to explain them</li>
-        <li>Knows how CBSE frames questions and what examiners look for</li>
-        <li>Backed by the <strong>Lume Live team of psychology tutors</strong>, for more timings and faster doubt-clearing</li>
-        <li>Part of a psychology-led counselling practice that works with these ideas every day</li>
-      </ul>
+      <p class="lede">Classes are led by a psychology educator with <strong>6 years of experience teaching Psychology in CBSE schools</strong>. They have taught the NCERT chapters year after year, set and checked school exams, and guided students through Class 12 practical files and board papers.</p>
+      <div class="tiles">
+        <div class="tile"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg></span><div><b>Makes tricky concepts click</b><span>Knows which ideas students find confusing, and how to explain them.</span></div></div>
+        <div class="tile"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span><div><b>Thinks like the examiner</b><span>Knows how CBSE frames questions and what examiners look for.</span></div></div>
+        <div class="tile"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg></span><div><b>Backed by a tutor team</b><span>More class timings and faster doubt-clearing.</span></div></div>
+        <div class="tile"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21.2l8.8-8.8a5.5 5.5 0 0 0 0-7.8z"/></svg></span><div><b>Psychology-led practice</b><span>Part of a counselling practice that works with these ideas every day.</span></div></div>
+      </div>
+      <div class="team-strip"><span class="dots" aria-hidden="true"><i>&#936;</i><i>&#936;</i><i>&#936;</i></span><span>Plus the <b>Lume Live team of psychology tutors</b>, all teaching from the NCERT textbook.</span></div>
     </div>
   </div>
 </section>
