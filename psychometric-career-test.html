@@ -76,6 +76,48 @@
 }
 </script>
 <link rel="stylesheet" href="site-anim.css">
+<style>
+/* ---- page-scoped: framework cards, caution list, reading steps, dark CTA, related cards ---- */
+.pc-measures{list-style:none;margin:18px 0 22px!important;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pc-measures li{--c:var(--teal);--soft:#E6F4F3;position:relative;margin:0;padding:16px 16px 16px 70px;border:1px solid var(--line);border-radius:16px;background:#fff;font-size:.93rem;line-height:1.6;box-shadow:0 2px 12px rgba(13,27,64,.04);transition:transform .2s,box-shadow .2s}
+.pc-measures li::before{content:"";position:absolute;left:16px;top:16px;width:40px;height:40px;border-radius:12px;background:var(--ic) center/21px no-repeat,var(--soft)}
+.pc-measures li strong{color:var(--c);font-size:1rem}
+.pc-measures li:last-child{grid-column:1/-1}
+.pc-measures li:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(13,27,64,.08)}
+.pc-measures li:nth-child(1){--c:#0A6E6E;--soft:#E6F4F3;--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230A6E6E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3Ccircle cx='12' cy='12' r='1.3'/%3E%3C/svg%3E")}
+.pc-measures li:nth-child(2){--c:#5B4FC9;--soft:#EEEBFF;--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235B4FC9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 21v-1a7 7 0 0 1 14 0v1'/%3E%3C/svg%3E")}
+.pc-measures li:nth-child(3){--c:#A8741F;--soft:#FFF4E0;--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23A8741F' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3l2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.8-5.4 2.8 1-6.1L3.2 9.4l6.1-.9z'/%3E%3C/svg%3E")}
+.pc-measures li:nth-child(4){--c:#1B8A5A;--soft:#E7F6EE;--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231B8A5A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 19.5V5a2 2 0 0 1 2-2h13v16H6.5A2.5 2.5 0 0 0 4 21.5z'/%3E%3Cpath d='M9 7h6'/%3E%3C/svg%3E")}
+.pc-measures li:nth-child(5){--c:#1D4E89;--soft:#E6EEF8;--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231D4E89' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9.5 3a3.5 3.5 0 0 0-3.4 4.3A3.5 3.5 0 0 0 5 14a3.5 3.5 0 0 0 4.5 5.5V3z'/%3E%3Cpath d='M14.5 3a3.5 3.5 0 0 1 3.4 4.3A3.5 3.5 0 0 1 19 14a3.5 3.5 0 0 1-4.5 5.5V3z'/%3E%3C/svg%3E")}
+.pc-cannot{list-style:none;margin:14px 0 18px!important;display:grid;gap:10px}
+.pc-cannot li{position:relative;margin:0;padding:12px 16px 12px 52px;border-radius:14px;background:#FDF3F6;border:1px solid #F6D9E3}
+.pc-cannot li::before{content:"";position:absolute;left:14px;top:12px;width:26px;height:26px;border-radius:50%;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23C2416B' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E") center/13px no-repeat;box-shadow:0 2px 6px rgba(194,65,107,.18)}
+.pc-cannot li:last-child{background:#FFF8EC;border-color:#F1E3C4}
+.pc-cannot li:last-child::before{background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23A8741F' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v5l3.5 2'/%3E%3C/svg%3E") center/15px no-repeat;box-shadow:0 2px 6px rgba(168,116,31,.18)}
+.pc-cannot li strong{color:var(--navy)}
+.pc-steps{list-style:none;counter-reset:st;margin:18px 0 22px!important;display:grid;gap:12px;position:relative}
+.pc-steps::before{content:"";position:absolute;left:31px;top:22px;bottom:22px;width:2px;background:linear-gradient(var(--teal),var(--gold2));opacity:.35}
+.pc-steps li{counter-increment:st;position:relative;margin:0;padding:14px 18px 14px 62px;border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:0 2px 12px rgba(13,27,64,.04)}
+.pc-steps li::before{content:counter(st);position:absolute;left:14px;top:13px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-family:Georgia,serif;font-weight:700;color:#fff;background:var(--teal);box-shadow:0 0 0 4px #fff}
+.pc-steps li:nth-child(2)::before{background:#5B4FC9}
+.pc-steps li:nth-child(3)::before{background:var(--gold)}
+.pc-steps li:nth-child(4)::before{background:var(--navy)}
+.pc-steps li strong{display:block;color:var(--navy)}
+.cta-box.pc-cta{position:relative;overflow:hidden;border:0;color:#fff;background:radial-gradient(70% 90% at 0% 0%,rgba(10,110,110,.7),transparent 60%),radial-gradient(60% 90% at 100% 100%,rgba(201,147,58,.3),transparent 60%),var(--navy);box-shadow:0 26px 56px rgba(13,27,64,.22)}
+.cta-box.pc-cta::before{content:"";position:absolute;inset:0;background:radial-gradient(rgba(255,255,255,.12) 1px,transparent 1.5px) 0 0/22px 22px;-webkit-mask-image:radial-gradient(60% 90% at 50% 50%,transparent 40%,#000);mask-image:radial-gradient(60% 90% at 50% 50%,transparent 40%,#000);pointer-events:none}
+.cta-box.pc-cta>*{position:relative}
+.cta-box.pc-cta h3{color:#fff}
+.cta-box.pc-cta p{color:rgba(255,255,255,.78)}
+.cta-box.pc-cta .pc-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:-8px 0 22px}
+.cta-box.pc-cta .pc-chips span{font-size:.74rem;font-weight:800;padding:5px 11px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff}
+.related.pc-related{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;border-top:0}
+.related.pc-related h2{grid-column:1/-1;margin-bottom:2px}
+.related.pc-related a{display:flex;flex-direction:column;justify-content:space-between;gap:12px;padding:16px;border:1px solid var(--line);border-radius:16px;background:#fff;line-height:1.4;min-height:112px;transition:transform .2s,box-shadow .2s,border-color .2s}
+.related.pc-related a::after{content:"";width:28px;height:28px;border-radius:50%;background:#E6F4F3 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230A6E6E' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/15px no-repeat;transition:transform .2s}
+.related.pc-related a:hover{transform:translateY(-3px);border-color:transparent;box-shadow:0 14px 30px rgba(13,27,64,.08)}
+.related.pc-related a:hover::after{transform:translateX(4px)}
+@media(max-width:640px){.pc-measures,.related.pc-related{grid-template-columns:1fr}.related.pc-related a{min-height:0;flex-direction:row;align-items:center}}
+</style>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -124,7 +166,7 @@
 
 <h2>What a psychometric career test measures</h2>
 <p>Most career-focused assessments combine a few well-established frameworks:</p>
-<ul>
+<ul class="pc-measures">
 <li><strong>Interests</strong> &mdash; usually the Holland RIASEC model (Realistic, Investigative, Artistic, Social, Enterprising, Conventional).</li>
 <li><strong>Personality</strong> &mdash; often the Big Five (openness, conscientiousness, extraversion, agreeableness, emotional stability).</li>
 <li><strong>Work values / drivers</strong> &mdash; what actually motivates you: autonomy, security, challenge, service, income, work&ndash;life balance.</li>
@@ -137,7 +179,7 @@
 
 <h2>What it cannot (and should not) tell you</h2>
 <p>This is where families get misled. A psychometric test:</p>
-<ul>
+<ul class="pc-cannot">
 <li><strong>cannot</strong> tell you "the one career you are destined for" &mdash; any tool that does is overselling;</li>
 <li><strong>cannot</strong> replace marks, effort, opportunity or a real conversation;</li>
 <li><strong>is a snapshot of today</strong> &mdash; interests and strengths genuinely change with age and exposure.</li>
@@ -145,7 +187,7 @@
 <div class="note">Be especially careful with "percentile" or "IQ" claims. A score is only a true percentile if it has been compared against a large, representative sample (a "norm"). Many tests show percentages that are <em>not</em> norm-referenced. An honest report will tell you whether its numbers are norms or just relative strengths.</div>
 
 <h2>How to read your results sensibly</h2>
-<ol>
+<ol class="pc-steps">
 <li><strong>Look at the pattern, not a single score.</strong> The shape across all areas matters more than any one number.</li>
 <li><strong>Treat low scores as preferences, not ceilings.</strong> "Lower interest in X" means "less drawn to it right now," not "incapable."</li>
 <li><strong>Notice what surprised you.</strong> The gap between how you see yourself and what the report says is the most useful thing to discuss.</li>
@@ -164,12 +206,13 @@
 
 <h2>What a responsible report looks like</h2>
 <p>At Lume Live, the Full Clarity Report combines interests, personality, work values, learning style and an aptitude snapshot into one counsellor-ready PDF &mdash; and states plainly that the scores describe preferences today, not abilities or a selection decision. It is then debriefed in a 1:1 session, because the conversation is where the value really lives.</p>
-    <div class="cta-box">
+    <div class="cta-box pc-cta">
       <h3>Try a free psychometric snapshot</h3>
       <p>See a real example of what these assessments reveal &mdash; the free Career Snapshot shows your top interest theme in about a minute.</p>
+      <div class="pc-chips"><span>Free</span><span>About a minute</span><span>Top interest theme</span></div>
       <a class="btn gold" href="assessment.html#free-test">Start the Free Career Snapshot</a>
     </div>
-    <div class="related">
+    <div class="related pc-related">
       <h2>Related guides</h2>
       <a href="stream-selection-after-10th.html">How to choose a stream after Class 10</a>
     <a href="pcm-vs-pcb-vs-commerce.html">PCM vs PCB vs Commerce</a>

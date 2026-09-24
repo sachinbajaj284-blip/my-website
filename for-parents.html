@@ -202,6 +202,46 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
 .pg-fallback[open] summary::after{content:'-';}
 .pg-fallback-body{padding:0 14px 14px;}
 @keyframes pgSheen{0%{transform:translateX(-120%);}100%{transform:translateX(120%);}}
+/* ---- livelier support cards, balance panel, steps and CTA ---- */
+.cards{counter-reset:fc}
+.card{--c:var(--teal);--soft:#E6F4F3;counter-increment:fc;position:relative;overflow:hidden;border-radius:18px;box-shadow:0 2px 14px rgba(13,27,64,.04);transition:border-color .25s,transform .25s,box-shadow .25s}
+.card:nth-child(6n+2){--c:#A8741F;--soft:#FFF4E0}
+.card:nth-child(6n+3){--c:#5B4FC9;--soft:#EEEBFF}
+.card:nth-child(6n+4){--c:#1B8A5A;--soft:#E7F6EE}
+.card:nth-child(6n+5){--c:var(--navy);--soft:#E8EBF3}
+.card:nth-child(6n){--c:#D0612F;--soft:#FDEDE5}
+.card::before{content:"";position:absolute;left:0;top:0;height:4px;width:64px;border-radius:0 0 4px 0;background:var(--c);transition:width .45s ease}
+.card::after{content:"0" counter(fc);position:absolute;right:18px;top:12px;font-family:Georgia,serif;font-size:3rem;font-weight:700;line-height:1;color:var(--c);opacity:.08;pointer-events:none}
+.card:hover{transform:translateY(-4px);border-color:transparent;box-shadow:0 18px 40px rgba(13,27,64,.1)}
+.card:hover::before{width:100%}
+.card .icon{width:52px;height:52px;border-radius:15px;display:grid;place-items:center;font-size:1.5rem;margin-bottom:16px;background:var(--soft);transition:transform .3s}
+.card:hover .icon{transform:scale(1.08) rotate(-5deg)}
+.panel{display:flex;flex-direction:column}
+.panel .tag+h2{margin-bottom:4px}
+.bal-sub{font-size:.8rem;color:var(--mid);margin:0}
+.bars{gap:26px;margin-top:26px}
+.bar-row{grid-template-columns:132px 1fr 40px}
+.bar-row em{font-style:normal;text-align:right;color:var(--navy);font-weight:900}
+.bar{height:14px}
+.bar-row:nth-child(2) .bar span{background:linear-gradient(90deg,#EC5F67,#F4A261)}
+.bar-row:nth-child(4) .bar span{background:linear-gradient(90deg,#7C9A92,var(--gold2))}
+.bal-note{margin-top:auto;display:flex;gap:12px;align-items:flex-start;padding:16px 18px;border-radius:14px;background:linear-gradient(135deg,#FFF7E8,#EEF8F7);border:1px solid #F1E3C4;font-size:.84rem;line-height:1.6;color:var(--ink,#1A2C2C)}
+.bal-note b{color:var(--navy)}
+.bal-note i{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:#fff;color:var(--gold);font-style:normal;font-size:1.05rem;box-shadow:0 2px 8px rgba(13,27,64,.08)}
+.bars{margin-bottom:26px}
+.timeline{position:relative}
+.timeline::before{content:"";position:absolute;left:12%;right:12%;top:35px;height:2px;background:linear-gradient(90deg,var(--teal),var(--gold2),#5B4FC9,#1B8A5A);opacity:.35}
+.step{--c:var(--teal);position:relative;text-align:center;padding:20px 18px 22px;border-radius:18px;transition:transform .25s,box-shadow .25s,border-color .25s}
+.step:nth-child(2){--c:var(--gold)}
+.step:nth-child(3){--c:#5B4FC9}
+.step:nth-child(4){--c:#1B8A5A}
+.step b{width:40px;height:40px;margin:0 auto 12px;background:var(--c);color:#fff;box-shadow:0 0 0 5px #fff,0 0 0 6px color-mix(in srgb,var(--c) 30%,transparent)}
+.step:hover{transform:translateY(-4px);border-color:transparent;box-shadow:0 16px 34px rgba(13,27,64,.09)}
+.cta{position:relative;background:radial-gradient(70% 90% at 0% 0%,rgba(10,110,110,.65),transparent 60%),radial-gradient(60% 90% at 100% 100%,rgba(201,147,58,.3),transparent 60%),linear-gradient(135deg,var(--navy),var(--navy2));box-shadow:0 28px 60px rgba(13,27,64,.22);padding:56px 30px}
+.cta::before{content:"";position:absolute;inset:0;background:radial-gradient(rgba(255,255,255,.13) 1px,transparent 1.5px) 0 0/22px 22px;-webkit-mask-image:radial-gradient(60% 90% at 50% 50%,transparent 40%,#000);mask-image:radial-gradient(60% 90% at 50% 50%,transparent 40%,#000);pointer-events:none}
+.cta>*{position:relative}
+.cta h2 em{font-style:italic;color:var(--gold2)}
+@media(max-width:900px){.timeline::before{display:none}.bar-row{grid-template-columns:110px 1fr 36px}}
 @media(max-width:860px){.ec-shell{grid-template-columns:1fr;}.ec-copy{min-height:auto;}}
 @media(max-width:860px){.pg-shell{grid-template-columns:1fr;}.pg-panel{max-width:560px;}.pg-list{grid-template-columns:1fr 1fr;}}
 @media(max-width:560px){#education-cost-calculator{padding:56px 14px;}.ec-copy,.ec-panel{padding:22px 18px;border-radius:16px;}.ec-fields{grid-template-columns:1fr;}.ec-breakdown{grid-template-columns:1fr;}.ec-actions .ec-btn{width:100%;}.parent-guide-pdf{padding:56px 14px;}.pg-panel{padding:20px 18px;border-radius:17px;}.pg-badges span,.pg-list span{width:100%;}.pg-list{grid-template-columns:1fr;}.pg-dialog{border-radius:18px;}.pg-qr{width:158px;height:158px;}}
@@ -280,12 +320,14 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
         <div class="panel">
           <span class="tag">Decision Balance</span>
           <h2 style="font-size:1.7rem">What we map in session</h2>
+          <p class="bal-sub">An illustrative example of how one family's picture can look.</p>
           <div class="bars">
-            <div class="bar-row"><span>Interest fit</span><div class="bar"><span style="width:86%"></span></div></div>
-            <div class="bar-row"><span>Stress load</span><div class="bar"><span style="width:62%"></span></div></div>
-            <div class="bar-row"><span>Subject comfort</span><div class="bar"><span style="width:74%"></span></div></div>
-            <div class="bar-row"><span>Family alignment</span><div class="bar"><span style="width:58%"></span></div></div>
+            <div class="bar-row"><span>Interest fit</span><div class="bar"><span style="width:86%"></span></div><em>86%</em></div>
+            <div class="bar-row"><span>Stress load</span><div class="bar"><span style="width:62%"></span></div><em>62%</em></div>
+            <div class="bar-row"><span>Subject comfort</span><div class="bar"><span style="width:74%"></span></div><em>74%</em></div>
+            <div class="bar-row"><span>Family alignment</span><div class="bar"><span style="width:58%"></span></div><em>58%</em></div>
           </div>
+          <div class="bal-note"><i aria-hidden="true">&#9670;</i><span><b>What this tells us:</b> the interest is there, but stress and family expectations need a calm conversation before the stream form is signed.</span></div>
         </div>
         <div class="panel">
           <span class="tag">Clarity Wheel</span>
@@ -398,7 +440,7 @@ h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.
   <section class="section">
     <div class="inner">
       <div class="cta">
-        <h2>Every parent wants the best for their child</h2>
+        <h2>Every parent wants the <em>best</em> for their child</h2>
         <p>Book a parent guidance session or a joint parent-child session. Get clarity, reduce conflict, and move forward with confidence.</p>
         <div class="cta-actions">
           <a class="btn" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20want%20to%20book%20a%20parent%20guidance%20session." target="_blank">Book Parent Guidance</a>
