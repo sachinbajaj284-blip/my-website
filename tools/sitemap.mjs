@@ -35,6 +35,7 @@ const PRIORITY = [
   [/^career-counselling-/,             '0.85', 'monthly'],
   [/^mental-health-counselling-/,      '0.85', 'monthly'],
   [/^(services-pricing|for-parents)\.html$/, '0.8', 'monthly'],
+  [/^psychology-tuition\.html$/,       '0.85', 'monthly'],
   [/^(career-explorer|career-library|compare-careers)\.html$/, '0.8', 'weekly'],
   [/^(college-predictor|colleges|choice-list|stream-selector(-hi)?)\.html$/, '0.8', 'weekly'],
   [/^career-as-/,                      '0.75', 'monthly'],
