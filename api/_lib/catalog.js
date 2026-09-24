@@ -44,7 +44,14 @@ const SKU_PRICES = {
     Full Clarity Report. Priced once here, like everything else.
   */
   "industry-expert-session": { amount: 7500, label: "Talk to Industry Expert - Dheeraj Ghughtyal", alias: "expert7500" },
-  "internship-lume-lens": { amount: 500, label: "Lume Lens Report (Intern Add-On)", alias: "internlens500" }
+  "internship-lume-lens": { amount: 500, label: "Lume Lens Report (Intern Add-On)", alias: "internlens500" },
+  /*
+    One month of online psychology tuition (CBSE Class 11 or 12), notes,
+    PYQs and PPTs included. A one-time payment per month, not a mandate:
+    the student pays again to continue. Class timings are fixed with the
+    tutor after payment, so this is not a calendar-booking SKU.
+  */
+  "psychology-tuition-monthly": { amount: 7999, label: "Psychology Tuition - 1 Month (Class 11/12)", alias: "psytuition7999" }
 };
 
 function getProduct(sku){
