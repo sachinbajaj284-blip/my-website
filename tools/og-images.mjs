@@ -44,7 +44,7 @@ const PAGES = {
   'self-esteem-test':                                 { eyebrow: 'Free Self-Check', title: "Free Self-Esteem Check, In Three Minutes" },
   'work-stress-burnout-test':                         { eyebrow: 'Free Self-Check', title: "Free Burnout And Work Stress Check" },
   'psychology-tuition':                               { eyebrow: 'Psychology Tuition · Class 11 & 12', title: "Learn Psychology From A CBSE Teacher",
-                                                        foot: 'lumelive.co.in <i>· Online Psychology Tuition</i>', pill: 'Notes · PYQs · PPTs' },
+                                                        foot: 'lumelive.co.in <i>· Online Psychology Tuition</i>', pill: '₹7,999 a month · Notes & PYQs' },
   'exam-stress-test':                                 { eyebrow: 'Free Self-Check', title: "Free Exam Stress Check For Students" },
   home:                             { eyebrow: 'From ₹249 a session', title: "India's Most Affordable Career Counselling" },
   'college-predictor':              { eyebrow: 'JoSAA Tools',        title: 'What Can You Get With Your JEE Rank?' },
