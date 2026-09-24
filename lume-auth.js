@@ -12,8 +12,7 @@
      account layer at all.
 
      Rather than copy a sign-in form onto the pages that lack it, this
-     is the one place that knows how to get a signed-in user — and, since
-     the sign-in is an address and an emailed code, the only place:
+     is the one place that knows how to get a signed-in user:
 
        window.lumeAccount.ready()    -> Promise<user|null>  once known
        window.lumeAccount.current()  -> user|null
@@ -24,8 +23,7 @@
      The form it opens is the one below, on every page. The three pages
      that used to run their own email-and-password modal open this
      instead: their buttons call openAuth(), and this file claims that
-     name once it loads. Same address they always used, minus the
-     password.
+     name once it loads.
 
      Nothing here runs on page load. Firebase is imported the first
      time an account is actually needed, which on most pages is never.
@@ -140,40 +138,30 @@
 
   /* ---------------------------------------------------------- prompt --
      One sign-in for the whole site, and it is the one below.
-
-     This used to hand off to whatever sign-in a page had of its own,
-     which meant three pages asked for an email and a password while the
-     rest had nothing at all. Signing in is now the same three steps
-     everywhere — name, address, code — so there is nothing left to hand
-     off to. `openAuth` is claimed below for the same reason: every
-     Login / Create Account button on those pages already calls it. */
+     `openAuth` is claimed below for the same reason: every Login /
+     Create Account button on the site already calls it. */
   function prompt(mode){
     openFallback(mode || "signup");
   }
 
   /* ============================================================
-     Sign in / sign up — name, email address, six-digit code
+     Sign in / sign up — Google, or an email address and a password
 
-     There is no password: a six-digit code, emailed, proves the same
-     thing a password does and is one less thing to remember, forget and
-     reset. And there is no separate sign-up — an address either has an
-     account behind it or gets one the moment the code checks out, and
-     the person never has to know which of the two they were. The name
-     is asked once, on the way in, or straight after a first code if
-     they arrived through "Sign in".
+     One card, laid out the same way in both directions: Google first,
+     then "or enter details", then the fields. "Sign in" and "Sign up"
+     swap in place from the line under the button, so someone who
+     picked the wrong one never has to close anything.
 
-     This was phone and SMS first, which is the better flow: a number is
-     the field the rest of the site already keys on, and an SMS beats a
-     Spam folder. It needs Firebase's Blaze plan, which needs a card. If
-     that changes, the phone version is in the history of this file and
-     is worth reviving.
+     Email and password is Firebase's own provider, so nothing
+     downstream changes: after either route there is an ordinary
+     Firebase user with an ordinary ID token, and api/_lib/account.js
+     verifies it exactly as it always has. A Google sign-in and a
+     password sign-in for one address are the same account (Firebase's
+     "link accounts that use the same email" default).
 
-     The code itself is ours, because Firebase does not do email codes —
-     only a link, which has to be opened in the browser that asked for
-     it, and on a phone usually is not. /api/auth/send-code issues and
-     emails it; /api/auth/verify-code checks it and returns a custom
-     token this file exchanges for an ordinary Firebase session. Nothing
-     downstream knows sign-in changed.
+     The emailed six-digit code this used to use (/api/auth/send-code,
+     /api/auth/verify-code) still exists on the server; it is in the
+     history of this file if it is ever wanted back.
      ============================================================ */
   var EL = {};
 
@@ -186,71 +174,92 @@
     '<path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>' +
     '</svg>';
 
+  // Line icons for the fields — stroke only, so they take the field's colour.
+  function icon(paths){
+    return '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + paths + '</svg>';
+  }
+  var ICON_BACK = icon('<path d="M19 12H5"/><path d="M11 18l-6-6 6-6"/>');
+  var ICON_MAIL = icon('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>');
+  var ICON_LOCK = icon('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>');
+  var ICON_USER = icon('<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>');
+  var ICON_EYE  = icon('<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>');
+  var ICON_EYE_OFF = icon('<path d="M3 3l18 18"/><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.5 0 10 7 10 7a17.6 17.6 0 0 1-3.2 4.2M6.6 6.6A17.4 17.4 0 0 0 2 12s3.5 7 10 7a9.8 9.8 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>');
+
   function injectStyles(){
     if(document.getElementById("la-styles")){ return; }
     var css = [
-".la-overlay{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(8,16,38,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}",
+".la-overlay{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(15,23,42,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}",
 ".la-overlay.la-open{display:flex}",
-".la-card{width:min(410px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:22px;box-shadow:0 30px 80px rgba(8,16,38,.4);font-family:'Segoe UI',system-ui,Arial,sans-serif;color:#102033}",
-".la-hd{position:relative;background:linear-gradient(135deg,#0D1B40,#13306b);color:#fff;padding:20px 22px 18px;border-radius:22px 22px 0 0;text-align:center}",
-".la-hd h3{margin:0;font-size:1.1rem;font-weight:800}",
-".la-hd p{margin:5px 0 0;font-size:.8rem;color:rgba(255,255,255,.72);line-height:1.5}",
-".la-x{position:absolute;top:12px;right:14px;background:rgba(255,255,255,.16);border:0;color:#fff;width:30px;height:30px;border-radius:50%;font-size:1rem;cursor:pointer;line-height:1}",
-".la-x:hover{background:rgba(255,255,255,.3)}",
-".la-body{padding:22px}",
-".la-field{margin-bottom:12px}",
-".la-field label{display:block;font-size:.74rem;font-weight:800;letter-spacing:.3px;text-transform:uppercase;color:#56657d;margin-bottom:5px}",
-".la-field input{width:100%;box-sizing:border-box;padding:11px 13px;border:1.5px solid #E3E9F2;border-radius:12px;font-size:.94rem;font-family:inherit;color:#102033;background:#FBFCFE}",
-".la-field input:focus{outline:0;border-color:#0D1B40;background:#fff}",
-/* The phone box reads as one field with the +91 that never changes. */
-".la-tel{display:flex;align-items:stretch;border:1.5px solid #E3E9F2;border-radius:12px;background:#FBFCFE;overflow:hidden}",
-".la-tel:focus-within{border-color:#0D1B40;background:#fff}",
-".la-tel span{display:flex;align-items:center;padding:0 10px 0 13px;font-size:.94rem;font-weight:700;color:#56657d;border-right:1.5px solid #E3E9F2}",
-".la-tel input{border:0;border-radius:0;background:transparent}",
-".la-tel input:focus{background:transparent}",
-/* The code itself: wide spacing so a 6-digit code is easy to check
-   against the email it came in. */
-"#laOtp{letter-spacing:.42em;font-size:1.12rem;font-weight:800;text-align:center}",
-".la-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;border:0;border-radius:999px;font-size:.94rem;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:10px}",
-".la-btn.gold{background:linear-gradient(135deg,#C9933A,#E8B95A);color:#0D1B40;box-shadow:0 10px 26px rgba(201,147,58,.32)}",
-".la-btn.gold:disabled{opacity:.6;cursor:default;box-shadow:none}",
-".la-alt{background:none;border:0;width:100%;font-family:inherit;font-size:.84rem;color:#33425c;cursor:pointer;padding:6px}",
-".la-alt b{color:#0D1B40}",
+".la-card{width:min(420px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:28px;box-shadow:0 30px 80px rgba(15,23,42,.22);font-family:'Montserrat','Segoe UI',system-ui,Arial,sans-serif;color:#111827;box-sizing:border-box;padding:30px 26px 28px}",
+".la-hd{margin-bottom:22px}",
+".la-hd-row{display:flex;align-items:center;gap:14px}",
+".la-hd h3{margin:0;font-size:1.55rem;font-weight:700;letter-spacing:-.01em;color:#111827;line-height:1.2}",
+".la-hd p{margin:10px 0 0;font-size:.92rem;color:#6B7280;line-height:1.5}",
+".la-x{flex:none;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;border:0;background:#F3F4F6;color:#111827;cursor:pointer;box-shadow:0 4px 12px rgba(15,23,42,.12);padding:0}",
+".la-x:hover{background:#E5E7EB}",
+".la-x svg{width:20px;height:20px;stroke-width:2.4}",
+".la-body{padding:0}",
+".la-field{margin-bottom:18px}",
+".la-field label{display:block;font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#1F2937;margin:0 0 8px 4px}",
+".la-field input{width:100%;box-sizing:border-box;padding:14px 16px;border:1px solid #E5E7EB;border-radius:14px;font-size:.95rem;font-family:inherit;color:#111827;background:#F8FAFC;transition:border-color .15s,background .15s,box-shadow .15s}",
+".la-field input::placeholder{color:#9CA3AF}",
+".la-field input:focus{outline:0;border-color:#111827;background:#fff;box-shadow:0 0 0 3px rgba(17,24,39,.08)}",
+/* A field with an icon on the left (and on the password one, the eye on the right). */
+".la-in{position:relative}",
+".la-in > svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:19px;height:19px;color:#6B7280;pointer-events:none}",
+".la-in input{padding-left:48px}",
+".la-in.la-pw input{padding-right:50px}",
+".la-eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:0;background:none;color:#4B5563;cursor:pointer;border-radius:10px;padding:0}",
+".la-eye:hover{background:#EEF2F7}",
+".la-eye svg{width:20px;height:20px}",
+".la-forgot{display:block;margin:-8px 0 20px auto;background:none;border:0;padding:4px;font-family:inherit;font-size:.84rem;font-weight:500;color:#1D4ED8;cursor:pointer}",
+".la-forgot:hover{text-decoration:underline}",
+".la-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:54px;border:0;border-radius:14px;font-size:1rem;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:10px}",
+/* `gold` is the old name for the primary button; the verify and phone
+   panels still use it, and they should look like the rest of the card. */
+".la-btn.gold,.la-btn.primary{background:#111827;color:#fff;box-shadow:0 10px 24px rgba(17,24,39,.22)}",
+".la-btn.gold:hover,.la-btn.primary:hover{background:#1F2937}",
+".la-btn.gold:disabled,.la-btn.primary:disabled{opacity:.6;cursor:default;box-shadow:none}",
+".la-switch{margin:18px 0 0;text-align:center;font-size:.92rem;color:#374151}",
+".la-switch button{background:none;border:0;padding:0 0 0 2px;font-family:inherit;font-size:inherit;font-weight:600;color:#1D4ED8;cursor:pointer}",
+".la-switch button:hover{text-decoration:underline}",
+".la-alt{background:none;border:0;width:100%;font-family:inherit;font-size:.86rem;color:#374151;cursor:pointer;padding:6px}",
+".la-alt b{color:#1D4ED8;font-weight:600}",
 ".la-alt:disabled{opacity:.55;cursor:default}",
-".la-err{margin:0 0 12px;padding:10px 12px;border-radius:11px;background:#FDECEC;color:#933;font-size:.82rem;line-height:1.45;display:none}",
+".la-err{margin:0 0 16px;padding:11px 13px;border-radius:12px;background:#FEF2F2;color:#B91C1C;font-size:.84rem;line-height:1.45;display:none}",
 ".la-err.on{display:block}",
-".la-note{margin:12px 0 0;font-size:.72rem;line-height:1.5;color:#8493ab;text-align:center}",
-".la-sent{margin:0 0 12px;padding:10px 12px;border-radius:11px;background:#E9F7F0;color:#186A4B;font-size:.82rem;line-height:1.45;display:none}",
+".la-note{margin:14px 0 0;font-size:.74rem;line-height:1.5;color:#9CA3AF;text-align:center}",
+".la-sent{margin:0 0 16px;padding:11px 13px;border-radius:12px;background:#ECFDF5;color:#047857;font-size:.84rem;line-height:1.45;display:none}",
 ".la-sent.on{display:block}",
-".la-sent b{white-space:nowrap}",
+".la-sent b{word-break:break-all}",
 /* The "check your inbox" panel. Shares the card, so it reads as the next
    step of the same flow rather than a different screen. */
-".lv-mark{width:48px;height:48px;margin:0 auto 12px;border-radius:50%;background:linear-gradient(135deg,#0A6E6E,#12A3A3);display:flex;align-items:center;justify-content:center;font-size:1.5rem}",
-".lv-to{margin:0 0 14px;text-align:center;font-size:.95rem;line-height:1.55;color:#102033}",
-".lv-to b{display:block;margin-top:4px;font-size:1rem;color:#0D1B40;word-break:break-all}",
+".lv-mark{width:48px;height:48px;margin:0 auto 12px;border-radius:50%;background:#F3F4F6;display:flex;align-items:center;justify-content:center;font-size:1.5rem}",
+".lv-to{margin:0 0 14px;text-align:center;font-size:.95rem;line-height:1.55;color:#111827}",
+".lv-to b{display:block;margin-top:4px;font-size:1rem;color:#111827;word-break:break-all}",
 ".lv-steps{margin:0 0 14px;padding:0;list-style:none;counter-reset:lv}",
-".lv-steps li{position:relative;counter-increment:lv;padding:0 0 10px 34px;font-size:.86rem;line-height:1.5;color:#33425c}",
-".lv-steps li:before{content:counter(lv);position:absolute;left:0;top:-1px;width:23px;height:23px;border-radius:50%;background:#EDF1F8;color:#0D1B40;font-size:.72rem;font-weight:900;display:flex;align-items:center;justify-content:center}",
-".lv-steps b{color:#0D1B40}",
+".lv-steps li{position:relative;counter-increment:lv;padding:0 0 10px 34px;font-size:.86rem;line-height:1.5;color:#374151}",
+".lv-steps li:before{content:counter(lv);position:absolute;left:0;top:-1px;width:23px;height:23px;border-radius:50%;background:#F3F4F6;color:#111827;font-size:.72rem;font-weight:800;display:flex;align-items:center;justify-content:center}",
+".lv-steps b{color:#111827}",
 /* The spam line is the single most useful sentence on this panel, so it
    is not a footnote — most "I never got the email" reports end here. */
 ".lv-spam{margin:0 0 14px;padding:11px 13px;border-radius:12px;background:#FFF8E8;border:1px solid #F2E2BC;font-size:.82rem;line-height:1.55;color:#6B5524}",
-".lv-spam b{color:#0D1B40}",
+".lv-spam b{color:#111827}",
 ".lv-row{display:flex;gap:9px;margin-bottom:10px}",
 ".lv-row .la-btn{margin-bottom:0}",
-".la-btn.ghost{background:#fff;border:1.5px solid #D9E1EE;color:#0D1B40;box-shadow:none}",
+".la-btn.ghost{background:#fff;border:1px solid #E5E7EB;color:#111827;box-shadow:none}",
 ".la-btn.ghost:disabled{opacity:.55;cursor:default}",
 ".lv-msg{margin:0 0 10px;padding:10px 12px;border-radius:11px;font-size:.82rem;line-height:1.45;display:none}",
 ".lv-msg.on{display:block}",
-".lv-msg.ok{background:#E9F7F0;color:#186A4B}",
-".lv-msg.bad{background:#FDECEC;color:#933}",
-".la-google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:48px;border:1.5px solid #D9E1EE;border-radius:999px;background:#fff;color:#1f1f1f;font-size:.94rem;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:4px}",
-".la-google:hover{background:#F7F9FC}",
+".lv-msg.ok{background:#ECFDF5;color:#047857}",
+".lv-msg.bad{background:#FEF2F2;color:#B91C1C}",
+".la-google{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:54px;border:1px solid #E5E7EB;border-radius:14px;background:#fff;color:#1F2937;font-size:.98rem;font-weight:500;font-family:inherit;cursor:pointer;box-shadow:0 2px 6px rgba(15,23,42,.08)}",
+".la-google:hover{background:#F9FAFB}",
 ".la-google:disabled{opacity:.6;cursor:default}",
-".la-google svg{width:18px;height:18px;flex:none}",
-".la-or{display:flex;align-items:center;gap:10px;margin:12px 0 14px;font-size:.72rem;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:#8493ab}",
-".la-or:before,.la-or:after{content:\"\";flex:1;height:1px;background:#E3E9F2}",
-"@media(max-width:420px){.lv-row{flex-direction:column}}"
+".la-google svg{width:20px;height:20px;flex:none}",
+".la-or{display:flex;align-items:center;gap:14px;margin:24px 0 22px;font-size:.78rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#9CA3AF}",
+".la-or:before,.la-or:after{content:\"\";flex:1;height:1px;background:#E5E7EB}",
+"@media(max-width:420px){.la-card{padding:26px 20px 24px;border-radius:24px}.la-hd h3{font-size:1.35rem}.lv-row{flex-direction:column}}"
     ].join("\n");
     var s = document.createElement("style");
     s.id = "la-styles";
@@ -268,74 +277,88 @@
     o.innerHTML =
       '<div class="la-card">' +
         '<div class="la-hd">' +
-          '<button class="la-x" type="button" aria-label="Close">✕</button>' +
-          '<h3 class="la-title">Create your Lume Live account</h3>' +
-          '<p class="la-sub">Your report, session and receipts stay with your account — on any device.</p>' +
+          '<div class="la-hd-row">' +
+            '<button class="la-x" type="button" aria-label="Back">' + ICON_BACK + '</button>' +
+            '<h3 class="la-title">Welcome back</h3>' +
+          '</div>' +
+          '<p class="la-sub">Enter your credentials to access your account</p>' +
         '</div>' +
         '<div class="la-body">' +
-          '<p class="la-err"></p>' +
+          '<p class="la-err" role="alert"></p>' +
           '<p class="la-sent"></p>' +
           '<div class="la-google-wrap">' +
             '<button class="la-google" type="button">' + GOOGLE_G + '<span>Continue with Google</span></button>' +
+            '<div class="la-or">Or enter details</div>' +
           '</div>' +
-          '<div class="la-field la-name-field"><label for="laName">Full name</label><input id="laName" type="text" autocomplete="name" placeholder="Your name"></div>' +
-          '<div class="la-field la-email-field"><label for="laEmail2">Email address</label>' +
-            '<input id="laEmail2" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" maxlength="254"></div>' +
-          '<div class="la-field la-otp-field" style="display:none"><label for="laOtp">6-digit code</label>' +
-            '<input id="laOtp" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="••••••" maxlength="6"></div>' +
-          '<button class="la-btn gold la-submit" type="button">Email me a code</button>' +
-          '<button class="la-alt la-resend" type="button" style="display:none">Didn’t get it? <b>Send again</b></button>' +
-          '<button class="la-alt la-edit" type="button" style="display:none">Wrong address? <b>Change it</b></button>' +
+          '<div class="la-field la-name-field"><label for="laName">Full name</label>' +
+            '<div class="la-in">' + ICON_USER + '<input id="laName" type="text" autocomplete="name" placeholder="Your name" maxlength="80"></div></div>' +
+          '<div class="la-field la-email-field"><label for="laEmail2">Email</label>' +
+            '<div class="la-in">' + ICON_MAIL + '<input id="laEmail2" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" maxlength="254"></div></div>' +
+          '<div class="la-field la-pw-field"><label for="laPass">Password</label>' +
+            '<div class="la-in la-pw">' + ICON_LOCK + '<input id="laPass" type="password" autocomplete="current-password" placeholder="Password" maxlength="128">' +
+              '<button class="la-eye" type="button" aria-label="Show password">' + ICON_EYE + '</button></div></div>' +
+          '<button class="la-forgot" type="button">Forgot password?</button>' +
+          '<button class="la-btn primary la-submit" type="button">Sign in</button>' +
           '<button class="la-alt la-signout" type="button" style="display:none">Not you? <b>Sign out</b></button>' +
-          '<p class="la-note la-main-note">We only use your name and email address from Google. No password to remember, no marketing.</p>' +
-          '<div class="la-captcha"></div>' +
+          '<p class="la-switch"><span class="la-switch-q">Don’t have an account?</span> <button type="button" class="la-switch-go">Sign up</button></p>' +
         '</div>' +
       '</div>';
     document.body.appendChild(o);
     EL.overlay = o;
     EL.title = o.querySelector(".la-title");
     EL.sub = o.querySelector(".la-sub");
+    EL.back = o.querySelector(".la-x");
     EL.err = o.querySelector(".la-err");
     EL.sent = o.querySelector(".la-sent");
     EL.nameField = o.querySelector(".la-name-field");
     EL.emailField = o.querySelector(".la-email-field");
-    EL.otpField = o.querySelector(".la-otp-field");
+    EL.pwField = o.querySelector(".la-pw-field");
     EL.name = o.querySelector("#laName");
     EL.email = o.querySelector("#laEmail2");
-    EL.otp = o.querySelector("#laOtp");
+    EL.pass = o.querySelector("#laPass");
+    EL.eye = o.querySelector(".la-eye");
+    EL.forgot = o.querySelector(".la-forgot");
     EL.submit = o.querySelector(".la-submit");
-    EL.resend = o.querySelector(".la-resend");
-    EL.edit = o.querySelector(".la-edit");
     EL.signout = o.querySelector(".la-signout");
+    EL.switchLine = o.querySelector(".la-switch");
+    EL.switchQ = o.querySelector(".la-switch-q");
+    EL.switchGo = o.querySelector(".la-switch-go");
     EL.googleWrap = o.querySelector(".la-google-wrap");
-    EL.note = o.querySelector(".la-main-note");
     EL.google = o.querySelector(".la-google");
     EL.google.addEventListener("click", signInWithGoogle);
 
-    o.querySelector(".la-x").addEventListener("click", closeFallback);
+    /* The arrow is "back": out of the reset-password step to where the
+       person was, otherwise out of the card. It is registered first, so
+       on the reset step it can stop the phone panel's own close handler
+       (added to the same button) from closing the card as well. */
+    EL.back.addEventListener("click", function(e){
+      if(EL.step === "reset" && EL.body && EL.body.style.display !== "none"){
+        e.stopImmediatePropagation();
+        showStep(EL.mode);
+        return;
+      }
+      closeFallback();
+    });
     o.addEventListener("click", function(e){ if(e.target === o){ closeFallback(); } });
     EL.submit.addEventListener("click", submit);
-    EL.resend.addEventListener("click", function(){ sendOtp(true); });
-    EL.edit.addEventListener("click", function(){
-      if(EL.pendingEmail && !EL.email.value){ EL.email.value = EL.pendingEmail; }
-      showStep("email");
+    EL.forgot.addEventListener("click", function(){ showStep("reset"); });
+    EL.switchGo.addEventListener("click", function(){
+      EL.mode = EL.step === "signup" ? "signin" : "signup";
+      showStep(EL.mode);
+    });
+    EL.eye.addEventListener("click", function(){
+      var show = EL.pass.type === "password";
+      EL.pass.type = show ? "text" : "password";
+      EL.eye.innerHTML = show ? ICON_EYE_OFF : ICON_EYE;
+      EL.eye.setAttribute("aria-label", show ? "Hide password" : "Show password");
     });
     EL.signout.addEventListener("click", signOutNow);
-    [EL.name, EL.email, EL.otp].forEach(function(input){
+    [EL.name, EL.email, EL.pass].forEach(function(input){
       input.addEventListener("keydown", function(e){ if(e.key === "Enter"){ submit(); } });
-    });
-    // Six digits is the whole code, so verify as soon as they are there
-    // rather than asking for a tap the person has already earned.
-    EL.otp.addEventListener("input", function(){
-      var digits = String(EL.otp.value || "").replace(/\D/g, "").slice(0, 6);
-      if(EL.otp.value !== digits){ EL.otp.value = digits; }
-      if(digits.length === 6 && !EL.submit.disabled){ submit(); }
     });
   }
 
-  /* A plausible address, not a valid one. The server checks it the same
-     way, and the only real test of an address is whether a code sent to
-     it comes back. */
+  /* A plausible address, not a valid one — Firebase has the final say. */
   function cleanEmail(raw){
     return String(raw || "").trim().toLowerCase();
   }
@@ -349,54 +372,54 @@
     return domain.indexOf(".") > 0 && domain.charAt(domain.length - 1) !== ".";
   }
 
+  var BUTTON_LABEL = {
+    signin: "Sign in",
+    signup: "Create account",
+    reset: "Send reset link",
+    account: "Done"
+  };
 
-  /* One card, two steps and a rare third: who you are, the code, and —
-     only for someone who arrived through "Sign in" and turns out to be
-     new — their name. Signing in and signing up are the same steps,
-     because an address either has an account behind it or gets one;
-     the person should not have to know which. */
+  /* Four states of one card: sign in, sign up, reset password, and —
+     for someone already signed in — who they are and how to leave. */
   function showStep(step){
     EL.step = step;
-    var onEmail = step === "email";
-    var onCode  = step === "code";
-    var onName  = step === "name";
+    var onIn    = step === "signin";
+    var onUp    = step === "signup";
+    var onReset = step === "reset";
     var onAcct  = step === "account";
 
-    /* Sign-in is Google only. The email-code steps below are kept
-       for now (and /api/auth/send-code still works) so they can be
-       switched back on by showing these fields again, but the first
-       step no longer offers them: the Google button is the whole form. */
-    EL.emailField.style.display = "none";
-    EL.otpField.style.display   = onCode ? "" : "none";
-    EL.nameField.style.display  = onName ? "" : "none";
-    EL.submit.style.display     = onEmail ? "none" : "";
-    EL.note.style.display       = onEmail ? "" : "none";
-    EL.resend.style.display     = onCode ? "" : "none";
-    EL.edit.style.display       = onCode ? "" : "none";
+    EL.googleWrap.style.display = (onIn || onUp) ? "" : "none";
+    EL.nameField.style.display  = onUp ? "" : "none";
+    EL.emailField.style.display = onAcct ? "none" : "";
+    EL.pwField.style.display    = (onIn || onUp) ? "" : "none";
+    EL.forgot.style.display     = onIn ? "" : "none";
+    EL.switchLine.style.display = (onIn || onUp) ? "" : "none";
     EL.signout.style.display    = onAcct ? "" : "none";
-    EL.googleWrap.style.display = onEmail ? "" : "none";
+    EL.pass.setAttribute("autocomplete", onUp ? "new-password" : "current-password");
+    EL.pass.setAttribute("placeholder", onUp ? "At least 6 characters" : "Password");
+    EL.back.setAttribute("aria-label", onReset ? "Back to sign in" : "Close");
+    EL.submit.textContent = BUTTON_LABEL[step];
 
-    if(onEmail){
-      EL.title.textContent = EL.mode === "signup" ? "Create your Lume Live account" : "Sign in to continue";
-      EL.sub.textContent = EL.mode === "signup"
-        ? "Your report, session and receipts stay with your account — on any device."
-        : "Continue with your Google account.";
-      EL.submit.textContent = "Email me a code";
+    if(onIn){
+      EL.title.textContent = "Welcome back";
+      EL.sub.textContent = "Enter your credentials to access your account";
+      EL.switchQ.textContent = "Don’t have an account?";
+      EL.switchGo.textContent = "Sign up";
       showSent("");
-    } else if(onCode){
-      EL.title.textContent = "Enter the code";
-      EL.sub.textContent = "It usually arrives within a few seconds.";
-      EL.submit.textContent = "Verify and continue";
-    } else if(onName){
-      EL.title.textContent = "One last thing";
-      EL.sub.textContent = "What should we call you?";
-      EL.submit.textContent = "Finish";
+    } else if(onUp){
+      EL.title.textContent = "Create account";
+      EL.sub.textContent = "Your report, session and receipts stay with your account — on any device.";
+      EL.switchQ.textContent = "Already have an account?";
+      EL.switchGo.textContent = "Sign in";
+      showSent("");
+    } else if(onReset){
+      EL.title.textContent = "Reset password";
+      EL.sub.textContent = "Enter your email and we’ll send you a link to set a new password.";
       showSent("");
     } else if(onAcct){
       var u = activeUser();
       EL.title.textContent = "You’re signed in";
       EL.sub.textContent = (u && u.displayName) ? u.displayName : "Your purchases follow this account.";
-      EL.submit.textContent = "Done";
       showSent(u && u.email
         ? "Signed in as <b>" + esc(u.email) + "</b>"
         : (u && u.phoneNumber ? "Signed in as <b>" + esc(u.phoneNumber) + "</b>" : ""));
@@ -406,10 +429,9 @@
     EL.submit.disabled = false;
     setTimeout(function(){
       try{
-        if(onCode){ EL.otp.focus(); }
-        else if(onName){ EL.name.focus(); }
-        else if(onEmail){ EL.google.focus(); }
-        else { EL.name.focus(); }
+        if(onUp){ EL.name.focus(); }
+        else if(onIn || onReset){ EL.email.focus(); }
+        else { EL.submit.focus(); }
       }catch(err){}
     }, 60);
   }
@@ -423,11 +445,13 @@
     EL.body = EL.body || EL.overlay.querySelector(".la-body:not(.lv-body)");
     EL.body.style.display = "";
     EL.mode = mode === "signin" ? "signin" : "signup";
-    EL.otp.value = "";
+    EL.pass.value = "";
+    EL.pass.type = "password";
+    EL.eye.innerHTML = ICON_EYE;
     /* The same button says Login and then Account. Re-asking a signed-in
        client for the address they signed in with reads as being logged
        out, so they get told who they are and how to leave instead. */
-    showStep(activeUser() ? "account" : "email");
+    showStep(activeUser() ? "account" : EL.mode);
     EL.overlay.classList.add("la-open");
     // Start loading Firebase now, so that by the time "Continue with
     // Google" is tapped the popup can open inside the tap itself —
@@ -437,19 +461,11 @@
 
   function closeFallback(){
     if(EL.overlay){ EL.overlay.classList.remove("la-open"); }
-    stopResendTimer();
   }
 
-  /*
-    The two banners are mutually exclusive, and that has to be enforced
-    here rather than remembered at every call site.
-
-    The card has shown both at once: "We couldn't send the email just
-    now" in red, directly above "We've already sent you a code" in
-    green. Each was true of a different attempt — the first send failed,
-    the second was refused as a resend — but together they are a card
-    telling somebody two opposite things and leaving them to guess.
-  */
+  /* The red and green banners are mutually exclusive, enforced here
+     rather than remembered at every call site: a card saying two
+     opposite things at once leaves the person to guess. */
   function showError(message){
     if(!EL.err){ return; }
     EL.err.textContent = message || "";
@@ -470,179 +486,130 @@
     }
   }
 
-  /* A second tap 30 seconds in has to read as "not yet" rather than as
-     a dead button — and a second email would invalidate the code the
-     person is already looking at.
-
-     Named apart from the email panel's tickResend below: two function
-     declarations of one name in this scope is not two functions, it is
-     the second one, and the countdown here silently never ran. */
-  var CODE_COOLDOWN_MS = 45 * 1000;
-  var lastOtpAt = 0;
-
-  function stopResendTimer(){
-    if(EL.timer){ clearInterval(EL.timer); EL.timer = null; }
-  }
-
-  function tickOtpResend(){
-    if(!EL.resend){ return; }
-    var left = Math.max(0, CODE_COOLDOWN_MS - (Date.now() - lastOtpAt));
-    if(left <= 0){
-      EL.resend.disabled = false;
-      EL.resend.innerHTML = "Didn’t get it? <b>Send again</b>";
-      stopResendTimer();
-      return;
-    }
-    EL.resend.disabled = true;
-    EL.resend.textContent = "You can ask for another code in " + Math.ceil(left / 1000) + "s";
-    if(!EL.timer){ EL.timer = setInterval(tickOtpResend, 1000); }
-  }
-
-  /*
-    Why a send or a check failed, in words, and never a silent failure.
-
-    Our own endpoints answer with a `code` and an `error` written for the
-    person reading it, so most of this is passing that through. The
-    console line exists for the cases the card cannot explain — a
-    misconfigured mail webhook looks identical to a slow one from the
-    outside.
-  */
-  function apiError(payload, fallback){
-    var message = payload && payload.error;
-    try{
-      console.error("[lume auth] email sign-in failed:", (payload && payload.code) || "?", message || "");
-    }catch(e){}
-    return message || fallback || "Something went wrong. Please try again in a moment.";
-  }
-
-  function post(path, body){
-    return fetch(path, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body || {})
-    }).then(function(res){
-      return res.json().catch(function(){ return {}; }).then(function(data){
-        return { ok: res.ok, status: res.status, data: data || {} };
-      });
-    });
-  }
-
   function submit(){
+    if(EL.submit.disabled){ return; }
     if(EL.step === "account"){ return closeFallback(); }
-    if(EL.step === "code"){ return confirmOtp(); }
-    if(EL.step === "name"){ return saveName(); }
-    return sendOtp(false);
+    if(EL.step === "reset"){ return sendReset(); }
+    return signInWithPassword(EL.step === "signup");
   }
 
-  function sendOtp(isResend){
-    if(isResend && Math.max(0, CODE_COOLDOWN_MS - (Date.now() - lastOtpAt)) > 0){ return; }
+  /* Firebase's error codes, in words. The code goes on the card too
+     (see signInWithGoogle): a screenshot of it is the whole bug report. */
+  function passwordError(err, creating){
+    var code = (err && err.code) || "";
+    try{ console.error("[lume auth] email sign-in failed:", code || (err && err.message)); }catch(e){}
+    switch(code){
+      case "auth/invalid-credential":
+      case "auth/invalid-login-credentials":
+      case "auth/wrong-password":
+      case "auth/user-not-found":
+        return "That email and password don’t match. Try again, or use “Forgot password?”.";
+      case "auth/email-already-in-use":
+        return "There’s already an account with this email. Sign in instead — or use Continue with Google if you made it that way.";
+      case "auth/weak-password":
+        return "Please choose a password of at least 6 characters.";
+      case "auth/invalid-email":
+        return "Please enter a valid email address.";
+      case "auth/user-disabled":
+        return "This account has been switched off. Please message us on WhatsApp.";
+      case "auth/too-many-requests":
+        return "Too many attempts. Please wait a few minutes and try again.";
+      case "auth/network-request-failed":
+        return "We couldn’t reach Lume Live. Check your connection and try again.";
+      case "auth/operation-not-allowed":
+        return "Email sign-in isn’t switched on yet. Please use Continue with Google for now.";
+      default:
+        return creating
+          ? "We couldn’t create your account just now. Please try again in a moment."
+          : "We couldn’t sign you in just now. Please try again in a moment.";
+    }
+  }
 
+  function busy(on, label){
+    EL.submit.disabled = Boolean(on);
+    EL.submit.textContent = on ? label : BUTTON_LABEL[EL.step];
+  }
+
+  function signInWithPassword(creating){
     var name = (EL.name.value || "").trim();
-    if(!name){ return showError("Please enter your name."); }
+    var email = cleanEmail(EL.email.value);
+    var pass = EL.pass.value || "";
 
-    // On the address step the field is the truth — otherwise "Change it",
-    // a new address, "Email me a code" would quietly write to the old
-    // one. A resend from the code step has no field on screen, so it
-    // uses what was sent.
-    var email = cleanEmail(EL.step === "code" ? (EL.pendingEmail || EL.email.value) : EL.email.value);
+    if(creating && !name){ return showError("Please enter your name."); }
     if(!looksLikeEmail(email)){ return showError("Please enter a valid email address."); }
+    if(!pass){ return showError("Please enter your password."); }
+    if(creating && pass.length < 6){ return showError("Please choose a password of at least 6 characters."); }
 
-    EL.pendingName = name;
-    EL.pendingEmail = email;
     showError("");
-    EL.submit.disabled = true;
-    EL.submit.textContent = "Sending\u2026";
+    busy(true, creating ? "Creating account…" : "Signing in…");
 
-    post("/api/auth/send-code", { email: email }).then(function(r){
-      if(!r.ok || r.data.ok === false){
-        EL.submit.disabled = false;
-        EL.submit.textContent = EL.step === "code" ? "Verify and continue" : "Email me a code";
-        return showError(apiError(r.data, "We could not send the code just now. Please try again in a moment."));
+    ensureAuth().then(function(auth){
+      watch(auth);
+      return creating
+        ? authMod.createUserWithEmailAndPassword(auth, email, pass)
+        : authMod.signInWithEmailAndPassword(auth, email, pass);
+    }).then(function(result){
+      var user = (result && result.user) || activeUser();
+      currentUser = user || currentUser;
+      window.currentFirebaseUser = currentUser;
+      if(!creating || !user){
+        busy(false);
+        closeFallback();
+        return;
       }
-
-      lastOtpAt = Date.now();
-      EL.otp.value = "";
-      showStep("code");
-      /* r.data.resent === false means a code from a minute ago is still
-         live. Sending a second one would invalidate the first, so the
-         person is told to use the one they have rather than left
-         wondering which of two emails is the real one. */
-      showSent(r.data.resent === false
-        ? esc(r.data.message || "We\u2019ve already sent you a code. Check your inbox \u2014 and your Spam folder.")
-        : "Code sent to <b>" + esc(email) + "</b>. Check Spam if it\u2019s not there.");
-      tickOtpResend();
-    }).catch(function(){
-      EL.submit.disabled = false;
-      EL.submit.textContent = EL.step === "code" ? "Verify and continue" : "Email me a code";
-      showError("We couldn\u2019t reach Lume Live just now. Check your connection and try again.");
+      /* A new account: put the name on it, then send the verification
+         link and say where it went. The name is set before anything else
+         reads the profile, and the ID token refreshed so the server sees
+         it too. Neither failing is a reason to undo the sign-up. */
+      return authMod.updateProfile(user, { displayName: name })
+        .then(function(){ return user.getIdToken(true); })
+        .catch(function(){})
+        .then(function(){
+          return authMod.sendEmailVerification(user).then(function(){ return true; }, function(){ return false; });
+        })
+        .then(function(sent){
+          busy(false);
+          lastResendAt = sent ? Date.now() : 0;
+          showVerifyHelp({ email: email, sent: sent });
+        });
+    }).catch(function(err){
+      busy(false);
+      var message = passwordError(err, creating);
+      var code = (err && err.code) || "";
+      showError(code && message.indexOf(code) < 0 ? message + " (" + code + ")" : message);
     });
   }
 
-  function confirmOtp(){
-    var code = String(EL.otp.value || "").replace(/\D/g, "");
-    if(code.length < 6){ return showError("Enter the 6-digit code from the email."); }
-
+  function sendReset(){
+    var email = cleanEmail(EL.email.value);
+    if(!looksLikeEmail(email)){ return showError("Please enter the email you signed up with."); }
     showError("");
-    EL.submit.disabled = true;
-    EL.submit.textContent = "Checking\u2026";
-
-    /*
-      The server checks the code and hands back a custom token — a
-      one-use ticket that Firebase exchanges for a real session. Nothing
-      downstream has to know sign-in changed: after this line there is an
-      ordinary Firebase user, with an ordinary ID token, and
-      api/_lib/account.js verifies it exactly as it always has.
-    */
-    post("/api/auth/verify-code", {
-      email: EL.pendingEmail,
-      code: code,
-      name: EL.pendingName || ""
-    }).then(function(r){
-      if(!r.ok || r.data.ok === false || !r.data.token){
-        EL.submit.disabled = false;
-        EL.submit.textContent = "Verify and continue";
-        return showError(apiError(r.data, "That code didn\u2019t match. Check the email and try again."));
-      }
-      return ensureAuth().then(function(auth){
-        watch(auth);
-        return authMod.signInWithCustomToken(auth, r.data.token);
-      }).then(function(result){
-        var user = (result && result.user) || activeUser();
-        currentUser = user || currentUser;
-        window.currentFirebaseUser = currentUser;
-        stopResendTimer();
-        EL.submit.disabled = false;
-        EL.submit.textContent = "Verify and continue";
-
-        // The server already put a typed-in name on a new account. This
-        // is for the person who arrived through "Sign in", so was never
-        // asked for one, and turns out to be new.
-        if(user && !user.displayName){
-          EL.name.value = "";
-          showStep("name");
-          return;
-        }
-        showSent("");
-        closeFallback();
-      });
+    busy(true, "Sending…");
+    ensureAuth().then(function(auth){
+      return authMod.sendPasswordResetEmail(auth, email);
+    }).then(function(){
+      busy(false);
+      /* Firebase answers the same whether or not the address has an
+         account, and so does this — it is not a way to find out who
+         has one. */
+      showSent("If <b>" + esc(email) + "</b> has a Lume Live account, a reset link is on its way. Check Spam if it’s not there.");
     }).catch(function(err){
-      EL.submit.disabled = false;
-      EL.submit.textContent = "Verify and continue";
-      try{ console.error("[lume auth] could not finish signing in:", err && (err.code || err.message)); }catch(e){}
-      showError("We couldn\u2019t finish signing you in. Please try again in a moment.");
+      busy(false);
+      var code = (err && err.code) || "";
+      if(code === "auth/user-not-found"){
+        showSent("If <b>" + esc(email) + "</b> has a Lume Live account, a reset link is on its way. Check Spam if it’s not there.");
+        return;
+      }
+      showError(passwordError(err, false));
     });
   }
 
   /* ============================================================
      Continue with Google
 
-     One tap, no code, no email to wait for. Google has already checked
-     the address, so the account arrives with emailVerified: true and
-     api/_lib/account.js and restore-access treat it exactly like one
-     made with a code. Same address, same account: Firebase links a
-     Google sign-in and an email-code sign-in for one address to one
-     user (Authentication → Settings → "Link accounts that use the same
-     email", the default).
+     One tap, no password. Google has already checked the address, so
+     the account arrives with emailVerified: true and api/_lib/account.js
+     and restore-access treat it like any other.
 
      A popup, never a redirect: the redirect flow round-trips through
      lume-live-cf865.firebaseapp.com, and browsers that partition
@@ -664,15 +631,15 @@
       case "auth/popup-blocked":
         return "Your browser blocked the Google window. Allow pop-ups for this site and try again.";
       case "auth/unauthorized-domain":
-        return "Google sign-in isn\u2019t enabled for this web address yet. Please message us on WhatsApp and we\u2019ll help.";
+        return "Google sign-in isn’t enabled for this web address yet. Please message us on WhatsApp and we’ll help.";
       case "auth/operation-not-allowed":
-        return "Google sign-in isn\u2019t switched on yet. Please message us on WhatsApp and we\u2019ll help.";
+        return "Google sign-in isn’t switched on yet. Please message us on WhatsApp and we’ll help.";
       case "auth/network-request-failed":
-        return "We couldn\u2019t reach Google. Check your connection and try again.";
+        return "We couldn’t reach Google. Check your connection and try again.";
       case "auth/account-exists-with-different-credential":
-        return "This email already has a Lume Live account under a different sign-in. Please message us on WhatsApp and we\u2019ll sort it out.";
+        return "This email already has a Lume Live account under a different sign-in. Please message us on WhatsApp and we’ll sort it out.";
       default:
-        return "Google sign-in didn\u2019t work just now. Please try again in a moment.";
+        return "Google sign-in didn’t work just now. Please try again in a moment.";
     }
   }
 
@@ -724,30 +691,11 @@
       window.currentFirebaseUser = null;
       EL.signout.disabled = false;
       EL.mode = "signin";
-      EL.email.value = "";
-      EL.pendingEmail = "";
-      EL.pendingName = "";
-      showStep("email");
+      EL.pass.value = "";
+      showStep("signin");
     }).catch(function(){
       EL.signout.disabled = false;
       showError("We could not sign you out just now. Please try again.");
-    });
-  }
-
-  function saveName(){
-    var name = (EL.name.value || "").trim();
-    if(!name){ return showError("Please enter your name."); }
-    var user = activeUser();
-    if(!user){ closeFallback(); return; }
-
-    EL.submit.disabled = true;
-    EL.submit.textContent = "Saving…";
-    ensureAuth().then(function(){
-      return authMod.updateProfile(user, { displayName: name });
-    }).catch(function(){}).then(function(){
-      EL.submit.disabled = false;
-      EL.submit.textContent = "Finish";
-      closeFallback();
     });
   }
 
