@@ -69,6 +69,15 @@ a{color:var(--teal);text-decoration:none}
 .steps li::before{content:counter(s);flex-shrink:0;width:25px;height:25px;border-radius:50%;background:var(--navy);color:#fff;font-weight:800;font-size:.79rem;display:flex;align-items:center;justify-content:center}
 .rules{font-size:.86rem;color:var(--muted);padding-left:19px}
 .rules li{margin:6px 0}
+.friends{list-style:none;margin-top:6px}
+.friends li{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+.friends li:last-child{border-bottom:0}
+.f-who{flex:1;min-width:0;font-weight:800;color:var(--navy);font-size:.92rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.f-when{display:block;margin-top:2px;font-size:.76rem;font-weight:600;color:var(--muted)}
+.f-amt{font-family:Georgia,serif;font-size:1.05rem;color:var(--navy);flex-shrink:0}
+.f-tag{flex-shrink:0;font-size:.68rem;font-weight:800;letter-spacing:.3px;text-transform:uppercase;padding:3px 8px;border-radius:999px}
+.f-tag.ok{background:#E9F7F0;color:#186A4B}
+.f-tag.wait{background:#FFF4E0;color:#8A6412}
 .fld{display:block;margin-top:14px}
 .fld span{display:block;font-size:.74rem;font-weight:800;letter-spacing:.3px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
 .fld input{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:12px;font-size:.94rem;font-family:inherit;color:var(--ink);background:#FBFCFE}
@@ -151,6 +160,18 @@ a{color:var(--teal);text-decoration:none}
       <div class="bar"><i id="bar" style="width:0%"></i></div>
       <div class="barlbl"><span id="barNow">₹0 earned</span><span id="barCap">of ₹0</span></div>
 
+    </div>
+
+    <!--
+      The list behind the numbers above. Hidden until we know there is
+      something to show: an empty "Who joined" reads as a failure, and a
+      failed request reads as "nobody joined", which is worse.
+    -->
+    <div class="card hide" id="friendsCard">
+      <h2>Who joined</h2>
+      <p id="friendsIntro">&nbsp;</p>
+      <ul class="friends" id="friendsList"></ul>
+      <p class="fine ok" id="friendsNote"></p>
     </div>
 
     <div class="card" id="payoutCard">
@@ -346,11 +367,87 @@ a{color:var(--teal);text-decoration:none}
       }
     };
 
+    loadFriends();
+
     show("dash");
     track("referral_dashboard_view", { event_category:"viral_loop",
       event_label: ((stats && stats.qualified) || 0) + " referred" });
 
     loadPayout();
+  }
+
+  /* ---- who joined -------------------------------------------------- */
+
+  /*
+     Everyone in this list qualified — a row only exists once a referral
+     counted. So it cannot show who opened a link and stopped, and the
+     copy does not imply it can.
+  */
+  function renderFriends(answer){
+    var list = answer && answer.friends;
+    if(!list || !list.length){
+      // Nothing to show, or nothing we could load. Either way an empty
+      // card is worse than no card.
+      $("friendsCard").classList.add("hide");
+      return;
+    }
+
+    var ul = $("friendsList");
+    ul.textContent = "";
+
+    var waiting = 0;
+    list.forEach(function(f, i){
+      if(!f.cleared) waiting += 1;
+
+      var li = document.createElement("li");
+
+      var who = document.createElement("div");
+      who.className = "f-who";
+      /* A first name if they gave one. We are not shown an email or a
+         number, so neither is anyone else. */
+      who.textContent = f.name || "A friend";
+
+      var when = document.createElement("span");
+      when.className = "f-when";
+      when.textContent = f.when ? fmtDate(f.when) : "";
+      who.appendChild(when);
+      li.appendChild(who);
+
+      if(f.amount > 0){
+        var amt = document.createElement("b");
+        amt.className = "f-amt";
+        amt.textContent = inr(f.amount);
+        li.appendChild(amt);
+      }
+
+      var tag = document.createElement("span");
+      tag.className = "f-tag " + (f.cleared ? "ok" : "wait");
+      tag.textContent = f.cleared ? "cleared" : "clearing";
+      li.appendChild(tag);
+
+      ul.appendChild(li);
+    });
+
+    $("friendsIntro").textContent = list.length === 1
+      ? "One friend has finished the quiz on your link."
+      : list.length + " friends have finished the quiz on your link.";
+
+    $("friendsNote").textContent = waiting
+      ? (waiting === 1 ? "One is still clearing" : waiting + " are still clearing") +
+        " — earnings become withdrawable " + (answer.hold_days || 7) + " days after the quiz."
+      : "";
+
+    $("friendsCard").classList.remove("hide");
+  }
+
+  function fmtDate(ts){
+    try{
+      return new Date(Number(ts)).toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+    }catch(e){ return ""; }
+  }
+
+  function loadFriends(){
+    window.LumeReferral.friends().then(renderFriends).catch(function(){ renderFriends(null); });
   }
 
   /* ---- payouts ---------------------------------------------------- */

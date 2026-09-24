@@ -101,7 +101,10 @@ function run({ referral, account, qr } = {}){
   };
   const doc = {
     readyState: "complete",
-    getElementById: id => page.byId[id] || null
+    getElementById: id => page.byId[id] || null,
+    // The "who joined" list builds its rows as elements rather than
+    // innerHTML, so the harness has to be able to make them.
+    createElement: tag => new Node("(" + tag + ")")
   };
   const sandbox = {
     window: win, document: doc, navigator: {}, console,
@@ -138,6 +141,10 @@ function referralStub(opts = {}){
     decorate: (url, code) => url + "?ref=" + code,
     inviteMessage: (lang, url) => "invite " + lang + " " + url,
     friendOffer: () => (opts.friendOffer === undefined ? null : opts.friendOffer),
+    friends(){
+      stub.friendsAsked = (stub.friendsAsked || 0) + 1;
+      return Promise.resolve(opts.friends === undefined ? null : opts.friends);
+    },
     payout(body){
       stub.lastPayout = body || null;
       if(typeof opts.payout === "function") return Promise.resolve(opts.payout(body));
@@ -315,6 +322,76 @@ await test("a missing QR encoder is survivable", async () => {
   await settle();
   assert.equal(visible(page, "qrWrap"), false);
   assert.equal(visible(page, "dash"), true);
+});
+
+console.log("\nwho joined");
+
+function friendRow(over){
+  return Object.assign({ name: "Aarav", amount: 50, when: Date.UTC(2026, 8, 20), cleared: true }, over || {});
+}
+
+await test("the list names who joined, what each earned and whether it cleared", async () => {
+  const { page } = run({
+    referral: referralStub({ stats: FULL, friends: { ok: true, hold_days: 7, friends: [
+      friendRow({ name: "Aarav", cleared: true }),
+      friendRow({ name: "Bhavya", cleared: false })
+    ] } }),
+    account: accountStub({ uid: "u1" })
+  });
+  await settle();
+
+  assert.equal(visible(page, "friendsCard"), true);
+  assert.match(page.byId.friendsIntro.textContent, /2 friends/);
+  assert.equal(page.byId.friendsList.children.length, 2);
+  assert.match(page.byId.friendsNote.textContent, /One is still clearing/);
+  assert.match(page.byId.friendsNote.textContent, /7 days/);
+});
+
+await test("a friend who gave no name is shown as a friend, not as blank", async () => {
+  const { page } = run({
+    referral: referralStub({ stats: FULL, friends: { ok: true, hold_days: 7, friends: [friendRow({ name: "" })] } }),
+    account: accountStub({ uid: "u1" })
+  });
+  await settle();
+  const li = page.byId.friendsList.children[0];
+  const who = li.children.find(c => c.className === "f-who");
+  assert.match(who.textContent, /A friend/);
+});
+
+await test("nothing to show means no card, and so does a failed load", async () => {
+  // An empty "Who joined" reads as a failure, and a failed request reads
+  // as "nobody joined". Neither is a thing to put on the page.
+  for(const answer of [null, { ok: true, friends: [] }]){
+    const { page } = run({
+      referral: referralStub({ stats: FULL, friends: answer }),
+      account: accountStub({ uid: "u1" })
+    });
+    await settle();
+    assert.equal(visible(page, "friendsCard"), false, "shown for: " + JSON.stringify(answer));
+    assert.equal(visible(page, "dash"), true, "and the rest of the dashboard still works");
+  }
+});
+
+await test("everything cleared says nothing about clearing", async () => {
+  const { page } = run({
+    referral: referralStub({ stats: FULL, friends: { ok: true, hold_days: 7, friends: [friendRow({ cleared: true })] } }),
+    account: accountStub({ uid: "u1" })
+  });
+  await settle();
+  assert.equal(page.byId.friendsNote.textContent, "");
+  assert.match(page.byId.friendsIntro.textContent, /One friend/);
+});
+
+await test("a referral worth nothing shows without a rupee figure", async () => {
+  // At the cap the friend still joined; there is just no amount to print.
+  const { page } = run({
+    referral: referralStub({ stats: FULL, friends: { ok: true, hold_days: 7, friends: [friendRow({ amount: 0 })] } }),
+    account: accountStub({ uid: "u1" })
+  });
+  await settle();
+  const li = page.byId.friendsList.children[0];
+  assert.equal(li.children.some(c => c.className === "f-amt"), false);
+  assert.equal(visible(page, "friendsCard"), true);
 });
 
 console.log("\nwhat the friend gets");
