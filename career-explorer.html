@@ -24,6 +24,45 @@
 <link rel="stylesheet" href="library.css">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Lume Live Career Explorer","description":"Career guides for India — streams, exams, colleges, salary and best-fit interests for the country's most-searched careers.","url":"https://lumelive.co.in/career-explorer.html","publisher":{"@type":"Organization","name":"Lume Live","url":"https://lumelive.co.in/"}}</script>
 <link rel="stylesheet" href="site-anim.css">
+<style>
+/* ---- page-scoped: stream colours, filter chips, separate cards, dark CTA, topic cards ---- */
+.acard[data-stream="pcm"]{--c:#1D4E89;--soft:#E6EEF8}
+.acard[data-stream="pcb"]{--c:#C2416B;--soft:#FCE9EF}
+.acard[data-stream="commerce"]{--c:#A8741F;--soft:#FFF4E0}
+.acard[data-stream="any"]{--c:#5B4FC9;--soft:#EEEBFF}
+.ce-filter{position:relative;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:26px auto 0}
+.ce-filter[hidden]{display:none}
+.ce-filter button{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;font:inherit;font-size:.82rem;font-weight:800;color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);cursor:pointer;transition:background .2s,border-color .2s,color .2s}
+.ce-filter button b{min-width:22px;padding:1px 7px;border-radius:999px;background:rgba(255,255,255,.14);font-size:.72rem}
+.ce-filter button:hover{border-color:rgba(232,185,90,.6)}
+.ce-filter button[aria-pressed="true"]{background:linear-gradient(135deg,var(--gold),var(--gold2));border-color:transparent;color:var(--navy)}
+.ce-filter button[aria-pressed="true"] b{background:rgba(13,27,64,.14)}
+.ce-filter button:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}
+main .cards{gap:16px;background:none;border:0;border-radius:0;overflow:visible;margin-top:44px}
+main .acard{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:18px;padding:30px 26px 24px;box-shadow:0 2px 14px rgba(13,27,64,.04);transition:transform .25s,box-shadow .25s,border-color .25s}
+main .acard::before{content:"";position:absolute;left:0;top:0;height:4px;width:56px;border-radius:0 0 4px 0;background:var(--c);transition:width .4s ease}
+main .acard:hover{background:#fff;transform:translateY(-4px);border-color:transparent;box-shadow:0 18px 40px rgba(13,27,64,.1)}
+main .acard:hover::before{width:100%}
+main .acard .k{display:inline-block;align-self:flex-start;padding:4px 10px;border-radius:999px;background:var(--soft);color:var(--c)}
+main .acard .read{display:inline-flex;align-self:flex-start;padding:7px 14px;border-radius:999px;background:var(--soft);color:var(--c)}
+main .acard:hover .read{letter-spacing:0;background:var(--c);color:#fff}
+main .acard[hidden]{display:none}
+.ce-empty{grid-column:1/-1}
+.cta-box.ce-cta{position:relative;overflow:hidden;border:0;color:#fff;background:radial-gradient(70% 90% at 0% 0%,rgba(10,110,110,.7),transparent 60%),radial-gradient(60% 90% at 100% 100%,rgba(201,147,58,.3),transparent 60%),var(--navy);box-shadow:0 26px 56px rgba(13,27,64,.22)}
+.cta-box.ce-cta::before{content:"";position:absolute;inset:0;background:radial-gradient(rgba(255,255,255,.12) 1px,transparent 1.5px) 0 0/22px 22px;-webkit-mask-image:radial-gradient(60% 90% at 50% 50%,transparent 40%,#000);mask-image:radial-gradient(60% 90% at 50% 50%,transparent 40%,#000);pointer-events:none}
+.cta-box.ce-cta>*{position:relative}
+.cta-box.ce-cta h3{color:#fff}
+.cta-box.ce-cta h3 em{color:var(--gold2)}
+.cta-box.ce-cta p{color:rgba(255,255,255,.78)}
+.related.ce-related{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;border-top:0}
+.related.ce-related h2{grid-column:1/-1;margin-bottom:2px}
+.related.ce-related a{display:flex;flex-direction:column;justify-content:space-between;gap:12px;padding:16px;border:1px solid var(--line);border-radius:16px;background:#fff;line-height:1.4;min-height:104px;transition:transform .2s,box-shadow .2s,border-color .2s}
+.related.ce-related a::after{content:"";width:28px;height:28px;border-radius:50%;background:#E6F4F3 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230A6E6E' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/15px no-repeat;transition:transform .2s}
+.related.ce-related a:hover{transform:translateY(-3px);border-color:transparent;box-shadow:0 14px 30px rgba(13,27,64,.08)}
+.related.ce-related a:hover::after{transform:translateX(4px)}
+@media(max-width:900px){.related.ce-related{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.related.ce-related{grid-template-columns:1fr}.related.ce-related a{min-height:0;flex-direction:row;align-items:center}.ce-filter button{font-size:.76rem;padding:7px 11px}}
+</style>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -60,71 +99,72 @@
   <span class="eyebrow">Career Explorer</span>
   <h1>&ldquo;How do I become a…?&rdquo; &mdash; honest career guides for India</h1>
   <p>For each career: the stream to choose after Class 10, the exams and degrees after Class 12, top colleges, real salary ranges, and &mdash; most importantly &mdash; who the career actually suits. No hype, no pressure.</p>
+  <div class="ce-filter" role="group" aria-label="Filter careers by stream" hidden><button type="button" aria-pressed="true" data-f="all">All careers <b>11</b></button><button type="button" aria-pressed="false" data-f="pcm">PCM <b>4</b></button><button type="button" aria-pressed="false" data-f="pcb">PCB <b>1</b></button><button type="button" aria-pressed="false" data-f="commerce">Commerce <b>1</b></button><button type="button" aria-pressed="false" data-f="any">Any stream <b>5</b></button></div>
 </div></section>
 
 <main class="wrap-wide">
   <div class="cards">
-    <a class="acard" href="career-as-software-engineer.html">
+    <a class="acard" data-stream="pcm" href="career-as-software-engineer.html">
       <div class="k">Technology &middot; PCM</div>
       <h2>How to Become a Software Engineer in India</h2>
       <p>The most stream-forgiving, merit-driven tech career. Paths via B.Tech, BCA and self-teaching, top colleges, and the very wide salary spread explained.</p>
       <div class="read">Read the guide &rarr;</div>
     </a>
-    <a class="acard" href="career-as-data-scientist.html">
+    <a class="acard" data-stream="pcm" href="career-as-data-scientist.html">
       <div class="k">Analytics &middot; PCM</div>
       <h2>How to Become a Data Scientist in India</h2>
       <p>Where maths, coding and business questions meet. Degrees, core skills, top institutions and whether your mind is wired for analytical work.</p>
       <div class="read">Read the guide &rarr;</div>
     </a>
-    <a class="acard" href="career-as-doctor-mbbs.html">
+    <a class="acard" data-stream="pcb" href="career-as-doctor-mbbs.html">
       <div class="k">Medicine &middot; PCB</div>
       <h2>How to Become a Doctor (MBBS) in India</h2>
       <p>The NEET route, MBBS and specialisation timeline, top colleges, the cost reality, and the temperament medicine truly asks for.</p>
       <div class="read">Read the guide &rarr;</div>
     </a>
-    <a class="acard" href="career-as-chartered-accountant.html">
+    <a class="acard" data-stream="commerce" href="career-as-chartered-accountant.html">
       <div class="k">Finance &middot; Commerce</div>
       <h2>How to Become a Chartered Accountant in India</h2>
       <p>The ICAI Foundation&ndash;Intermediate&ndash;Final route, articleship, the ~5-year journey, salaries, and the discipline it rewards.</p>
       <div class="read">Read the guide &rarr;</div>
     </a>
-    <a class="acard" href="career-as-psychologist.html">
+    <a class="acard" data-stream="any" href="career-as-psychologist.html">
       <div class="k">Psychology &middot; Any Stream</div>
       <h2>How to Become a Psychologist in India</h2>
       <p>Clinical vs counselling vs organisational paths, the RCI licence, where to study, and the emotional steadiness the work needs.</p>
       <div class="read">Read the guide &rarr;</div>
     </a>
-    <a class="acard" href="career-as-commercial-pilot.html">
+    <a class="acard" data-stream="pcm" href="career-as-commercial-pilot.html">
       <div class="k">Aviation &middot; PCM</div>
       <h2>How to Become a Commercial Pilot in India</h2>
       <p>The DGCA CPL route, medical requirements, the ₹35&ndash;60 lakh cost reality, salaries, and the discipline flying demands.</p>
       <div class="read">Read the guide &rarr;</div>
     </a>
-    <a class="acard" href="career-as-lawyer.html">
+    <a class="acard" data-stream="any" href="career-as-lawyer.html">
       <div class="k">Law &middot; Any Stream</div>
       <h2>How to Become a Lawyer in India</h2>
       <p>The CLAT/AILET route, 5-year BA LLB, top NLUs, Bar enrolment, the wide salary spread, and who the legal profession suits.</p>
       <div class="read">Read the guide &rarr;</div>
     </a>
-    <a class="acard" href="career-as-civil-services-ias.html">
+    <a class="acard" data-stream="any" href="career-as-civil-services-ias.html">
       <div class="k">Civil Services &middot; Any Stream</div>
       <h2>How to Become an IAS Officer in India</h2>
       <p>The degree-agnostic UPSC path, the three-stage exam, eligibility, the realistic timeline, and the temperament it demands.</p>
       <div class="read">Read the guide &rarr;</div>
     </a>
-    <a class="acard" href="career-as-architect.html">
+    <a class="acard" data-stream="pcm" href="career-as-architect.html">
       <div class="k">Architecture &middot; PCM</div>
       <h2>How to Become an Architect in India</h2>
       <p>NATA and JEE Paper 2, the 5-year B.Arch, top colleges, COA registration, salaries, and the art-meets-engineering fit.</p>
       <div class="read">Read the guide &rarr;</div>
     </a>
-    <a class="acard" href="career-as-product-designer.html">
+    <a class="acard" data-stream="any" href="career-as-product-designer.html">
       <div class="k">Design &middot; Any Stream</div>
       <h2>How to Become a Product Designer (UX/UI) in India</h2>
       <p>B.Des via UCEED/NID/NIFT or the portfolio route, the core UX skills, salaries, and who this creative-tech career suits.</p>
       <div class="read">Read the guide &rarr;</div>
     </a>
-    <a class="acard" href="career-as-digital-marketer.html">
+    <a class="acard" data-stream="any" href="career-as-digital-marketer.html">
       <div class="k">Marketing &middot; Any Stream</div>
       <h2>How to Become a Digital Marketer in India</h2>
       <p>The stream-open, skill-driven path, SEO/ads/social, degrees vs certifications, salaries, and who this fast-moving field suits.</p>
@@ -132,13 +172,13 @@
     </a>
   </div>
 
-  <div class="cta-box">
+  <div class="cta-box ce-cta">
     <h3>Which of these fits <em>you</em>?</h3>
     <p>Reading about careers is one thing; knowing which suits your interests is another. Take the free 60-second Career Snapshot to see your top interest themes and three best-fit directions — no payment, no signup.</p>
     <a class="btn gold" href="assessment.html#free-test">Start the Free Career Snapshot</a>
   </div>
 
-  <div class="related">
+  <div class="related ce-related">
     <h2>Prefer to read by topic?</h2>
     <a href="compare-careers.html">Compare careers side by side &mdash; salary, stream, exams &amp; fit</a>
     <a href="college-predictor.html">JoSAA college predictor &mdash; what your JEE rank can actually get you</a>
@@ -154,6 +194,22 @@
 </footer>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-1CZ93P4P3V"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1CZ93P4P3V');</script>
+<script>
+/* Stream filter: the chips stay hidden without JavaScript, so every card
+   still shows. Filtering only hides cards; links and order are unchanged. */
+(function(){
+  var bar=document.querySelector('.ce-filter'); if(!bar) return;
+  var cards=document.querySelectorAll('main .acard[data-stream]');
+  bar.hidden=false;
+  bar.addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b) return;
+    var f=b.getAttribute('data-f');
+    Array.prototype.forEach.call(bar.querySelectorAll('button'),function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});
+    Array.prototype.forEach.call(cards,function(c){c.hidden=!(f==='all'||c.getAttribute('data-stream')===f);});
+    if(window.gtag) gtag('event','career_filter',{event_label:f});
+  });
+})();
+</script>
 <script src="site-anim.js" defer></script>
 </body>
 </html>
