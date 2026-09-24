@@ -74,6 +74,60 @@ tr:last-child td,tr:last-child th{border-bottom:0}
 .foot a{color:var(--gold2)}
 .disclaimer{font-size:.76rem;color:var(--muted);text-align:center;margin:4px 0 0}
 @media(max-width:620px){tbody th{width:110px;font-size:.66rem}th,td{padding:11px 12px;font-size:.84rem}}
+/* ---- colour-coded columns, picker card, stacked phone table, dark CTA ---- */
+.c0{--c:#0A6E6E;--soft:#E6F4F3}.c1{--c:#5B4FC9;--soft:#EEEBFF}.c2{--c:#A8741F;--soft:#FFF4E0}
+.hero{padding-top:48px}
+.pickers{position:relative;align-items:flex-end;max-width:760px;margin:28px auto 8px;padding:20px 22px;background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 18px 44px rgba(13,27,64,.07)}
+.pick label{display:flex;align-items:center;gap:6px;color:var(--c)}
+.pick label::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--c)}
+.pick select{border-color:var(--soft);border-width:2px;background:linear-gradient(var(--soft),var(--soft)) left/5px 100% no-repeat,#fff;padding-left:18px}
+.pick select:focus{outline-color:var(--c);border-color:var(--c)}
+.vs{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;padding:0;margin-bottom:3px;font-size:.9rem;color:#fff;background:linear-gradient(135deg,var(--gold),var(--gold2));box-shadow:0 6px 14px rgba(201,147,58,.35)}
+.addbtn{margin-top:0;border-color:#E8D6AE;color:#A8741F;background:#FFFBF2;transition:background .2s,border-color .2s}
+.addbtn:hover{background:#FFF4E0;border-color:#A8741F}
+.chip{transition:border-color .2s,color .2s,transform .2s}
+.chip:hover{transform:translateY(-1px)}
+.tablewrap{margin-top:26px}
+@media(min-width:621px){table{table-layout:fixed}tbody th,thead th:first-child{width:170px}}
+thead th.c0,thead th.c1,thead th.c2{background:var(--c);position:relative}
+thead th.c0::after,thead th.c1::after,thead th.c2::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.35)}
+td.c0,td.c1,td.c2{box-shadow:inset 3px 0 0 var(--soft)}
+tbody tr:hover td{background:#FBFCFC}
+.rowlink a{display:inline-flex;padding:6px 13px;border-radius:999px;background:var(--soft);color:var(--c)}
+.rowlink a:hover{background:var(--c);color:#fff}
+.cta-box{position:relative;overflow:hidden;border:0;color:#fff;background:radial-gradient(70% 90% at 0% 0%,rgba(10,110,110,.7),transparent 60%),radial-gradient(60% 90% at 100% 100%,rgba(201,147,58,.3),transparent 60%),var(--navy);box-shadow:0 26px 56px rgba(13,27,64,.22)}
+.cta-box::before{content:"";position:absolute;inset:0;background:radial-gradient(rgba(255,255,255,.12) 1px,transparent 1.5px) 0 0/22px 22px;-webkit-mask-image:radial-gradient(60% 90% at 50% 50%,transparent 40%,#000);mask-image:radial-gradient(60% 90% at 50% 50%,transparent 40%,#000);pointer-events:none}
+.cta-box>*{position:relative}
+.cta-box h3{color:#fff}
+.cta-box p{color:rgba(255,255,255,.78)}
+.cta-box p em{color:var(--gold2)}
+.btn.gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);box-shadow:0 10px 24px rgba(201,147,58,.35)}
+.btn.gold:hover{background:linear-gradient(135deg,var(--gold),var(--gold2));filter:brightness(1.05)}
+.related{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;border-top:0}
+.related h2{grid-column:1/-1;margin-bottom:2px}
+.related a{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px;border:1px solid var(--line);border-radius:16px;background:#fff;transition:transform .2s,box-shadow .2s,border-color .2s}
+.related a::after{content:"";flex:none;width:28px;height:28px;border-radius:50%;background:#E6F4F3 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230A6E6E' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/15px no-repeat;transition:transform .2s}
+.related a:hover{transform:translateY(-3px);border-color:transparent;box-shadow:0 14px 30px rgba(13,27,64,.08)}
+.related a:hover::after{transform:translateX(4px)}
+@media(max-width:620px){
+  .nav{padding:10px 16px}.brand img{width:32px;height:32px}.brand span{white-space:nowrap}
+  .nlinks{align-items:center;gap:10px}.nlinks a:not(.cta){display:none}.nlinks .cta{white-space:nowrap;padding:8px 12px;font-size:.8rem}
+  .pickers{padding:16px;gap:10px;flex-direction:column;align-items:stretch}
+  .pick select{width:100%;min-width:0}
+  .vs{align-self:center;margin:0}
+  .addbtn{align-self:stretch}
+  .tablewrap{overflow:visible;border:0;background:none;box-shadow:none}
+  table{min-width:0}
+  thead{display:none}
+  tbody,tbody tr{display:block}
+  tbody tr{margin-bottom:12px;border:1px solid var(--line);border-radius:16px;background:#fff;overflow:hidden;box-shadow:0 2px 12px rgba(13,27,64,.04)}
+  tbody th{display:block;width:auto;border-bottom:1px solid var(--line);padding:10px 14px}
+  tbody td{display:flex;flex-direction:column;gap:3px;box-shadow:inset 4px 0 0 var(--c);padding:10px 14px 10px 18px}
+  tbody td::before{content:attr(data-name);font-size:.68rem;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--c)}
+  tbody tr td:last-child{border-bottom:0}
+  .rowlink td{flex-direction:row;align-items:center;justify-content:space-between}
+  .related{grid-template-columns:1fr}
+}
 </style>
 <link rel="stylesheet" href="site-anim.css">
 <script type="application/ld+json">
@@ -116,9 +170,9 @@ tr:last-child td,tr:last-child th{border-bottom:0}
 
 <main class="wrap">
   <div class="pickers" id="pickers">
-    <div class="pick"><label>Career A</label><select id="selA" aria-label="Choose the first career to compare"></select></div>
+    <div class="pick c0"><label>Career A</label><select id="selA" aria-label="Choose the first career to compare"></select></div>
     <div class="vs">vs</div>
-    <div class="pick"><label>Career B</label><select id="selB" aria-label="Choose the second career to compare"></select></div>
+    <div class="pick c1"><label>Career B</label><select id="selB" aria-label="Choose the second career to compare"></select></div>
     <button class="addbtn" id="addBtn" title="Add a third career">+ Add</button>
   </div>
 
@@ -181,14 +235,14 @@ function currentKeys(){return selects.map(function(s){return s.value;});}
 function render(){
   var keys=currentKeys();
   // header
-  var h='<th>&nbsp;</th>'+keys.map(function(k){return '<th>'+CAREERS[k].name+'</th>';}).join('');
+  var h='<th>&nbsp;</th>'+keys.map(function(k,i){return '<th class="c'+i+'">'+CAREERS[k].name+'</th>';}).join('');
   document.getElementById('hrow').innerHTML=h;
   // body
   var b=ROWS.map(function(r){
-    return '<tr><th>'+r[1]+'</th>'+keys.map(function(k){return '<td>'+CAREERS[k][r[0]]+'</td>';}).join('')+'</tr>';
+    return '<tr><th>'+r[1]+'</th>'+keys.map(function(k,i){return '<td class="c'+i+'" data-name="'+CAREERS[k].name+'">'+CAREERS[k][r[0]]+'</td>';}).join('')+'</tr>';
   }).join('');
   // full-guide links row
-  b+='<tr class="rowlink"><th>Full guide</th>'+keys.map(function(k){return '<td><a href="'+CAREERS[k].url+'">Read &rarr;</a></td>';}).join('')+'</tr>';
+  b+='<tr class="rowlink"><th>Full guide</th>'+keys.map(function(k,i){return '<td class="c'+i+'" data-name="'+CAREERS[k].name+'"><a href="'+CAREERS[k].url+'">Read &rarr;</a></td>';}).join('')+'</tr>';
   document.getElementById('brows').innerHTML=b;
   if(window.gtag) gtag('event','compare_used',{event_category:'lead_tools',event_label:keys.join(' vs ')});
 }
@@ -196,11 +250,12 @@ fillSelect(selects[0],'dr'); fillSelect(selects[1],'se');
 selects[0].addEventListener('change',render); selects[1].addEventListener('change',render);
 document.getElementById('addBtn').addEventListener('click',function(){
   if(third) return;
-  var d=document.createElement('div'); d.className='pick';
+  var d=document.createElement('div'); d.className='pick c2';
   d.innerHTML='<label>Career C</label><select id="selC" aria-label="Choose a third career to compare"></select>';
   document.getElementById('pickers').insertBefore(d,document.getElementById('addBtn'));
   third=document.getElementById('selC'); selects.push(third);
-  fillSelect(third,'ca'); third.addEventListener('change',render);
+  var used=currentKeys().slice(0,2), pick=ORDER.filter(function(k){return used.indexOf(k)<0;})[0];
+  fillSelect(third,pick); third.addEventListener('change',render);
   this.style.display='none'; render();
 });
 render();
