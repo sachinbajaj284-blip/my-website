@@ -187,10 +187,20 @@
 
   function injectStyles(){
     if(document.getElementById("la-styles")){ return; }
+    /* Comfortaa, the rounded face the card was designed in. Loaded only
+       when the card is first opened; until it arrives (or if it never
+       does) the card falls back to the page's own fonts. */
+    if(!document.getElementById("la-font")){
+      var f = document.createElement("link");
+      f.id = "la-font";
+      f.rel = "stylesheet";
+      f.href = "https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap";
+      document.head.appendChild(f);
+    }
     var css = [
 ".la-overlay{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(15,23,42,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}",
 ".la-overlay.la-open{display:flex}",
-".la-card{width:min(420px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:28px;box-shadow:0 30px 80px rgba(15,23,42,.22);font-family:'Montserrat','Segoe UI',system-ui,Arial,sans-serif;color:#111827;box-sizing:border-box;padding:30px 26px 28px}",
+".la-card{width:min(420px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:28px;box-shadow:0 30px 80px rgba(15,23,42,.22);font-family:'Comfortaa','Montserrat','Segoe UI',system-ui,Arial,sans-serif;color:#111827;box-sizing:border-box;padding:30px 26px 28px}",
 ".la-hd{margin-bottom:22px}",
 ".la-hd-row{display:flex;align-items:center;gap:14px}",
 ".la-hd h3{margin:0;font-size:1.55rem;font-weight:700;letter-spacing:-.01em;color:#111827;line-height:1.2}",
