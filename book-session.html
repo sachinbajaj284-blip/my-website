@@ -92,6 +92,28 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
 .gbook-copy code{flex:1;min-width:180px;background:rgba(0,0,0,.28);border:1px dashed rgba(255,255,255,.22);border-radius:8px;padding:9px 11px;color:#fff;font-size:.8rem;word-break:break-word}
 .gbook-copy button{border:0;border-radius:8px;padding:9px 16px;font:inherit;font-weight:800;font-size:.8rem;background:var(--gold2);color:var(--navy);cursor:pointer;transition:background .15s}
 .gbook-copy button.done{background:#1EAE5C;color:#fff}
+/* ---- session cards with icon tiles and a selected tick ---- */
+.sess{--c:var(--teal);--soft:#E6F4F3;display:grid;grid-template-columns:44px 1fr;column-gap:12px;align-items:start;padding:14px 38px 14px 14px;border-radius:16px;transition:border-color .2s,background .2s,box-shadow .2s,transform .2s}
+.sess::before{content:"";grid-row:1/span 3;width:44px;height:44px;border-radius:13px;background:var(--ic) center/22px no-repeat,var(--soft)}
+.sess[data-key="intro"]{--c:#0A6E6E;--soft:#E6F4F3;--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230A6E6E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 11.5a8.4 8.4 0 0 1-12.6 7.3L3 20l1.3-5.1A8.4 8.4 0 1 1 21 11.5z'/%3E%3C/svg%3E")}
+.sess[data-key="counsel"]{--c:#C2416B;--soft:#FCE9EF;--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23C2416B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21C7.2 16.7 3.5 13.4 3.5 9.6A4.6 4.6 0 0 1 12 6.4a4.6 4.6 0 0 1 8.5 3.2c0 3.8-3.7 7.1-8.5 11.4z'/%3E%3C/svg%3E")}
+.sess[data-key="parent"]{--c:#A8741F;--soft:#FFF4E0;--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23A8741F' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='9' cy='7' r='3'/%3E%3Cpath d='M3 20v-1a5 5 0 0 1 5-5h2a5 5 0 0 1 5 5v1'/%3E%3Ccircle cx='17' cy='9' r='2.3'/%3E%3Cpath d='M16.5 14H18a4 4 0 0 1 4 4v1'/%3E%3C/svg%3E")}
+.sess[data-key="debrief"]{--c:#5B4FC9;--soft:#EEEBFF;--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235B4FC9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z'/%3E%3Cpath d='M14 3v5h5'/%3E%3Cpath d='M9 13h6'/%3E%3Cpath d='M9 17h4'/%3E%3C/svg%3E")}
+.sess .s-name,.sess .s-meta,.sess .s-desc{grid-column:2}
+.sess .s-meta{display:inline-block;justify-self:start;margin-top:5px;padding:2px 8px;border-radius:8px;background:var(--soft);color:var(--c);font-size:.72rem}
+.sess .s-desc{font-weight:500;font-size:.8rem;line-height:1.45}
+.sess:hover{border-color:var(--c);transform:translateY(-2px);box-shadow:0 10px 24px rgba(13,27,64,.07)}
+.sess.sel{border-color:var(--c);background:linear-gradient(135deg,var(--soft),#fff 70%);box-shadow:0 10px 24px rgba(13,27,64,.08)}
+.sess.sel::before{background-color:#fff;box-shadow:0 4px 12px rgba(13,27,64,.1)}
+.sess::after{content:"";position:absolute;right:12px;top:12px;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line);background:#fff}
+.sess.sel::after{border-color:var(--c);background:var(--c) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.3l2.5 2.5L12 5.3' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/13px no-repeat}
+.sess:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.gbook{box-shadow:0 26px 56px rgba(13,27,64,.22)}
+.gbook::after{content:"";position:absolute;inset:0;background:radial-gradient(rgba(255,255,255,.12) 1px,transparent 1.5px) 0 0/22px 22px;-webkit-mask-image:radial-gradient(60% 90% at 50% 50%,transparent 40%,#000);mask-image:radial-gradient(60% 90% at 50% 50%,transparent 40%,#000);pointer-events:none}
+.gbook>*{position:relative;z-index:1}
+.not-ready{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 10px;max-width:784px;margin:0 auto 34px;padding:14px 18px;border-radius:18px;background:#fff;border:1px solid var(--line);font-size:.86rem;color:var(--muted);text-align:center}
+.not-ready a{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:#E6F4F3;color:var(--teal);font-weight:800;text-decoration:none}
+.not-ready a:last-of-type{background:#EEEBFF;color:#5B4FC9}
 @media(max-width:520px){.stats{grid-template-columns:1fr 1fr}.sess-grid{grid-template-columns:1fr}}
 </style>
 <link rel="stylesheet" href="site-anim.css">
@@ -219,8 +241,8 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
   .lume-ref-btn.ghost:hover{border-color:#0A6E6E;color:#0A6E6E}
   </style>
 
-  <p style="text-align:center;font-size:.86rem;color:var(--muted);margin-bottom:30px">
-    Not ready to book? <a href="assessment.html#free-test">Take the free 60-second Career Snapshot</a> or <a href="career-explorer.html">explore careers</a> first.
+  <p class="not-ready">
+    <span>Not ready to book?</span> <a href="assessment.html#free-test">Take the free 60-second Career Snapshot</a> <span>or</span> <a href="career-explorer.html">explore careers</a> <span>first.</span>
   </p>
 </main>
 
