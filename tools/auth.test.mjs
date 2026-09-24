@@ -10,7 +10,7 @@
   The whole module is a single IIFE. Two function declarations of one
   name in that scope are not two functions — the second one silently
   replaces the first, everywhere, including in calls written above it.
-  That is how the OTP resend countdown came to never run: it was called
+  That is how the old OTP resend countdown came to never run: it was called
   tickResend, and so was the email panel's, five hundred lines below.
   Nothing threw, nothing logged, the button simply stayed enabled.
 */
@@ -58,36 +58,40 @@ test("no var is declared twice in the module scope", () => {
   assert.deepEqual(dupes, [], "re-declared and re-assigned on load: " + dupes.join(", "));
 });
 
-test("sign-in asks for a name, an address and a code", () => {
-  ["laName", "laEmail2", "laOtp"].forEach(id => {
+test("sign-in asks for an address and a password, and sign-up for a name too", () => {
+  ["laName", "laEmail2", "laPass"].forEach(id => {
     assert.ok(SOURCE.includes('id="' + id + '"'), "missing the " + id + " field");
   });
-  assert.ok(SOURCE.includes("signInWithCustomToken"), "the code is exchanged for a real Firebase session");
-  assert.ok(SOURCE.includes("/api/auth/send-code"), "the code is issued by our own endpoint");
-  assert.ok(SOURCE.includes("/api/auth/verify-code"), "and checked by it");
+  assert.ok(SOURCE.includes("signInWithEmailAndPassword"), "signing in uses Firebase's own password provider");
+  assert.ok(SOURCE.includes("createUserWithEmailAndPassword"), "and so does signing up");
+  assert.ok(SOURCE.includes("signInWithPopup"), "Continue with Google is still offered");
+  assert.ok(SOURCE.includes("sendPasswordResetEmail"), "a forgotten password can be reset");
 });
 
-test("nothing signs anyone in with a password", () => {
-  assert.ok(!SOURCE.includes("createUserWithEmailAndPassword"), "an account is a number now");
-  assert.ok(!SOURCE.includes("signInWithEmailAndPassword"), "an account is a number now");
+test("a new account gets its name and a verification email", () => {
+  const flow = SOURCE.slice(SOURCE.indexOf("function signInWithPassword"), SOURCE.indexOf("function relabelNav"));
+  assert.ok(flow.includes("updateProfile(user, { displayName: name })"), "the name typed at sign-up is put on the account");
+  assert.ok(flow.includes("sendEmailVerification"), "the address is sent a verification link");
+  assert.ok(flow.includes("showVerifyHelp"), "and the person is told where it went");
 });
 
 test("openAuth is claimed, so the old page modals stay shut", () => {
   assert.ok(SOURCE.includes("window.openAuth = openFallback"), "the page buttons call openAuth by name");
 });
 
-test("the code is never asked for before an address is", () => {
-  const send = SOURCE.slice(SOURCE.indexOf("function sendOtp"), SOURCE.indexOf("function confirmOtp"));
-  assert.ok(send.includes("looksLikeEmail(email)"), "a malformed address never reaches the server");
-  assert.ok(send.includes("EL.pendingEmail = email"), "the address the code went to is remembered for the check");
+test("nothing reaches Firebase before the form is checked", () => {
+  const flow = SOURCE.slice(SOURCE.indexOf("function signInWithPassword"), SOURCE.indexOf("function relabelNav"));
+  const firstCall = flow.indexOf("ensureAuth()");
+  assert.ok(firstCall > 0, "the sign-in goes through ensureAuth");
+  const checks = flow.slice(0, firstCall);
+  assert.ok(checks.includes("looksLikeEmail(email)"), "a malformed address is caught on the page");
+  assert.ok(checks.includes("pass.length < 6"), "a new password shorter than Firebase allows is caught on the page");
+  assert.ok(checks.includes("creating && !name"), "a sign-up without a name is caught on the page");
 });
 
-test("the browser is never handed a code, only a token", () => {
-  // The code exists in the email and in the server's hash. If it ever
-  // appeared in a response the page could read, the email would be
-  // decoration rather than proof.
-  assert.ok(!/data\.code\b/.test(SOURCE), "a response carrying the code would defeat the whole flow");
-  assert.ok(SOURCE.includes("r.data.token"), "what comes back is a one-use custom token");
+test("a password reset does not say whether an address has an account", () => {
+  const reset = SOURCE.slice(SOURCE.indexOf("function sendReset"), SOURCE.indexOf("Continue with Google\n"));
+  assert.ok(reset.includes("auth/user-not-found"), "an unknown address gets the same answer as a known one");
 });
 
 console.log(`\n${passed} passed, ${failed} failed`);
