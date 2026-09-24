@@ -572,7 +572,7 @@
          reads the profile, and the ID token refreshed so the server sees
          it too. Neither failing is a reason to undo the sign-up. */
       return authMod.updateProfile(user, { displayName: name })
-        .then(function(){ return user.getIdToken(true); })
+        .then(function(){ relabelNav(user); return user.getIdToken(true); })
         .catch(function(){})
         .then(function(){
           return authMod.sendEmailVerification(user).then(function(){ return true; }, function(){ return false; });
@@ -588,6 +588,16 @@
       var code = (err && err.code) || "";
       showError(code && message.indexOf(code) < 0 ? message + " (" + code + ")" : message);
     });
+  }
+
+  /* The pages with a Login link in the nav show the person's first name
+     there once they are signed in. They redraw it when Firebase reports
+     the sign-in — which, for a new account, is a moment before the name
+     above has been saved — so it is redrawn once more when it has. */
+  function relabelNav(user){
+    try{
+      if(typeof window.renderAuthUser === "function"){ window.renderAuthUser(user); }
+    }catch(err){}
   }
 
   function sendReset(){

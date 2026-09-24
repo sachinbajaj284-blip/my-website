@@ -4821,7 +4821,10 @@ function renderAuthUser(user){
   const signedIn=Boolean(user);
   document.querySelectorAll('.auth-signed-out').forEach(el=>{el.hidden=signedIn;});
   document.querySelectorAll('.auth-signed-in').forEach(el=>{el.hidden=!signedIn;});
-  document.getElementById('navAccountLink').textContent=signedIn?'My Account':'Sign In / Sign Up';
+  const firstName=signedIn?((user.displayName||'').trim().split(/\s+/)[0]||'').slice(0,16):'';
+  document.getElementById('navAccountLink').textContent=signedIn?(firstName||'My Account'):'Sign In / Sign Up';
+  const mobileAccount=document.getElementById('mobileAccountLink');
+  if(mobileAccount){mobileAccount.textContent=signedIn?(firstName||'My Account'):'My Account';}
   document.getElementById('authSignedOut').hidden=signedIn;
   document.getElementById('authSignedIn').hidden=!signedIn;
   if(signedIn){
