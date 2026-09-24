@@ -166,31 +166,63 @@ body{background:#fff}
 .syl-note{text-align:center;color:var(--muted);font-size:.9rem;margin-top:18px}
 
 /* ---------- pricing ---------- */
-.price-wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:stretch}
-.pcard{position:relative;border-radius:24px;padding:34px 32px;background:linear-gradient(160deg,#10224F,var(--navy));color:#fff;overflow:hidden;box-shadow:0 26px 60px rgba(13,27,64,.25)}
-.pcard::after{content:"";position:absolute;right:-80px;top:-80px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(201,147,58,.35),transparent 70%)}
-.pcard .badge{display:inline-block;background:var(--gold2);color:var(--navy);font-size:.7rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;border-radius:999px;padding:5px 12px}
-.pcard h3{font-family:Georgia,serif;font-size:1.4rem;margin:14px 0 6px}
-.amt{display:flex;align-items:baseline;gap:8px;margin:10px 0 4px}
-.amt b{font-family:Georgia,serif;font-size:3.2rem;line-height:1}
-.amt span{color:rgba(255,255,255,.7)}
-.pcard .fine{color:rgba(255,255,255,.62);font-size:.84rem;margin-bottom:20px}
-.pcard ul{list-style:none;margin:0 0 26px;padding:0}
-.pcard li{padding:7px 0 7px 28px;position:relative;color:rgba(255,255,255,.9);font-size:.95rem}
-.pcard li::before{content:"✓";position:absolute;left:0;top:6px;width:18px;height:18px;border-radius:50%;background:rgba(232,185,90,.18);color:var(--gold2);font-size:.72rem;font-weight:900;display:grid;place-items:center}
-.pcard .btn.pay{width:100%;font-size:1rem;min-height:54px}
+#fees{position:relative;overflow:hidden;background:radial-gradient(40% 50% at 0% 20%,rgba(10,110,110,.08),transparent 70%),radial-gradient(40% 50% at 100% 80%,rgba(91,79,201,.09),transparent 70%)}
+#fees::before{content:"Ψ";position:absolute;right:-40px;top:40px;font-family:Georgia,serif;font-size:26rem;line-height:1;color:rgba(13,27,64,.03);pointer-events:none}
+.price-wrap{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:32px;align-items:stretch}
+.pframe{position:relative;border-radius:28px;padding:3px;background:conic-gradient(from var(--ang,0deg),#C9933A,#E8B95A,#0A6E6E,#5B4FC9,#C9933A);box-shadow:0 30px 70px rgba(13,27,64,.28)}
+@property --ang{syntax:"<angle>";initial-value:0deg;inherits:false}
+@media(prefers-reduced-motion:no-preference){.pframe{animation:spin 8s linear infinite}@keyframes spin{to{--ang:360deg}}}
+.pcard{position:relative;border-radius:25px;padding:32px 30px 26px;background:linear-gradient(165deg,#132A5E,var(--navy) 60%);color:#fff;overflow:hidden;height:100%}
+.pcard::after{content:"";position:absolute;right:-90px;top:-90px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(232,185,90,.32),transparent 70%);pointer-events:none}
+.ptop{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.pcard .badge{display:inline-flex;align-items:center;gap:6px;background:var(--gold2);color:var(--navy);font-size:.7rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;border-radius:999px;padding:6px 12px}
+.pcard .live{display:inline-flex;align-items:center;gap:6px;font-size:.74rem;font-weight:700;color:rgba(255,255,255,.8)}
+.pcard .live::before{content:"";width:8px;height:8px;border-radius:50%;background:#3DDC97;box-shadow:0 0 0 4px rgba(61,220,151,.2)}
+.pcard h3{font-family:Georgia,serif;font-size:1.45rem;margin:16px 0 4px}
+.amt{display:flex;align-items:flex-start;gap:4px;margin:8px 0 2px}
+.amt sup{font-family:Georgia,serif;font-size:1.6rem;margin-top:8px;color:var(--gold2)}
+.amt b{font-family:Georgia,serif;font-size:4rem;line-height:1;letter-spacing:-1px;background:linear-gradient(180deg,#fff,#E9E4FF);-webkit-background-clip:text;background-clip:text;color:transparent}
+.amt span{align-self:flex-end;margin:0 0 8px 6px;color:rgba(255,255,255,.7);font-size:.95rem}
+.perday{display:inline-block;font-size:.8rem;font-weight:700;color:var(--gold2);background:rgba(232,185,90,.12);border:1px dashed rgba(232,185,90,.45);border-radius:8px;padding:4px 10px;margin:6px 0 10px}
+.pcard .fine{color:rgba(255,255,255,.62);font-size:.84rem;margin-bottom:18px}
+.incl{font-size:.7rem;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.incl::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.14)}
+.pcard ul{list-style:none;margin:0 0 20px;padding:0;display:grid;gap:4px}
+.pcard li{display:flex;gap:12px;align-items:center;padding:7px 0;color:rgba(255,255,255,.92);font-size:.95rem}
+.pcard li i{flex:none;width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.08);color:var(--gold2)}
+.pcard li i svg{width:17px;height:17px}
+.guar{display:flex;gap:12px;align-items:center;margin:0 0 18px;padding:12px 14px;border-radius:14px;background:rgba(61,220,151,.1);border:1px solid rgba(61,220,151,.3);font-size:.86rem;color:rgba(255,255,255,.9)}
+.guar svg{flex:none;width:26px;height:26px;color:#3DDC97}
+.guar b{color:#fff}
+.guar a{color:#8FF0C4;text-decoration:underline}
+.pcard .btn.pay{width:100%;font-size:1.02rem;min-height:56px;gap:10px}
+.pcard .btn.pay svg{width:18px;height:18px}
 .pay-methods{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin-top:14px}
-.pay-methods span{font-size:.7rem;font-weight:800;letter-spacing:.6px;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:3px 8px;color:rgba(255,255,255,.75)}
-.secure{text-align:center;font-size:.78rem;color:rgba(255,255,255,.6);margin-top:10px}
-.steps{list-style:none;margin:0;padding:0;counter-reset:st}
-.steps li{counter-increment:st;position:relative;padding:0 0 26px 62px}
-.steps li::before{content:counter(st);position:absolute;left:0;top:0;width:42px;height:42px;border-radius:14px;background:var(--teal-soft);color:var(--teal);font-weight:900;display:grid;place-items:center;font-size:1.05rem}
-.steps li::after{content:"";position:absolute;left:20px;top:48px;bottom:6px;width:2px;background:var(--line)}
+.pay-methods span{display:inline-flex;align-items:center;gap:5px;font-size:.7rem;font-weight:800;letter-spacing:.5px;background:#fff;color:var(--navy);border-radius:7px;padding:4px 9px}
+.secure{display:flex;justify-content:center;align-items:center;gap:6px;font-size:.78rem;color:rgba(255,255,255,.62);margin-top:10px}
+.secure svg{width:14px;height:14px}
+.steps-box{display:flex;flex-direction:column}
+.steps-box h3{font-family:Georgia,serif;color:var(--navy);font-size:1.45rem;margin:4px 0 22px}
+.steps{list-style:none;margin:0;padding:0}
+.steps li{position:relative;display:flex;gap:16px;padding:0 0 22px}
+.steps li::after{content:"";position:absolute;left:23px;top:52px;bottom:4px;width:2px;background:linear-gradient(var(--teal),var(--violet));opacity:.35}
 .steps li:last-child::after{display:none}
-.steps b{display:block;color:var(--navy);font-size:1.02rem;margin-bottom:2px}
-.steps span{color:var(--muted);font-size:.93rem}
-.steps-box h3{font-family:Georgia,serif;color:var(--navy);font-size:1.35rem;margin:0 0 20px}
-.talk{margin-top:6px;padding:16px 18px;border-radius:14px;background:var(--gold-soft);font-size:.92rem;color:var(--ink)}
+.steps .si{position:relative;flex:none;width:48px;height:48px;border-radius:16px;display:grid;place-items:center;color:#fff;box-shadow:0 10px 22px rgba(13,27,64,.15)}
+.steps .si svg{width:22px;height:22px}
+.steps .si em{position:absolute;right:-6px;top:-6px;width:20px;height:20px;border-radius:50%;background:#fff;color:var(--navy);font-style:normal;font-size:.7rem;font-weight:900;display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.steps li:nth-child(1) .si{background:linear-gradient(135deg,var(--gold),var(--gold2))}
+.steps li:nth-child(2) .si{background:linear-gradient(135deg,#1FA37A,#25D366)}
+.steps li:nth-child(3) .si{background:linear-gradient(135deg,var(--teal),#14958F)}
+.steps li:nth-child(4) .si{background:linear-gradient(135deg,var(--violet),#7C6FE0)}
+.steps .st{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px;flex:1;transition:transform .2s,box-shadow .2s}
+.steps li:hover .st{transform:translateX(4px);box-shadow:0 10px 22px rgba(13,27,64,.07)}
+.steps b{display:block;color:var(--navy);font-size:1rem;margin-bottom:2px}
+.steps span{display:block;color:var(--muted);font-size:.9rem;line-height:1.55}
+.talk{margin-top:auto;display:flex;gap:14px;align-items:center;padding:16px 18px;border-radius:16px;background:linear-gradient(135deg,#E9FBF1,#F3FBF8);border:1px solid #C9EFD9;font-size:.92rem;color:var(--ink)}
+.talk .wa{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:#25D366;color:#fff}
+.talk .wa svg{width:22px;height:22px}
+.talk b{display:block;color:var(--navy)}
+.talk a{text-decoration:underline}
 
 /* ---------- who / FAQ ---------- */
 .who{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
@@ -251,7 +283,7 @@ body{background:#fff}
   .stats div:nth-child(-n+2){border-bottom:1px solid var(--line)}
   .method,.samples,.who,.syl,.teach,.price-wrap,.tiles{grid-template-columns:1fr}
   .prof-top{height:130px}.avatar{width:104px;height:104px;top:74px;left:22px}.prof-body{padding:58px 22px 22px}
-  .pcard{padding:28px 22px}
+  .pcard{padding:26px 20px 22px}.amt b{font-size:3.3rem}#fees::before{font-size:16rem}
   .final{padding:36px 20px;border-radius:20px}
   .mbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:900;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.97);border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(13,27,64,.1)}
   .mbar b{font-family:Georgia,serif;color:var(--navy);font-size:1.15rem;display:block;line-height:1.1}
@@ -479,31 +511,35 @@ body{background:#fff}
       <p>Pay online in a minute. No hidden costs, no separate charge for notes.</p>
     </div>
     <div class="price-wrap">
-      <div class="pcard">
-        <span class="badge">Class 11 or Class 12</span>
+      <div class="pframe"><div class="pcard">
+        <div class="ptop"><span class="badge">&#936; Class 11 or Class 12</span><span class="live">Enrolling now</span></div>
         <h3>Psychology Tuition</h3>
-        <div class="amt"><b>&#8377;7,999</b><span>/ month</span></div>
+        <div class="amt"><sup>&#8377;</sup><b>7,999</b><span>/ month</span></div>
+        <span class="perday">That's less than &#8377;270 a day</span>
         <p class="fine">One-time payment for one month. Pay again to continue. No auto-debit.</p>
+        <div class="incl">Everything included</div>
         <ul>
-          <li>Live online classes, 1:1 or in a small batch</li>
-          <li>Chapter-wise notes, PYQs with model answers &amp; PPTs</li>
-          <li>Sample papers, chapter tests &amp; feedback</li>
-          <li>Practical file &amp; case profile guidance</li>
-          <li>Doubt-clearing with the psychology tutor team</li>
+          <li><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></i>Live online classes, 1:1 or in a small batch</li>
+          <li><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/></svg></i>Chapter-wise notes, PYQs with model answers &amp; PPTs</li>
+          <li><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></i>Sample papers, chapter tests &amp; feedback</li>
+          <li><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></i>Practical file &amp; case profile guidance</li>
+          <li><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"/></svg></i>Doubt-clearing with the psychology tutor team</li>
         </ul>
-        <button type="button" class="btn pay" data-enrol>Enrol &amp; pay &#8377;7,999</button>
-        <div class="pay-methods" aria-label="Payment methods"><span>UPI</span><span>CARDS</span><span>NETBANKING</span><span>WALLETS</span></div>
-        <p class="secure">🔒 Secure checkout by Cashfree Payments</p>
-      </div>
+        <div class="guar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg><span><b>Full refund before your first class.</b> Change your mind before classes start and you get it all back. <a href="refund-policy.html#tuition">Refund policy</a></span></div>
+        <button type="button" class="btn pay" data-enrol>Enrol &amp; pay &#8377;7,999 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
+        <div class="pay-methods" aria-label="Payment methods"><span>UPI</span><span>Cards</span><span>Netbanking</span><span>Wallets</span></div>
+        <p class="secure"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Secure checkout by Cashfree Payments</p>
+      </div></div>
       <div class="steps-box">
-        <h3>How it works</h3>
+        <span class="kicker">How it works</span>
+        <h3>From enrolment to your first class</h3>
         <ol class="steps">
-          <li><b>Enrol and pay online</b><span>Choose your class and 1:1 or batch, then pay &#8377;7,999 securely.</span></li>
-          <li><b>We message you within 24 hours</b><span>On WhatsApp, to fix class timings that fit around school.</span></li>
-          <li><b>Start live classes</b><span>Notes, PYQs and PPTs are shared chapter by chapter.</span></li>
-          <li><b>Test, revise, score</b><span>Chapter tests and sample papers before every exam.</span></li>
+          <li><span class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg><em>1</em></span><div class="st"><b>Enrol and pay online</b><span>Choose your class and 1:1 or batch, then pay &#8377;7,999 securely.</span></div></li>
+          <li><span class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"/></svg><em>2</em></span><div class="st"><b>We message you within 24 hours</b><span>On WhatsApp, to fix class timings that fit around school.</span></div></li>
+          <li><span class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg><em>3</em></span><div class="st"><b>Start live classes</b><span>Notes, PYQs and PPTs are shared chapter by chapter.</span></div></li>
+          <li><span class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M6 20V14h3v6M11 20V9h3v11M16 20V4h3v16"/></svg><em>4</em></span><div class="st"><b>Test, revise, score</b><span>Chapter tests and sample papers before every exam.</span></div></li>
         </ol>
-        <div class="talk">Prefer to talk first? <a href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20want%20to%20know%20about%20psychology%20tuition." target="_blank" rel="noopener"><strong>Chat with us on WhatsApp</strong></a> or call <a href="tel:+917015671280">+91 70156 71280</a>.</div>
+        <div class="talk"><span class="wa"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/></svg></span><span><b>Prefer to talk first?</b><a href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20want%20to%20know%20about%20psychology%20tuition." target="_blank" rel="noopener">Chat with us on WhatsApp</a> or call <a href="tel:+917015671280">+91 70156 71280</a>.</span></div>
       </div>
     </div>
   </div>
