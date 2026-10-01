@@ -2964,6 +2964,8 @@ if(ov&&caps[i]){var d=document.createElement("div");d.className="gallery-cap";d.
 }();</script>
   <script src="lume-capture.js" defer></script>
 <script>
+/* Arriving from index-hi.html's Login link (index.html#login) opens the sign-in modal */
+if(location.hash==="#login"){window.addEventListener("load",function(){if(typeof openAuth==="function")openAuth("signin");});}
 /* Nav dropdowns: Escape closes and returns focus; ArrowDown opens and moves into the menu */
 document.addEventListener("keydown",function(e){
   var wrap=e.target.closest&&e.target.closest(".nav-more");
