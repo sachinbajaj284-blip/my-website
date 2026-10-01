@@ -5,12 +5,109 @@
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains" },
-        { "key": "Permissions-Policy", "value": "geolocation=(), microphone=(), camera=()" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "geolocation=(), microphone=(), camera=()"
+        }
       ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/career-counselling-in-ahmedabad.html",
+      "destination": "/online-career-counselling-india.html",
+      "permanent": true
+    },
+    {
+      "source": "/career-counselling-in-bangalore.html",
+      "destination": "/online-career-counselling-india.html",
+      "permanent": true
+    },
+    {
+      "source": "/career-counselling-in-bhopal.html",
+      "destination": "/online-career-counselling-india.html",
+      "permanent": true
+    },
+    {
+      "source": "/career-counselling-in-chandigarh.html",
+      "destination": "/online-career-counselling-india.html",
+      "permanent": true
+    },
+    {
+      "source": "/career-counselling-in-dehradun.html",
+      "destination": "/online-career-counselling-india.html",
+      "permanent": true
+    },
+    {
+      "source": "/career-counselling-in-guwahati.html",
+      "destination": "/online-career-counselling-india.html",
+      "permanent": true
+    },
+    {
+      "source": "/career-counselling-in-hyderabad.html",
+      "destination": "/online-career-counselling-india.html",
+      "permanent": true
+    },
+    {
+      "source": "/career-counselling-in-indore.html",
+      "destination": "/online-career-counselling-india.html",
+      "permanent": true
+    },
+    {
+      "source": "/career-counselling-in-jaipur.html",
+      "destination": "/online-career-counselling-india.html",
+      "permanent": true
+    },
+    {
+      "source": "/career-counselling-in-kochi.html",
+      "destination": "/online-career-counselling-india.html",
+      "permanent": true
+    },
+    {
+      "source": "/career-counselling-in-kolkata.html",
+      "destination": "/online-career-counselling-india.html",
+      "permanent": true
+    },
+    {
+      "source": "/career-counselling-in-lucknow.html",
+      "destination": "/online-career-counselling-india.html",
+      "permanent": true
+    },
+    {
+      "source": "/career-counselling-in-mumbai.html",
+      "destination": "/online-career-counselling-india.html",
+      "permanent": true
+    },
+    {
+      "source": "/career-counselling-in-nagpur.html",
+      "destination": "/online-career-counselling-india.html",
+      "permanent": true
+    },
+    {
+      "source": "/career-counselling-in-patna.html",
+      "destination": "/online-career-counselling-india.html",
+      "permanent": true
+    },
+    {
+      "source": "/career-counselling-in-pune.html",
+      "destination": "/online-career-counselling-india.html",
+      "permanent": true
     }
   ]
 }

@@ -77,6 +77,11 @@ jobs:
       - name: Meta Pixel consent and placement
         run: npm run pixel:test
 
+      # Retired city pages stay deleted, redirect to a live page, and nothing
+      # on the site (including the sitemap) still links to them.
+      - name: Redirects
+        run: npm run redirects:test
+
       # sitemap.xml is generated, not hand-written, but nothing forced it to
       # be regenerated — so it drifted: every entry read August while pages
       # had changed in September, which tells Google there is nothing new to
