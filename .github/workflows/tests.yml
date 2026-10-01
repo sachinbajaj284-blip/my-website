@@ -71,6 +71,12 @@ jobs:
       - name: Listening tool
         run: npm run listen:test
 
+      # Nothing reaches Meta before consent, nothing from the wellbeing
+      # self-checks reaches it at all, and no mental-health page loads it.
+      #   Fix placement with: npm run pixel:pages
+      - name: Meta Pixel consent and placement
+        run: npm run pixel:test
+
       # sitemap.xml is generated, not hand-written, but nothing forced it to
       # be regenerated — so it drifted: every entry read August while pages
       # had changed in September, which tells Google there is nothing new to
