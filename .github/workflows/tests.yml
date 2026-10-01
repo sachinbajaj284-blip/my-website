@@ -66,6 +66,11 @@ jobs:
       - name: JoSAA parser
         run: npm run josaa:test
 
+      # Includes the check that a reply starter for someone in distress
+      # never carries a link, a price or the brand name.
+      - name: Listening tool
+        run: npm run listen:test
+
       # sitemap.xml is generated, not hand-written, but nothing forced it to
       # be regenerated — so it drifted: every entry read August while pages
       # had changed in September, which tells Google there is nothing new to

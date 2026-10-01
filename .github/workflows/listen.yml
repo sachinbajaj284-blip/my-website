@@ -1,0 +1,49 @@
+name: Listening tool
+
+# Every morning, reads the newest posts in the subreddits listed in
+# tools/listen/config.mjs and sends the ones worth answering to a Google
+# Sheet + Telegram. Read-only: it never posts or comments anywhere.
+# Setup and secrets: docs/listening-tool.md.
+#
+# To try it by hand: Actions → "Listening tool" → Run workflow, with
+# dry_run ticked to print the list in the log without sending it.
+
+on:
+  schedule:
+    # 02:17 UTC = 07:47 IST, so the list is waiting before the day starts.
+    - cron: '17 2 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Print the list in the log only — send nothing to the Sheet'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  listen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # Node built-ins only — nothing to install.
+      - name: Find posts worth answering
+        env:
+          LISTEN_WEBHOOK_URL: ${{ secrets.LISTEN_WEBHOOK_URL }}
+          LISTEN_WEBHOOK_TOKEN: ${{ secrets.LISTEN_WEBHOOK_TOKEN }}
+          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+        run: |
+          if [ "$DRY_RUN" = "true" ]; then
+            node tools/listen/listen.mjs --dry-run
+          else
+            node tools/listen/listen.mjs
+          fi
