@@ -513,6 +513,11 @@ section { padding: 56px 16px; }
 .sp-photo img{width:100%;height:320px;object-fit:cover}
 .sa-video-thumb{position:relative;aspect-ratio:1168/784;overflow:hidden}
 .sa-video-thumb img{width:100%;height:100%;object-fit:contain;display:block}
+/* Blocks waiting to slide in (.anim.left/.right) start 32px off to the side. index.css
+   clips each section, but until it lands they widen the page past the screen, the
+   phone zooms out, and everything pinned to the screen edge moves when it zooms back.
+   clip (not hidden) only trims sideways overflow and does not break position:sticky. */
+body>section{overflow-x:clip}
 </style>
 <link rel="preload" href="index.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="index.css"></noscript>

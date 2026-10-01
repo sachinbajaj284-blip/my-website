@@ -53,4 +53,10 @@ test('it pins the nav height and the decorative particle box', () => {
   assert.match(css, /#hero\.hero-particles\{[^}]*height:100svh/);
 });
 
+test('sections clip sideways overflow before index.css lands', () => {
+  // Slide-in blocks start 32px off-screen; unclipped, they widen the page and the
+  // phone zooms out, moving everything pinned to the screen edge.
+  assert.ok(guard.replace(/\s+/g, '').includes('body>section{overflow-x:clip}'));
+});
+
 console.log(`\n${passed} layout-shift guard tests passed.`);
