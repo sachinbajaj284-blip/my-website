@@ -476,7 +476,10 @@ section { padding: 56px 16px; }
 .hamburger { min-width: 44px; min-height: 44px; }
 .hero-assessment-links a, .hero-links a { display: inline-flex; align-items: center; min-height: 44px; padding-block: 6px; font-size: 12.5px; }
 }
-
+</style>
+<style id="cls-guard">
+/* Kept out of the critical-css block on purpose: tools/build-critical-css.mjs
+   rewrites that block, and would silently drop these. */
 /* --- CLS guard: nav + hero sizing must be known before index.css (206KB) lands.
    Without these, the logo <img width="400" height="218"> renders the header at
    247px, then snaps to 70px when index.css applies — a ~1.0 layout shift.
@@ -485,7 +488,31 @@ section { padding: 56px 16px; }
 .nav-logo-img{width:48px;height:48px;border-radius:50%;overflow:hidden;flex-shrink:0}
 .nav-logo-img img{width:100%;height:100%;object-fit:cover}
 .hero-particles{position:absolute;inset:0;pointer-events:none}
+/* The particles are placed in % of their box. With inset:0 that box is the whole
+   hero, whose height settles over the first second (images, the consent bar, lazy
+   blocks), so every decorative dot "moves" and counts as layout shift. Pinning the
+   box to the first screen keeps them still. #hero raises specificity so index.css,
+   which loads later, does not undo it. */
+#hero .hero-particles{bottom:auto;height:100vh;height:100svh}
 @media(max-width:1280px) and (min-width:961px){.nav-inner{padding:0 10px;gap:8px}.nav-logo-img{width:36px;height:36px}}
+/* Before index.css lands, the mobile menu and the desktop links have no rules at
+   all: the menu renders open in the page flow (pushing the hero ~1,500px down) and
+   the desktop links overflow the screen. Both snap away when index.css applies,
+   which is the 1.0 layout shift Lighthouse reports. Same values as index.css. */
+.nav-links{display:flex;align-items:center;list-style:none;min-width:0}
+.mob-menu{display:none}
+.mob-menu.open{display:block}
+.side-icons{position:fixed;right:0;top:55%;transform:translateY(-50%);z-index:990;display:flex;flex-direction:column}
+/* tools/build-critical-css.mjs keeps rules for elements that are visible above the
+   fold, so it can never capture the rules that HIDE things on a phone. Those live here. */
+@media(max-width:960px){.nav-links{display:none}.side-icons{display:none}.hero-right{display:none}}
+/* Large photos further down have width="1600" and no other rule until index.css
+   lands, which makes the page 1,600px wide and drags the fixed nav with it. */
+.gallery-item img{width:100%;height:240px;object-fit:cover;display:block}
+.svc-thumb img{width:100%;height:auto;display:block;aspect-ratio:16/9;object-fit:cover}
+.sp-photo img{width:100%;height:320px;object-fit:cover}
+.sa-video-thumb{position:relative;aspect-ratio:1168/784;overflow:hidden}
+.sa-video-thumb img{width:100%;height:100%;object-fit:contain;display:block}
 </style>
 <link rel="preload" href="index.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="index.css"></noscript>
