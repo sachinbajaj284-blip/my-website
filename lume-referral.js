@@ -27,6 +27,7 @@
      LumeReferral.stats()          -> { qualified, credit_earned, … } | null
      LumeReferral.inviteMessage(lang, url) -> text for a WhatsApp invite
      LumeReferral.payout([{upi, ageDeclared}]) -> Promise<answer|null>
+     LumeReferral.friends()        -> Promise<{friends:[...]}|null>
      LumeReferral.decorate(url[,code]) -> url + ?ref= (sync, cached)
      LumeReferral.claim(event)     -> Promise<{counted, needsPhone, offer}>
      LumeReferral.claimWithPhone(event) -> claim, offering OTP if needed
@@ -38,6 +39,7 @@
   var CODE_ENDPOINT = "/api/referrals/code";
   var CLAIM_ENDPOINT = "/api/referrals/claim";
   var PAYOUT_ENDPOINT = "/api/referrals/payout";
+  var FRIENDS_ENDPOINT = "/api/referrals/friends";
 
   var IN_KEY = "lumeRefInbound";   // { code, ts }
   var MY_KEY = "lumeRefMine";      // { code, uid, stats }
@@ -244,6 +246,25 @@
   function friendOffer(){
     var row = read(MY_KEY);
     return (row && row.friendOffer) || null;
+  }
+
+  /*
+     Who actually joined. Never cached: it is a list the student reads to
+     check whether the thing they just did counted.
+
+     Resolves null when there is nobody signed in or the request fails —
+     the dashboard hides the section rather than showing an empty one,
+     because "no friends yet" and "we couldn't load your friends" are
+     different things and only one of them is true.
+  */
+  function friends(){
+    return account().then(function(user){
+      if(!user || !user.uid) return null;
+      return token().then(function(idToken){
+        if(!idToken) return null;
+        return post(FRIENDS_ENDPOINT, {}, idToken);
+      });
+    }).catch(function(){ return null; });
   }
 
   /* ---------------------------------------------------------------- */
@@ -479,6 +500,7 @@
     stats: stats,
     friendOffer: friendOffer,
     payout: payout,
+    friends: friends,
     claimWithPhone: claimWithPhone,
     inviteMessage: inviteMessage,
     decorate: decorate,

@@ -220,6 +220,36 @@ rather than from what it hoped happened.
 
 **This endpoint does not move money.** It writes a request.
 
+### `POST /api/referrals/friends` — signed in
+
+The list behind the totals: who joined, what each earned, and whether it
+has cleared the hold — the question a student staring at a balance they
+cannot withdraw is actually asking.
+
+**It cannot say who hasn't finished.** An attribution row is written when
+a referral qualifies and never before, so there is no record of somebody
+who opened a link and stopped. The copy on the page does not imply
+otherwise.
+
+**A first name, and nothing else.** The friend agreed to take a quiz, not
+to appear on someone else's dashboard. No email, no phone, no surname, no
+uid. A referrer shown "Aarav" learns nothing they didn't know — they sent
+Aarav the link. An email address would be different in kind: a handle for
+contacting someone who never offered it.
+
+`firstName()` refuses anything containing `@` or a long digit run, because
+people type their email or number into the name field and stripping the
+punctuation out of one would leave the local part looking like a name
+("aaravgmailcom"). Those show as **A friend**.
+
+Names are read from Firebase Auth per request, not copied onto the
+attribution when it is written. One batched lookup per dashboard view
+buys two things: a third party's name is never duplicated into a document
+belonging to someone else, and a friend who deletes their account stops
+appearing without anything having to remember to erase them. If the
+lookup fails the list still renders — dates and amounts are the
+load-bearing part.
+
 ### `POST /api/referrals/claim` — signed in
 
 ```json
@@ -461,14 +491,20 @@ be one environment variable, not a revert.
 
 ---
 
-## Not built yet
+## What is deliberately still manual
 
-Deliberately, and in roughly this order:
+Nothing on the original backlog is outstanding. Two things are manual by
+choice rather than by omission, and both are argued for above:
 
-1. **A "who joined" list on `refer.html`.** The page shows totals; it
-   cannot yet name the friends behind them, because `/api/referrals/code`
-   returns counts only. A student chasing the last ₹50 wants to know who
-   has not finished yet.
+- **Payouts.** A human runs `npm run referrals:payouts`, pays the UPI IDs
+  it prints, and marks them paid. There is no payout API because an
+  automated rail needs a funded balance behind a key living in the same
+  environment as the website, and transferred money does not come back.
+- **Everything the phone gate cannot do.** It proves a number was
+  verified once. It does not prove the person behind it is not the
+  referrer's sibling, and no amount of code will.
+
+### Notes
 
 `stream-selector.html` and its Hindi twin now carry `lume-auth.js`, so
 the Stream Selector can both originate and receive referrals. It had to:

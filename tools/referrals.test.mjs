@@ -22,6 +22,7 @@ const referrals = require("../api/_lib/referrals.js");
 const { normalizeCode, isValidCode, makeCode, rewardFor, todayKey, publicStats,
         ensureCode, statsFor, lookupCode, recordQualified,
         normalizeUpi, isValidUpi, payoutSummary, requestPayout, settlePayout, listPayouts,
+        friendsFor,
         normalizePhone, phoneKey, requiresPhone, bindPhone, PHONES, ATTRIBUTIONS,
         EARNINGS_CAP, DAILY_QUALIFY_LIMIT, HOLD_MS, MIN_PAYOUT, REFERRERS } = referrals;
 
@@ -400,6 +401,128 @@ await test("with the gate switched off, a phoneless referral still counts", asyn
     delete process.env.LUME_REFERRAL_REQUIRE_PHONE;
   }
   assert.equal(requiresPhone(), true, "and the gate is back on afterwards");
+});
+
+console.log("\nwho joined");
+
+await test("only people who qualified are listed", async () => {
+  // A row exists because a referral counted. Somebody who opened the link
+  // and stopped leaves no trace, so this can never answer "who hasn't
+  // taken it yet" — and nothing here pretends it can.
+  store.clear();
+  const code = await referrer("u1", "Aarav", "7K2P");
+  await qualify({ code, referredUid: "friend1", event: "snapshot" });
+  await recordQualified({ code, referredUid: "nobody", event: "pageview",
+    referredPhone: "9990001111" });
+
+  const list = await friendsFor("u1");
+  assert.equal(list.length, 1);
+  assert.equal(list[0].uid, "friend1");
+});
+
+await test("newest first — the one they just earned is what they came for", async () => {
+  store.clear();
+  const code = await referrer("u1", "Aarav", "7K2P");
+  const base = Date.now() - (30 * 24 * 60 * 60 * 1000);
+  await qualify({ code, referredUid: "older", event: "snapshot", now: base });
+  await qualify({ code, referredUid: "newer", event: "snapshot", now: base + 86400000 });
+
+  const list = await friendsFor("u1");
+  assert.deepEqual(list.map(f => f.uid), ["newer", "older"]);
+});
+
+await test("each row says whether it has cleared the hold", async () => {
+  store.clear();
+  const code = await referrer("u1", "Aarav", "7K2P");
+  // OLD/NEW are declared further down the file; HOLD_MS is imported.
+  await qualify({ code, referredUid: "matured", event: "snapshot", now: Date.now() - (HOLD_MS + 3600000) });
+  await qualify({ code, referredUid: "fresh", event: "snapshot", now: Date.now() - 3600000 });
+
+  const list = await friendsFor("u1");
+  const by = Object.fromEntries(list.map(f => [f.uid, f]));
+  assert.equal(by.matured.cleared, true);
+  assert.equal(by.fresh.cleared, false, "this is the row that explains an unwithdrawable balance");
+});
+
+await test("one referrer never sees another's friends", async () => {
+  store.clear();
+  const a = await referrer("u1", "Aarav", "7K2P");
+  const b = await referrer("u2", "Bhavya", "9M4Q");
+  await qualify({ code: a, referredUid: "mine", event: "snapshot" });
+  await qualify({ code: b, referredUid: "theirs", event: "snapshot" });
+
+  assert.deepEqual((await friendsFor("u1")).map(f => f.uid), ["mine"]);
+  assert.deepEqual((await friendsFor("u2")).map(f => f.uid), ["theirs"]);
+});
+
+await test("the ledger returns uids and never a name", async () => {
+  // Resolving a uid to a person is Firebase Auth's job and the route's
+  // decision. Keeping it out of here is what stops the ledger quietly
+  // becoming a place third-party names live.
+  store.clear();
+  const code = await referrer("u1", "Aarav", "7K2P");
+  await qualify({ code, referredUid: "friend1", event: "snapshot" });
+
+  const row = (await friendsFor("u1"))[0];
+  assert.deepEqual(Object.keys(row).sort(), ["amount", "cleared", "created_at", "uid"]);
+});
+
+await test("a referral worth nothing still appears", async () => {
+  // At the cap a referral is recorded and pays ₹0. The student should
+  // still see that their friend joined.
+  store.clear();
+  const code = await referrer("u1", "Aarav", "7K2P");
+  await store.seed(REFERRERS, "u1", {
+    code, qualified: 6, earned: EARNINGS_CAP, day: "2000-01-01", day_count: 0
+  });
+  await qualify({ code, referredUid: "capped", event: "snapshot" });
+
+  const list = await friendsFor("u1");
+  assert.equal(list.length, 1);
+  assert.equal(list[0].amount, 0);
+});
+
+await test("an account with no referrals has an empty list, not an error", async () => {
+  store.clear();
+  assert.deepEqual(await friendsFor("nobody"), []);
+  assert.deepEqual(await friendsFor(""), []);
+});
+
+console.log("\nwhat a friend's account may put on someone else's screen");
+
+const { firstName } = require("../api/_lib/routes/referrals/friends.js");
+
+await test("a first name, and only the first", () => {
+  assert.equal(firstName("Aarav Sharma"), "Aarav", "a surname is more than the referrer needs");
+  assert.equal(firstName("  Priya   Nair  "), "Priya");
+  assert.equal(firstName("aarav"), "aarav");
+});
+
+await test("names that are not plain words still work", () => {
+  assert.equal(firstName("D'Souza Maria"), "D'Souza");
+  assert.equal(firstName("Jean-Luc Picard"), "Jean-Luc");
+});
+
+await test("an email typed into the name field is refused, not mangled", () => {
+  // Stripping the punctuation would leave the local part sitting on
+  // somebody else's dashboard looking like a name.
+  assert.equal(firstName("aarav@gmail.com"), "");
+  assert.equal(firstName("Aarav aarav@gmail.com"), "");
+});
+
+await test("a phone number typed into the name field is refused", () => {
+  assert.equal(firstName("9876543210"), "");
+  assert.equal(firstName("+91 98765 43210"), "");
+});
+
+await test("nothing usable resolves to nothing, and the page says 'A friend'", () => {
+  for(const bad of ["", "   ", "J", "!", null, undefined]){
+    assert.equal(firstName(bad), "", "leaked from: " + String(bad));
+  }
+});
+
+await test("a long name cannot stretch the row", () => {
+  assert.equal(firstName("A".repeat(200)).length, 24);
 });
 
 console.log("\npayout addresses");
