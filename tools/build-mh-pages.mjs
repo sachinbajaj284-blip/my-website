@@ -61,13 +61,17 @@ function buildScreener(s) {
 }
 
 /* ── city pages ────────────────────────────────────────────────────────── */
+// Cities without a local career page point at the national one. Its links are
+// labelled for India, not the city, so they don't promise a page that isn't there.
+const careerIsNational = c => c.careerPage === 'online-career-counselling-india.html';
+
 function buildCity(c) {
   const related = [
     [HUB, 'Online mental health counselling in India'],
     ['wellbeing-check.html', 'Free mental health self-checks'],
     ['free-anxiety-test.html', 'Free anxiety test (GAD-7)'],
     ['exam-stress-test.html', 'Free exam stress check'],
-    ...(c.careerPage ? [[c.careerPage, `Career counselling in ${c.city}`]] : []),
+    ...(c.careerPage ? [[c.careerPage, careerIsNational(c) ? 'Online career counselling across India' : `Career counselling in ${c.city}`]] : []),
     ['student-mental-health-india.html', 'Student mental health in India'],
     ['for-parents.html', 'For parents: spotting the signs early'],
   ];
@@ -183,7 +187,7 @@ ${c.why.split('\n').map(l => '    ' + l.trim()).join('\n')}
       ['index.html', 'Home'],
       [HUB, 'Counselling'],
       ['wellbeing-check.html', 'Free Checks'],
-      ...(c.careerPage ? [[c.careerPage, `Careers ${c.city}`]] : [['for-parents.html', 'For Parents']]),
+      ...(c.careerPage ? [[c.careerPage, careerIsNational(c) ? 'Careers' : `Careers ${c.city}`]] : [['for-parents.html', 'For Parents']]),
     ],
     waNav: `Hello Lume Live! I want to talk about mental health counselling in ${c.city}.`,
     kicker: `&#128205; ${c.city} &middot; Confidential &middot; Non-Diagnostic Support`,

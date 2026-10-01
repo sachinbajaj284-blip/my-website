@@ -66,6 +66,27 @@ jobs:
       - name: JoSAA parser
         run: npm run josaa:test
 
+      # Includes the check that a reply starter for someone in distress
+      # never carries a link, a price or the brand name.
+      - name: Listening tool
+        run: npm run listen:test
+
+      # Nothing reaches Meta before consent, nothing from the wellbeing
+      # self-checks reaches it at all, and no mental-health page loads it.
+      #   Fix placement with: npm run pixel:pages
+      - name: Meta Pixel consent and placement
+        run: npm run pixel:test
+
+      # Retired city pages stay deleted, redirect to a live page, and nothing
+      # on the site (including the sitemap) still links to them.
+      - name: Redirects
+        run: npm run redirects:test
+
+      # The homepage must not jump while index.css loads (it scored a 1.0
+      # layout shift and 50 on mobile Lighthouse before these rules).
+      - name: Layout-shift guard
+        run: npm run cls:test
+
       # sitemap.xml is generated, not hand-written, but nothing forced it to
       # be regenerated — so it drifted: every entry read August while pages
       # had changed in September, which tells Google there is nothing new to

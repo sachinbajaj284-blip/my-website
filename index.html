@@ -4,8 +4,9 @@
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-1CZ93P4P3V"></script>
 <script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","G-1CZ93P4P3V"),function(){var a=new URLSearchParams(location.search);("#free-test"===location.hash||"#self-assessments"===location.hash||a.has("sample-report"))&&location.replace("assessment.html"+location.search+location.hash)}();</script>
+<script src="lume-pixel.js" defer></script>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' sdk.cashfree.com *.cashfree.com www.gstatic.com cdn.jsdelivr.net www.googletagmanager.com apis.google.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; img-src 'self' data: blob: www.google-analytics.com www.googletagmanager.com *.cashfree.com; connect-src 'self' *.cashfree.com *.googleapis.com *.firebaseio.com *.firebaseapp.com www.gstatic.com www.googletagmanager.com *.google-analytics.com *.analytics.google.com; frame-src *.cashfree.com *.firebaseapp.com; object-src 'none'; base-uri 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' sdk.cashfree.com *.cashfree.com www.gstatic.com cdn.jsdelivr.net www.googletagmanager.com apis.google.com connect.facebook.net; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; img-src 'self' data: blob: www.google-analytics.com www.googletagmanager.com *.cashfree.com www.facebook.com; connect-src 'self' *.cashfree.com *.googleapis.com *.firebaseio.com *.firebaseapp.com www.gstatic.com www.googletagmanager.com *.google-analytics.com *.analytics.google.com www.facebook.com connect.facebook.net; frame-src *.cashfree.com *.firebaseapp.com; object-src 'none'; base-uri 'self';">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Career Counselling Delhi-NCR from &#8377;249 | Lume Live</title>
 <meta name="description" content="India's most affordable career counselling — first 1:1 session ₹249 with a qualified counsellor. For Class 10–12 students in Delhi-NCR and across India.">
@@ -475,7 +476,10 @@ section { padding: 56px 16px; }
 .hamburger { min-width: 44px; min-height: 44px; }
 .hero-assessment-links a, .hero-links a { display: inline-flex; align-items: center; min-height: 44px; padding-block: 6px; font-size: 12.5px; }
 }
-
+</style>
+<style id="cls-guard">
+/* Kept out of the critical-css block on purpose: tools/build-critical-css.mjs
+   rewrites that block, and would silently drop these. */
 /* --- CLS guard: nav + hero sizing must be known before index.css (206KB) lands.
    Without these, the logo <img width="400" height="218"> renders the header at
    247px, then snaps to 70px when index.css applies — a ~1.0 layout shift.
@@ -484,7 +488,31 @@ section { padding: 56px 16px; }
 .nav-logo-img{width:48px;height:48px;border-radius:50%;overflow:hidden;flex-shrink:0}
 .nav-logo-img img{width:100%;height:100%;object-fit:cover}
 .hero-particles{position:absolute;inset:0;pointer-events:none}
+/* The particles are placed in % of their box. With inset:0 that box is the whole
+   hero, whose height settles over the first second (images, the consent bar, lazy
+   blocks), so every decorative dot "moves" and counts as layout shift. Pinning the
+   box to the first screen keeps them still. #hero raises specificity so index.css,
+   which loads later, does not undo it. */
+#hero .hero-particles{bottom:auto;height:100vh;height:100svh}
 @media(max-width:1280px) and (min-width:961px){.nav-inner{padding:0 10px;gap:8px}.nav-logo-img{width:36px;height:36px}}
+/* Before index.css lands, the mobile menu and the desktop links have no rules at
+   all: the menu renders open in the page flow (pushing the hero ~1,500px down) and
+   the desktop links overflow the screen. Both snap away when index.css applies,
+   which is the 1.0 layout shift Lighthouse reports. Same values as index.css. */
+.nav-links{display:flex;align-items:center;list-style:none;min-width:0}
+.mob-menu{display:none}
+.mob-menu.open{display:block}
+.side-icons{position:fixed;right:0;top:55%;transform:translateY(-50%);z-index:990;display:flex;flex-direction:column}
+/* tools/build-critical-css.mjs keeps rules for elements that are visible above the
+   fold, so it can never capture the rules that HIDE things on a phone. Those live here. */
+@media(max-width:960px){.nav-links{display:none}.side-icons{display:none}.hero-right{display:none}}
+/* Large photos further down have width="1600" and no other rule until index.css
+   lands, which makes the page 1,600px wide and drags the fixed nav with it. */
+.gallery-item img{width:100%;height:240px;object-fit:cover;display:block}
+.svc-thumb img{width:100%;height:auto;display:block;aspect-ratio:16/9;object-fit:cover}
+.sp-photo img{width:100%;height:320px;object-fit:cover}
+.sa-video-thumb{position:relative;aspect-ratio:1168/784;overflow:hidden}
+.sa-video-thumb img{width:100%;height:100%;object-fit:contain;display:block}
 </style>
 <link rel="preload" href="index.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="index.css"></noscript>
@@ -546,7 +574,6 @@ section { padding: 56px 16px; }
       <li class="nav-more" id="navServices">
         <button type="button" class="nav-more-btn" aria-haspopup="true" aria-expanded="false" onclick="toggleNavMore(event,'navServices')">Services <span class="caret">▾</span></button>
         <ul class="nav-more-menu align-left">
-          <li><a href="assessment.html#free-test" style="color:#0A6E6E;font-weight:800;">Career Snapshot</a></li>
           <li><a href="stream-selector.html">Stream Selector Quiz</a></li>
           <li><a href="career-explorer.html">Career Explorer</a></li>
           <li><a href="career-intelligence.html">Career Intelligence</a></li>
@@ -554,6 +581,7 @@ section { padding: 56px 16px; }
           <li><a href="for-parents.html">For Parents</a></li>
           <li><a href="school-partnerships.html">Schools</a></li>
           <li><a href="internships.html">Psychology Internship</a></li>
+          <li><a href="psychology-tuition.html" title="Online psychology tuition for CBSE Class 11 &amp; 12">Psychology Tuition</a></li>
         </ul>
       </li>
       <li class="nav-more" id="navMore">
@@ -568,10 +596,11 @@ section { padding: 56px 16px; }
           <li><a href="#contact">Contact</a></li>
         </ul>
       </li>
-      <li><a href="psychology-tuition.html" title="Online psychology tuition for CBSE Class 11 &amp; 12">Psychology Tuition</a></li>
-      <li><a href="index-hi.html" hreflang="hi-in" lang="hi" title="हिंदी में देखें" style="border:1px solid #DDE7E5;border-radius:999px;padding:6px 12px;font-weight:800;">हिंदी</a></li>
-      <li class="nav-auth-item"><a href="#" id="navAccountLink" class="nav-auth-link" onclick="openAuth('signin');return false;">Login</a></li>
-      <li><a href="#" class="nav-cta" onclick="openModal('session');return false;" style="background:linear-gradient(135deg,#c9933a,#e8b84e);color:#0d1b40;font-weight:800;padding:8px 18px;border-radius:20px;box-shadow:0 4px 12px rgba(201,147,58,.3);transition:all .3s;">Counselling ₹249 <span style="font-size:.55rem;opacity:.7;text-decoration:line-through;margin-left:3px;">₹499</span></a></li>
+      <li><a href="assessment.html#free-test" class="nav-link nav-free" title="Free 5-minute career test">Career Snapshot <span class="nav-free-tag">Free</span></a></li>
+      <li class="nav-sep" aria-hidden="true"></li>
+      <li><a href="index-hi.html" class="nav-lang" hreflang="hi-in" lang="hi" title="हिंदी में देखें" aria-label="हिंदी में देखें — View this page in Hindi"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg>हिंदी</a></li>
+      <li class="nav-auth-item"><a href="#" id="navAccountLink" class="nav-auth-link" title="Login or create your account" onclick="openAuth('signin');return false;">Login</a></li>
+      <li><a href="#" class="nav-cta" aria-label="Book a counselling session for ₹249, regular price ₹499" onclick="openModal('session');return false;"><span class="nav-cta-label">Counselling</span><span class="nav-cta-price">₹249</span><s class="nav-cta-was" aria-hidden="true">₹499</s></a></li>
     </ul>
     <button class="hamburger" id="ham" onclick="toggleMenu()" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -2934,5 +2963,34 @@ if(ov&&caps[i]){var d=document.createElement("div");d.className="gallery-cap";d.
 });
 }();</script>
   <script src="lume-capture.js" defer></script>
+<script>
+/* Arriving from index-hi.html's Login link (index.html#login) opens the sign-in modal */
+if(location.hash==="#login"){window.addEventListener("load",function(){if(typeof openAuth==="function")openAuth("signin");});}
+/* Nav dropdowns: Escape closes and returns focus; ArrowDown opens and moves into the menu */
+document.addEventListener("keydown",function(e){
+  var wrap=e.target.closest&&e.target.closest(".nav-more");
+  if(e.key==="Escape"){
+    document.querySelectorAll(".nav-more.open").forEach(function(m){
+      m.classList.remove("open");
+      var b=m.querySelector(".nav-more-btn");b&&b.setAttribute("aria-expanded","false");
+    });
+    if(wrap){var b=wrap.querySelector(".nav-more-btn");b&&b.focus();}
+    return;
+  }
+  if(!wrap||(e.key!=="ArrowDown"&&e.key!=="ArrowUp"))return;
+  var items=Array.prototype.slice.call(wrap.querySelectorAll(".nav-more-menu a"));
+  if(!items.length)return;
+  e.preventDefault();
+  if(!wrap.classList.contains("open")){
+    var menu=wrap.querySelector(".nav-more-menu");
+    menu.style.transition="none"; /* skip the fade so the first item can take focus immediately */
+    wrap.classList.add("open");wrap.querySelector(".nav-more-btn").setAttribute("aria-expanded","true");
+    void menu.offsetHeight;menu.style.transition="";
+  }
+  var i=items.indexOf(document.activeElement);
+  i=e.key==="ArrowDown"?(i+1)%items.length:(i<=0?items.length-1:i-1);
+  items[i].focus();
+});
+</script>
 </body>
 </html>
