@@ -108,18 +108,22 @@
       '.lume-consent{position:fixed;z-index:1000;left:88px;right:16px;bottom:16px;max-width:520px;' +
       'background:#fff;color:#1f2430;border:1px solid #dcd9d2;border-radius:12px;padding:14px 16px;' +
       'box-shadow:0 8px 30px rgba(0,0,0,.15);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}' +
-      '.lume-consent p{margin:0 0 10px}' +
+      '.lume-consent p{margin:0 0 6px}' +
       '.lume-consent a{color:#2c3a7b}' +
       '.lume-consent .lc-row{display:flex;gap:8px;flex-wrap:wrap}' +
       '.lume-consent button{font:inherit;font-weight:600;border-radius:8px;padding:8px 14px;cursor:pointer;border:1px solid #2c3a7b}' +
       '.lume-consent .lc-yes{background:#2c3a7b;color:#fff}' +
       '.lume-consent .lc-no{background:transparent;color:#2c3a7b}' +
-      '@media(max-width:520px){.lume-consent{left:16px;bottom:88px}}' +
+      '@media(max-width:520px){.lume-consent{left:16px;bottom:88px;font-size:13px;padding:12px 14px}}' +
       '</style>' +
-      '<p>With your permission, we\'d like to use Meta cookies to help parents and adults discover our sessions. ' +
-      'It\'s entirely your choice, and the site works the same either way. ' +
-      'If you\'re under 18, we kindly ask you to choose <b>No thanks</b>. ' +
-      '<a href="privacy-policy.html#cookies">Learn more</a></p>' +
+      // One short paragraph per sentence, not one long block. Google times the page
+      // (LCP) by its largest visible text, and the hero fades in, so a long banner
+      // paragraph became that text: the page was judged by a banner that only
+      // appears after scripts run. Each of these stays smaller than the hero subtitle.
+      '<p>With your permission, we\'d like to use Meta cookies to help parents and adults discover our sessions.</p>' +
+      '<p>It\'s entirely your choice, and the site works the same either way.</p>' +
+      '<p>If you\'re under 18, we kindly ask you to choose <b>No thanks</b>. ' +
+      '<a href="privacy-policy.html#cookies">Learn more about cookies</a></p>' +
       '<div class="lc-row"><button type="button" class="lc-yes" data-lc="yes">Allow</button>' +
       '<button type="button" class="lc-no" data-lc="no">No thanks</button></div>';
     bar.addEventListener('click', function(e){
