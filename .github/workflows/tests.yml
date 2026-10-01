@@ -82,6 +82,11 @@ jobs:
       - name: Redirects
         run: npm run redirects:test
 
+      # The homepage must not jump while index.css loads (it scored a 1.0
+      # layout shift and 50 on mobile Lighthouse before these rules).
+      - name: Layout-shift guard
+        run: npm run cls:test
+
       # sitemap.xml is generated, not hand-written, but nothing forced it to
       # be regenerated — so it drifted: every entry read August while pages
       # had changed in September, which tells Google there is nothing new to
