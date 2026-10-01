@@ -116,9 +116,10 @@
       '.lume-consent .lc-no{background:transparent;color:#2c3a7b}' +
       '@media(max-width:520px){.lume-consent{left:16px;bottom:88px}}' +
       '</style>' +
-      '<p>Allow marketing cookies? We use Meta to show our sessions to parents and adults. ' +
-      'Please choose <b>No thanks</b> if you are under 18. ' +
-      '<a href="privacy-policy.html#cookies">Details</a></p>' +
+      '<p>With your permission, we\'d like to use Meta cookies to help parents and adults discover our sessions. ' +
+      'It\'s entirely your choice, and the site works the same either way. ' +
+      'If you\'re under 18, we kindly ask you to choose <b>No thanks</b>. ' +
+      '<a href="privacy-policy.html#cookies">Learn more</a></p>' +
       '<div class="lc-row"><button type="button" class="lc-yes" data-lc="yes">Allow</button>' +
       '<button type="button" class="lc-no" data-lc="no">No thanks</button></div>';
     bar.addEventListener('click', function(e){
