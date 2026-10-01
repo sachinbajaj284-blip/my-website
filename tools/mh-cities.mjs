@@ -99,7 +99,7 @@ export const CITIES = [
     slug: 'mental-health-counselling-mumbai.html',
     heroCard: 'Forty-five minutes that cost you forty-five minutes. No travelling, no waiting room.',
     city: 'Mumbai', region: 'IN-MH', state: 'Maharashtra',
-    careerPage: 'career-counselling-in-mumbai.html',
+    careerPage: 'online-career-counselling-india.html',
     lede: 'A city that rewards endurance and almost never asks what it costs you. Private 1:1 support for students, professionals and families across Mumbai and the MMR. Online, in Hindi or English.',
     hindi: 'Sab kuch sambhaal lena hi taakat nahi hai. &#128155;',
     pressure: `<h3>What the pressure looks like here</h3>
@@ -126,7 +126,7 @@ export const CITIES = [
     slug: 'mental-health-counselling-bangalore.html',
     heroCard: 'Doing fine on paper and badly everywhere else is a real thing, and it is worth talking about.',
     city: 'Bangalore', region: 'IN-KA', state: 'Karnataka',
-    careerPage: 'career-counselling-in-bangalore.html',
+    careerPage: 'online-career-counselling-india.html',
     lede: 'Full of people who came here for the work, quietly measuring themselves against everyone who came earlier. Private 1:1 support across Bengaluru. Online, Hindi or English.',
     hindi: 'Sabke saath rehkar bhi akela lagna aam hai. &#128155;',
     pressure: `<h3>What the pressure looks like here</h3>
@@ -153,7 +153,7 @@ export const CITIES = [
     slug: 'mental-health-counselling-hyderabad.html',
     heroCard: 'Somebody outside the college, outside the family, and not keeping score.',
     city: 'Hyderabad', region: 'IN-TG', state: 'Telangana',
-    careerPage: 'career-counselling-in-hyderabad.html',
+    careerPage: 'online-career-counselling-india.html',
     lede: 'Intermediate colleges run like factories, and an IT corridor that never really shuts. Private 1:1 support across Hyderabad and Secunderabad. Online, Hindi or English.',
     hindi: 'Marks se zyada zaroori aap hain. &#128155;',
     pressure: `<h3>What the pressure looks like here</h3>
@@ -181,7 +181,7 @@ export const CITIES = [
     slug: 'mental-health-counselling-pune.html',
     heroCard: 'Around the second month it gets hard. Almost everyone feels it. Almost nobody says so.',
     city: 'Pune', region: 'IN-MH', state: 'Maharashtra',
-    careerPage: 'career-counselling-in-pune.html',
+    careerPage: 'online-career-counselling-india.html',
     lede: 'Every June this city fills up with students who have just left home for the first time. Private 1:1 support across Pune. Online, Hindi or English.',
     hindi: 'Ghar se door hona aasaan nahi hota. &#128155;',
     pressure: `<h3>What the pressure looks like here</h3>
@@ -208,7 +208,7 @@ export const CITIES = [
     slug: 'mental-health-counselling-jaipur.html',
     heroCard: '“This isn’t working and I don’t know if I should keep going.” You can say that here first.',
     city: 'Jaipur', region: 'IN-RJ', state: 'Rajasthan',
-    careerPage: 'career-counselling-in-jaipur.html',
+    careerPage: 'online-career-counselling-india.html',
     lede: 'A state where coaching is treated as the only route, and saying it isn\'t working is genuinely hard. Private 1:1 support across Jaipur and Rajasthan. Online, Hindi or English.',
     hindi: 'Ek exam aapki poori kahani nahi hai. &#128155;',
     pressure: `<h3>What the pressure looks like here</h3>
@@ -235,7 +235,7 @@ export const CITIES = [
     slug: 'mental-health-counselling-chandigarh.html',
     heroCard: 'No clinic, no corridor, nobody to see you walking in.',
     city: 'Chandigarh', region: 'IN-CH', state: 'Chandigarh, Punjab &amp; Haryana',
-    careerPage: 'career-counselling-in-chandigarh.html',
+    careerPage: 'online-career-counselling-india.html',
     lede: 'Small enough that word travels, and that being seen walking into a clinic puts people off going at all. Private 1:1 support across Chandigarh, Mohali and Panchkula. Online, Hindi or English.',
     hindi: 'Gal karn naal farak painda hai. &#128155;',
     pressure: `<h3>What the pressure looks like here</h3>
@@ -262,7 +262,7 @@ export const CITIES = [
     slug: 'mental-health-counselling-lucknow.html',
     heroCard: 'Years of waiting with no news is a hard thing to sit inside. It helps to say so out loud.',
     city: 'Lucknow', region: 'IN-UP', state: 'Uttar Pradesh',
-    careerPage: 'career-counselling-in-lucknow.html',
+    careerPage: 'online-career-counselling-india.html',
     lede: 'A government-exam city, where preparing can stretch across years and the waiting becomes its own weight. Private 1:1 support across Lucknow and UP. Online, Hindi or English.',
     hindi: 'Intezaar lamba ho sakta hai, akela nahi hona chahiye. &#128155;',
     pressure: `<h3>What the pressure looks like here</h3>
