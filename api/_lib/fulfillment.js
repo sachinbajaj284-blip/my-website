@@ -26,7 +26,7 @@ const { notifyOwner } = require("./notify");
 // so the owner knows not to chase them for a date and time.
 // intro-session is retired and can no longer be bought, but orders placed
 // while it was on sale are still fulfilled here and must still resolve.
-const BOOKING_SKUS = new Set(["intro-session", "wellness-session", "career-direction-session", "stream-clarity-session", "industry-expert-session"]);
+const BOOKING_SKUS = new Set(["intro-session", "wellness-session", "senior-clinician-session", "career-direction-session", "stream-clarity-session", "industry-expert-session", "career-clarity-pack", "complete-clarity-program", "mental-health-support-plan"]);
 
 // Reads the fields fulfilment needs out of a Cashfree order object — the
 // shape /pg/orders/{id} returns. Both callers hand us that same shape, so
