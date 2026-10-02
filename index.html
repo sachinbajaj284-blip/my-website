@@ -771,16 +771,12 @@ body>section{overflow-x:clip}
         catalogue and removes it entirely if the offer has been paused.
         Tapping the code copies it and pre-fills the checkout field.
       -->
-      <div data-lume-coupon-badge="FIRST50"
-           data-lume-coupon-eyebrow="First session offer"
-           data-lume-coupon-headline="50% off your first wellness session"
-           data-lume-coupon-description="A 1:1 hour with a qualified counsellor (M.Sc Clinical Psychology). Tap the code, use it at checkout."
-           data-lume-coupon-base="499"
-           data-lume-coupon-final="249"></div>
+      <!-- first-session coupon badge removed: the ₹249 FIRST50 offer is mental-health only -->
+      <div class="hero-trust-chip">✓ Transparent pricing &middot; No compulsory packages &middot; Qualified counsellors</div>
       <div class="hero-btns">
         <a href="#" class="btn-book-secondary" onclick="openModal('session');return false;">
-          <span class="btn-book-main">Book Your First 1:1 Session <span class="btn-price">&#8377;249</span></span>
-          <span class="btn-book-sub">A low-cost first step &middot; Qualified counsellor</span>
+          <span class="btn-book-main">Book Your First 1:1 Session <span class="btn-price">&#8377;499</span></span>
+          <span class="btn-book-sub">A focused first step &middot; Qualified counsellor</span>
         </a>
         <a href="#services" class="btn-ghost btn-ghost-pro">Explore Services</a>
       </div>
@@ -1041,6 +1037,7 @@ body>section{overflow-x:clip}
   .co-note{font-size:.74rem;color:#637083;margin-top:10px;line-height:1.5}
   @media(max-width:920px){.cl-grid{grid-template-columns:1fr}.cl-section.cl-anim .cl-plan{opacity:1;transform:none}}
   @media(prefers-reduced-motion:reduce){.cl-section.cl-anim .cl-plan{opacity:1;transform:none;transition:none}.cl-badge{animation:none}.cl-plan:hover{transform:none}}
+  .hero-trust-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(201,147,58,.14);border:1px solid rgba(201,147,58,.4);color:var(--gold2);font-size:.72rem;font-weight:800;letter-spacing:.03em;padding:7px 14px;border-radius:999px;margin-bottom:10px}
 </style>
 <section id="clarity-ladder" class="cl-section" aria-label="Lume Live Clarity Ladder plans">
   <div class="cl-wrap">
@@ -2731,7 +2728,7 @@ body>section{overflow-x:clip}
   ₹49 "intro-session" they used to point at is retired; FIRST50 is the
   first-session offer now, and it applies to both.
 */
-SESSION_PLANS={"career-intro":{sku:"wellness-session",amount:499,regular:null,title:"Book Your Career Counselling Session",sub:"Stream, course and career direction · Online across India",detail:"1:1 counselling session · 45 minutes",label:"1:1 Counselling Session",offer:!1,suggestCoupon:"FIRST50"},intro:{sku:"wellness-session",amount:499,regular:null,title:"Book Your First 1:1 Session",sub:"For parents, students & families · Online across India",detail:"1:1 counselling session · 45 minutes",label:"1:1 Counselling Session",offer:!1,suggestCoupon:"FIRST50"},wellness:{sku:"wellness-session",amount:499,regular:null,title:"Book Your Emotional Wellness Session",sub:"1:1 confidential support · Online across India",detail:"1:1 counselling session · 45 minutes",label:"1:1 Counselling Session",offer:!1,suggestCoupon:"FIRST50"},"stream-clarity":{sku:"stream-clarity-session",amount:999,regular:null,returnUrl:"https://lumelive.co.in/payment-return.html?order_id={order_id}&sku=stream-clarity-session&continue=%2Fassessment.html%23self-assessments",continueUrl:"assessment.html#self-assessments",title:"Book Your Stream Clarity Session",sub:"For parents of Grade 9–12 students · Online across India",detail:"Career Confusion & Stream Clarity session",label:"Career Confusion & Stream Clarity Session",offer:!1},"career-direction":{sku:"career-direction-session",amount:1499,regular:null,title:"Book Your Career Direction Session",sub:"For older students & young adults · Online across India",detail:"Career Direction & First-Job Readiness session",label:"Career Direction & First-Job Readiness Session",offer:!1}},currentSessionPlan=SESSION_PLANS.intro;function fmtINR(e){return"₹"+Number(e||0).toLocaleString("en-IN")}/*
+SESSION_PLANS={"career-intro":{sku:"wellness-session",amount:499,regular:null,title:"Book Your Career Counselling Session",sub:"Stream, course and career direction · Online across India",detail:"1:1 counselling session · 45 minutes",label:"1:1 Counselling Session",offer:!1,suggestCoupon:""},intro:{sku:"wellness-session",amount:499,regular:null,title:"Book Your First 1:1 Session",sub:"For parents, students & families · Online across India",detail:"1:1 counselling session · 45 minutes",label:"1:1 Counselling Session",offer:!1,suggestCoupon:""},wellness:{sku:"wellness-session",amount:499,regular:null,title:"Book Your Emotional Wellness Session",sub:"1:1 confidential support · Online across India",detail:"1:1 counselling session · 45 minutes",label:"1:1 Counselling Session",offer:!1,suggestCoupon:"FIRST50"},"stream-clarity":{sku:"stream-clarity-session",amount:999,regular:null,returnUrl:"https://lumelive.co.in/payment-return.html?order_id={order_id}&sku=stream-clarity-session&continue=%2Fassessment.html%23self-assessments",continueUrl:"assessment.html#self-assessments",title:"Book Your Stream Clarity Session",sub:"For parents of Grade 9–12 students · Online across India",detail:"Career Confusion & Stream Clarity session",label:"Career Confusion & Stream Clarity Session",offer:!1},"career-direction":{sku:"career-direction-session",amount:1499,regular:null,title:"Book Your Career Direction Session",sub:"For older students & young adults · Online across India",detail:"Career Direction & First-Job Readiness session",label:"Career Direction & First-Job Readiness Session",offer:!1}},currentSessionPlan=SESSION_PLANS.intro;function fmtINR(e){return"₹"+Number(e||0).toLocaleString("en-IN")}/*
   Coupons on the session modal.
 
   sessionCoupon holds the widget mounted into #sessCoupon by
