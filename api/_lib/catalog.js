@@ -33,11 +33,33 @@ const SKU_PRICES = {
     entitlement, and those paths must keep resolving it.
   */
   "wellness-session": { amount: 499, label: "1:1 Counselling Session", alias: "session499" },
+  /*
+    Optional senior-clinician 1:1 — the same 45 minutes as wellness-session
+    but with a senior counsellor, priced higher so visitors who read price
+    as a quality signal have a tier to choose. Still a booking SKU: the
+    client picks their own slot after paying.
+  */
+  "senior-clinician-session": { amount: 1099, label: "Senior Clinician 1:1 Session", alias: "senior1099" },
+  /*
+    Bundled offers — "The Clarity Ladder". These are sold once at a single
+    price here; what a visitor sees as the "regular / separate" number is
+    page copy only (the anchor), never a second charge. Fulfilment treats
+    the session-bearing packs as booking SKUs so the client picks their own
+    slots and the owner is told to expect the bundled number of sessions.
+  */
+  "career-clarity-pack": { amount: 2499, label: "Career Clarity Pack (Full Report + 2 Sessions + Roadmap)", alias: "claritypack2499" },
+  "complete-clarity-program": { amount: 4499, label: "Complete Clarity Program (Report + 4 Sessions + Roadmap + 30-day Follow-up)", alias: "complete4499" },
+  "mental-health-support-plan": { amount: 1799, label: "Mental Health 4-Session Support Plan", alias: "mhplan1799" },
   // Internship tracks are sold in supervised hours. The SKU keys are kept as-is
   // so orders placed before the hours-based relaunch still resolve.
   "internship-1-month": { amount: 3499, label: "Practitioner Foundations (60 supervised hours)", alias: "intern60h3499" },
   "internship-2-month": { amount: 5999, label: "Advanced Fellowship (120 supervised hours)", alias: "intern120h5999" },
   "internship-240-hour": { amount: 11999, label: "University Credit Track (240 supervised hours)", alias: "intern240h11999" },
+  // Optional low-cost entry to the internship ladder: an observership plus a
+  // certificate, priced to compete with ₹2,000–2,500 rivals and funnel up to
+  // the supervised tracks. Seat confirmed after a screening call, like the
+  // other internship SKUs — not a self-booking calendar product.
+  "internship-observership": { amount: 1999, label: "Observership + Certificate", alias: "observe1999" },
   /*
     Premium upgrade offered on the assessment checkout: a 1:1 hour with
     Dheeraj Ghughtyal (Founder's Office Head, CoverYou) on top of the
