@@ -884,25 +884,6 @@ body>section{overflow-x:clip}
       <p class="s-sub" style="margin:0 auto;">Structured support that meets students, families and professionals exactly where they are.</p>
     </div>
     <div class="svc-grid">
-      <a class="svc-card anim stagger-1" href="services-pricing.html#clarity-ladder" aria-label="Career Clarity Pack — best-value bundle" style="position:relative;border:2px solid #C9933A;box-shadow:0 20px 48px rgba(201,147,58,.22)">
-        <span style="position:absolute;top:-13px;left:50%;transform:translateX(-50%);white-space:nowrap;background:linear-gradient(135deg,#C9933A,#E8B95A);color:#0D1B40;font-size:.66rem;font-weight:900;letter-spacing:.09em;text-transform:uppercase;padding:7px 16px;border-radius:999px;box-shadow:0 8px 18px rgba(201,147,58,.35);z-index:3">★ Most Popular · Best Value</span>
-        <div class="svc-head">
-          <span class="chip chip-live">✅ Best Value Bundle</span>
-          <div class="svc-icon">🧭</div>
-          <div class="svc-for">For Students &amp; Families</div>
-          <div class="svc-name">Career Clarity Pack</div>
-        </div>
-        <div class="svc-body">
-          <ul class="svc-bullets">
-            <li>Full Clarity Report — the complete 4-part psychometric profile (₹999 value)</li>
-            <li>2 × 1:1 live sessions with a qualified counsellor</li>
-            <li>Detailed Career Roadmap for your chosen direction (₹1,499 value)</li>
-            <li>Pick your own slots — video, voice or chat</li>
-          </ul>
-          <div class="svc-price"><span class="cap" style="text-decoration:line-through;opacity:.7">₹3,497</span> <span class="amt">₹2,499</span> <span class="cap">save ₹998</span></div>
-          <button class="svc-cta gold" type="button">Get the Clarity Pack <span class="arr">→</span></button>
-        </div>
-      </a>
       <div class="svc-card hs anim stagger-1" onclick="openSessionModal('stream-clarity')">
         <div class="svc-head">
           <span class="chip chip-live">✅ Live Now</span>
@@ -1003,6 +984,214 @@ body>section{overflow-x:clip}
   </div>
 </section>
 
+
+<!-- ══════════ THE CLARITY LADDER — PLANS ══════════ -->
+<style>
+  .cl-section{padding:54px 20px;background:linear-gradient(180deg,#fff, #F8F5EF)}
+  .cl-wrap{max-width:1120px;margin:0 auto}
+  .cl-eyebrow{display:inline-flex;border:1px solid rgba(201,147,58,.42);border-radius:999px;padding:6px 12px;color:#A8741F;font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px}
+  .cl-title{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,4vw,2.8rem);color:var(--navy);line-height:1.1;margin:0 0 8px}
+  .cl-lead{color:#637083;font-size:.98rem;margin:0 auto 26px;line-height:1.6}
+  .cl-lead strong{color:var(--teal)}
+  .cl-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:stretch}
+  .cl-plan{position:relative;background:#fff;border:1px solid #E8E1D6;border-radius:18px;padding:24px 22px;display:flex;flex-direction:column;gap:12px;box-shadow:0 2px 14px rgba(13,27,64,.05);transition:transform .25s,box-shadow .25s,border-color .25s}
+  .cl-plan:hover{transform:translateY(-4px);box-shadow:0 22px 46px rgba(13,27,64,.12)}
+  .cl-plan.cl-feat{border:2px solid var(--gold);box-shadow:0 20px 48px rgba(201,147,58,.22)}
+  .cl-badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);white-space:nowrap;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-size:.66rem;font-weight:900;letter-spacing:.09em;text-transform:uppercase;padding:7px 16px;border-radius:999px;box-shadow:0 8px 18px rgba(201,147,58,.35)}
+  .cl-name{font-size:1.08rem;font-weight:900;color:var(--navy);line-height:1.3;margin:0}
+  .cl-tag{align-self:flex-start;border-radius:999px;padding:5px 10px;background:#EFF7F6;color:var(--teal);font-size:.62rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em}
+  .cl-plan.cl-feat .cl-tag{background:#FFF4E0;color:#A8741F}
+  .cl-price{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .cl-was{color:#637083;text-decoration:line-through;font-size:1.05rem;font-weight:700}
+  .cl-now{font-size:2rem;font-weight:900;color:var(--gold);line-height:1}
+  .cl-save{display:inline-block;background:#E4F5EE;color:var(--green);font-size:.72rem;font-weight:900;padding:4px 9px;border-radius:999px}
+  .cl-perse{color:#637083;font-size:.78rem;margin:-4px 0 0}
+  .cl-perse b{color:#16213E}
+  .cl-plan ul{list-style:none;padding-left:0;display:grid;gap:7px;margin:2px 0}
+  .cl-plan ul li{position:relative;padding-left:24px;font-size:.87rem;color:#39475B}
+  .cl-plan ul li::before{content:"";position:absolute;left:0;top:.35em;width:16px;height:16px;border-radius:50%;background:#E6F4F3 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.2 2.2 4.8-4.8' fill='none' stroke='%230A6E6E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/11px no-repeat}
+  .cl-cta{margin-top:auto;display:inline-flex;justify-content:center;border:0;border-radius:999px;padding:12px 14px;background:var(--teal);color:#fff;font-size:.82rem;font-weight:800;text-align:center;cursor:pointer;transition:filter .2s,transform .2s}
+  .cl-cta:hover{filter:brightness(1.1);transform:translateY(-1px)}
+  .cl-plan.cl-feat .cl-cta{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy)}
+  .cl-ghost{display:inline-flex;justify-content:center;border-radius:999px;padding:12px 14px;border:1.5px solid var(--teal);color:var(--teal);background:#fff;font-size:.82rem;font-weight:800;text-align:center;margin-top:auto;text-decoration:none;transition:background .2s}
+  .cl-ghost:hover{background:#EFF7F6}
+  .cl-band{margin-top:24px}
+  .cl-trust{margin:18px 0 0;display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+  .cl-trust span{background:#fff;border:1px solid #E2EFED;border-radius:999px;padding:8px 14px;font-size:.8rem;font-weight:700;color:var(--teal)}
+  .co-overlay{position:fixed;inset:0;background:rgba(13,27,64,.55);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px}
+  .co-overlay.active{display:flex}
+  .co-modal{background:#fff;border-radius:18px;max-width:420px;width:100%;padding:24px;box-shadow:0 30px 70px rgba(13,27,64,.35);max-height:92vh;overflow:auto}
+  .co-modal h3{font-family:'Playfair Display',serif;color:var(--navy);font-size:1.3rem;margin:0 0 4px}
+  .co-modal .co-price{color:var(--gold);font-weight:900;font-size:1.05rem;margin-bottom:14px}
+  .co-input,.co-select{width:100%;border:1px solid #E8E1D6;border-radius:10px;padding:11px 12px;font:inherit;font-size:.9rem;margin-bottom:10px;color:#16213E}
+  .co-pay{width:100%;border:0;border-radius:999px;padding:13px;background:var(--gold);color:#fff;font-weight:800;font-size:.92rem;cursor:pointer;margin-top:4px}
+  .co-pay:hover{filter:brightness(1.08)}
+  .co-close{float:right;border:0;background:none;font-size:1.4rem;line-height:1;color:#637083;cursor:pointer}
+  .co-note{font-size:.74rem;color:#637083;margin-top:10px;line-height:1.5}
+  @media(max-width:920px){.cl-grid{grid-template-columns:1fr}}
+</style>
+<section id="clarity-ladder" class="cl-section" aria-label="Lume Live Clarity Ladder plans">
+  <div class="cl-wrap">
+    <div style="text-align:center;max-width:640px;margin:0 auto">
+      <span class="cl-eyebrow">Plans &amp; Pricing</span>
+      <h2 class="cl-title">The Clarity Ladder</h2>
+      <p class="cl-lead">Start free, try a session for ₹249, or save with a bundle. Every price is published and nothing is compulsory. <strong>Buy any Clarity Pack and your psychometric assessment unlocks instantly.</strong></p>
+    </div>
+    <div class="cl-grid">
+      <article class="cl-plan">
+        <span class="cl-tag">Starter</span>
+        <h3 class="cl-name">Full Clarity Report</h3>
+        <div class="cl-price"><span class="cl-now">₹999</span></div>
+        <p class="cl-perse">Self-serve psychometric report — the honest first step.</p>
+        <ul>
+          <li>4-part career clarity report (interests, personality, values, learning style)</li>
+          <li>Instant report view + PDF download</li>
+          <li>Great before a counselling session</li>
+        </ul>
+        <a class="cl-ghost" href="assessment.html#self-assessments">Start the Report</a>
+      </article>
+      <article class="cl-plan cl-feat">
+        <span class="cl-badge">★ Most Popular · Best Value</span>
+        <span class="cl-tag">Career Clarity Pack</span>
+        <h3 class="cl-name">Report + 2 Sessions + Roadmap</h3>
+        <div class="cl-price"><span class="cl-was">₹3,497</span><span class="cl-now">₹2,499</span></div>
+        <div><span class="cl-save">You save ₹998 (28%)</span></div>
+        <p class="cl-perse">Live sessions work out to <b>₹750 each</b> inside this pack.</p>
+        <ul>
+          <li>Full Clarity Report — psychometric assessment unlocks instantly (₹999 value)</li>
+          <li>2 × 1:1 live sessions with a qualified counsellor</li>
+          <li>Detailed Career Roadmap (₹1,499 value)</li>
+          <li>Pick your own slots — video, voice or chat</li>
+        </ul>
+        <button type="button" class="cl-cta" onclick="buyPack('career-clarity-pack',2499,'Career Clarity Pack',true)">Choose Clarity Pack</button>
+      </article>
+      <article class="cl-plan">
+        <span class="cl-tag">Complete</span>
+        <h3 class="cl-name">Complete Clarity Program</h3>
+        <div class="cl-price"><span class="cl-was">₹5,995</span><span class="cl-now">₹4,499</span></div>
+        <div><span class="cl-save">You save ₹1,496 (25%)</span></div>
+        <p class="cl-perse">Four live sessions at <b>₹625 each</b> + a month of follow-up.</p>
+        <ul>
+          <li>Everything in the Clarity Pack (assessment unlocks instantly)</li>
+          <li>4 × 1:1 live sessions (not 2)</li>
+          <li>30-day follow-up support</li>
+          <li>Best for a full decision journey</li>
+        </ul>
+        <button type="button" class="cl-cta" onclick="buyPack('complete-clarity-program',4499,'Complete Clarity Program',true)">Choose Complete</button>
+      </article>
+    </div>
+    <div class="cl-band">
+      <div style="text-align:center;max-width:640px;margin:0 auto 14px">
+        <h3 class="cl-title" style="font-size:clamp(1.4rem,3vw,1.9rem)">Mental-health sessions</h3>
+        <p class="cl-lead" style="margin-bottom:0">Confidential 1:1 support with a counsellor qualified in clinical psychology.</p>
+      </div>
+      <div class="cl-grid">
+        <article class="cl-plan">
+          <span class="cl-tag">Single</span>
+          <h3 class="cl-name">1:1 Session</h3>
+          <div class="cl-price"><span class="cl-was">₹499</span><span class="cl-now">₹249</span></div>
+          <div><span class="cl-save">First session with code FIRST50</span></div>
+          <p class="cl-perse">45 minutes · regular ₹499 after the first.</p>
+          <ul>
+            <li>Exam stress, anxiety, low mood, burnout, relationships</li>
+            <li>Completely confidential — book with a first name only</li>
+            <li>Video, voice or chat, across India</li>
+          </ul>
+          <a class="cl-ghost" href="book-session.html">Book a Session</a>
+        </article>
+        <article class="cl-plan cl-feat">
+          <span class="cl-badge">★ Best Value</span>
+          <span class="cl-tag">4-Session Plan</span>
+          <h3 class="cl-name">Support Plan</h3>
+          <div class="cl-price"><span class="cl-was">₹1,996</span><span class="cl-now">₹1,799</span></div>
+          <p class="cl-perse"><b>₹450 per session</b> — vs ₹1,000–2,500 elsewhere.</p>
+          <ul>
+            <li>4 × 45-minute 1:1 sessions</li>
+            <li>Continuity with the same counsellor</li>
+            <li>Best for real, short-term change</li>
+          </ul>
+          <button type="button" class="cl-cta" onclick="buyPack('mental-health-support-plan',1799,'Mental Health 4-Session Support Plan',true)">Start the Plan</button>
+        </article>
+        <article class="cl-plan">
+          <span class="cl-tag">Senior Clinician</span>
+          <h3 class="cl-name">Senior 1:1 Session</h3>
+          <div class="cl-price"><span class="cl-now">₹1,099</span></div>
+          <p class="cl-perse">45 minutes with a senior counsellor.</p>
+          <ul>
+            <li>For complex or in-depth concerns</li>
+            <li>Same confidentiality and flexible format</li>
+            <li>Still less than the market single-session rate</li>
+          </ul>
+          <button type="button" class="cl-cta" onclick="buyPack('senior-clinician-session',1099,'Senior Clinician 1:1 Session',true)">Book Senior Session</button>
+        </article>
+      </div>
+    </div>
+    <div class="cl-trust">
+      <span>✓ No compulsory packages</span>
+      <span>✓ Every price published</span>
+      <span>✓ Refund &amp; cancellation policy</span>
+      <span>✓ Qualified counsellors, not a sales call</span>
+    </div>
+    <div style="text-align:center;margin-top:16px">
+      <a class="cl-ghost" href="services-pricing.html#clarity-ladder" style="display:inline-flex">See full services &amp; pricing →</a>
+    </div>
+  </div>
+</section>
+
+<!-- Shared checkout modal for Clarity Ladder plans -->
+<div class="co-overlay" id="coOverlay" role="dialog" aria-modal="true" aria-labelledby="coTitle">
+  <div class="co-modal">
+    <button type="button" class="co-close" aria-label="Close" onclick="closeCheckout()">&times;</button>
+    <h3 id="coTitle">Complete your booking</h3>
+    <div class="co-price" id="coPrice"></div>
+    <input class="co-input" id="coName" type="text" maxlength="60" placeholder="Your full name" autocomplete="name">
+    <input class="co-input" id="coEmail" type="email" maxlength="80" placeholder="Email address" autocomplete="email">
+    <input class="co-input" id="coPhone" type="tel" maxlength="15" inputmode="numeric" placeholder="WhatsApp / phone number" autocomplete="tel">
+    <select class="co-select" id="coMode" aria-label="Preferred session format">
+      <option value="Video call">Video call</option>
+      <option value="Voice call">Voice call</option>
+      <option value="Chat (WhatsApp)">Chat (WhatsApp)</option>
+    </select>
+    <button type="button" class="co-pay" id="coPay">Pay securely with Cashfree</button>
+    <p class="co-note">After payment you'll pick your own session slot(s) on our live calendar, and any Clarity Pack unlocks your psychometric assessment instantly. Secure checkout by Cashfree · covered by our refund &amp; cancellation policy.</p>
+  </div>
+</div>
+<script>
+(function(){
+  "use strict";
+  var active = { sku:"", amount:0, label:"", isSession:false };
+  var overlay = document.getElementById("coOverlay");
+  function v(id){ var el = document.getElementById(id); return el ? el.value.trim() : ""; }
+  function inr(n){ return "₹" + Number(n||0).toLocaleString("en-IN"); }
+  window.buyPack = function(sku, amount, label, isSession){
+    active = { sku:sku, amount:amount, label:label, isSession:!!isSession };
+    document.getElementById("coTitle").textContent = label;
+    document.getElementById("coPrice").textContent = inr(amount);
+    var modeEl = document.getElementById("coMode");
+    if(modeEl){ modeEl.style.display = isSession ? "" : "none"; }
+    overlay.classList.add("active");
+    document.body.style.overflow = "hidden";
+    var n = document.getElementById("coName"); if(n){ n.focus(); }
+  };
+  window.closeCheckout = function(){
+    overlay.classList.remove("active");
+    document.body.style.overflow = "";
+  };
+  overlay.addEventListener("click", function(e){ if(e.target === overlay){ window.closeCheckout(); } });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape"){ window.closeCheckout(); } });
+  document.getElementById("coPay").addEventListener("click", function(){
+    var name = v("coName"), phone = v("coPhone"), email = v("coEmail");
+    if(!name || !phone){ alert("Please add your name and phone number so we can confirm your booking."); return; }
+    if(typeof window.lumeCashfreePay !== "function"){
+      alert("Checkout is still loading. Please wait a few seconds and tap Pay again."); return;
+    }
+    var opts = { sku:active.sku, amount:active.amount, label:active.label,
+      customerName:name, customerPhone:phone, customerEmail:email };
+    if(active.isSession){ opts.notes = { sessionMode: v("coMode") }; }
+    window.lumeCashfreePay(opts);
+  });
+})();
+</script>
 
 <!-- ══════════ MOST AFFORDABLE SESSIONS IN INDIA ══════════ -->
 
