@@ -38,6 +38,7 @@ const PAGES = {
   'mental-health-counselling-lucknow':                { eyebrow: 'Mental Health · Lucknow', title: "Confidential Counselling In Lucknow" },
   'mental-health-counselling-rohtak':                 { eyebrow: 'Mental Health · Rohtak', title: "Confidential Counselling In Rohtak" },
   'student-mental-health-india':                      { eyebrow: 'Student Guide', title: "Student Mental Health In India" },
+  'mental-health-calendar':                           { eyebrow: 'Mental Health · All Year', title: "The Mental Health Awareness Calendar" },
   'wellbeing-check':                                  { eyebrow: 'Free Self-Checks', title: "Seven Free, Private Mental Health Checks" },
   'free-anxiety-test':                                { eyebrow: 'Free Self-Check', title: "Free Anxiety Test, In Three Minutes" },
   'free-depression-test':                             { eyebrow: 'Free Self-Check', title: "Free Low Mood Check, In Two Minutes" },

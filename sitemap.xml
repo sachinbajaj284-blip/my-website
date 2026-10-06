@@ -318,7 +318,7 @@
   </url>
   <url>
     <loc>https://lumelive.co.in/</loc>
-    <lastmod>2026-10-02</lastmod>
+    <lastmod>2026-10-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en-in" href="https://lumelive.co.in/"/>
@@ -364,6 +364,12 @@
   <url>
     <loc>https://lumelive.co.in/lawyer-vs-civil-services.html</loc>
     <lastmod>2026-10-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lumelive.co.in/mental-health-calendar.html</loc>
+    <lastmod>2026-10-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

@@ -595,6 +595,7 @@ body>section{overflow-x:clip}
           <li><a href="#gallery">Sessions</a></li>
           <li><a href="assessment.html#self-assessments">Full Clarity Report</a></li>
           <li><a href="#emotional-wellbeing">Emotional Wellbeing</a></li>
+          <li><a href="mental-health-calendar.html">Mental Health Calendar</a></li>
           <li><a href="#faq">FAQ</a></li>
           <li><a href="#testimonials">Reviews</a></li>
           <li><a href="#questionnaire">Enquire</a></li>
@@ -626,6 +627,7 @@ body>section{overflow-x:clip}
   <a href="#gallery" onclick="closeMob()">📸 Sessions Gallery</a>
   <a href="assessment.html#self-assessments" onclick="closeMob()">🧭 Full Clarity Report</a>
   <a href="#emotional-wellbeing" onclick="closeMob()">🧠 Emotional Wellbeing</a>
+  <a href="mental-health-calendar.html" onclick="closeMob()">🗓️ Mental Health Calendar</a>
   <a href="#faq" onclick="closeMob()">❓ FAQ</a>
   <a href="#testimonials" onclick="closeMob()">⭐ Client Reviews</a>
   <a href="#questionnaire" onclick="closeMob()">📋 Support Enquiry</a>
@@ -787,6 +789,17 @@ body>section{overflow-x:clip}
         <div class="quote">"Helping People See Clearly Before They Choose"</div>
       </div>
       <div class="hero-live"><div class="dot"></div><span>Wellness Sessions Live Now</span></div>
+    </div>
+  </div>
+</section>
+<!-- MENTAL HEALTH AWARENESS BAND (auto-updates to today's observance; content in mh-calendar-data.js) -->
+<section id="mh-today" class="mh-band" aria-live="polite" aria-label="Mental health awareness today">
+  <div class="mh-band-inner">
+    <div class="mh-band-body">
+      <p class="mh-band-lines">A year-round mental health awareness calendar — psychoeducation for students, parents and professionals.</p>
+      <div class="mh-band-actions">
+        <a class="mh-band-more" href="mental-health-calendar.html">View the mental health calendar &rarr;</a>
+      </div>
     </div>
   </div>
 </section>
@@ -2375,6 +2388,7 @@ body>section{overflow-x:clip}
         <h4>Company</h4>
         <a href="refer.html">Refer a Friend &mdash; Earn &#8377;50</a>
         <a href="career-library.html">Career Library</a>
+        <a href="mental-health-calendar.html">Mental Health Calendar</a>
         <a href="partner-with-us.html">Partner With Us</a>
         <a href="#gallery">Sessions Gallery</a>
         <a href="#faq">FAQ</a>
@@ -3112,6 +3126,8 @@ function openModal(e){"session"===e?openSessionModal("intro"):(document.getEleme
 <script src="lume-auth.js" defer></script>
 <script src="lume-referral.js" defer></script>
 <script src="cashfree-payments.js" defer></script>
+<script src="mh-calendar-data.js" defer></script>
+<script src="lume-mh-calendar.js" defer></script>
 <script>!function(){"use strict";
 var bar=document.createElement("div");bar.id="scrollProgress";document.body.appendChild(bar);
 var ticking=!1;function updBar(){var h=document.documentElement.scrollHeight-window.innerHeight;bar.style.transform="scaleX("+(h>0?Math.min(1,window.scrollY/h):0)+")";ticking=!1}

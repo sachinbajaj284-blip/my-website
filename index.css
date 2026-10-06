@@ -2192,3 +2192,27 @@ a, button, [role="button"] { -webkit-tap-highlight-color: rgba(0,0,0,.06); }
 .footer-seo a{color:rgba(232,185,90,.9);text-decoration:underline;text-decoration-color:rgba(232,185,90,.35);text-underline-offset:2px;}
 .footer-seo a:hover{color:#fff;}
 @media(max-width:560px){.ewb-why-grid{gap:12px;}.ewb-cta{padding:40px 20px;border-radius:20px;}}
+
+/* ══════════ MENTAL HEALTH AWARENESS BAND (homepage, below hero) ══════════ */
+/* Auto-filled by lume-mh-calendar.js from mh-calendar-data.js. The markup in
+   index.html is a no-JS fallback; JS replaces it with today's observance. */
+.mh-band{padding:30px 20px;background:linear-gradient(135deg,#0D1B40 0%,#142C5A 60%,#0A6E6E 100%);position:relative;overflow:hidden;}
+.mh-band::after{content:"";position:absolute;inset:0;background:radial-gradient(60% 90% at 100% 0%,rgba(201,147,58,.22),transparent 60%);pointer-events:none;}
+.mh-band-inner{position:relative;z-index:1;max-width:1180px;margin:0 auto;display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:start;}
+.mh-band-left{display:flex;flex-direction:column;gap:8px;align-items:flex-start;padding-top:2px;}
+.mh-band-chip{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#C9933A,#E8B95A);color:#0D1B40;border-radius:999px;padding:7px 14px;font-size:.72rem;font-weight:900;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap;box-shadow:0 4px 14px rgba(201,147,58,.28);}
+.mh-band-body{min-width:0;}
+.mh-band-title{font-family:'Playfair Display',Georgia,serif;color:#fff;font-size:clamp(1.3rem,2.6vw,1.9rem);line-height:1.2;margin:0 0 8px;}
+.mh-band-lines{color:rgba(255,255,255,.86);font-size:.96rem;line-height:1.6;margin:0 0 6px;max-width:760px;}
+.mh-band-hindi{color:#FFE2A3;font-size:.9rem;font-weight:700;margin:0 0 8px;}
+.mh-band-actions{display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin-top:14px;}
+.mh-band-cta{display:inline-flex;align-items:center;justify-content:center;background:#fff;color:#0D1B40;border-radius:12px;padding:12px 22px;font-size:.9rem;font-weight:800;text-decoration:none;transition:transform var(--dur-fast,.18s) var(--ease,ease),box-shadow var(--dur-fast,.18s) ease;box-shadow:0 6px 18px rgba(0,0,0,.18);}
+.mh-band-cta:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(0,0,0,.26);}
+.mh-band-more{color:#E8B95A;font-size:.86rem;font-weight:800;text-decoration:none;}
+.mh-band-more:hover{color:#fff;text-decoration:underline;}
+.mh-band-crisis{margin:14px 0 0;color:rgba(255,255,255,.62);font-size:.76rem;line-height:1.5;}
+/* category chip, shared with the full calendar page via its own rules */
+.mh-band .mhc-cat{display:inline-flex;align-items:center;border-radius:999px;padding:5px 11px;font-size:.64rem;font-weight:900;letter-spacing:.5px;text-transform:uppercase;border:1px solid rgba(255,255,255,.3);color:#fff;background:rgba(255,255,255,.1);}
+@media(prefers-reduced-motion:reduce){.mh-band-cta{transition:none;}.mh-band-cta:hover{transform:none;}}
+@media(max-width:720px){.mh-band-inner{grid-template-columns:1fr;gap:12px;}.mh-band-left{flex-direction:row;flex-wrap:wrap;align-items:center;}}
+@media(max-width:560px){.mh-band{padding:24px 16px;}.mh-band-actions{gap:12px;}.mh-band-cta{width:100%;}}
