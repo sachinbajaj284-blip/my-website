@@ -13,6 +13,7 @@ import path from 'node:path';
 import { page, faqNode, crumbNode, toolNode, esc, CRISIS, ROOT, SITE } from './mh-pages.mjs';
 import { SCREENERS } from './mh-screeners.mjs';
 import { CITIES } from './mh-cities.mjs';
+import { CONDITIONS } from './mh-conditions.mjs';
 
 const HUB = 'mental-health-counselling.html';
 const CHECK = process.argv.includes('--check');
@@ -205,10 +206,130 @@ ${c.why.split('\n').map(l => '    ' + l.trim()).join('\n')}
   });
 }
 
+/* ── condition explainer pages ─────────────────────────────────────────── */
+// A MedicalWebPage "about" a MedicalCondition is the honest schema for a page that
+// explains a condition without claiming to diagnose or treat it.
+const conditionNode = c => ({
+  '@type': 'MedicalWebPage',
+  '@id': `${SITE}/${c.slug}#webpage`,
+  name: c.title.replace(/ \| Lume Live$/, ''),
+  url: `${SITE}/${c.slug}`,
+  description: c.desc,
+  inLanguage: 'en-IN',
+  about: { '@type': 'MedicalCondition', name: c.conditionName },
+  lastReviewed: '2026-10-06',
+  publisher: { '@type': 'Organization', name: 'Lume Live', url: `${SITE}/` },
+});
+
+const PRICE = `<p>A session is a private 1:1 conversation with Sachin Bajaj, who has an M.Sc in Clinical Psychology from Gurugram University and a PGDGC from Jamia Millia Islamia. It&rsquo;s <strong>&#8377;499 for 45 minutes, and &#8377;249 for your first</strong> with the code FIRST50.</p>
+    <p><strong>Nothing goes to your parents, school, college or employer.</strong> A first name is enough to book. For most people that turns out to matter more than the price.</p>`;
+
+const bookBox = (heading, blurb, waText) => `<div class="cta-box">
+      <h3>${heading}</h3>
+      <p>${blurb}</p>
+      <div class="cta-row">
+        <a class="btn" href="book-session.html">Pick a slot &rarr;</a>
+        <a class="btn wa" href="https://wa.me/917015671280?text=${encodeURIComponent(waText)}" target="_blank" rel="noopener">Ask on WhatsApp</a>
+      </div>
+    </div>`;
+
+function buildCondition(c) {
+  // Every condition page links to the other ones, so none hangs off a single link.
+  const others = CONDITIONS.filter(o => o.slug !== c.slug)
+    .map(o => `      <a href="${o.slug}">Understanding ${o.name} &rarr;</a>`)
+    .join('\n');
+
+  const related = [
+    c.screener,
+    ['wellbeing-check.html', 'All seven free self-checks'],
+    [HUB, 'Online mental health counselling in India'],
+    ['student-mental-health-india.html', 'Student mental health in India'],
+    ['for-parents.html', 'For parents: spotting the signs early'],
+    ['book-session.html', 'Book a &#8377;249 first session'],
+  ];
+
+  const body = `<h2>${c.whatH2}</h2>
+    ${c.what}
+
+    <div class="cta-box" id="check">
+      <h3>${c.checkBox.heading}</h3>
+      <p>${c.checkBox.blurb}</p>
+      <div class="cta-row"><button type="button" class="btn" data-ll-open="${c.check}">${c.checkLabel}</button></div>
+      <p class="ll-check-note" style="margin-top:14px">${c.checkBox.note}</p>
+    </div>
+
+    ${CRISIS}
+
+    <h2>Signs to look for</h2>
+    <p>${c.signsIntro}</p>
+    <div class="concerns">
+${c.signs.map(([ic, b, p]) => `      <div class="concern"><div class="ic">${ic}</div><b>${b}</b><p>${p}</p></div>`).join('\n')}
+    </div>
+
+    <h2>What causes it, and what keeps it going</h2>
+    ${c.causes}
+
+    <h2>What actually helps</h2>
+    <p>None of this replaces proper support, but all of it is worth doing while you decide:</p>
+    <ul>
+${c.helps.map(([lead, rest]) => `      <li><strong>${lead}</strong> ${rest}</li>`).join('\n')}
+    </ul>
+
+    <h2 id="support">When to get support</h2>
+    ${c.whenHelp}
+
+    <h2>Common myths, cleared up</h2>
+${c.myths.map(([m, t]) => `    <div class="faq-item"><h3>${m}</h3><p>${t}</p></div>`).join('\n')}
+
+    <h2 id="book">Talking to someone about it</h2>
+    <p>You don&rsquo;t need a diagnosis, a crisis or a tidy explanation to book a session. &ldquo;Something feels off and I can&rsquo;t explain it&rdquo; is a perfectly good place to start.</p>
+    ${PRICE}
+    ${bookBox(`Book a first session &mdash; &#8377;249`, 'One 45-minute conversation. Pick your own slot and get the invite immediately. Video, voice or chat &mdash; no package, no commitment to a course of treatment.', `Hello Lume Live! I would like to talk about ${c.conditionName.replace(/ \(.*\)/, '')}. 💛`)}
+
+    <div class="note">This page is general information, not medical advice, and nothing here is a diagnosis. Lume Live offers non-diagnostic counselling support &mdash; we don&rsquo;t diagnose conditions or prescribe medication. If what you&rsquo;re describing needs a psychiatrist, your counsellor will say so and help you find one.</div>
+
+    <h2>Other conditions, explained</h2>
+    <div class="related">
+${others}
+    </div>`;
+
+  return page({
+    slug: c.slug, title: c.title, desc: c.desc, keywords: c.keywords,
+    ogTitle: c.ogTitle, ogDesc: c.ogDesc,
+    graph: [
+      conditionNode(c),
+      crumbNode(c.slug, [
+        ['Home', `${SITE}/`],
+        ['Mental Health Counselling', `${SITE}/${HUB}`],
+        [`Understanding ${c.name.replace(/&amp;/g, '&')}`, `${SITE}/${c.slug}`],
+      ]),
+      faqNode(c.slug, c.faq),
+    ],
+    nav: [
+      ['index.html', 'Home'],
+      [HUB, 'Counselling'],
+      ['wellbeing-check.html', 'Free Checks'],
+      ['student-mental-health-india.html', 'Student Guide'],
+    ],
+    waNav: `Hello Lume Live! I&rsquo;d like to talk about ${c.conditionName.replace(/ \(.*\)/, '')}.`,
+    kicker: c.kicker, h1: c.h1, lede: c.lede, hindi: c.hindi,
+    heroCard: c.heroCard,
+    actions: [
+      `        <button type="button" class="btn" data-ll-open="${c.check}">${c.checkLabel}</button>`,
+      `        <a class="btn secondary" href="#book">Book a &#8377;249 first session</a>`,
+    ],
+    heroNote: 'This page is general information, not a diagnosis. Any self-check is anonymous and not stored &mdash; your answers never leave your browser.',
+    crumb: `<a href="index.html">Home</a> &rsaquo; <a href="${HUB}">Mental Health Counselling</a> &rsaquo; Understanding ${esc(c.name.replace(/&amp;/g, '&'))}`,
+    body, faq: c.faq, related,
+    stickyCheck: c.check,
+  });
+}
+
 /* ── write ─────────────────────────────────────────────────────────────── */
 const out = [
   ...SCREENERS.map(s => [s.slug, buildScreener(s)]),
   ...CITIES.map(c => [c.slug, buildCity(c)]),
+  ...CONDITIONS.map(c => [c.slug, buildCondition(c)]),
 ];
 
 let stale = 0, wrote = 0;
