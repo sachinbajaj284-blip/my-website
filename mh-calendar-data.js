@@ -50,7 +50,7 @@ window.LUME_MH_CALENDAR = {
     {
       id: 'board-exam-season',
       title: 'Board Exam Season',
-      start: '02-01', end: '03-15',
+      start: '02-01', end: '04-10',
       category: 'Exam stress',
       lines: "As boards approach, racing thoughts, poor sleep and irritability are common — this is a normal stress response, not a sign of weakness. Fixed sleep, short breaks and talking to someone protect focus far more than extra late-night hours. You are not your marks.",
       link: 'board-exam-stress-guide.html',
@@ -78,9 +78,9 @@ window.LUME_MH_CALENDAR = {
       hindi: ''
     },
     {
-      id: 'mental-health-awareness-month',
-      title: 'Mental Health Awareness Month',
-      start: '05-01', end: '05-14',
+      id: 'mental-health-awareness-week',
+      title: 'Mental Health Awareness Week',
+      start: '05-08', end: '05-14',
       category: 'Awareness',
       lines: "You don’t need a “diagnosis” to seek support. If you feel overwhelmed, stuck, or just need someone to listen, that is reason enough. Talking early is a strength, not a last resort.",
       link: 'mental-health-counselling.html',
@@ -108,11 +108,11 @@ window.LUME_MH_CALENDAR = {
       hindi: ''
     },
     {
-      id: 'back-to-school',
-      title: 'Back-to-School Reset',
+      id: 'new-college-session',
+      title: 'New College Session',
       start: '08-01', end: '08-20',
       category: 'Self-care',
-      lines: "A new term or college year can feel exciting and anxious at once — new people, new expectations, a new routine. Give yourself a few weeks to settle; you don’t have to have it all figured out on day one. If the nerves stay heavy, it’s okay to ask for support.",
+      lines: "Starting college can feel exciting and anxious at once — a new city, new people, living away from home and a workload nobody warned you about. Give yourself a few weeks to settle; everyone around you is finding their feet too, even when they hide it well. If the homesickness or nerves stay heavy, it’s okay to ask for support.",
       link: 'mental-health-counselling.html',
       linkText: 'Find support',
       hindi: ''
@@ -139,8 +139,8 @@ window.LUME_MH_CALENDAR = {
     },
     {
       id: 'stress-awareness',
-      title: 'Stress & Burnout Awareness',
-      start: '11-01', end: '11-20',
+      title: 'Stress & Burnout Awareness Week',
+      start: '11-01', end: '11-07',
       category: 'Awareness',
       lines: "Constant exhaustion, cynicism and feeling you can never catch up are signs of burnout, not of laziness. It builds quietly over weeks, so it is easy to miss until you crash. Naming it early makes it much easier to recover.",
       link: 'work-stress-burnout-test.html',
