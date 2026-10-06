@@ -48,6 +48,16 @@ window.LUME_MH_CALENDAR = {
       hindi: 'छोटी शुरुआत भी असली शुरुआत है — खुद पर थोड़ा नरम रहें।'
     },
     {
+      id: 'day-of-education',
+      title: 'International Day of Education',
+      start: '01-24', end: '01-24',
+      category: 'Awareness',
+      lines: "Learning is meant to open doors, not crush the person walking through them. Marks measure one kind of performance on one day — never your worth, your intelligence or your future. A rested, supported student learns more than one running on fear.",
+      link: 'student-mental-health-india.html',
+      linkText: 'Read: student mental health in India',
+      hindi: 'नंबर आपकी काबिलियत नहीं, सिर्फ एक दिन का हिसाब हैं।'
+    },
+    {
       id: 'board-exam-season',
       title: 'Board Exam Season',
       start: '02-01', end: '04-10',
@@ -66,6 +76,36 @@ window.LUME_MH_CALENDAR = {
       link: 'mental-health-counselling.html',
       linkText: 'See how counselling works',
       hindi: ''
+    },
+    {
+      id: 'day-of-happiness',
+      title: 'International Day of Happiness',
+      start: '03-20', end: '03-20',
+      category: 'Self-care',
+      lines: "Happiness isn’t a prize for finishing everything — it grows from small, ordinary moments: a walk, a real conversation, enough sleep. Chasing it by achievement alone tends to push it further away. Notice one good thing today, however small.",
+      link: 'wellbeing-check.html',
+      linkText: 'Take a wellbeing check',
+      hindi: 'खुशी बड़ी मंज़िल में नहीं, छोटे पलों में छिपी होती है।'
+    },
+    {
+      id: 'world-bipolar-day',
+      title: 'World Bipolar Day',
+      start: '03-30', end: '03-30',
+      category: 'Awareness',
+      lines: "Bipolar disorder is a real, treatable health condition — not a mood, a choice or a character flaw. With the right support, people living with it lead full, steady lives. Understanding it is the first step to replacing stigma with care.",
+      link: 'mental-health-counselling.html',
+      linkText: 'Talk to a counsellor',
+      hindi: 'सही मदद से ज़िंदगी फिर से संतुलित हो सकती है।'
+    },
+    {
+      id: 'autism-awareness-day',
+      title: 'World Autism Awareness Day',
+      start: '04-02', end: '04-02',
+      category: 'Awareness',
+      lines: "Autistic people experience the world differently, not wrongly. Acceptance means making room for different ways of communicating, focusing and feeling — at home, in school and at work. Understanding helps far more than trying to ‘fix’ anyone.",
+      link: 'mental-health-counselling.html',
+      linkText: 'See how counselling works',
+      hindi: 'हर दिमाग़ अलग है — और यह बिल्कुल ठीक है।'
     },
     {
       id: 'world-health-day',
@@ -98,6 +138,36 @@ window.LUME_MH_CALENDAR = {
       hindi: 'एक नंबर आपका भविष्य तय नहीं करता।'
     },
     {
+      id: 'day-of-yoga',
+      title: 'International Day of Yoga',
+      start: '06-21', end: '06-21',
+      category: 'Self-care',
+      lines: "Breath and movement are two of the simplest tools for a restless mind. A few minutes of slow breathing or gentle stretching can lower stress in the moment — no app or equipment needed. Calm is a skill you can practise, not a mood you wait for.",
+      link: 'wellbeing-check.html',
+      linkText: 'Take a wellbeing check',
+      hindi: 'कुछ गहरी साँसें भी मन को थोड़ा हल्का कर देती हैं।'
+    },
+    {
+      id: 'ptsd-awareness-day',
+      title: 'PTSD Awareness Day',
+      start: '06-27', end: '06-27',
+      category: 'Awareness',
+      lines: "After a frightening or painful event, the mind can stay on high alert — flashbacks, poor sleep, feeling constantly on edge. This is a normal response to trauma, and it is treatable. You don’t have to carry it alone or ‘just get over it’.",
+      link: 'mental-health-counselling.html',
+      linkText: 'Talk to a counsellor',
+      hindi: 'मुश्किल अनुभव के बाद डर महसूस होना सामान्य है — मदद मौजूद है।'
+    },
+    {
+      id: 'youth-skills-day',
+      title: 'World Youth Skills Day',
+      start: '07-15', end: '07-15',
+      category: 'Awareness',
+      lines: "Not knowing your path yet is normal — skills and direction are built over time, not found overnight. Comparison with others your age is the fastest way to feel behind. Focus on your next small step, and ask for guidance when the future feels foggy.",
+      link: 'mental-health-counselling.html',
+      linkText: 'Find support',
+      hindi: 'रास्ता अभी साफ़ न हो तो भी ठीक है — एक कदम काफ़ी है।'
+    },
+    {
       id: 'self-care-day',
       title: 'International Self-Care Day',
       start: '07-24', end: '07-24',
@@ -118,6 +188,26 @@ window.LUME_MH_CALENDAR = {
       hindi: ''
     },
     {
+      id: 'youth-day',
+      title: 'International Youth Day',
+      start: '08-12', end: '08-12',
+      category: 'Awareness',
+      lines: "Young people carry real pressure — studies, expectations, an uncertain future — and often feel they must hide it. Your feelings are valid, and asking for help is a sign of strength, not failure. A good first conversation stays confidential.",
+      link: 'student-mental-health-india.html',
+      linkText: 'Read: student mental health in India',
+      hindi: 'आपकी भावनाएँ सही हैं — मदद माँगना हिम्मत की बात है।'
+    },
+    {
+      id: 'teachers-day-india',
+      title: "Teachers' Day (India)",
+      start: '09-05', end: '09-05',
+      category: 'Awareness',
+      lines: "A teacher who notices a quiet, struggling student can change everything. Supporting young minds means caring for how they feel, not only how they score. If a student seems withdrawn, a kind question can be the start of real help.",
+      link: 'student-mental-health-india.html',
+      linkText: 'How to support a struggling student',
+      hindi: 'एक शिक्षक का साथ किसी बच्चे की पूरी राह बदल सकता है।'
+    },
+    {
       id: 'suicide-prevention-day',
       title: 'World Suicide Prevention Day',
       start: '09-10', end: '09-10',
@@ -126,6 +216,16 @@ window.LUME_MH_CALENDAR = {
       link: 'student-mental-health-india.html',
       linkText: 'Read: student mental health in India',
       hindi: 'अगर मन में खुद को नुकसान पहुँचाने के विचार आ रहे हैं — Tele-MANAS 14416 पर अभी कॉल करें।'
+    },
+    {
+      id: 'world-gratitude-day',
+      title: 'World Gratitude Day',
+      start: '09-21', end: '09-21',
+      category: 'Self-care',
+      lines: "Gratitude isn’t about pretending everything is fine — it’s about noticing what is, even on a hard day. Naming one thing you’re thankful for gently shifts attention away from worry. It’s a small habit with a real effect on mood.",
+      link: 'wellbeing-check.html',
+      linkText: 'Take a wellbeing check',
+      hindi: 'मुश्किल दिन में भी एक अच्छी बात ढूँढना मन को सहारा देता है।'
     },
     {
       id: 'world-mental-health-day',
@@ -138,6 +238,16 @@ window.LUME_MH_CALENDAR = {
       hindi: 'आज किसी से पूछिए — “सच में कैसे हो?”'
     },
     {
+      id: 'day-of-the-girl',
+      title: 'International Day of the Girl Child',
+      start: '10-11', end: '10-11',
+      category: 'Awareness',
+      lines: "Every girl deserves to feel safe, heard and free to dream — at home, in school and online. Pressure, comparison and unfair expectations take a quiet toll on mental health. Listening without judgement is one of the kindest things we can offer.",
+      link: 'mental-health-counselling.html',
+      linkText: 'Talk to a counsellor',
+      hindi: 'हर बेटी को सुना जाना और सपने देखने का हक़ है।'
+    },
+    {
       id: 'stress-awareness',
       title: 'Stress & Burnout Awareness Week',
       start: '11-01', end: '11-07',
@@ -148,6 +258,36 @@ window.LUME_MH_CALENDAR = {
       hindi: ''
     },
     {
+      id: 'world-kindness-day',
+      title: 'World Kindness Day',
+      start: '11-13', end: '11-13',
+      category: 'Self-care',
+      lines: "Kindness counts twice — it lifts the person who receives it and the person who gives it. The hardest person to be kind to is often yourself; speak to yourself as you would to a friend. One small, genuine gesture today is enough.",
+      link: 'wellbeing-check.html',
+      linkText: 'Check in on yourself',
+      hindi: 'खुद के साथ भी वैसी ही नरमी रखें, जैसी किसी दोस्त के साथ।'
+    },
+    {
+      id: 'childrens-day-india',
+      title: "Children's Day (India)",
+      start: '11-14', end: '11-14',
+      category: 'Awareness',
+      lines: "Children feel stress too — about marks, friendships and fitting in — even when they can’t put it into words. Feeling safe to talk, without fear of being judged or compared, is what protects a child’s mind most. Ask how they really are, and listen.",
+      link: 'for-parents.html',
+      linkText: 'Guidance for parents',
+      hindi: 'बच्चे भी तनाव महसूस करते हैं — उन्हें सुनना सबसे बड़ी मदद है।'
+    },
+    {
+      id: 'mens-day',
+      title: "International Men's Day",
+      start: '11-19', end: '11-19',
+      category: 'Awareness',
+      lines: "Boys and men are often taught to hide what they feel — and that silence shows up as stress, anger or burnout. Reaching out isn’t weakness; it takes real courage. Talking to someone is a strength, whatever anyone told you growing up.",
+      link: 'work-stress-burnout-test.html',
+      linkText: 'Take the burnout check',
+      hindi: 'भावनाएँ छुपाना ताक़त नहीं — बात करना असली हिम्मत है।'
+    },
+    {
       id: 'year-end-exam-calm',
       title: 'Exam-Prep Calm',
       start: '12-01', end: '12-31',
@@ -156,6 +296,16 @@ window.LUME_MH_CALENDAR = {
       link: 'how-to-deal-with-exam-anxiety.html',
       linkText: 'How to deal with exam anxiety',
       hindi: 'घबराहट में पढ़ाई मुश्किल लगती है — थोड़ा रुककर, गहरी साँस लें।'
+    },
+    {
+      id: 'disabilities-day',
+      title: 'International Day of Persons with Disabilities',
+      start: '12-03', end: '12-03',
+      category: 'Awareness',
+      lines: "Mental health is part of everyone’s health — including people living with disabilities, who too often face extra barriers to support. Inclusion means access, understanding and respect, not pity. Everyone deserves care that fits their needs.",
+      link: 'mental-health-counselling.html',
+      linkText: 'See how counselling works',
+      hindi: 'हर किसी को अपनी ज़रूरत के मुताबिक़ सहारा पाने का हक़ है।'
     }
   ]
 };
