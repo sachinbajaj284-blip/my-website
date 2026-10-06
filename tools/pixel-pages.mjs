@@ -28,6 +28,7 @@ export const NO_PIXEL = [
   /^mental-health-counselling.*\.html$/,
   /^mental-health-calendar\.html$/,
   /^understanding-.*\.html$/,
+  /^online-therapy.*\.html$/,
   /^free-anxiety-test\.html$/,
   /^free-depression-test\.html$/,
   /^self-esteem-test\.html$/,

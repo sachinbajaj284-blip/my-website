@@ -29,6 +29,7 @@ const PRIORITY = [
   [/^career-intelligence\.html$/,      '0.92', 'weekly'],
   [/^for-working-professionals\.html$/,'0.9',  'weekly'],
   [/^mental-health-counselling\.html$/,'0.9',  'weekly'],
+  [/^online-therapy/,                  '0.9',  'weekly'],
   [/^mental-health-calendar\.html$/,   '0.7',  'monthly'],
   [/^(free-anxiety|free-depression|exam-stress|self-esteem|work-stress-burnout)-test\.html$/, '0.85', 'monthly'],
   [/^wellbeing-check\.html$/,          '0.85', 'monthly'],

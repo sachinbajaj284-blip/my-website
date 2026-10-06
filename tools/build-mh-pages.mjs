@@ -14,6 +14,7 @@ import { page, faqNode, crumbNode, toolNode, esc, CRISIS, ROOT, SITE } from './m
 import { SCREENERS } from './mh-screeners.mjs';
 import { CITIES } from './mh-cities.mjs';
 import { CONDITIONS } from './mh-conditions.mjs';
+import { LANDINGS } from './mh-landings.mjs';
 
 const HUB = 'mental-health-counselling.html';
 const CHECK = process.argv.includes('--check');
@@ -325,11 +326,119 @@ ${others}
   });
 }
 
+/* ── conversion landing pages ──────────────────────────────────────────── */
+// A national counselling service. Same ProfessionalService shape the city pages use,
+// minus the areaServed city, since this one serves all of India.
+const landingServiceNode = l => ({
+  '@type': 'ProfessionalService',
+  '@id': `${SITE}/${l.slug}#service`,
+  name: 'Lume Live — Online Therapy & Counselling',
+  url: `${SITE}/${l.slug}`,
+  description: 'Confidential, non-diagnostic online counselling across India by a counsellor with an M.Sc in Clinical Psychology. Support for anxiety, stress, low mood, burnout and self-esteem for students, parents and working professionals.',
+  image: `${SITE}/og/${l.slug.replace(/\.html$/, '')}.png`,
+  logo: `${SITE}/logo.png`,
+  telephone: '+91-7015671280',
+  email: 'hello@lumelive.co.in',
+  areaServed: { '@type': 'Country', name: 'India' },
+  availableLanguage: ['en', 'hi'],
+  priceRange: '₹249-₹499',
+  provider: {
+    '@type': 'Person', name: 'Sachin Bajaj',
+    jobTitle: 'Career and Mental Health Counsellor',
+    hasCredential: 'M.Sc Clinical Psychology (Gurugram University); PGDGC (Jamia Millia Islamia)',
+  },
+});
+
+function buildLanding(l) {
+  const body = `<div class="cta-box" id="check">
+      <h3>Not sure it&rsquo;s worth a session? Start here.</h3>
+      <p>Take a free, private self-check first &mdash; two minutes, no sign-up, nothing saved. It helps you see what&rsquo;s going on, and there&rsquo;s no pressure to book anything.</p>
+      <div class="cta-row"><button type="button" class="btn" data-ll-open="${l.check}">${l.checkLabel}</button></div>
+      <p class="ll-check-note" style="margin-top:14px">It&rsquo;s a reflection tool, not a diagnosis. Your answers never leave your browser.</p>
+    </div>
+
+    ${CRISIS}
+
+    <h2>What people talk to us about</h2>
+    <p>You don&rsquo;t need a diagnosis, a crisis, or a tidy explanation to book. These are simply the things people bring to a first session most often:</p>
+    <div class="concerns">
+${l.helps.map(([ic, b, p]) => `      <div class="concern"><div class="ic">${ic}</div><b>${b}</b><p>${p}</p></div>`).join('\n')}
+    </div>
+
+    <h2>How it works</h2>
+    <div class="concerns steps">
+${l.steps.map(([n, b, p]) => `      <div class="concern"><div class="ic">${n}</div><b>${b}</b><p>${p}</p></div>`).join('\n')}
+    </div>
+
+    <h2>Confidential means confidential</h2>
+    <p>Price isn&rsquo;t what stops most people booking. It&rsquo;s the worry that someone will find out. So, plainly:</p>
+    <ul>
+      <li><strong>Nothing goes to your parents, school, college or employer.</strong> No report, no summary, not even confirmation that you turned up.</li>
+      <li><strong>A first name is enough to book.</strong> You don&rsquo;t owe us your full name, and you don&rsquo;t have to explain yourself in advance.</li>
+      <li><strong>The self-checks store nothing.</strong> Your answers sit in your browser and vanish when you close the tab.</li>
+      <li><strong>Sessions are online.</strong> No waiting room, nobody to bump into.</li>
+    </ul>
+
+    <h2>Who you&rsquo;ll be talking to</h2>
+    <p>Sachin Bajaj has an M.Sc in Clinical Psychology from Gurugram University and a PGDGC from Jamia Millia Islamia, and has worked with more than 500 students and families across India. You get the same counsellor every session &mdash; no app shuffling you between strangers who each need the story from the top.</p>
+    <div class="credentials">
+      <div class="cred"><div class="ic">&#127891;</div><b>M.Sc</b><span>Clinical Psychology, Gurugram University</span></div>
+      <div class="cred"><div class="ic">&#128220;</div><b>PGDGC</b><span>Jamia Millia Islamia, New Delhi</span></div>
+      <div class="cred"><div class="ic">&#129309;</div><b>500+</b><span>Students &amp; families supported</span></div>
+      <div class="cred"><div class="ic">&#128483;</div><b>&#2361;&#2367;&#2306;&#2342;&#2368; + EN</b><span>Whichever you think in</span></div>
+    </div>
+
+    <h2>What this is, and what it isn&rsquo;t</h2>
+    <p>It&rsquo;s counselling support, not treatment: confidential conversations about what you&rsquo;re carrying and what might help. We don&rsquo;t diagnose conditions and we don&rsquo;t prescribe medication, and this isn&rsquo;t an emergency service. If what you describe needs a psychiatrist, your counsellor will tell you so in the first session and help you find one. You won&rsquo;t be sold a package instead.</p>
+
+    <h2 id="book">What a session costs</h2>
+    <p><strong>&#8377;499 for 45 minutes</strong>, and your <strong>first one is &#8377;249</strong> with the code <strong>FIRST50</strong>. Private counselling in India usually runs &#8377;1,500 to &#8377;3,000 a session. You&rsquo;re not signing up for a course of treatment &mdash; you&rsquo;re booking one conversation, and you can stop after it.</p>
+    <div class="cta-box">
+      <h3>Book a first session &mdash; &#8377;249</h3>
+      <p>Pick a slot from the live calendar and the video-call invite arrives straight away. Video, voice or chat, whichever suits you.</p>
+      <div class="cta-row">
+        <a class="btn" href="book-session.html">Pick a slot &rarr;</a>
+        <a class="btn wa" href="https://wa.me/917015671280?text=${encodeURIComponent('Hello Lume Live! I would like to book an online counselling session. 💛')}" target="_blank" rel="noopener">Ask on WhatsApp</a>
+      </div>
+    </div>`;
+
+  return page({
+    slug: l.slug, title: l.title, desc: l.desc, keywords: l.keywords,
+    ogTitle: l.ogTitle, ogDesc: l.ogDesc,
+    graph: [
+      landingServiceNode(l),
+      crumbNode(l.slug, [
+        ['Home', `${SITE}/`],
+        ['Mental Health Counselling', `${SITE}/${HUB}`],
+        ['Online Therapy & Counselling', `${SITE}/${l.slug}`],
+      ]),
+      faqNode(l.slug, l.faq),
+    ],
+    nav: [
+      ['index.html', 'Home'],
+      [HUB, 'Counselling'],
+      ['wellbeing-check.html', 'Free Checks'],
+      ['book-session.html', 'Book'],
+    ],
+    waNav: 'Hello Lume Live! I would like to talk about online counselling.',
+    kicker: l.kicker, h1: l.h1, lede: l.lede, hindi: l.hindi,
+    heroCard: l.heroCard, heroNote: l.heroNote, stats: l.stats,
+    actions: [
+      `        <button type="button" class="btn" data-ll-open="${l.check}">${l.checkLabel}</button>`,
+      `        <a class="btn secondary" href="#book">Book a &#8377;249 first session</a>`,
+    ],
+    crumb: `<a href="index.html">Home</a> &rsaquo; <a href="${HUB}">Mental Health Counselling</a> &rsaquo; Online Therapy &amp; Counselling`,
+    body, faq: l.faq, related: l.related,
+    stickyCheck: l.check,
+  });
+}
+
 /* ── write ─────────────────────────────────────────────────────────────── */
 const out = [
   ...SCREENERS.map(s => [s.slug, buildScreener(s)]),
   ...CITIES.map(c => [c.slug, buildCity(c)]),
   ...CONDITIONS.map(c => [c.slug, buildCondition(c)]),
+  ...LANDINGS.map(l => [l.slug, buildLanding(l)]),
 ];
 
 let stale = 0, wrote = 0;
