@@ -2211,8 +2211,17 @@ a, button, [role="button"] { -webkit-tap-highlight-color: rgba(0,0,0,.06); }
 .mh-band-more{color:#E8B95A;font-size:.86rem;font-weight:800;text-decoration:none;}
 .mh-band-more:hover{color:#fff;text-decoration:underline;}
 .mh-band-crisis{margin:14px 0 0;color:rgba(255,255,255,.62);font-size:.76rem;line-height:1.5;}
-/* category chip, shared with the full calendar page via its own rules */
-.mh-band .mhc-cat{display:inline-flex;align-items:center;border-radius:999px;padding:5px 11px;font-size:.64rem;font-weight:900;letter-spacing:.5px;text-transform:uppercase;border:1px solid rgba(255,255,255,.3);color:#fff;background:rgba(255,255,255,.1);}
-@media(prefers-reduced-motion:reduce){.mh-band-cta{transition:none;}.mh-band-cta:hover{transform:none;}}
+/* category chip — per-category tints legible on the dark band */
+.mh-band .mhc-cat{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:5px 11px;font-size:.64rem;font-weight:900;letter-spacing:.5px;text-transform:uppercase;border:1px solid rgba(255,255,255,.3);color:#fff;background:rgba(255,255,255,.1);}
+.mh-band .mhc-cat-ic{font-size:.85rem;line-height:1;}
+.mh-band .mhc-cat--exam{background:rgba(232,185,90,.16);border-color:rgba(232,185,90,.42);color:#FFE2A3;}
+.mh-band .mhc-cat--anxiety{background:rgba(120,180,230,.16);border-color:rgba(120,180,230,.42);color:#CFE6FB;}
+.mh-band .mhc-cat--selfcare{background:rgba(90,205,185,.16);border-color:rgba(90,205,185,.42);color:#BFEEE4;}
+.mh-band .mhc-cat--crisis{background:rgba(224,90,70,.2);border-color:rgba(224,90,70,.5);color:#FFC9BE;}
+.mh-band .mhc-cat--awareness{background:rgba(180,150,230,.18);border-color:rgba(180,150,230,.46);color:#E2D6F4;}
+/* subtle entrance when JS fills the band */
+@keyframes mhBandIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.mh-band-body{animation:mhBandIn .5s var(--ease,cubic-bezier(.22,.61,.36,1)) both;}
+@media(prefers-reduced-motion:reduce){.mh-band-cta{transition:none;}.mh-band-cta:hover{transform:none;}.mh-band-body{animation:none;}}
 @media(max-width:720px){.mh-band-inner{grid-template-columns:1fr;gap:12px;}.mh-band-left{flex-direction:row;flex-wrap:wrap;align-items:center;}}
 @media(max-width:560px){.mh-band{padding:24px 16px;}.mh-band-actions{gap:12px;}.mh-band-cta{width:100%;}}

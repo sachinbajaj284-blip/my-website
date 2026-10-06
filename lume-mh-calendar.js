@@ -30,6 +30,11 @@
     'Exam stress': 'exam', 'Anxiety': 'anxiety', 'Self-care': 'selfcare',
     'Crisis': 'crisis', 'Awareness': 'awareness'
   };
+  var CAT_ICON = {
+    'Exam stress': '📚', 'Anxiety': '🌊', 'Self-care': '🌿',
+    'Crisis': '🆘', 'Awareness': '💡'
+  };
+  var SITE = 'https://lumelive.co.in';
 
   function esc(s) {
     return String(s == null ? '' : s)
@@ -126,7 +131,10 @@
 
   function catTag(entry) {
     var slug = CAT_SLUG[entry.category] || 'awareness';
-    return '<span class="mhc-cat mhc-cat--' + slug + '">' + esc(entry.category) + '</span>';
+    var ic = CAT_ICON[entry.category] || '';
+    return '<span class="mhc-cat mhc-cat--' + slug + '">' +
+      (ic ? '<span class="mhc-cat-ic" aria-hidden="true">' + ic + '</span>' : '') +
+      esc(entry.category) + '</span>';
   }
 
   // ── Homepage band ─────────────────────────────────────────────────────────
@@ -178,8 +186,10 @@
       var badge = isToday ? '<span class="mhc-badge">Today</span>'
                 : isActive ? '<span class="mhc-badge mhc-badge--now">Now</span>' : '';
       var hindi = e.hindi ? '<p class="mhc-card-hindi">' + esc(e.hindi) + '</p>' : '';
+      var slug = CAT_SLUG[e.category] || 'awareness';
       html +=
-        '<article class="mhc-card' + (isToday || isActive ? ' mhc-card--live' : '') + '">' +
+        '<article id="' + esc(e.id) + '" class="mhc-card mhc-card--' + slug +
+          (isToday || isActive ? ' mhc-card--live' : '') + '">' +
           '<div class="mhc-card-top">' +
             '<span class="mhc-date">' + esc(fmtRange(e.start, e.end)) + '</span>' +
             catTag(e) + badge +
@@ -194,12 +204,53 @@
     mount.innerHTML = html;
   }
 
+  // ── schema.org Event structured data (full calendar page only) ────────────
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function iso(y, m, d) { return y + '-' + pad(m) + '-' + pad(d); }
+
+  function injectEvents() {
+    if (document.getElementById('mh-events-ld')) return;
+    var now = today();
+    var t0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var items = DATA.entries.map(function (e, i) {
+      var s = parse(e.start), en = parse(e.end);
+      var y = now.getFullYear();
+      if (new Date(y, s.m - 1, s.d) < t0) y += 1;        // next upcoming occurrence
+      var ey = en.key >= s.key ? y : y + 1;               // handle wrap ranges
+      return {
+        '@type': 'ListItem', position: i + 1,
+        item: {
+          '@type': 'Event',
+          name: e.title,
+          description: e.lines,
+          startDate: iso(y, s.m, s.d),
+          endDate: iso(ey, en.m, en.d),
+          eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
+          eventStatus: 'https://schema.org/EventScheduled',
+          url: SITE + '/mental-health-calendar.html#' + e.id,
+          image: [SITE + '/og/mental-health-calendar.png'],
+          location: { '@type': 'VirtualLocation', url: SITE + '/mental-health-calendar.html' },
+          organizer: { '@type': 'Organization', name: 'Lume Live', url: SITE + '/' }
+        }
+      };
+    });
+    var ld = {
+      '@context': 'https://schema.org', '@type': 'ItemList',
+      name: 'Mental Health Awareness Calendar', itemListElement: items
+    };
+    var s = document.createElement('script');
+    s.type = 'application/ld+json';
+    s.id = 'mh-events-ld';
+    s.textContent = JSON.stringify(ld);
+    document.head.appendChild(s);
+  }
+
   function init() {
     try {
       var band = document.getElementById('mh-today');
       if (band) renderBand(band);
       var full = document.getElementById('mh-calendar-full');
-      if (full) renderFull(full);
+      if (full) { renderFull(full); injectEvents(); }
     } catch (err) { if (window.console) console.error('[mh-calendar]', err); }
   }
 
