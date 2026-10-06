@@ -359,8 +359,8 @@ function buildLanding(l) {
 
     ${CRISIS}
 
-    <h2>What people talk to us about</h2>
-    <p>You don&rsquo;t need a diagnosis, a crisis, or a tidy explanation to book. These are simply the things people bring to a first session most often:</p>
+    <h2>${l.helpsH2 || 'What people talk to us about'}</h2>
+    <p>${l.helpsIntro || 'You don&rsquo;t need a diagnosis, a crisis, or a tidy explanation to book. These are simply the things people bring to a first session most often:'}</p>
     <div class="concerns">
 ${l.helps.map(([ic, b, p]) => `      <div class="concern"><div class="ic">${ic}</div><b>${b}</b><p>${p}</p></div>`).join('\n')}
     </div>
