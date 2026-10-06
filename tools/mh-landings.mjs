@@ -40,6 +40,7 @@ export const LANDINGS = [
     heroNote: 'The check is free, anonymous and not stored &mdash; your answers never leave your browser.',
     check: 'wellbeingMenu',
     checkLabel: 'Take the free 2-minute check',
+    cityList: true,
     stats: [
       ['500+', 'Students &amp; families supported'],
       ['&#8377;249', 'First session'],
