@@ -108,3 +108,29 @@ li{margin-bottom:7px;font-size:.98rem}
 .citylist{line-height:2.2}
 .citylist a{color:var(--teal);font-weight:700;background:#F0F6F5;border:1px solid #DDE7E5;border-radius:999px;padding:6px 13px;white-space:nowrap}
 .citylist a:hover{background:var(--teal);color:#fff}
+
+/* ── Mental health awareness calendar (mental-health-calendar.html) ──────── */
+/* Rendered into #mh-calendar-full by lume-mh-calendar.js. */
+.mhc-month{margin:26px 0}
+.mhc-month-head{font-family:Georgia,serif;color:var(--navy);font-size:1.25rem;margin:0 0 12px;padding-bottom:6px;border-bottom:2px solid var(--mint)}
+.mhc-month--current .mhc-month-head{color:var(--teal);border-bottom-color:var(--teal)}
+.mhc-card{border:1px solid #E2E9E8;border-radius:14px;padding:18px 20px;margin:0 0 14px;background:#fff;transition:box-shadow .18s ease}
+.mhc-card:hover{box-shadow:0 10px 28px rgba(13,27,64,.09)}
+.mhc-card--live{border-color:var(--teal);background:var(--mint);box-shadow:0 8px 24px rgba(10,110,110,.12)}
+.mhc-card-top{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-bottom:8px}
+.mhc-date{font-weight:800;color:var(--navy);font-size:.88rem}
+.mhc-card-title{font-size:1.1rem;color:var(--navy);margin:0 0 7px}
+.mhc-card-lines{font-size:.95rem;color:var(--dark);line-height:1.6;margin:0 0 8px}
+.mhc-card-hindi{color:var(--teal);font-weight:700;font-size:.9rem;margin:0 0 8px}
+.mhc-card-link{display:inline-block;color:var(--teal);font-weight:800;font-size:.9rem}
+.mhc-card-link:hover{text-decoration:underline}
+.mhc-badge{display:inline-flex;align-items:center;background:var(--gold);color:#fff;border-radius:999px;padding:4px 11px;font-size:.64rem;font-weight:900;letter-spacing:.5px;text-transform:uppercase}
+.mhc-badge--now{background:var(--teal)}
+/* category chips (shared vocabulary with the homepage band) */
+.mhc-cat{display:inline-flex;align-items:center;border-radius:999px;padding:4px 11px;font-size:.64rem;font-weight:900;letter-spacing:.5px;text-transform:uppercase;border:1px solid transparent}
+.mhc-cat--exam{background:#FDF1E3;color:#9A6514;border-color:#F0D9B8}
+.mhc-cat--anxiety{background:#EAF3FB;color:#1E5C92;border-color:#CFE2F3}
+.mhc-cat--selfcare{background:#ECF7F6;color:#0A6E6E;border-color:#CDE8E6}
+.mhc-cat--crisis{background:#FFF4F2;color:#8E2A1B;border-color:#F3C7BE}
+.mhc-cat--awareness{background:#F2EEFA;color:#5B3DA6;border-color:#DED3F2}
+@media(prefers-reduced-motion:reduce){.mhc-card{transition:none}}
