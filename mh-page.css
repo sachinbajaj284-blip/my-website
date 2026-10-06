@@ -133,4 +133,17 @@ li{margin-bottom:7px;font-size:.98rem}
 .mhc-cat--selfcare{background:#ECF7F6;color:#0A6E6E;border-color:#CDE8E6}
 .mhc-cat--crisis{background:#FFF4F2;color:#8E2A1B;border-color:#F3C7BE}
 .mhc-cat--awareness{background:#F2EEFA;color:#5B3DA6;border-color:#DED3F2}
-@media(prefers-reduced-motion:reduce){.mhc-card{transition:none}}
+.mhc-cat-ic{font-size:.9rem;line-height:1}
+/* per-category left accent (yields to the live highlight) */
+.mhc-card--exam:not(.mhc-card--live){border-left:3px solid #E8B95A}
+.mhc-card--anxiety:not(.mhc-card--live){border-left:3px solid #6BA8DD}
+.mhc-card--selfcare:not(.mhc-card--live){border-left:3px solid #2FA79A}
+.mhc-card--crisis:not(.mhc-card--live){border-left:3px solid #C0392B}
+.mhc-card--awareness:not(.mhc-card--live){border-left:3px solid #8B6FD0}
+/* subtle staggered entrance when JS fills the list */
+@keyframes mhCardIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.mhc-card{animation:mhCardIn .45s ease both}
+.mhc-month .mhc-card:nth-child(3){animation-delay:.05s}
+.mhc-month .mhc-card:nth-child(4){animation-delay:.1s}
+.mhc-month .mhc-card:nth-child(5){animation-delay:.15s}
+@media(prefers-reduced-motion:reduce){.mhc-card{transition:none;animation:none}}
