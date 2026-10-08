@@ -21,7 +21,7 @@ export const CITIES = [
     slug: 'mental-health-counselling-delhi.html',
     heroCard: '“Log kya kahenge” has kept more people out of a counselling room than the fee ever has.',
     city: 'Delhi', region: 'IN-DL', state: 'Delhi NCR',
-    careerPage: null,
+    careerPage: 'career-counselling-in-delhi.html',
     lede: 'Entrance exams, coaching timetables, and a city where a young person is never more than one conversation away from being ranked against somebody. Private 1:1 support, online, in Hindi or English.',
     hindi: 'Baat karna kamzori nahi, samajhdari hai. &#128155;',
     pressure: `<h3>What the pressure looks like here</h3>
