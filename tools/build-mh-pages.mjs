@@ -606,6 +606,11 @@ ${siblings}
     keywords: f.kw(c),
     ogTitle: `${f.label} in ${c.city} — Lume Live`,
     ogDesc: f.desc(c),
+    // The condition×city pages overlap more with each other and with the existing
+    // mental-health-counselling-<city> pages, so they're kept out of the organic
+    // index (noindex) and serve paid-ads traffic only. sitemap.mjs drops noindex
+    // pages automatically. The general online-therapy-<city> pages stay indexable.
+    robots: f.key === 'general' ? undefined : 'noindex, follow',
     geo: { region: c.region, place: `${c.city}, ${c.state}`.replace(/&amp;/g, '&') },
     graph: [
       landingCityServiceNode(c, f, slug),
