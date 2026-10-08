@@ -89,6 +89,13 @@ const EXPLAINER_CARDS = {
   'therapy-for-anxiety':               ['Online Therapy · Anxiety',       'Online Therapy For Anxiety'],
   'therapy-for-depression':            ['Online Therapy · Depression',    'Online Therapy For Depression'],
   'therapy-for-stress':                ['Online Therapy · Burnout',       'Online Therapy For Stress & Burnout'],
+  'therapy-for-ocd':                   ['Online Therapy · OCD',           'Online Therapy For OCD'],
+  'therapy-for-panic-attacks':         ['Online Therapy · Panic',         'Online Therapy For Panic Attacks'],
+  'therapy-for-social-anxiety':        ['Online Therapy · Social Anxiety', 'Online Therapy For Social Anxiety'],
+  'therapy-for-adhd':                  ['Support · ADHD',                 'ADHD Counselling & Support'],
+  'therapy-for-insomnia':              ['Online Therapy · Sleep',         'Counselling For Insomnia & Sleep'],
+  'therapy-for-ptsd':                  ['Support · Trauma',               'Counselling For PTSD & Trauma'],
+  'therapy-for-bipolar-disorder':      ['Support · Bipolar',              'Counselling Support For Bipolar'],
 };
 for (const [slug, [eyebrow, title]] of Object.entries(EXPLAINER_CARDS)) PAGES[slug] = { eyebrow, title };
 
