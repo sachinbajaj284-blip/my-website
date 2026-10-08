@@ -57,7 +57,7 @@ function page(o) {
 <meta name="description" content="${esc(o.desc)}">
 <meta name="keywords" content="${esc(o.keywords)}">
 <meta name="author" content="Lume Live">
-<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<meta name="robots" content="${o.robots || 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1'}">
 ${geo}<meta http-equiv="content-language" content="en-IN">
 <link rel="canonical" href="${url}">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">

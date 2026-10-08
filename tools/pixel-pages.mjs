@@ -27,6 +27,9 @@ export const TAG = '<script src="lume-pixel.js" defer></script>';
 export const NO_PIXEL = [
   /^mental-health-counselling.*\.html$/,
   /^mental-health-calendar\.html$/,
+  /^understanding-.*\.html$/,
+  /^online-therapy.*\.html$/,
+  /^therapy-for-.*\.html$/,
   /^free-anxiety-test\.html$/,
   /^free-depression-test\.html$/,
   /^self-esteem-test\.html$/,
