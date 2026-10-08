@@ -119,6 +119,17 @@ for (const c of CAREER_PROFILES) {
   PAGES[`career-as-${c.slug}`] = { eyebrow: 'Career Guide', title: `How to Become ${c.article} ${c.name} in India` };
 }
 
+// Admission & exam library guides.
+const ADMISSION_CARDS = {
+  'neet-counselling-process':       ['Admissions · NEET',  'NEET Counselling, Explained'],
+  'josaa-counselling-process':      ['Admissions · JoSAA', 'JoSAA Counselling, Step by Step'],
+  'what-to-do-after-neet':          ['After NEET',         'Your Options After a Low NEET Score'],
+  'what-to-do-after-jee':           ['After JEE',          'Your Options After a Low JEE Rank'],
+  'cuet-admission-process':         ['Admissions · CUET',  'After Your CUET Result'],
+  'scholarships-for-students-india':['Scholarships',       'Scholarships For Students In India'],
+};
+for (const [slug, [eyebrow, title]] of Object.entries(ADMISSION_CARDS)) PAGES[slug] = { eyebrow, title };
+
 const logo = 'data:image/png;base64,' + fs.readFileSync(path.join(ROOT, 'logo.png')).toString('base64');
 
 // Fonts are vendored and inlined rather than pulled from the Google Fonts CDN:
