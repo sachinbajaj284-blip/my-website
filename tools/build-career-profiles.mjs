@@ -157,7 +157,7 @@ ${breadcrumbGraph(c)}
 ${c.facts.map(([b, s]) => `      <div><b>${b}</b><span>${s}</span></div>`).join('\n')}
     </div>
 
-    <h2>What ${c.article} ${c.name.toLowerCase()} actually does</h2>
+    <h2>What ${c.article} ${c.lowerName || c.name.toLowerCase()} actually does</h2>
     <p>${c.does}</p>
 
     <h2>The path after Class 10</h2>
