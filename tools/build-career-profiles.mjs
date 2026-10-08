@@ -20,6 +20,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CAREER_PROFILES } from './career-profiles.mjs';
+import { ART } from './profession-art.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SITE = 'https://lumelive.co.in';
@@ -160,7 +161,7 @@ ${breadcrumbGraph(c)}
 <header class="ar-hero">
   <div class="wrap">
     <p class="crumb"><a href="index.html">Home</a> &rsaquo; <a href="career-explorer.html">Career Explorer</a> &rsaquo; ${c.name}</p>
-    <div class="ar-glyph">${GLYPH[c.slug] || '🎓'}</div>
+    ${ART[c.slug] || `<div class="ar-glyph">${GLYPH[c.slug] || '🎓'}</div>`}
     <span class="ar-eyebrow">${c.category}</span>
     <h1>${title(c)}</h1>
     <div class="ar-meta">By the Lume Live counselling team &middot; Updated October 2026 &middot; ${c.readMin} min read</div>

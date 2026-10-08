@@ -88,6 +88,7 @@ footer.foot a{color:var(--gold2)}
 .ar-hero .crumb{color:rgba(255,255,255,.58);padding:20px 0 0}
 .ar-hero .crumb a{color:var(--gold2)}
 .ar-glyph{font-size:2.7rem;line-height:1;margin:18px 0 2px;filter:drop-shadow(0 6px 14px rgba(0,0,0,.35))}
+.ar-art{display:block;width:108px;height:108px;margin:16px 0 4px;filter:drop-shadow(0 8px 18px rgba(0,0,0,.3))}
 .ar-eyebrow{display:inline-block;color:var(--gold2);font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:2px;margin:12px 0 12px}
 .ar-hero h1{font-family:Georgia,serif;font-weight:700;color:#fff;font-size:clamp(1.8rem,4.2vw,2.6rem);line-height:1.15;letter-spacing:-.4px;margin:0 0 12px;padding:0;border:0}
 .ar-meta{font-size:.76rem;color:rgba(255,255,255,.5);margin:0 0 14px;letter-spacing:.2px}
