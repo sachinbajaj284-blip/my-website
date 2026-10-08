@@ -18,6 +18,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CITIES } from './mh-cities.mjs';
+import { CAREER_PROFILES } from './career-profiles.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'og');
@@ -103,6 +104,12 @@ for (const c of CITIES) {
     const [eyebrow, title] = make(c);
     PAGES[`${stem}-${key}`] = { eyebrow, title };
   }
+}
+
+// Generated profession guides carry a share card in the same style as the existing
+// career-as-<slug> cards: a "Career Guide" eyebrow and the page's own H1.
+for (const c of CAREER_PROFILES) {
+  PAGES[`career-as-${c.slug}`] = { eyebrow: 'Career Guide', title: `How to Become ${c.article} ${c.name} in India` };
 }
 
 const logo = 'data:image/png;base64,' + fs.readFileSync(path.join(ROOT, 'logo.png')).toString('base64');
