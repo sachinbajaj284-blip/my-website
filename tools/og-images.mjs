@@ -17,6 +17,7 @@ import { chromium } from 'playwright';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { CITIES } from './mh-cities.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'og');
@@ -63,6 +64,41 @@ const PAGES = {
                                       foot: 'lumelive.co.in <i>· करियर और मेंटल-हेल्थ काउंसलिंग</i>',
                                       pill: 'पहला session सिर्फ ₹249' },
 };
+
+/* Condition explainer pages and therapy landing pages added later. The share card
+   is the only image these carry, so each needs one. City cards are generated from
+   the CITIES table below so they can't drift from the pages that exist. */
+const EXPLAINER_CARDS = {
+  'understanding-anxiety':             ['Understanding · Anxiety',        'What Anxiety Is, And What Helps'],
+  'understanding-depression':          ['Understanding · Depression',     'What Depression Is, And What Helps'],
+  'understanding-ocd':                 ['Understanding · OCD',            'What OCD Really Is'],
+  'understanding-panic-attacks':       ['Understanding · Panic',          'Panic Attacks: Why They Happen'],
+  'understanding-social-anxiety':      ['Understanding · Social Anxiety', 'More Than Shyness: Social Anxiety'],
+  'understanding-stress-and-burnout':  ['Understanding · Burnout',        'Stress & Burnout: Spot It, Recover'],
+  'understanding-adhd':                ['Understanding · ADHD',           'ADHD In Adults And Students'],
+  'understanding-insomnia':            ['Understanding · Sleep',          'Insomnia: Why You Can’t Sleep'],
+  'understanding-ptsd':                ['Understanding · Trauma',         'PTSD & Trauma: Signs And Help'],
+  'understanding-bipolar-disorder':    ['Understanding · Bipolar',        'Bipolar Disorder, Explained'],
+  'online-therapy-india':              ['Online Therapy',                 'Online Therapy & Counselling In India'],
+  'therapy-for-anxiety':               ['Online Therapy · Anxiety',       'Online Therapy For Anxiety'],
+  'therapy-for-depression':            ['Online Therapy · Depression',    'Online Therapy For Depression'],
+  'therapy-for-stress':                ['Online Therapy · Burnout',       'Online Therapy For Stress & Burnout'],
+};
+for (const [slug, [eyebrow, title]] of Object.entries(EXPLAINER_CARDS)) PAGES[slug] = { eyebrow, title };
+
+// One card per city × therapy flavour, keyed to match the page's og/<slug>.png.
+const CITY_FLAVOURS = [
+  ['online-therapy',         c => [`Online Therapy · ${c.city}`, `Online Therapy In ${c.city}`]],
+  ['therapy-for-anxiety',    c => [`Anxiety · ${c.city}`,        `Therapy For Anxiety In ${c.city}`]],
+  ['therapy-for-depression', c => [`Low Mood · ${c.city}`,       `Therapy For Depression In ${c.city}`]],
+];
+for (const c of CITIES) {
+  const key = c.slug.replace(/^mental-health-counselling-/, '').replace(/\.html$/, '');
+  for (const [stem, make] of CITY_FLAVOURS) {
+    const [eyebrow, title] = make(c);
+    PAGES[`${stem}-${key}`] = { eyebrow, title };
+  }
+}
 
 const logo = 'data:image/png;base64,' + fs.readFileSync(path.join(ROOT, 'logo.png')).toString('base64');
 
