@@ -19,6 +19,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CITIES } from './mh-cities.mjs';
 import { CAREER_PROFILES } from './career-profiles.mjs';
+import { COMPARISONS } from './comparisons.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'og');
@@ -129,6 +130,9 @@ const ADMISSION_CARDS = {
   'scholarships-for-students-india':['Scholarships',       'Scholarships For Students In India'],
 };
 for (const [slug, [eyebrow, title]] of Object.entries(ADMISSION_CARDS)) PAGES[slug] = { eyebrow, title };
+
+// Comparison pages: a "Compare" eyebrow and the short "A vs B" from the page's crumb.
+for (const c of COMPARISONS) PAGES[c.slug] = { eyebrow: 'Compare', title: c.crumb };
 
 const logo = 'data:image/png;base64,' + fs.readFileSync(path.join(ROOT, 'logo.png')).toString('base64');
 

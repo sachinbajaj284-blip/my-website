@@ -26,6 +26,18 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://lumelive.co.in/ca-vs-cma.html</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lumelive.co.in/ca-vs-cs.html</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://lumelive.co.in/career-as-ai-ml-engineer.html</loc>
     <lastmod>2026-10-08</lastmod>
     <changefreq>monthly</changefreq>
@@ -285,7 +297,7 @@
   </url>
   <url>
     <loc>https://lumelive.co.in/career-library.html</loc>
-    <lastmod>2026-10-02</lastmod>
+    <lastmod>2026-10-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -344,8 +356,20 @@
     <priority>0.65</priority>
   </url>
   <url>
+    <loc>https://lumelive.co.in/data-scientist-vs-ai-ml-engineer.html</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://lumelive.co.in/data-scientist-vs-software-engineer.html</loc>
     <lastmod>2026-10-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lumelive.co.in/design-vs-engineering.html</loc>
+    <lastmod>2026-10-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -384,6 +408,12 @@
     <lastmod>2026-08-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://lumelive.co.in/government-job-vs-private-job.html</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://lumelive.co.in/holland-riasec-test-explained.html</loc>
@@ -466,6 +496,12 @@
   <url>
     <loc>https://lumelive.co.in/lawyer-vs-civil-services.html</loc>
     <lastmod>2026-10-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lumelive.co.in/mbbs-vs-bds.html</loc>
+    <lastmod>2026-10-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -582,6 +618,12 @@
     <lastmod>2026-10-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://lumelive.co.in/neet-vs-jee.html</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://lumelive.co.in/online-career-counselling-india.html</loc>
@@ -714,6 +756,12 @@
     <lastmod>2026-10-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://lumelive.co.in/psychology-vs-psychiatry.html</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://lumelive.co.in/psychometric-career-test.html</loc>

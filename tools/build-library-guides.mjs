@@ -19,12 +19,28 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { LIBRARY_GUIDES } from './library-guides.mjs';
+import { COMPARISONS } from './comparisons.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SITE = 'https://lumelive.co.in';
 const CHECK = process.argv.includes('--check');
 
 const fileOf = g => `${g.slug}.html`;
+
+// Comparison pages ("A vs B") are library articles too — same shell — but they sit
+// under Compare Careers rather than the Career Library, so the nav, breadcrumb and
+// footer point there. A guide's `kind: 'compare'` selects that chrome.
+const chromeOf = g => g.kind === 'compare'
+  ? {
+      parentHref: 'compare-careers.html', parentName: 'Compare Careers',
+      nav: '<a href="index.html">Home</a><a href="compare-careers.html">Compare</a><a href="career-explorer.html">Careers</a><a class="cta" href="assessment.html#free-test">Free Career Test</a>',
+      footer: '<a href="index.html">Home</a> &middot; <a href="compare-careers.html">Compare Careers</a> &middot; <a href="career-explorer.html">Careers</a> &middot; <a href="career-library.html">Library</a> &middot; <a href="privacy-policy.html">Privacy Policy</a>',
+    }
+  : {
+      parentHref: 'career-library.html', parentName: 'Career Library',
+      nav: '<a href="index.html">Home</a><a href="career-explorer.html">Careers</a><a href="career-library.html">Library</a><a class="cta" href="assessment.html#free-test">Free Career Test</a>',
+      footer: '<a href="index.html">Home</a> &middot; <a href="career-explorer.html">Careers</a> &middot; <a href="career-library.html">Library</a> &middot; <a href="services-pricing.html">Services &amp; Pricing</a> &middot; <a href="privacy-policy.html">Privacy Policy</a> · <a href="terms.html">Terms of Service</a>',
+    };
 
 function headGraph(g) {
   const url = `${SITE}/${fileOf(g)}`;
@@ -65,20 +81,24 @@ const faqGraph = g => JSON.stringify({
   mainEntity: g.faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
 });
 
-const breadcrumbGraph = g => JSON.stringify({
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  '@id': `${SITE}/${fileOf(g)}#breadcrumb`,
-  itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
-    { '@type': 'ListItem', position: 2, name: 'Career Library', item: `${SITE}/career-library.html` },
-    { '@type': 'ListItem', position: 3, name: g.crumb, item: `${SITE}/${fileOf(g)}` },
-  ],
-}, null, 2);
+const breadcrumbGraph = g => {
+  const c = chromeOf(g);
+  return JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    '@id': `${SITE}/${fileOf(g)}#breadcrumb`,
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+      { '@type': 'ListItem', position: 2, name: c.parentName, item: `${SITE}/${c.parentHref}` },
+      { '@type': 'ListItem', position: 3, name: g.crumb, item: `${SITE}/${fileOf(g)}` },
+    ],
+  }, null, 2);
+};
 
 function guidePage(g) {
   const url = `${SITE}/${fileOf(g)}`;
   const og = `${SITE}/og/${g.slug}.png`;
+  const chrome = chromeOf(g);
   const cta = g.cta || {};
   const ctaHref = cta.href || 'assessment.html#free-test';
   const ctaLabel = cta.label || 'Start the Free Career Snapshot';
@@ -150,11 +170,11 @@ ${breadcrumbGraph(g)}
 <body>
 <header class="top"><nav class="nav">
   <a class="brand" href="index.html"><img src="logo.png" alt="Lume Live logo" decoding="async"><span>LUME LIVE</span></a>
-  <div class="nlinks"><a href="index.html">Home</a><a href="career-explorer.html">Careers</a><a href="career-library.html">Library</a><a class="cta" href="assessment.html#free-test">Free Career Test</a></div>
+  <div class="nlinks">${chrome.nav}</div>
 </nav></header>
 
 <div class="wrap">
-  <p class="crumb"><a href="index.html">Home</a> &rsaquo; <a href="career-library.html">Career Library</a> &rsaquo; ${g.crumb}</p>
+  <p class="crumb"><a href="index.html">Home</a> &rsaquo; <a href="${chrome.parentHref}">${chrome.parentName}</a> &rsaquo; ${g.crumb}</p>
   <article role="main">
     <h1>${g.h1}</h1>
     <div class="meta">By the Lume Live counselling team &middot; Updated October 2026 &middot; ${g.readMin} min read</div>
@@ -171,7 +191,7 @@ ${g.related.map(([href, label]) => `      <a href="${href}">${label}</a>`).join(
 
 <footer class="foot">
   Lume Live &middot; Online career counselling &amp; mental-health support across India &middot; WhatsApp +91 70156 71280<br>
-  <a href="index.html">Home</a> &middot; <a href="career-explorer.html">Careers</a> &middot; <a href="career-library.html">Library</a> &middot; <a href="services-pricing.html">Services &amp; Pricing</a> &middot; <a href="privacy-policy.html">Privacy Policy</a> · <a href="terms.html">Terms of Service</a>
+  ${chrome.footer}
 </footer>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-1CZ93P4P3V"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1CZ93P4P3V');</script>
@@ -183,8 +203,9 @@ ${g.related.map(([href, label]) => `      <a href="${href}">${label}</a>`).join(
 }
 
 /* ── write ─────────────────────────────────────────────────────────────── */
+const ALL = [...LIBRARY_GUIDES, ...COMPARISONS];
 let stale = 0, wrote = 0;
-for (const g of LIBRARY_GUIDES) {
+for (const g of ALL) {
   const file = path.join(ROOT, fileOf(g));
   const html = guidePage(g);
   const prev = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : null;
@@ -194,7 +215,7 @@ for (const g of LIBRARY_GUIDES) {
   wrote++;
 }
 if (CHECK) {
-  console.log(stale ? `${stale} page(s) stale — run node tools/build-library-guides.mjs` : `all ${LIBRARY_GUIDES.length} library guides up to date`);
+  console.log(stale ? `${stale} page(s) stale — run node tools/build-library-guides.mjs` : `all ${ALL.length} library guides & comparisons up to date`);
   process.exit(stale ? 1 : 0);
 }
-console.log(`wrote ${wrote} of ${LIBRARY_GUIDES.length} library guides`);
+console.log(`wrote ${wrote} of ${ALL.length} library guides & comparisons`);
