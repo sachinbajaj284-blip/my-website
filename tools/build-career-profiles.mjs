@@ -26,6 +26,21 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SITE = 'https://lumelive.co.in';
 const CHECK = process.argv.includes('--check');
 
+// Optional profession photos: a page gets a banner only when images/professions/<slug>.jpg
+// exists (populated locally by tools/fetch-profession-photos.mjs — this environment's
+// network blocks image hosts). credits.json, if present, adds a small provenance caption.
+const PHOTO_DIR = path.join(ROOT, 'images', 'professions');
+const CREDITS = (() => {
+  const f = path.join(PHOTO_DIR, 'credits.json');
+  try { return fs.existsSync(f) ? JSON.parse(fs.readFileSync(f, 'utf8')) : {}; } catch { return {}; }
+})();
+function photoBanner(c) {
+  if (!fs.existsSync(path.join(PHOTO_DIR, `${c.slug}.jpg`))) return '';
+  const cr = CREDITS[c.slug];
+  const cap = cr ? `<figcaption>Photo: ${cr.title ? cr.title + ' · ' : ''}${cr.license}${cr.source ? ` · <a href="${cr.source}" target="_blank" rel="noopener nofollow">source</a>` : ''}</figcaption>` : '';
+  return `\n<figure class="ar-photo"><img src="images/professions/${c.slug}.jpg" alt="${c.name} at work in India" loading="lazy" decoding="async">${cap}</figure>\n`;
+}
+
 const title = c => `How to Become ${c.article} ${c.name} in India`;
 const slugFile = c => `career-as-${c.slug}.html`;
 
@@ -172,7 +187,7 @@ ${c.facts.map(([b, s]) => `      <div class="hf"><b>${b}</b><span>${s}</span></d
     ${DECO}
   </div>
 </header>
-
+${photoBanner(c)}
 <div class="wrap">
   <article role="main">
     <h2><span class="sec-ic">💼</span> What ${c.article} ${c.lowerName || c.name.toLowerCase()} actually does</h2>
