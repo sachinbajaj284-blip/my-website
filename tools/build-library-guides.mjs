@@ -42,6 +42,43 @@ const chromeOf = g => g.kind === 'compare'
       footer: '<a href="index.html">Home</a> &middot; <a href="career-explorer.html">Careers</a> &middot; <a href="career-library.html">Library</a> &middot; <a href="services-pricing.html">Services &amp; Pricing</a> &middot; <a href="privacy-policy.html">Privacy Policy</a> · <a href="terms.html">Terms of Service</a>',
     };
 
+// Hero glyph + eyebrow for the admission/exam guides (keyed by slug). Comparisons use
+// the scales glyph and a VS header built from their crumb instead.
+const GLYPH_GUIDE = {
+  'neet-counselling-process': '🩺', 'josaa-counselling-process': '⚙️',
+  'what-to-do-after-neet': '🩺', 'what-to-do-after-jee': '🛠️',
+  'cuet-admission-process': '🎓', 'scholarships-for-students-india': '💰',
+};
+const EYEBROW_GUIDE = {
+  'neet-counselling-process': 'NEET · Counselling', 'josaa-counselling-process': 'JEE · JoSAA',
+  'what-to-do-after-neet': 'After NEET', 'what-to-do-after-jee': 'After JEE',
+  'cuet-admission-process': 'CUET · Admission', 'scholarships-for-students-india': 'Scholarships',
+};
+
+// Ambient, on-brand hero motif — inline SVG, so it passes the strict img-src CSP, scales
+// with the hero, and is genuinely licence-free. Shared with build-career-profiles.mjs.
+const DECO = `<svg class="ar-deco" viewBox="0 0 220 300" fill="none" aria-hidden="true">` +
+  `<circle cx="150" cy="150" r="118" stroke="currentColor" stroke-width="1.4" opacity=".45"/>` +
+  `<circle cx="150" cy="150" r="78" stroke="currentColor" stroke-width="1.4" opacity=".7"/>` +
+  `<circle cx="150" cy="150" r="38" stroke="currentColor" stroke-width="1.4"/>` +
+  `<path d="M28 272 C 90 210 135 196 236 112" stroke="currentColor" stroke-width="2.2" opacity=".85"/>` +
+  `<circle cx="150" cy="150" r="4.5" fill="currentColor"/>` +
+  `<circle cx="236" cy="112" r="6" fill="currentColor"/></svg>`;
+
+// The hero's visual block: a VS header for comparisons, stat chips for guides with facts.
+function heroExtra(g) {
+  if (g.kind === 'compare') {
+    const [a, b] = g.crumb.split(/\s+vs\s+/i);
+    return `    <div class="vs-head"><div class="vs-side">${a}</div><div class="vs-badge">VS</div><div class="vs-side">${b}</div></div>`;
+  }
+  if (g.facts) {
+    return `    <div class="hero-facts">
+${g.facts.map(([b, s]) => `      <div class="hf"><b>${b}</b><span>${s}</span></div>`).join('\n')}
+    </div>`;
+  }
+  return '';
+}
+
 function headGraph(g) {
   const url = `${SITE}/${fileOf(g)}`;
   return JSON.stringify({
@@ -102,11 +139,8 @@ function guidePage(g) {
   const cta = g.cta || {};
   const ctaHref = cta.href || 'assessment.html#free-test';
   const ctaLabel = cta.label || 'Start the Free Career Snapshot';
-  const facts = g.facts ? `
-    <div class="facts">
-${g.facts.map(([b, s]) => `      <div><b>${b}</b><span>${s}</span></div>`).join('\n')}
-    </div>
-` : '';
+  const glyph = g.kind === 'compare' ? '⚖️' : (GLYPH_GUIDE[g.slug] || '📚');
+  const eyebrow = g.kind === 'compare' ? 'Compare Careers' : (EYEBROW_GUIDE[g.slug] || 'Career Library');
   const takeaways = g.takeaways ? `
     <div class="takeaway">
     <b>Key takeaways</b>
@@ -147,13 +181,6 @@ ${g.takeaways.map(t => `      <li>${t}</li>`).join('\n')}
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="library.css">
-<style>
-.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:24px 0}
-.facts div{background:#fff;padding:16px 14px;text-align:center}
-.facts b{display:block;color:var(--navy);font-size:.98rem;margin-bottom:3px}
-.facts span{font-size:.68rem;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:800}
-@media(max-width:640px){.facts{grid-template-columns:1fr 1fr}}
-</style>
 <script type="application/ld+json">
 ${headGraph(g)}
 </script>
@@ -173,13 +200,21 @@ ${breadcrumbGraph(g)}
   <div class="nlinks">${chrome.nav}</div>
 </nav></header>
 
-<div class="wrap">
-  <p class="crumb"><a href="index.html">Home</a> &rsaquo; <a href="${chrome.parentHref}">${chrome.parentName}</a> &rsaquo; ${g.crumb}</p>
-  <article role="main">
+<header class="ar-hero">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html">Home</a> &rsaquo; <a href="${chrome.parentHref}">${chrome.parentName}</a> &rsaquo; ${g.crumb}</p>
+    <div class="ar-glyph">${glyph}</div>
+    <span class="ar-eyebrow">${eyebrow}</span>
     <h1>${g.h1}</h1>
-    <div class="meta">By the Lume Live counselling team &middot; Updated October 2026 &middot; ${g.readMin} min read</div>
-    <p class="lead">${g.lead}</p>
-${facts}
+    <div class="ar-meta">By the Lume Live counselling team &middot; Updated October 2026 &middot; ${g.readMin} min read</div>
+    <p class="ar-lead">${g.lead}</p>
+${heroExtra(g)}
+    ${DECO}
+  </div>
+</header>
+
+<div class="wrap">
+  <article role="main">
 ${g.body}
 ${takeaways}${ctaBox}
     <div class="related">

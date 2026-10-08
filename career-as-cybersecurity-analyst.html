@@ -22,13 +22,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="library.css">
-<style>
-.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:24px 0}
-.facts div{background:#fff;padding:16px 14px;text-align:center}
-.facts b{display:block;color:var(--navy);font-size:.98rem;margin-bottom:3px}
-.facts span{font-size:.68rem;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:800}
-@media(max-width:640px){.facts{grid-template-columns:1fr 1fr}}
-</style>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -124,27 +117,33 @@
   <div class="nlinks"><a href="index.html">Home</a><a href="career-explorer.html">Careers</a><a href="career-library.html">Library</a><a class="cta" href="assessment.html#free-test">Free Career Test</a></div>
 </nav></header>
 
-<div class="wrap">
-  <p class="crumb"><a href="index.html">Home</a> &rsaquo; <a href="career-explorer.html">Career Explorer</a> &rsaquo; Cybersecurity Analyst</p>
-  <article role="main">
+<header class="ar-hero">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html">Home</a> &rsaquo; <a href="career-explorer.html">Career Explorer</a> &rsaquo; Cybersecurity Analyst</p>
+    <div class="ar-glyph">🛡️</div>
+    <span class="ar-eyebrow">Cybersecurity · PCM</span>
     <h1>How to Become a Cybersecurity Analyst in India</h1>
-    <div class="meta">By the Lume Live counselling team &middot; Updated October 2026 &middot; 8 min read</div>
-    <p class="lead">A cybersecurity analyst <strong>defends systems and data from attack</strong> &mdash; finding weaknesses before attackers do, and responding when they strike. As everything moves online, demand has outstripped supply, which makes it one of the most certification-driven and opportunity-rich tech careers.</p>
-
-    <div class="facts">
-      <div><b>PCM (Science)</b><span>Best-fit stream</span></div>
-      <div><b>B.Tech / BCA + certs</b><span>Typical route</span></div>
-      <div><b>Networks + security</b><span>Core skills</span></div>
-      <div><b>₹4&ndash;10 LPA</b><span>Fresher range</span></div>
+    <div class="ar-meta">By the Lume Live counselling team &middot; Updated October 2026 &middot; 8 min read</div>
+    <p class="ar-lead">A cybersecurity analyst <strong>defends systems and data from attack</strong> &mdash; finding weaknesses before attackers do, and responding when they strike. As everything moves online, demand has outstripped supply, which makes it one of the most certification-driven and opportunity-rich tech careers.</p>
+    <div class="hero-facts">
+      <div class="hf"><b>PCM (Science)</b><span>Best-fit stream</span></div>
+      <div class="hf"><b>B.Tech / BCA + certs</b><span>Typical route</span></div>
+      <div class="hf"><b>Networks + security</b><span>Core skills</span></div>
+      <div class="hf"><b>₹4&ndash;10 LPA</b><span>Fresher range</span></div>
     </div>
+    <svg class="ar-deco" viewBox="0 0 220 300" fill="none" aria-hidden="true"><circle cx="150" cy="150" r="118" stroke="currentColor" stroke-width="1.4" opacity=".45"/><circle cx="150" cy="150" r="78" stroke="currentColor" stroke-width="1.4" opacity=".7"/><circle cx="150" cy="150" r="38" stroke="currentColor" stroke-width="1.4"/><path d="M28 272 C 90 210 135 196 236 112" stroke="currentColor" stroke-width="2.2" opacity=".85"/><circle cx="150" cy="150" r="4.5" fill="currentColor"/><circle cx="236" cy="112" r="6" fill="currentColor"/></svg>
+  </div>
+</header>
 
-    <h2>What a cybersecurity analyst actually does</h2>
+<div class="wrap">
+  <article role="main">
+    <h2><span class="sec-ic">💼</span> What a cybersecurity analyst actually does</h2>
     <p>A cybersecurity analyst monitors networks and systems for threats, investigates incidents, hardens defences, and tests for vulnerabilities. The field branches widely: a Security Operations Centre (SOC) analyst watches for and responds to attacks; a penetration tester (ethical hacker) deliberately breaks in to find holes; others work in governance, risk and compliance, application security or digital forensics. Certifications matter unusually much here, often as much as the degree.</p>
 
-    <h2>The path after Class 10</h2>
+    <h2><span class="sec-ic">🧭</span> The path after Class 10</h2>
     <p>Take <strong>Science with Mathematics (PCM)</strong> for the strongest base into a computing degree. Logical thinking and comfort with computers matter most; a curiosity about how systems work &mdash; and break &mdash; is the real early signal.</p>
 
-    <h2>The path after Class 12</h2>
+    <h2><span class="sec-ic">🎓</span> The path after Class 12</h2>
     <ul>
       <li><strong>B.Tech in CSE / Cybersecurity (4 years)</strong> &mdash; via JEE or state/private entrances; a broad, respected base.</li>
       <li><strong>BCA / B.Sc Computer Science</strong> &mdash; solid routes, especially when paired with security certifications.</li>
@@ -152,7 +151,7 @@
       <li><strong>Hands-on practice</strong> &mdash; labs, capture-the-flag (CTF) competitions and a home lab build the practical skill employers test for.</li>
     </ul>
 
-    <h2>Top institutions &amp; entry routes</h2>
+    <h2><span class="sec-ic">🏛️</span> Top institutions &amp; entry routes</h2>
     <table class="cmp">
       <tr><th>Type</th><th>Institutions</th><th>How you get in</th></tr>
       <tr><td>Elite</td><td>IITs, IIITs (incl. security-focused programmes)</td><td>JEE Advanced / JEE Main / entrance</td></tr>
@@ -161,7 +160,7 @@
       <tr><td>Practice</td><td>CTF platforms, labs, bug-bounty programmes</td><td>Self-driven + portfolio</td></tr>
     </table>
 
-    <h2>Core skills to build</h2>
+    <h2><span class="sec-ic">🛠️</span> Core skills to build</h2>
     <ul>
       <li><strong>Networking &amp; systems</strong> &mdash; how networks, operating systems and the web actually work.</li>
       <li><strong>Security fundamentals</strong> &mdash; threats, cryptography, access control and defence-in-depth.</li>
@@ -169,16 +168,16 @@
       <li><strong>Analytical, ethical mindset</strong> &mdash; thinking like an attacker while acting responsibly.</li>
     </ul>
 
-    <h2>Salary in India (2026)</h2>
-    <table class="cmp">
-      <tr><th>Stage</th><th>Typical annual pay</th></tr>
-      <tr><td>Entry-level (0&ndash;2 yrs)</td><td>₹4&ndash;10 LPA</td></tr>
-      <tr><td>Mid-level (3&ndash;6 yrs)</td><td>₹10&ndash;25 LPA</td></tr>
-      <tr><td>Senior / specialist (pentest, cloud security)</td><td>₹25&ndash;60 LPA</td></tr>
-      <tr><td>Leadership (CISO track)</td><td>₹60 LPA&ndash;₹1 Cr+</td></tr>
-    </table>
+    <h2><span class="sec-ic">💰</span> Salary in India (2026)</h2>
+    <div class="sal-ladder">
+      <div class="sal-rung"><div class="sr-top"><span class="sr-stage">Entry-level (0&ndash;2 yrs)</span><span class="sr-pay">₹4&ndash;10 LPA</span></div><div class="sr-track"><div class="sr-fill" style="width:25%"></div></div></div>
+      <div class="sal-rung"><div class="sr-top"><span class="sr-stage">Mid-level (3&ndash;6 yrs)</span><span class="sr-pay">₹10&ndash;25 LPA</span></div><div class="sr-track"><div class="sr-fill" style="width:50%"></div></div></div>
+      <div class="sal-rung"><div class="sr-top"><span class="sr-stage">Senior / specialist (pentest, cloud security)</span><span class="sr-pay">₹25&ndash;60 LPA</span></div><div class="sr-track"><div class="sr-fill" style="width:75%"></div></div></div>
+      <div class="sal-rung"><div class="sr-top"><span class="sr-stage">Leadership (CISO track)</span><span class="sr-pay">₹60 LPA&ndash;₹1 Cr+</span></div><div class="sr-track"><div class="sr-fill" style="width:100%"></div></div></div>
+    </div>
+    <p class="sal-cap">Illustrative career progression &mdash; actual pay varies widely by employer, city and skill.</p>
 
-    <h2>Is this career right for you?</h2>
+    <h2><span class="sec-ic">🧩</span> Is this career right for you?</h2>
     <p>Cybersecurity suits <strong>Investigative</strong> interests (curiosity about how things work and break) with <strong>Conventional</strong> (methodical rigour) and a <strong>Realistic</strong> hands-on streak. If you like puzzles, think like someone probing for the weak point, and have a strong ethical compass, it is a genuinely good fit &mdash; and one where skill and certifications can outrun the college name.</p>
 
     <div class="takeaway">

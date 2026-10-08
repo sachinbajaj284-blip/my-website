@@ -77,3 +77,41 @@ a.btn:focus-visible,.acard:focus-visible,.nlinks a:focus-visible{outline:2px sol
 footer.foot{background:var(--navy);color:rgba(255,255,255,.72);padding:30px 18px;text-align:center;font-size:.84rem;margin-top:20px}
 footer.foot a{color:var(--gold2)}
 @media(max-width:760px){.cards{grid-template-columns:1fr}.nlinks a:not(.cta){display:none}}
+
+/* ═══ Rich article pages — generated profiles, guides & comparisons ═══════════
+   An on-brand navy hero band plus small inline-SVG / CSS infographics. Everything
+   here is scoped to new .ar-* / hero-* / sal-* / vs-* / sec-ic classes, so the
+   plain hand-authored articles that don't use them render exactly as before. */
+.ar-hero{background:var(--navy);color:#fff;position:relative;overflow:hidden;padding:4px 0 38px}
+.ar-hero::before{content:"";position:absolute;inset:0;background:radial-gradient(55% 80% at 8% -12%,rgba(10,110,110,.5),transparent 60%),radial-gradient(48% 72% at 100% 116%,rgba(201,147,58,.22),transparent 60%);pointer-events:none}
+.ar-hero .wrap{position:relative;z-index:2}
+.ar-hero .crumb{color:rgba(255,255,255,.58);padding:20px 0 0}
+.ar-hero .crumb a{color:var(--gold2)}
+.ar-glyph{font-size:2.7rem;line-height:1;margin:18px 0 2px;filter:drop-shadow(0 6px 14px rgba(0,0,0,.35))}
+.ar-eyebrow{display:inline-block;color:var(--gold2);font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:2px;margin:12px 0 12px}
+.ar-hero h1{font-family:Georgia,serif;font-weight:700;color:#fff;font-size:clamp(1.8rem,4.2vw,2.6rem);line-height:1.15;letter-spacing:-.4px;margin:0 0 12px;padding:0;border:0}
+.ar-meta{font-size:.76rem;color:rgba(255,255,255,.5);margin:0 0 14px;letter-spacing:.2px}
+.ar-lead{font-size:1.08rem;color:rgba(255,255,255,.84);line-height:1.62;max-width:650px;margin:0}
+.ar-deco{position:absolute;right:-30px;top:0;height:100%;width:auto;opacity:.13;z-index:1;pointer-events:none;color:#fff}
+@media(max-width:860px){.ar-deco{right:-110px;opacity:.07}}
+
+.hero-facts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:26px;max-width:600px}
+.hero-facts .hf{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:13px 8px;text-align:center}
+.hero-facts .hf b{display:block;color:var(--gold2);font-size:.9rem;font-weight:800;line-height:1.25;margin-bottom:4px}
+.hero-facts .hf span{font-size:.57rem;text-transform:uppercase;letter-spacing:.4px;color:rgba(255,255,255,.6);font-weight:800}
+@media(max-width:560px){.hero-facts{grid-template-columns:1fr 1fr}}
+
+.vs-head{display:flex;align-items:stretch;justify-content:center;gap:12px;margin-top:28px;max-width:600px}
+.vs-side{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:16px 12px;font-weight:800;color:#fff;font-size:1rem;line-height:1.25;display:flex;align-items:center;justify-content:center;text-align:center}
+.vs-badge{align-self:center;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.85rem;flex:none;box-shadow:0 8px 20px rgba(201,147,58,.45)}
+
+article h2 .sec-ic{display:inline-block;margin-right:9px;font-size:1.02em;vertical-align:-1px}
+
+.sal-ladder{margin:18px 0 6px}
+.sal-cap{font-size:.76rem;color:var(--muted);margin:2px 0 18px}
+.sal-rung{margin:0 0 15px}
+.sal-rung .sr-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px}
+.sal-rung .sr-stage{font-weight:700;color:var(--navy);font-size:.92rem}
+.sal-rung .sr-pay{font-weight:800;color:var(--teal);font-size:.92rem;white-space:nowrap}
+.sal-rung .sr-track{height:13px;border-radius:999px;background:var(--paper);border:1px solid var(--line);overflow:hidden}
+.sal-rung .sr-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--teal),var(--gold2))}

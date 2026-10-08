@@ -28,6 +28,24 @@ const CHECK = process.argv.includes('--check');
 const title = c => `How to Become ${c.article} ${c.name} in India`;
 const slugFile = c => `career-as-${c.slug}.html`;
 
+// One topic glyph per profession for the hero. Falls back to the mortarboard.
+const GLYPH = {
+  nurse: '🩺', dentist: '🦷', pharmacist: '💊', physiotherapist: '🦿',
+  'company-secretary': '📋', 'fashion-designer': '✂️', chef: '🧑‍🍳', journalist: '🎙️',
+  'civil-engineer': '🏗️', teacher: '👩‍🏫', 'ai-ml-engineer': '🤖',
+  'cybersecurity-analyst': '🛡️', 'investment-banker': '📈', 'cost-accountant': '🧮',
+};
+
+// Ambient, on-brand hero motif (concentric rings + a growth trajectory). Inline so it
+// passes the strict img-src CSP, scales with the hero height, and is truly licence-free.
+const DECO = `<svg class="ar-deco" viewBox="0 0 220 300" fill="none" aria-hidden="true">` +
+  `<circle cx="150" cy="150" r="118" stroke="currentColor" stroke-width="1.4" opacity=".45"/>` +
+  `<circle cx="150" cy="150" r="78" stroke="currentColor" stroke-width="1.4" opacity=".7"/>` +
+  `<circle cx="150" cy="150" r="38" stroke="currentColor" stroke-width="1.4"/>` +
+  `<path d="M28 272 C 90 210 135 196 236 112" stroke="currentColor" stroke-width="2.2" opacity=".85"/>` +
+  `<circle cx="150" cy="150" r="4.5" fill="currentColor"/>` +
+  `<circle cx="236" cy="112" r="6" fill="currentColor"/></svg>`;
+
 function headGraph(c) {
   const url = `${SITE}/${slugFile(c)}`;
   return JSON.stringify({
@@ -120,13 +138,6 @@ function profilePage(c) {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="library.css">
-<style>
-.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:24px 0}
-.facts div{background:#fff;padding:16px 14px;text-align:center}
-.facts b{display:block;color:var(--navy);font-size:.98rem;margin-bottom:3px}
-.facts span{font-size:.68rem;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:800}
-@media(max-width:640px){.facts{grid-template-columns:1fr 1fr}}
-</style>
 <script type="application/ld+json">
 ${headGraph(c)}
 </script>
@@ -146,46 +157,52 @@ ${breadcrumbGraph(c)}
   <div class="nlinks"><a href="index.html">Home</a><a href="career-explorer.html">Careers</a><a href="career-library.html">Library</a><a class="cta" href="assessment.html#free-test">Free Career Test</a></div>
 </nav></header>
 
-<div class="wrap">
-  <p class="crumb"><a href="index.html">Home</a> &rsaquo; <a href="career-explorer.html">Career Explorer</a> &rsaquo; ${c.name}</p>
-  <article role="main">
+<header class="ar-hero">
+  <div class="wrap">
+    <p class="crumb"><a href="index.html">Home</a> &rsaquo; <a href="career-explorer.html">Career Explorer</a> &rsaquo; ${c.name}</p>
+    <div class="ar-glyph">${GLYPH[c.slug] || '🎓'}</div>
+    <span class="ar-eyebrow">${c.category}</span>
     <h1>${title(c)}</h1>
-    <div class="meta">By the Lume Live counselling team &middot; Updated October 2026 &middot; ${c.readMin} min read</div>
-    <p class="lead">${c.lead}</p>
-
-    <div class="facts">
-${c.facts.map(([b, s]) => `      <div><b>${b}</b><span>${s}</span></div>`).join('\n')}
+    <div class="ar-meta">By the Lume Live counselling team &middot; Updated October 2026 &middot; ${c.readMin} min read</div>
+    <p class="ar-lead">${c.lead}</p>
+    <div class="hero-facts">
+${c.facts.map(([b, s]) => `      <div class="hf"><b>${b}</b><span>${s}</span></div>`).join('\n')}
     </div>
+    ${DECO}
+  </div>
+</header>
 
-    <h2>What ${c.article} ${c.lowerName || c.name.toLowerCase()} actually does</h2>
+<div class="wrap">
+  <article role="main">
+    <h2><span class="sec-ic">💼</span> What ${c.article} ${c.lowerName || c.name.toLowerCase()} actually does</h2>
     <p>${c.does}</p>
 
-    <h2>The path after Class 10</h2>
+    <h2><span class="sec-ic">🧭</span> The path after Class 10</h2>
     <p>${c.after10}</p>
 
-    <h2>The path after Class 12</h2>
+    <h2><span class="sec-ic">🎓</span> The path after Class 12</h2>
     <ul>
 ${c.after12.map(li => `      <li>${li}</li>`).join('\n')}
     </ul>
 
-    <h2>Top institutions &amp; entry routes</h2>
+    <h2><span class="sec-ic">🏛️</span> Top institutions &amp; entry routes</h2>
     <table class="cmp">
       <tr><th>Type</th><th>Institutions</th><th>How you get in</th></tr>
 ${c.institutions.map(([a, b, d]) => `      <tr><td>${a}</td><td>${b}</td><td>${d}</td></tr>`).join('\n')}
     </table>
 
-    <h2>Core skills to build</h2>
+    <h2><span class="sec-ic">🛠️</span> Core skills to build</h2>
     <ul>
 ${c.skills.map(([bold, rest]) => `      <li><strong>${bold}</strong> &mdash; ${rest}</li>`).join('\n')}
     </ul>
 
-    <h2>Salary in India (2026)</h2>
-    <table class="cmp">
-      <tr><th>Stage</th><th>Typical annual pay</th></tr>
-${c.salary.map(([stage, pay]) => `      <tr><td>${stage}</td><td>${pay}</td></tr>`).join('\n')}
-    </table>
+    <h2><span class="sec-ic">💰</span> Salary in India (2026)</h2>
+    <div class="sal-ladder">
+${c.salary.map(([stage, pay], i) => `      <div class="sal-rung"><div class="sr-top"><span class="sr-stage">${stage}</span><span class="sr-pay">${pay}</span></div><div class="sr-track"><div class="sr-fill" style="width:${Math.round((i + 1) / c.salary.length * 100)}%"></div></div></div>`).join('\n')}
+    </div>
+    <p class="sal-cap">Illustrative career progression &mdash; actual pay varies widely by employer, city and skill.</p>
 
-    <h2>Is this career right for you?</h2>
+    <h2><span class="sec-ic">🧩</span> Is this career right for you?</h2>
     <p>${c.fit}</p>
 
     <div class="takeaway">
