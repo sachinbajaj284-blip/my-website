@@ -18,6 +18,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CITIES } from './mh-cities.mjs';
+import { CAREER_PROFILES } from './career-profiles.mjs';
+import { COMPARISONS } from './comparisons.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'og');
@@ -38,6 +40,11 @@ const PAGES = {
   'mental-health-counselling-chandigarh':             { eyebrow: 'Mental Health · Chandigarh', title: "Confidential Counselling In Chandigarh" },
   'mental-health-counselling-lucknow':                { eyebrow: 'Mental Health · Lucknow', title: "Confidential Counselling In Lucknow" },
   'mental-health-counselling-rohtak':                 { eyebrow: 'Mental Health · Rohtak', title: "Confidential Counselling In Rohtak" },
+  'mental-health-counselling-faridabad':              { eyebrow: 'Mental Health · Faridabad', title: "Confidential Counselling In Faridabad" },
+  'mental-health-counselling-sonipat':                { eyebrow: 'Mental Health · Sonipat', title: "Confidential Counselling In Sonipat" },
+  'mental-health-counselling-panipat':                { eyebrow: 'Mental Health · Panipat', title: "Confidential Counselling In Panipat" },
+  'mental-health-counselling-hisar':                  { eyebrow: 'Mental Health · Hisar', title: "Confidential Counselling In Hisar" },
+  'mental-health-counselling-bhiwani':                { eyebrow: 'Mental Health · Bhiwani', title: "Confidential Counselling In Bhiwani" },
   'student-mental-health-india':                      { eyebrow: 'Student Guide', title: "Student Mental Health In India" },
   'mental-health-calendar':                           { eyebrow: 'Mental Health · All Year', title: "The Mental Health Awareness Calendar" },
   'wellbeing-check':                                  { eyebrow: 'Free Self-Checks', title: "Seven Free, Private Mental Health Checks" },
@@ -83,6 +90,13 @@ const EXPLAINER_CARDS = {
   'therapy-for-anxiety':               ['Online Therapy · Anxiety',       'Online Therapy For Anxiety'],
   'therapy-for-depression':            ['Online Therapy · Depression',    'Online Therapy For Depression'],
   'therapy-for-stress':                ['Online Therapy · Burnout',       'Online Therapy For Stress & Burnout'],
+  'therapy-for-ocd':                   ['Online Therapy · OCD',           'Online Therapy For OCD'],
+  'therapy-for-panic-attacks':         ['Online Therapy · Panic',         'Online Therapy For Panic Attacks'],
+  'therapy-for-social-anxiety':        ['Online Therapy · Social Anxiety', 'Online Therapy For Social Anxiety'],
+  'therapy-for-adhd':                  ['Support · ADHD',                 'ADHD Counselling & Support'],
+  'therapy-for-insomnia':              ['Online Therapy · Sleep',         'Counselling For Insomnia & Sleep'],
+  'therapy-for-ptsd':                  ['Support · Trauma',               'Counselling For PTSD & Trauma'],
+  'therapy-for-bipolar-disorder':      ['Support · Bipolar',              'Counselling Support For Bipolar'],
 };
 for (const [slug, [eyebrow, title]] of Object.entries(EXPLAINER_CARDS)) PAGES[slug] = { eyebrow, title };
 
@@ -99,6 +113,26 @@ for (const c of CITIES) {
     PAGES[`${stem}-${key}`] = { eyebrow, title };
   }
 }
+
+// Generated profession guides carry a share card in the same style as the existing
+// career-as-<slug> cards: a "Career Guide" eyebrow and the page's own H1.
+for (const c of CAREER_PROFILES) {
+  PAGES[`career-as-${c.slug}`] = { eyebrow: 'Career Guide', title: `How to Become ${c.article} ${c.name} in India` };
+}
+
+// Admission & exam library guides.
+const ADMISSION_CARDS = {
+  'neet-counselling-process':       ['Admissions · NEET',  'NEET Counselling, Explained'],
+  'josaa-counselling-process':      ['Admissions · JoSAA', 'JoSAA Counselling, Step by Step'],
+  'what-to-do-after-neet':          ['After NEET',         'Your Options After a Low NEET Score'],
+  'what-to-do-after-jee':           ['After JEE',          'Your Options After a Low JEE Rank'],
+  'cuet-admission-process':         ['Admissions · CUET',  'After Your CUET Result'],
+  'scholarships-for-students-india':['Scholarships',       'Scholarships For Students In India'],
+};
+for (const [slug, [eyebrow, title]] of Object.entries(ADMISSION_CARDS)) PAGES[slug] = { eyebrow, title };
+
+// Comparison pages: a "Compare" eyebrow and the short "A vs B" from the page's crumb.
+for (const c of COMPARISONS) PAGES[c.slug] = { eyebrow: 'Compare', title: c.crumb };
 
 const logo = 'data:image/png;base64,' + fs.readFileSync(path.join(ROOT, 'logo.png')).toString('base64');
 

@@ -17,6 +17,22 @@ import { CONDITIONS } from './mh-conditions.mjs';
 import { LANDINGS } from './mh-landings.mjs';
 
 const HUB = 'mental-health-counselling.html';
+
+// Each condition explainer links to its matching treatment-intent landing page, so the
+// pair (understanding-X ↔ therapy-for-X) is bidirectional. Keyed by condition slug; the
+// landing links back via its own `related` list in mh-landings.mjs.
+const THERAPY_FOR = {
+  'understanding-anxiety.html': ['therapy-for-anxiety.html', 'Online therapy &amp; counselling for anxiety'],
+  'understanding-depression.html': ['therapy-for-depression.html', 'Online therapy &amp; counselling for depression'],
+  'understanding-stress-and-burnout.html': ['therapy-for-stress.html', 'Online counselling for stress &amp; burnout'],
+  'understanding-ocd.html': ['therapy-for-ocd.html', 'Online therapy &amp; counselling for OCD'],
+  'understanding-panic-attacks.html': ['therapy-for-panic-attacks.html', 'Online counselling for panic attacks'],
+  'understanding-social-anxiety.html': ['therapy-for-social-anxiety.html', 'Online counselling for social anxiety'],
+  'understanding-adhd.html': ['therapy-for-adhd.html', 'ADHD counselling &amp; support online'],
+  'understanding-insomnia.html': ['therapy-for-insomnia.html', 'Online counselling for insomnia &amp; sleep'],
+  'understanding-ptsd.html': ['therapy-for-ptsd.html', 'Online counselling for PTSD &amp; trauma'],
+  'understanding-bipolar-disorder.html': ['therapy-for-bipolar-disorder.html', 'Counselling support for bipolar disorder'],
+};
 const CHECK = process.argv.includes('--check');
 
 /* ── screener pages ────────────────────────────────────────────────────── */
@@ -241,6 +257,7 @@ function buildCondition(c) {
     .join('\n');
 
   const related = [
+    ...(THERAPY_FOR[c.slug] ? [THERAPY_FOR[c.slug]] : []),
     c.screener,
     ['wellbeing-check.html', 'All seven free self-checks'],
     [HUB, 'Online mental health counselling in India'],

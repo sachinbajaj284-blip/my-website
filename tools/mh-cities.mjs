@@ -21,7 +21,7 @@ export const CITIES = [
     slug: 'mental-health-counselling-delhi.html',
     heroCard: '“Log kya kahenge” has kept more people out of a counselling room than the fee ever has.',
     city: 'Delhi', region: 'IN-DL', state: 'Delhi NCR',
-    careerPage: null,
+    careerPage: 'career-counselling-in-delhi.html',
     lede: 'Entrance exams, coaching timetables, and a city where a young person is never more than one conversation away from being ranked against somebody. Private 1:1 support, online, in Hindi or English.',
     hindi: 'Baat karna kamzori nahi, samajhdari hai. &#128155;',
     pressure: `<h3>What the pressure looks like here</h3>
@@ -283,6 +283,142 @@ export const CITIES = [
       ['Everyone in my family is counting on this. Can I even talk about stopping?', 'Yes, and a session is a reasonable place to do it, precisely because it is outside the family. It is usually worth working out what you actually think before working out what to say at home &mdash; those are separate problems.'],
       ['Is the session in Hindi?', 'Yes if you want it to be. Hindi or English, whichever you think in. For most aspirants in UP that’s Hindi, and there’s no reason a session should run in the harder language.'],
       ['I can’t afford much. What does it cost?', 'A first session is &#8377;249 with code FIRST50, and sessions after that are &#8377;499 for 45 minutes. That is deliberately well below typical private counselling rates, which commonly run &#8377;1,500&ndash;&#8377;3,000, because affordability is exactly what stops aspirants getting support.'],
+    ],
+  },
+
+  {
+    slug: 'mental-health-counselling-faridabad.html',
+    heroCard: 'Nobody at the plant, the office or the society needs to know. That’s usually the first question, so here’s the answer up front.',
+    city: 'Faridabad', region: 'IN-HR', state: 'Haryana',
+    careerPage: 'career-counselling-in-faridabad.html',
+    lede: 'A working city that runs on shifts and long commutes, where slowing down can feel like falling behind. Private 1:1 support for workers, students and parents across Faridabad. Online, in Hindi or English.',
+    hindi: 'Thak jaana normal hai. Har roz toot-te rehna nahi. &#128155;',
+    pressure: `<h3>What the pressure looks like here</h3>
+    <p>Faridabad is a city built around work. The industrial belts along Mathura Road and the NIT and Ballabhgarh sectors pull in people who came here for a job on the line, in a workshop, or in a small unit that can’t afford a bad month. A lot of that work is shift work, and a lot of the families here moved from somewhere else to do it, which means the people you’d normally lean on are a train ride away.</p>
+    <p>That produces a particular kind of strain. Long hours, a wage that doesn’t leave much room, a commute that eats what’s left, and a sense that stopping to deal with how you feel is a luxury other people get. People turn up having carried something for years because there was never an hour in the week that belonged to them.</p>
+    <p>The other Faridabad story is the student stuck between a city that’s technically Delhi NCR and a Delhi that feels a world away &mdash; travelling hours to a coaching centre, or quietly deciding they can’t ask their family to fund one.</p>`,
+    why: `<p>Faridabad isn’t short of hospitals. Amrita Hospital out towards the bypass is one of the largest in the country, and the ESIC medical college serves a lot of the industrial workforce. If you need a psychiatric assessment or things are severe, that care exists.</p>
+    <p>What’s much harder to find is an unhurried conversation when you aren’t ill &mdash; just worn down, anxious, or quietly not okay. Private therapy in NCR runs &#8377;1,500 to &#8377;3,000 a session, which for a shift worker or a student means asking for money and explaining why, which for a lot of people means not going at all.</p>
+    <p>Sessions here run online, at a slot you pick around your shift, and the first one is &#8377;249.</p>`,
+    concerns: [
+      ['&#128296;', 'Shift work and job strain', 'Exhaustion that sleep doesn’t fix, insecurity about the next month, and effort that never feels like enough.'],
+      ['&#128649;', 'Long commutes and no time', 'Days with no hour that belongs to you, and distress that never gets a chance to surface.'],
+      ['&#127968;', 'Living away from family', 'Building a life in a city you moved to for work, without the people you’d normally lean on.'],
+      ['&#127891;', 'Students in Delhi’s shadow', 'Travelling for coaching, or deciding you can’t ask your family to pay for it.'],
+    ],
+    faq: [
+      ['Will my employer or factory know I booked a session?', 'No. This is completely independent of any workplace or ESIC programme &mdash; your employer isn’t involved, isn’t told, and isn’t billed. You can book using a first name only.'],
+      ['I work shifts. Can I get a session that fits?', 'Yes. You pick your own slot from the live calendar, and daytime slots that suit a night or rotating shift are available. Sessions are online, so nothing is added to your commute.'],
+      ['Is this available in Hindi?', 'Yes &mdash; Hindi or English, whichever you actually think in. For most people in Faridabad the difficult parts are much easier to reach in Hindi, even when work runs in English.'],
+      ['My problem is really money and workload. Can counselling help?', 'It can’t change your pay or your hours, and it would be dishonest to pretend otherwise. What it can help with is the part you do carry &mdash; the worry, the sleep, the boundaries, and working out what, if anything, you want to change. Sometimes the honest conclusion is that the situation is the problem, not you.'],
+    ],
+  },
+  {
+    slug: 'mental-health-counselling-hisar.html',
+    heroCard: 'Your university, your coaching centre and your family don’t hear about this. That’s the whole point.',
+    city: 'Hisar', region: 'IN-HR', state: 'Haryana',
+    careerPage: 'career-counselling-in-hisar.html',
+    lede: 'A university town and a government-job town at once, pulling in students from across western Haryana. Private 1:1 support for students, aspirants and families in Hisar. Online, in Hindi or English.',
+    hindi: 'Marks aur result se zyada zaroori aap hain. &#128155;',
+    pressure: `<h3>What the pressure looks like here</h3>
+    <p>Hisar runs on study. Guru Jambheshwar University, the agricultural university at HAU &mdash; one of the largest of its kind in Asia &mdash; and the veterinary university between them pull in young people from villages right across western Haryana, most of them the first in their family to study this far from home. For a lot of them the real adjustment isn’t the syllabus, it’s being suddenly alone in a hostel or a rented room in a town where nobody knew them a month ago.</p>
+    <p>Over all of it sits the government job. SSC, HSSC, bank and teaching exams, years of preparation with no feedback and no fixed endpoint, in a region where a sarkari naukri is treated as the one safe outcome. People sit a second and third attempt while everyone they grew up with moves into jobs and marriages, and the gap gets harder to talk about each year.</p>
+    <p>The families carry it too &mdash; farming households that have put real money behind a child’s studies, and a quiet pressure that struggling would be ungrateful.</p>`,
+    why: `<p>There’s a civil hospital and private clinics in Hisar, and for a psychiatric assessment or anything severe the public medical colleges in the region, including PGIMS at Rohtak, are the right doors to knock on. Agroha has a medical college too.</p>
+    <p>What that system isn’t built for is the much larger group who aren’t ill but are struggling anyway &mdash; the hosteller who’s stopped going to class, the aspirant on a third attempt, the student who can’t tell their family how it’s really going. That kind of thing gets left alone because it doesn’t look like illness. It just looks like studying.</p>
+    <p>Sessions run online, nothing reaches your university or your family, and the first is &#8377;249.</p>`,
+    concerns: [
+      ['&#127979;', 'First time away from home', 'Hostel and rented-room loneliness, in a town where nobody knew you a month ago.'],
+      ['&#128220;', 'Long-horizon exam preparation', 'Years of SSC, HSSC or bank preparation with no feedback and no defined endpoint.'],
+      ['&#128128;', 'Watching peers move on', 'Friends entering jobs and marriages while your life stays deliberately on hold.'],
+      ['&#128149;', 'Family expectation and guilt', 'Struggling in a farming household that has put real money behind your studies.'],
+    ],
+    faq: [
+      ['Will my university or coaching centre be told?', 'No. This sits entirely outside your institution &mdash; no attendance note, no word to a warden or a counselling cell. You can book using a first name only.'],
+      ['I’ve been preparing for a government job for years and feel stuck. Is that a mental health issue?', 'It doesn’t have to be a disorder to be worth talking about. Sustained uncertainty with no feedback wears people down in a way that looks like lost motivation from outside and feels very different from inside, and it’s a genuinely workable thing to bring to a session.'],
+      ['Is the session in Hindi?', 'Yes if you want it to be &mdash; Hindi or English, whichever you think in. For most students and aspirants in this part of Haryana that’s Hindi, and there’s no reason a session should run in the harder language.'],
+      ['I can’t afford much. What does it cost?', 'A first session is &#8377;249 with code FIRST50, and sessions after are &#8377;499 for 45 minutes &mdash; deliberately well below typical private counselling rates of &#8377;1,500 to &#8377;3,000, because affordability is exactly what stops people here getting support.'],
+    ],
+  },
+  {
+    slug: 'mental-health-counselling-panipat.html',
+    heroCard: 'Somebody outside the family, outside the business, and not keeping score. That’s what a session is.',
+    city: 'Panipat', region: 'IN-HR', state: 'Haryana',
+    careerPage: 'career-counselling-in-panipat.html',
+    lede: 'A trading and textile town where the family business and the family name sit at the centre of everything. Private 1:1 support for students, young people and parents in Panipat. Online, in Hindi or English.',
+    hindi: 'Apni baat kehna kamzori nahi hai. &#128155;',
+    pressure: `<h3>What the pressure looks like here</h3>
+    <p>Panipat runs on the handloom and home-furnishings trade, and a lot of life here is organised around the family business. That shapes the pressure in a specific way: for many young people the expected path is to step into the shop, the unit or the export order book, and wanting something else can feel less like a career choice and more like letting the family down.</p>
+    <p>It’s a close-knit, reputation-conscious place, strung along the highway between Delhi and the north. In a town where everyone knows whose son or daughter you are, the fear that a private struggle will become public talk keeps people quiet long past the point where talking would have helped.</p>
+    <p>And underneath the business story is the ordinary one &mdash; teenagers through the board-exam and competitive-exam funnel, and parents working long hours in the trade who can see something is wrong with their child but can’t tell what’s normal and what isn’t.</p>`,
+    why: `<p>Panipat has a civil hospital and private clinics, and for a psychiatric assessment or anything severe the public medical colleges in the region &mdash; PGIMS at Rohtak, or the hospitals in Delhi an hour up the highway &mdash; are the right places.</p>
+    <p>What’s harder to find locally is an unhurried, genuinely private conversation when you aren’t ill, in a town small enough that walking into a clinic is itself a risk to privacy. Private therapy also runs &#8377;1,500 to &#8377;3,000 a session, which for a student means involving a parent, which for many means not going.</p>
+    <p>Sessions here run online, nothing reaches your family or the neighbourhood, and the first is &#8377;249.</p>`,
+    concerns: [
+      ['&#127981;', 'Family business expectation', 'Being expected to step into the trade, and reading your own ambitions as disloyalty.'],
+      ['&#128065;', 'A town where everyone knows you', 'The fear that a private struggle becomes public talk, and the silence that enforces.'],
+      ['&#127891;', 'Board and competitive exam pressure', 'A narrow funnel treated as though it decides the rest of your life.'],
+      ['&#128106;', 'Parents on business hours', 'Knowing something is wrong with your child and not knowing what’s normal.'],
+    ],
+    faq: [
+      ['Will anyone in Panipat find out I booked a session?', 'No. Sessions are online, there’s no clinic to be seen walking into, and nothing is reported to your family, your school or anyone else. You can book using a first name only. In a town this size that privacy is usually the whole point.'],
+      ['I’m expected to join the family business but want something else. Can I talk about that?', 'Yes, and it’s one of the most common things young people bring here. It usually helps to work out what you actually want, separately from how to have the conversation at home &mdash; those are two different problems, and a session is a good place to untangle them.'],
+      ['Is this available in Hindi?', 'Yes &mdash; Hindi or English, whichever you think in. For most people in Panipat the difficult parts are easier to reach in Hindi.'],
+      ['I’m a parent worried about my teenager. Where do I start?', 'A parent session is a reasonable first step and doesn’t require your child to agree to anything. It’s often more useful than pushing a reluctant teenager into a room. Our guide <a href="for-parents.html">for parents</a> covers the signs worth taking seriously.'],
+    ],
+  },
+  {
+    slug: 'mental-health-counselling-sonipat.html',
+    heroCard: 'Doing fine on paper and badly everywhere else is a real thing, and it’s worth talking about.',
+    city: 'Sonipat', region: 'IN-HR', state: 'Haryana',
+    careerPage: 'career-counselling-in-sonipat.html',
+    lede: 'A district that holds elite university campuses and a local Haryana town in the same few kilometres. Private 1:1 support for students, hostellers and families across Sonipat. Online, in Hindi or English.',
+    hindi: 'Sabke saath rehkar bhi akela lagna aam hai. &#128155;',
+    pressure: `<h3>What the pressure looks like here</h3>
+    <p>Sonipat has changed fast. The campuses out towards Rai &mdash; Ashoka, the Jindal global university, the sports school &mdash; pull in students from across India and beyond into intense, high-achieving environments, most of them living away from home for the first time. The pressure there is comparison inside an exceptional peer group: very capable people quietly convinced they’re falling behind, on evidence that wouldn’t survive five minutes of scrutiny.</p>
+    <p>A few kilometres away is the other Sonipat &mdash; a Haryana town and an industrial belt around Kundli on the edge of Delhi NCR, with local students and families whose world is very different from the campuses next door. Both carry real strain; they just don’t look alike.</p>
+    <p>What they share is distance and newness. A first-year a long way from home, a student on a course that turned out wrong, a young person reading an unfamiliar room in an unfamiliar language &mdash; and the specific loneliness of being surrounded by people and still feeling that nobody really knows you.</p>`,
+    why: `<p>Sonipat sits close enough to Delhi that the serious clinical care &mdash; AIIMS, IHBAS and the rest &mdash; is within reach, and that’s the right route for a psychiatric assessment or anything severe. Several campuses here also run their own counselling cells.</p>
+    <p>What students hesitate over usually isn’t the counsellor but the closeness &mdash; a campus cell sits inside the same institution that touches your grades, your attendance and what gets said to your parents, and that’s enough to make people edit themselves. The much larger group whose problem isn’t clinical at all is left with little that feels genuinely outside.</p>
+    <p>This sits outside all of it. Nothing reaches your university or your family, and the first session is &#8377;249.</p>`,
+    concerns: [
+      ['&#128200;', 'Comparison and impostor feelings', 'Measuring yourself against an unusually high-achieving peer group on campus.'],
+      ['&#127979;', 'First year away from home', 'Hostel adjustment, homesickness, and the loneliness of a room full of people.'],
+      ['&#128220;', 'Wrong course, family investment', 'Realising a course doesn’t fit when someone else is paying for it.'],
+      ['&#128172;', 'Language and belonging', 'Arriving from another state and reading the room in an unfamiliar language.'],
+    ],
+    faq: [
+      ['Will my university or its counselling cell be told?', 'No. This is entirely outside your institution &mdash; no note to a cell, no attendance record, nothing to a warden or your parents. You can book using a first name only, which for a lot of students on these campuses is exactly why they use it.'],
+      ['Everyone around me seems to be doing better. Is that worth a session?', 'Yes, and it’s one of the most common things students here bring. Comparison inside a high-achieving peer group is a genuine and specific difficulty, and it responds well to being examined out loud with someone who isn’t in that peer group.'],
+      ['Is this available in Hindi?', 'Yes &mdash; Hindi or English, whichever you think in. A lot of students study in English and think in Hindi, and there’s no reason a session should run in the harder language.'],
+      ['I have backlogs or a course I regret, and my family doesn’t know. Can I talk about that?', 'Yes, and it’s very common. The academic problem and the growing gap with home are two different problems, and it usually helps to separate them before deciding anything.'],
+    ],
+  },
+  {
+    slug: 'mental-health-counselling-bhiwani.html',
+    heroCard: 'Pushing through pain is trained into you here. Knowing when something needs talking about is a different kind of strength.',
+    city: 'Bhiwani', region: 'IN-HR', state: 'Haryana',
+    careerPage: 'career-counselling-in-bhiwani.html',
+    lede: 'A town that produces fighters and government-job aspirants in equal measure, and asks a lot of both. Private 1:1 support for young people, athletes and families in Bhiwani. Online, in Hindi or English.',
+    hindi: 'Andar se toot-na bhi ek chot hai. Ispe baat karna theek hai. &#128155;',
+    pressure: `<h3>What the pressure looks like here</h3>
+    <p>Bhiwani has a reputation to carry. It’s the town that sent boxers to the Olympics, and the akhara-and-training culture runs deep &mdash; young athletes putting years into a shot at national selection, a government sports quota, or a place in the forces. That’s an enormous amount staked on a body and a few results, usually with no plan B and no safety net if an injury or a missed selection ends it.</p>
+    <p>Alongside the sport is the other Bhiwani &mdash; a coaching and government-exam town, where SSC, defence recruitment and teaching exams pull in years of preparation, and a sarkari naukri is treated as the one outcome that counts.</p>
+    <p>It’s also a conservative, close-knit place where toughness is the expected answer to everything. Young people are trained to push through pain and not complain, which is useful in a ring and much less useful when the thing that’s hurting is on the inside &mdash; and so it gets carried silently, because saying it out loud feels like weakness.</p>`,
+    why: `<p>Bhiwani has a civil hospital and private clinics, and for a psychiatric assessment or anything severe the public medical colleges in the region &mdash; PGIMS at Rohtak is the nearest major one &mdash; are the right places to go.</p>
+    <p>What’s almost impossible to find locally is an unhurried, private conversation for someone who isn’t ill but is struggling &mdash; the athlete whose selection didn’t come, the aspirant on another attempt, the young person who’s stopped enjoying anything and can’t say why. In a town this size, being seen walking into a clinic is itself a barrier.</p>
+    <p>Sessions here run online, nothing reaches your family, your coach or anyone else, and the first is &#8377;249.</p>`,
+    concerns: [
+      ['&#129354;', 'Everything staked on sport', 'Years put into selection or a quota, with no plan B if injury or a result ends it.'],
+      ['&#128220;', 'Government and defence exam pressure', 'Long preparation for SSC, forces or teaching exams, treated as the one outcome that counts.'],
+      ['&#128170;', 'Toughness as the only answer', 'Being trained to push through pain, and having no way to name what hurts on the inside.'],
+      ['&#128128;', 'When the plan doesn’t work out', 'A missed selection or a lost year, and an identity built entirely around one goal.'],
+    ],
+    faq: [
+      ['Will my coach, academy or family find out?', 'No. Sessions are online, there’s no clinic to be seen walking into, and nothing is reported to a coach, an academy or your family. You can book using a first name only.'],
+      ['My selection didn’t come and I don’t know who I am without it. Is that worth a session?', 'Yes &mdash; it’s exactly the kind of thing worth talking about. When an identity is built around a single goal, losing it is a real loss, and working through it with someone outside the sport is genuinely useful, not a sign of weakness.'],
+      ['I’ve been told my whole life to just be tough. How is talking different?', 'Toughness gets you through a lot, and it’s worth something. It just doesn’t work on everything &mdash; some things get heavier the longer you carry them alone. A session isn’t the opposite of being tough; it’s dealing with the part that pushing through doesn’t reach.'],
+      ['Is the session in Hindi, and what does it cost?', 'Hindi or English, whichever you think in &mdash; for most people here that’s Hindi. A first session is &#8377;249 with code FIRST50, and sessions after are &#8377;499 for 45 minutes, well below typical private rates of &#8377;1,500 to &#8377;3,000.'],
     ],
   },
 
