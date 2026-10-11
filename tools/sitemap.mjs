@@ -64,6 +64,19 @@ const TRANSLATION_GROUPS = [
     ['hi-in',     ORIGIN + 'stream-selector-hi.html'],
     ['x-default', ORIGIN + 'stream-selector.html'],
   ]},
+  ...[
+    'career-as-doctor-mbbs',
+    'career-as-software-engineer',
+    'career-as-civil-services-ias',
+    'career-as-chartered-accountant',
+  ].map(base => ({
+    pages: [`${base}.html`, `${base}-hi.html`],
+    alternates: [
+      ['en-in',     ORIGIN + `${base}.html`],
+      ['hi-in',     ORIGIN + `${base}-hi.html`],
+      ['x-default', ORIGIN + `${base}.html`],
+    ],
+  })),
 ];
 const alternatesFor = f => {
   const g = TRANSLATION_GROUPS.find(g => g.pages.includes(f));
