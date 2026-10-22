@@ -149,6 +149,64 @@ normalised reference to the order id it minted.
 
 ---
 
+## Many at once — a corporate / bulk deal
+
+A company pays Lume Live **once**, off-platform, for access on behalf of its
+staff — e.g. ER Automotives buying the Lume Lens Working Profile
+(`lume-lens-working-profile`) for 50 employees. That is one transfer that has
+to become 50 separate entitlements, one per named employee. Do **not** turn off
+the payment gateway or hand round a 100%-off coupon (a 100%-off code still
+charges ₹1 and still makes every employee go through checkout). Grant them.
+
+`tools/grant-entitlements.mjs` reads a CSV of employees and records one manual
+entitlement each. It calls `recordManualEntitlement` directly — the same code
+path as the endpoint — so, run from a machine that has the `FIREBASE_*`
+secrets, there is no HTTP token to arm. It writes **nothing** without
+`--commit`.
+
+```bash
+# 1. preview (writes nothing) — always first
+npm run entitlements:grant -- \
+  --file employees.csv \
+  --reference ERAUTO-INV-2026-001 \
+  --amount 1200          # the negotiated PER-HEAD rate, so the grants sum to the invoice
+
+# 2. apply, once the preview looks right
+npm run entitlements:grant -- \
+  --file employees.csv --reference ERAUTO-INV-2026-001 --amount 1200 --commit
+```
+
+The CSV needs a header row with an `email` column; `phone` and `name` are
+optional and column order/case don't matter. A template is at
+[`examples/corporate-grants.sample.csv`](examples/corporate-grants.sample.csv).
+
+| Flag | Required | Notes |
+|---|---|---|
+| `--file` | yes | CSV of recipients. |
+| `--reference` | yes | The **one** invoice/transfer reference the whole batch was paid under. |
+| `--sku` | no | Pack to grant. Default `lume-lens-working-profile`. |
+| `--amount` | no | Rupees **per person**. Defaults to catalogue price; pass the negotiated per-head rate so the grants reconcile to the invoice total. |
+| `--commit` | no | Actually write. Without it, preview only. |
+
+**One invoice, many references.** A grant is idempotent on its reference, so the
+tool derives each employee's reference from the invoice reference plus a hash of
+that employee's email (or phone). Each is therefore unique per person (everyone
+gets their own entitlement), stable across runs (re-running the file after
+fixing two rows re-grants nobody), and prefixed with the invoice reference (so
+the `source:"manual"` rows for this deal sort together when you reconcile). A
+row with no usable email or phone, or a duplicated person, is reported and
+skipped — the rest still run.
+
+The per-person email caveat above applies to every row: an employee granted by
+email can self-restore on any device; one granted by phone only cannot until you
+add their sign-in email. After the grant, each employee signs in with that email
+and `lumeCashfreeVerifyAccess("lume-lens-working-profile")` unlocks the
+assessment — no payment on their end.
+
+Tested by `npm run entitlements:grant:test` (part of `npm test`).
+
+---
+
 ## Revoking one
 
 Set `status` to anything other than `PAID` on the `entitlements/{order_id}`
