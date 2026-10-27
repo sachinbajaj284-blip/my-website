@@ -30,7 +30,7 @@ const SITE = 'https://lumelive.co.in';
 const WA = '917015671280';
 const CREDS = 'M.Sc in Clinical Psychology (Gurugram University) and a PGDGC from Jamia Millia Islamia';
 
-const CSP = `default-src 'self'; script-src 'self' 'unsafe-inline' www.googletagmanager.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com; img-src 'self' data: www.google-analytics.com www.googletagmanager.com; connect-src 'self' www.googletagmanager.com *.google-analytics.com *.analytics.google.com; object-src 'none'; base-uri 'self';`;
+const CSP = `default-src 'self'; script-src 'self' 'unsafe-inline' sdk.cashfree.com *.cashfree.com www.gstatic.com cdn.jsdelivr.net www.googletagmanager.com apis.google.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; img-src 'self' data: blob: www.google-analytics.com www.googletagmanager.com *.cashfree.com; connect-src 'self' *.cashfree.com *.googleapis.com *.firebaseio.com *.firebaseapp.com www.gstatic.com www.googletagmanager.com *.google-analytics.com *.analytics.google.com; frame-src *.cashfree.com *.firebaseapp.com; object-src 'none'; base-uri 'self';`;
 
 const esc = s => String(s).replace(/&(?!#?\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const wa = t => `https://wa.me/${WA}?text=${encodeURIComponent(t)}`;
@@ -147,6 +147,9 @@ ${o.related.map(([h, t]) => `      <a href="${h}">${t} &rarr;</a>`).join('\n')}
 </div>
 
 <script>document.getElementById('yr').textContent=new Date().getFullYear();</script>
+<script src="lume-coupons.js" defer></script>
+<script src="lume-auth.js" defer></script>
+<script src="cashfree-payments.js" defer></script>
 <script src="lume-wellbeing-check.js" defer></script>
 <script src="site-anim.js" defer></script>
 </body>
