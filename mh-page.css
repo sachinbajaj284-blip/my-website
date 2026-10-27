@@ -76,6 +76,13 @@ li{margin-bottom:7px;font-size:.98rem}
 .faq-item{border-bottom:1px solid #E2E9E8;padding:16px 0}
 .faq-item h3{margin:0 0 8px}
 .faq-item p{margin-bottom:0;color:var(--mid)}
+.reflect{background:linear-gradient(135deg,#F3F8F7,#FDF6E8);border:1px solid #E4E9E3;border-left:4px solid var(--gold);border-radius:14px;padding:22px 24px;margin:24px 0}
+.reflect h2{margin-top:0}
+.reflect p.reflect-lead{color:var(--mid);font-size:.92rem;margin:0 0 12px}
+.reflect ul{list-style:none;margin:0;padding:0}
+.reflect li{position:relative;padding:10px 0 10px 30px;border-top:1px solid #E9EDE6;color:var(--dark);font-size:.95rem}
+.reflect li:first-of-type{border-top:0}
+.reflect li::before{content:"?";position:absolute;left:0;top:9px;width:20px;height:20px;border-radius:50%;background:var(--gold);color:#fff;font-weight:800;font-size:.8rem;display:flex;align-items:center;justify-content:center}
 .related{background:var(--gray);border-radius:14px;padding:20px;margin:26px 0}
 .related h2{margin-top:0}
 .related a{display:block;color:var(--teal);font-weight:700;padding:4px 0}
