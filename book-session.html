@@ -2,7 +2,7 @@
 <html lang="en-IN">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' www.googletagmanager.com connect.facebook.net; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com; img-src 'self' data: www.google-analytics.com www.googletagmanager.com www.facebook.com; connect-src 'self' www.googletagmanager.com *.google-analytics.com *.analytics.google.com www.facebook.com connect.facebook.net; object-src 'none'; base-uri 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' sdk.cashfree.com *.cashfree.com www.gstatic.com cdn.jsdelivr.net www.googletagmanager.com apis.google.com connect.facebook.net; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; img-src 'self' data: blob: www.google-analytics.com www.googletagmanager.com *.cashfree.com www.facebook.com; connect-src 'self' *.cashfree.com *.googleapis.com *.firebaseio.com *.firebaseapp.com www.gstatic.com www.googletagmanager.com *.google-analytics.com *.analytics.google.com www.facebook.com connect.facebook.net; frame-src *.cashfree.com *.firebaseapp.com; object-src 'none'; base-uri 'self';">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Book a ₹249 Counselling Session — Pick a Slot | Lume Live</title>
 <link rel="preconnect" href="https://calendar.app.google">
@@ -76,6 +76,8 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
 .gbook h2{position:relative;font-family:Georgia,serif;font-size:1.4rem;margin-bottom:8px}
 .gbook p{position:relative;color:rgba(255,255,255,.78);max-width:520px;margin:0 auto 18px;font-size:.94rem}
 .btn.gbtn{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);width:auto;display:inline-flex;padding:15px 32px;position:relative}
+.btn.gbook-alt{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.35);width:auto;display:inline-flex;padding:13px 26px;margin-top:12px;position:relative}
+.btn.gbook-alt:hover{background:rgba(255,255,255,.18)}
 .or-divider{display:flex;align-items:center;gap:14px;color:var(--muted);font-size:.82rem;font-weight:700;margin:26px 4px 2px;text-transform:uppercase;letter-spacing:.5px}
 .or-divider::before,.or-divider::after{content:"";flex:1;height:1px;background:var(--line)}
 .sess-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -174,7 +176,8 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
     <h2>Book from live available times</h2>
     <p>Pick a slot from Lume Live's calendar — you'll get an instant Google Calendar invite with the video-call link and reminders. You choose your time once, and that's the booking done.</p>
     <div class="gbook-sess" id="gbookSess">You're booking: <b>First 1:1 Session</b> · 45 min · ₹249</div>
-    <a class="btn gbtn" id="gBookBtn" href="https://calendar.app.google/s59WHyuHJenjfPbQ6" target="_blank" rel="noopener">See available times &amp; book &rarr;</a>
+    <a class="btn gbtn" id="gPayBtn" href="#" role="button">🔒 Pay &amp; pick your slot</a>
+    <a class="btn gbook-alt" id="gBookBtn" href="https://calendar.app.google/s59WHyuHJenjfPbQ6" target="_blank" rel="noopener">Prefer to pay later? Book a slot directly &rarr;</a>
     <p class="gbook-note" id="gbookNote" hidden><span id="gbookNoteMsg">Tap <b>Book</b> above and we'll copy your session name — just paste it into the <b>Notes</b> box on the Google form so your counsellor knows which one.</span>
       <span class="gbook-copy"><code id="gbookNoteCode">Session: First 1:1 Session (45 min, ₹249)</code><button type="button" id="gbookCopy">Copy</button></span>
     </p>
@@ -263,10 +266,10 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
   // aud = the "This session is for" chip to pre-select. Set only where the
   // audience is unambiguous, so we never pre-fill a wrong guess.
   var SESSIONS=[
-    {key:'intro',    name:'First 1:1 Session',              mins:45, priceLabel:'₹249 with FIRST50',       desc:'First 1:1 call — understand your concern and the right next step.', aud:''},
-    {key:'counsel',  name:'1:1 Mental Health Session',        mins:45, priceLabel:'₹499, first ₹249',desc:'Confidential support for anxiety, stress, low mood, burnout or self-esteem.', aud:''},
-    {key:'parent',   name:'Parent / Joint Session',            mins:45, priceLabel:'₹499, first ₹249',desc:'Parent guidance or a joint parent-child conversation.', aud:'a parent enquiry'},
-    {key:'debrief',  name:'₹999 Report Debrief',               mins:30, priceLabel:'incl. in ₹999',desc:'Expert walkthrough of your Full Clarity Report.', aud:''}
+    {key:'intro',    name:'First 1:1 Session',              mins:45, priceLabel:'₹249 with FIRST50',       desc:'First 1:1 call — understand your concern and the right next step.', aud:'', pay:{sku:'wellness-session',amount:499,label:'1:1 Counselling Session'}},
+    {key:'counsel',  name:'1:1 Mental Health Session',        mins:45, priceLabel:'₹499, first ₹249',desc:'Confidential support for anxiety, stress, low mood, burnout or self-esteem.', aud:'', pay:{sku:'wellness-session',amount:499,label:'1:1 Mental Health Session'}},
+    {key:'parent',   name:'Parent / Joint Session',            mins:45, priceLabel:'₹499, first ₹249',desc:'Parent guidance or a joint parent-child conversation.', aud:'a parent enquiry', pay:{sku:'wellness-session',amount:499,label:'Parent / Joint Session'}},
+    {key:'debrief',  name:'₹999 Report Debrief',               mins:30, priceLabel:'incl. in ₹999',desc:'Expert walkthrough of your Full Clarity Report.', aud:'', pay:null}
   ];
   var state={session:SESSIONS[0],name:'',forWhom:''}, started=false;
 
@@ -347,6 +350,7 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
   function update(){
     var s=state.session;
     document.getElementById('gbookSess').innerHTML='You’re booking: <b>'+s.name+'</b> · '+s.mins+' min · '+s.priceLabel;
+    updatePay();
     document.getElementById('gbookNoteCode').textContent=noteLine();
     // The single Google page already IS the intro, so only nudge for the
     // other sessions — the common first-session path stays one tap, no notes chore.
@@ -377,6 +381,37 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
     else { var t=document.createElement('textarea'); t.value=text; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');done();}catch(e){} document.body.removeChild(t); }
   }
   document.getElementById('gbookCopy').addEventListener('click',copyNote);
+  // Self-serve Cashfree checkout. Paying runs the same post-payment slot
+  // picker (bookingCalendarUrl) that the "book directly" link opens, so this
+  // collects the fee up front and still books a real slot. Sessions without a
+  // `pay` config (the ₹999 report debrief) hide the button rather than risk
+  // charging a session price that does not apply to them. If the payment
+  // library has not loaded (or on a local file:// preview), we fall back to the
+  // direct calendar booking so the path is never a dead end.
+  var payBtn=document.getElementById('gPayBtn');
+  function updatePay(){
+    if(!payBtn) return;
+    if(state.session && state.session.pay){ payBtn.removeAttribute('hidden'); payBtn.style.display=''; }
+    else { payBtn.setAttribute('hidden',''); payBtn.style.display='none'; }
+  }
+  if(payBtn) payBtn.addEventListener('click',function(e){
+    e.preventDefault();
+    var p=state.session && state.session.pay; if(!p) return;
+    markStarted();
+    if(window.gtag) gtag('event','begin_checkout',{event_category:'booking',event_label:state.session.key,value:Number(p.amount)});
+    if(typeof window.lumeCashfreePay!=='function'){
+      var cal=document.getElementById('gBookBtn');
+      if(cal){ window.open(cal.getAttribute('href'),'_blank','noopener'); }
+      return;
+    }
+    var notes={ sessionKey:state.session.key, sessionName:state.session.name };
+    if(state.forWhom) notes.sessionFor=state.forWhom;
+    var opts={ sku:p.sku, amount:p.amount, label:p.label, notes:notes };
+    if(state.name) opts.customerName=state.name;
+    window.lumeCashfreePay(opts);
+  });
+  updatePay();
+
   var gb=document.getElementById('gBookBtn');
   if(gb) gb.addEventListener('click',function(){
     // Auto-copy the session name for non-intro sessions so the only manual
@@ -388,5 +423,8 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
 </script>
 <script src="site-anim.js" defer></script>
   <script src="lume-capture.js" defer></script>
+  <script src="lume-coupons.js" defer></script>
+  <script src="lume-auth.js" defer></script>
+  <script src="cashfree-payments.js" defer></script>
 </body>
 </html>
