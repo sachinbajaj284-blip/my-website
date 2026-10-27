@@ -271,9 +271,15 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
     {key:'parent',   name:'Parent / Joint Session',            mins:45, priceLabel:'₹499, first ₹249',desc:'Parent guidance or a joint parent-child conversation.', aud:'a parent enquiry', pay:{sku:'wellness-session',amount:499,label:'Parent / Joint Session'}},
     {key:'debrief',  name:'₹999 Report Debrief',               mins:30, priceLabel:'incl. in ₹999',desc:'Expert walkthrough of your Full Clarity Report.', aud:'', pay:null}
   ];
-  var state={session:SESSIONS[0],name:'',forWhom:''}, started=false;
+  var state={session:SESSIONS[0],name:'',forWhom:''}, started=false, nameEntered=false;
 
   function markStarted(){ if(!started){started=true; if(window.gtag) gtag('event','booking_started',{event_category:'booking'}); } }
+
+  // Funnel entry: the booking page was viewed with the session picker in front of
+  // the visitor. Together with booking_session_selected, booking_name_entered and
+  // the pay / calendar / WhatsApp clicks, this makes the slot-view → name → pay
+  // drop-off a GA4 funnel, so we can see which stage loses people.
+  if(window.gtag) gtag('event','booking_view',{event_category:'booking',event_label:state.session.key});
 
   // build the session picker
   var sessGrid=document.getElementById('sessGrid');
@@ -301,7 +307,13 @@ input[type=text]:focus{outline:2px solid var(--teal);outline-offset:1px;border-c
     c.addEventListener('click',function(){ selectIn(document.getElementById('forChips'),this); state.forWhom=this.getAttribute('data-for'); markStarted(); update(); });
   });
 
-  document.getElementById('bName').addEventListener('input',function(){ state.name=this.value.trim(); markStarted(); update(); });
+  document.getElementById('bName').addEventListener('input',function(){
+    state.name=this.value.trim(); markStarted();
+    // The name step is the one that was invisible before: fire it once, the first
+    // time a real name is present, so the name → pay drop-off is measurable.
+    if(state.name && !nameEntered){ nameEntered=true; if(window.gtag) gtag('event','booking_name_entered',{event_category:'booking',event_label:state.session.key}); }
+    update();
+  });
 
   // Pre-select "This session is for" when arriving from the start.html triage
   // link (?for=s10|s1112|parent|pro), so the answer given there isn't asked twice.
