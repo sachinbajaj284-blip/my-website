@@ -920,6 +920,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://lumelive.co.in/understanding-anger.html</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://lumelive.co.in/understanding-anxiety.html</loc>
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
@@ -944,7 +950,19 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://lumelive.co.in/understanding-loneliness.html</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://lumelive.co.in/understanding-ocd.html</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lumelive.co.in/understanding-overthinking.html</loc>
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -956,7 +974,25 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://lumelive.co.in/understanding-perfectionism.html</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lumelive.co.in/understanding-procrastination.html</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://lumelive.co.in/understanding-ptsd.html</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lumelive.co.in/understanding-self-compassion.html</loc>
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
