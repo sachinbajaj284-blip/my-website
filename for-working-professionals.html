@@ -218,7 +218,7 @@
           "name": "How does payment work?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "The public price is ₹1999. Cashfree checkout can collect payment securely once the payment backend is connected, with WhatsApp Pay confirmation available as backup."
+            "text": "Lume Lens — For Working Professionals is a one-time ₹1999. It covers all five parts and your premium working profile report."
           }
         }
       ]
@@ -1619,7 +1619,7 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
       <div class="assessment-step"><b>2</b><div><strong>One premium PDF report</strong><span>A private working profile report, available after completion.</span></div></div>
       <div class="assessment-step"><b>3</b><div><strong>Saved permanently in Firebase</strong><span>Your completed report record is saved for account continuity, follow-up and future dashboard features.</span></div></div>
       <div class="assessment-note"><span>&#10003;</span><span>For reflection and guided professional discussion. Not a hiring tool, performance review, or diagnosis.</span></div>
-      <div class="assessment-note gold"><span>&#10003;</span><span>Secure Cashfree checkout is being connected, with WhatsApp Pay confirmation available as a steady backup.</span></div>
+      <div class="assessment-note gold"><span>&#10003;</span><span>Create your Lume Live account or sign in, then begin your working profile straight away.</span></div>
     </div>
   </div>
 </section>
@@ -2844,29 +2844,18 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
           <aside class="sa-pay">
             <span class="sa-pay-label">Lume Lens &middot; For Working Professionals</span>
             <div class="sa-pay-price"><strong>&#8377;1999</strong><s>&#8377;2999</s><span>one-time fee</span></div>
-<div data-lume-coupon-checkout data-sku="lume-lens-working-profile" data-amount="1999" data-label="Lume Lens Working Profile" data-price-el=".sa-pay-price strong" data-phone="#saPhone"></div>
-            <p style="font-size:.78rem;color:var(--mid);line-height:1.55;">Payable once before you begin &mdash; covers all five parts and your premium working profile report.</p>
+            <p style="font-size:.78rem;color:var(--mid);line-height:1.55;">Covers all five parts and your premium working profile report.</p>
             <div class="sa-pay-trust" aria-label="Why professionals trust Lume Live">
               <div><b>500+</b><span>Guided</span></div>
               <div><b>4.9&#9733;</b><span>Avg Rating</span></div>
               <div><b>100%</b><span>Confidential</span></div>
             </div>
             <div class="sa-pay-assure">
-              <span><i>&#128274;</i> Secure Cashfree checkout &mdash; pay by UPI, card, net-banking or wallet.</span>
               <span><i>&#129309;</i> A premium PDF profile you keep &mdash; built for coaching and career decisions.</span>
-              <span><i>&#8617;&#65039;</i> Eligible refunds processed within 7 working days &mdash; see our <a class="sa-help-link" href="refund-policy.html" target="_blank" rel="noopener">refund policy</a>.</span>
-            </div>
-            <div class="sa-cashfree-panel">
-              <div class="sa-cashfree-top">
-                <div class="sa-cashfree-mark" aria-hidden="true">&#8377;</div>
-                <div><b>Secure Cashfree Checkout</b><span>Pay by UPI, card, netbanking or wallet and come back to begin.</span></div>
-              </div>
-              <button class="sa-btn primary" type="button" onclick="saStartCashfreePayment()">Pay Securely with Cashfree</button>
-              <p class="sa-pay-note">Checkout opens securely and returns you here after payment.</p>
+              <span><i>&#9989;</i> All five parts in one guided sitting &mdash; around 30&ndash;40 minutes end to end.</span>
             </div>
             <button class="sa-btn primary" type="button" onclick="saBegin()">Begin Lume Lens &rarr;</button>
-            <p class="sa-pay-note">Cashfree payments verify automatically and return you here to begin. <a class="sa-help-link" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20need%20help%20with%20the%20assessment%20payment%20or%20report." target="_blank" rel="noopener">Need help? Message Lume Live.</a></p>
-            <p class="sa-pay-note"><a href="#" onclick="if(typeof lumeCashfreeRestoreAccessPrompt==='function')lumeCashfreeRestoreAccessPrompt();return false;">Paid on your phone and now on another device? Restore access</a></p>
+            <p class="sa-pay-note">Create your account or sign in, then begin. <a class="sa-help-link" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20need%20help%20with%20the%20Lume%20Lens%20assessment." target="_blank" rel="noopener">Need help? Message Lume Live.</a></p>
           </aside>
         </div>
       </div>
@@ -3301,16 +3290,10 @@ window.saBegin=function(){
  var err=el("saGateError");
  if(!requireAssessmentSignin())return;
  if(!validateGate())return;
- err.textContent="Checking your payment status…";
- applyVerifiedCashfreeAccess().then(function(verified){
-  if(!verified){
-   err.textContent="Please complete the ₹1,999 Cashfree payment before starting. If you have just paid, wait a few seconds for it to verify and tap Begin again — or message us on WhatsApp to confirm your access.";return;
-  }
-  err.textContent="";
-  S.paid=true;persistAssessmentProgress();
-  show("saTest");renderPart();el("saTest").scrollIntoView({behavior:"smooth",block:"start"});
-  toast("You are in. One honest answer at a time.");
- });
+ err.textContent="";
+ S.paid=true;persistAssessmentProgress();
+ show("saTest");renderPart();el("saTest").scrollIntoView({behavior:"smooth",block:"start"});
+ toast("You are in. One honest answer at a time.");
 };
 
 /* ─── Stepper ─── */
