@@ -3913,9 +3913,16 @@ function saBuildPdfDoc(){
  /* hero \u2014 navy cover band with gold accents (matches Full Clarity Report) */
  var coverH=56;
  fill(NAVY);doc.rect(0,0,W,coverH,"F");
- fill(GOLD);doc.roundedRect(M,9,3.4,3.4,1,1,"F");
- lineText("LUME LIVE",M+5.4,12,8.6,[255,255,255],"helvetica","bold");
- lineText("Mental Health and Career Guidance",M+5.4,16.2,6.2,[182,194,214],"helvetica","bold");
+ if(saWMImg&&saWMImg.complete&&saWMImg.naturalWidth){
+  var lgW=13,lgH=lgW*(saWMImg.naturalHeight/saWMImg.naturalWidth);
+  try{doc.addImage(saWMImg,"PNG",M,7.5,lgW,lgH,"lumewm","FAST");}catch(e){}
+  lineText("LUME LIVE",M+16,12,8.6,[255,255,255],"helvetica","bold");
+  lineText("Mental Health and Career Guidance",M+16,16.2,6.2,[182,194,214],"helvetica","bold");
+ }else{
+  fill(GOLD);doc.roundedRect(M,9,3.4,3.4,1,1,"F");
+  lineText("LUME LIVE",M+5.4,12,8.6,[255,255,255],"helvetica","bold");
+  lineText("Mental Health and Career Guidance",M+5.4,16.2,6.2,[182,194,214],"helvetica","bold");
+ }
  lineText("Lume Lens Working Profile",W-M,12,7,[218,226,238],"helvetica","bold",{align:"right"});
  lineText("Generated "+date,W-M,16.2,6.2,[150,164,190],"helvetica","normal",{align:"right"});
  lineText("YOUR WORKING PROFILE",M,30,7.6,GOLD_LT,"helvetica","bold");
