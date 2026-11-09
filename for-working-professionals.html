@@ -2774,6 +2774,21 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
 
     <!-- SCREEN 1 — overview + payment gate -->
     <div class="sa-screen" id="saGate">
+      <!-- Trust & social-proof band (presentational) -->
+      <div class="wp-trust anim" aria-label="Why professionals trust Lume Lens">
+        <div class="wp-trust-stats">
+          <div class="wp-stat"><b data-wp-count="500" data-wp-suffix="+">0</b><span>Professionals guided</span></div>
+          <div class="wp-stat"><b data-wp-count="4.9" data-wp-dec="1" data-wp-suffix="&#9733;">0</b><span>Average rating</span></div>
+          <div class="wp-stat"><b data-wp-count="12" data-wp-suffix="+">0</b><span>Industries covered</span></div>
+          <div class="wp-stat"><b data-wp-count="100" data-wp-suffix="%">0</b><span>Private &amp; confidential</span></div>
+        </div>
+        <div class="wp-pillars">
+          <span class="wp-pillar">&#128274; Private PDF report</span>
+          <span class="wp-pillar">&#129517; Evidence-based framework</span>
+          <span class="wp-pillar">&#127470;&#127475; Built for India</span>
+          <span class="wp-pillar">&#128172; Guided professional debrief</span>
+        </div>
+      </div>
       <div class="sa-card">
         <div class="sa-gate-grid">
           <div>
@@ -2842,13 +2857,14 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
             <p class="sa-error" id="saGateError"></p>
           </div>
           <aside class="sa-pay">
+            <span class="wp-pay-ribbon">Most chosen</span>
             <span class="sa-pay-label">Lume Lens &middot; For Working Professionals</span>
-            <div class="sa-pay-price"><strong>&#8377;1999</strong><s>&#8377;2999</s><span>one-time fee</span></div>
+            <div class="sa-pay-price"><strong>&#8377;1999</strong><s>&#8377;2999</s><span>one-time fee</span><em class="wp-pay-save">Save &#8377;1000</em></div>
             <p style="font-size:.78rem;color:var(--mid);line-height:1.55;">Covers all five parts and your premium working profile report.</p>
             <div class="sa-pay-trust" aria-label="Why professionals trust Lume Live">
-              <div><b>500+</b><span>Guided</span></div>
-              <div><b>4.9&#9733;</b><span>Avg Rating</span></div>
-              <div><b>100%</b><span>Confidential</span></div>
+              <div><b data-wp-count="500" data-wp-suffix="+">0</b><span>Guided</span></div>
+              <div><b data-wp-count="4.9" data-wp-dec="1" data-wp-suffix="&#9733;">0</b><span>Avg Rating</span></div>
+              <div><b data-wp-count="100" data-wp-suffix="%">0</b><span>Confidential</span></div>
             </div>
             <div class="sa-pay-assure">
               <span><i>&#129309;</i> A premium PDF profile you keep &mdash; built for coaching and career decisions.</span>
@@ -5467,6 +5483,57 @@ function setMode(el, mode){
 
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(showBanner, 900); });
   else setTimeout(showBanner, 900);
+})();
+</script>
+<!-- ══════════ WP VISUAL POLISH (trust band · pay card · micro-interactions) ══════════ -->
+<style>
+/* ── Trust & social-proof band ── */
+.wp-trust{max-width:920px;margin:0 auto 22px;padding:20px 22px;border-radius:22px;background:linear-gradient(135deg,rgba(13,27,64,.035),rgba(10,110,110,.06));border:1px solid rgba(10,110,110,.14);box-shadow:var(--elev-1);}
+.wp-trust-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.wp-stat{text-align:center;padding:12px 6px;border-radius:14px;background:rgba(255,255,255,.62);border:1px solid rgba(255,255,255,.72);box-shadow:var(--glass-highlight);transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease);}
+.wp-stat:hover{transform:translateY(-4px);box-shadow:var(--elev-2);}
+.wp-stat b{display:block;font-family:'Playfair Display',serif;font-size:1.7rem;line-height:1;background:linear-gradient(135deg,var(--navy),var(--teal2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-variant-numeric:tabular-nums;}
+.wp-stat span{display:block;margin-top:6px;font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--mid);}
+.wp-pillars{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin-top:16px;}
+.wp-pillar{font-size:.72rem;font-weight:700;color:var(--teal);background:rgba(10,110,110,.07);border:1px solid rgba(10,110,110,.16);border-radius:999px;padding:7px 13px;transition:transform var(--dur) var(--ease),background var(--dur) var(--ease),border-color var(--dur) var(--ease),color var(--dur) var(--ease);}
+.wp-pillar:hover{background:rgba(201,147,58,.1);border-color:var(--gold);color:var(--navy);transform:translateY(-2px);}
+@media(max-width:680px){.wp-trust{padding:16px;border-radius:18px;}.wp-trust-stats{grid-template-columns:repeat(2,1fr);gap:10px;}.wp-stat b{font-size:1.45rem;}}
+
+/* ── Premium pay card polish ── */
+.sa-pay{border:1px solid rgba(201,147,58,.32)!important;}
+.sa-pay::after{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold));background-size:200% 100%;animation:wpShimmer 3.6s linear infinite;z-index:2;pointer-events:none;}
+.wp-pay-ribbon{position:absolute;top:16px;right:-36px;transform:rotate(45deg);background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-size:.58rem;font-weight:900;letter-spacing:.07em;text-transform:uppercase;padding:5px 42px;box-shadow:0 4px 12px rgba(201,147,58,.32);z-index:3;}
+.wp-pay-save{font-family:'Montserrat',sans-serif;font-style:normal;font-size:.62rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase;color:var(--teal);background:rgba(10,110,110,.1);border:1px solid rgba(10,110,110,.2);border-radius:999px;padding:4px 9px;align-self:center;}
+.sa-pay-trust b{font-variant-numeric:tabular-nums;}
+
+/* ── Hover micro-interactions ── */
+.sa-list-item{transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease),border-color var(--dur) var(--ease);}
+.sa-list-item:hover{transform:translateY(-3px);box-shadow:var(--elev-2);border-color:rgba(10,110,110,.3);}
+.sa-pay-trust div{transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease);}
+.sa-pay-trust div:hover{transform:translateY(-3px);box-shadow:var(--elev-1);}
+.sa-affirm-panel{transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease);}
+.sa-affirm-panel:hover{transform:translateY(-2px);box-shadow:var(--elev-1);}
+
+@keyframes wpShimmer{0%{background-position:0 0;}100%{background-position:200% 0;}}
+@media(prefers-reduced-motion:reduce){.sa-pay::after{animation:none;}.wp-stat,.wp-pillar,.sa-list-item,.sa-pay-trust div,.sa-affirm-panel{transition:none;}}
+</style>
+<script>
+/* WP count-up for trust stats (presentational, respects reduced motion) */
+(function(){
+  function fmt(v,dec,suf){return (dec?v.toFixed(dec):Math.round(v).toLocaleString('en-IN'))+(suf||'');}
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function run(el){
+    var target=parseFloat(el.dataset.wpCount),dec=parseInt(el.dataset.wpDec||'0',10),suf=el.dataset.wpSuffix||'';
+    if(reduce||isNaN(target)){el.textContent=fmt(target,dec,suf);return;}
+    var start=null,dur=1600;
+    function tick(ts){if(start===null)start=ts;var p=Math.min((ts-start)/dur,1);var e=1-Math.pow(1-p,3);el.textContent=fmt(target*e,dec,suf);if(p<1)requestAnimationFrame(tick);else el.textContent=fmt(target,dec,suf);}
+    requestAnimationFrame(tick);
+  }
+  var nodes=document.querySelectorAll('[data-wp-count]');
+  if(!nodes.length)return;
+  if(!('IntersectionObserver' in window)){nodes.forEach(run);return;}
+  var obs=new IntersectionObserver(function(entries){entries.forEach(function(en){if(en.isIntersecting){run(en.target);obs.unobserve(en.target);}});},{threshold:0.4});
+  nodes.forEach(function(el){obs.observe(el);});
 })();
 </script>
 <script src="lume-coupons.js" defer></script>
