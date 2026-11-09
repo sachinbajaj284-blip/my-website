@@ -3800,9 +3800,12 @@ function saBuildPdfDoc(){
  }
  function section(num,title,sub,accent){
   accent=accent||SAFF;
-  /* one section per page: start a fresh page, but reuse the current one if it is already blank */
-  if(y>TOP+4){doc.addPage();paint();}
-  y=TOP+1;
+  /* Flow sections continuously. Only break to a new page when the header plus a first
+     row would not fit; otherwise add breathing space and keep filling the current page.
+     (Replaces the old "one section per page" rule that left large blank gaps.) */
+  if(y+40>H-BOT){doc.addPage();paint();y=TOP+1;}
+  else if(y>TOP+4){y+=11;}
+  else{y=TOP+1;}
   fill(accent);doc.roundedRect(M,y-5.6,8.5,8.5,1.8,1.8,"F");
   lineText(num,M+4.25,y+.6,8,[255,255,255],"helvetica","bold",{align:"center"});
   doc.setFont("times","bold");doc.setFontSize(17);rgb(INK);
@@ -3884,6 +3887,16 @@ function saBuildPdfDoc(){
    lineText(rows[i].key,lx,ly+1.5,8,accent||SAFF,"helvetica","bold",{align:"center"});}
  }
  function card(x,yy,w,h,border){fill(CARD);stroke(border||LINE);doc.setLineWidth(.25);doc.roundedRect(x,yy,w,h,2.2,2.2,"FD");}
+ /* Labelled radar block (chart + caption + one plain-language line) reused by every module */
+ function radarBlock(rows,accent,caption,desc){
+  ensure(62);y+=2;
+  radarChart(M+32,y+28,24,rows,100,accent);
+  lineText(caption,M+70,y+12,7.4,accent,"helvetica","bold");
+  doc.setFont("helvetica","normal");doc.setFontSize(8.8);rgb(INK_SOFT);
+  var dl=doc.splitTextToSize(safe(desc),W-M-(M+70));
+  dl.forEach(function(l,i){doc.text(l,M+70,y+19+i*4.7);});
+  y+=56;
+ }
 
  paint();
 
@@ -3936,8 +3949,9 @@ function saBuildPdfDoc(){
  var Dmap2={};D.forEach(function(r){Dmap2[r.key]=r.score;});
  var auto=Math.round(((Dmap2.INT||0)+(Dmap2.IDE||0))/2);
  var ctrl=Math.round(((Dmap2.INJ||0)+(Dmap2.EXT||0))/2);
- var motTag=auto>ctrl+10?"largely autonomous":ctrl>auto+10?"largely controlled":"mixed";
- var narrPdf="Your strongest personality pattern is "+topW.name.toLowerCase()+", and your motivation is "+motTag+". You default to "+topC.name.toLowerCase()+" decision-making, "+topH.name.toLowerCase()+" in disagreement, and your strongest emotional intelligence branch is "+topE.name.toLowerCase()+".";
+ var motTag=auto>ctrl+10?"mostly your own interest and values":ctrl>auto+10?"mostly outside pressure, rewards and expectations":"a mix of personal interest and outside pressure";
+ var roleLead=S.course?("As a "+S.course+", "):"";
+ var narrPdf=roleLead+"at work you come across most as "+topW.name.toLowerCase()+". What keeps you going is "+motTag+". When you make a choice, you lean on "+topC.name.toLowerCase()+" thinking. In a disagreement, your first move is usually "+topH.name.toLowerCase()+". And your strongest emotional skill is "+topE.name.toLowerCase()+".";
  doc.setFont("times","italic");doc.setFontSize(11.4);
  var nlines=doc.splitTextToSize(safe(narrPdf),W-2*M-16);
  var nsText="Bring this profile to a 1:1 debrief to turn it into concrete career moves — WhatsApp +91 70156 71280 or hello@lumelive.co.in.";
@@ -4034,37 +4048,35 @@ function saBuildPdfDoc(){
 
  section("01","Part 1 \u00B7 Personality Patterns","How you engage with work and people",PLUM);
  W_.forEach(dimRow);
- ensure(70);y+=3;
- radarChart(M+32,y+28,24,W_,100,PLUM);
- lineText("YOUR PERSONALITY SHAPE",M+70,y+12,7.4,PLUM,"helvetica","bold");
- doc.setFont("helvetica","normal");doc.setFontSize(8.8);rgb(INK_SOFT);
- var pshape=doc.splitTextToSize(safe("Each corner is one of the Big Five traits (O, C, E, A, S). The further a point reaches out, the stronger that trait - the overall shape is your personality at a glance."),W-M-(M+70));
- pshape.forEach(function(l,i){doc.text(l,M+70,y+19+i*4.7);});
- y+=62;
+ radarBlock(W_,PLUM,"YOUR PERSONALITY SHAPE","Each corner is one of the Big Five traits (O, C, E, A, S). The further a point reaches out, the stronger that trait - the overall shape is your personality at a glance.");
  meaningList(W_,DIMS.wsp);
  reflectBox(["Which of these patterns feels most like you at work - and did any of them surprise you?","Where does your strongest trait help you most, and where might it quietly cost you?"],PLUM);
  y+=2;para("A higher score on any dimension is not better than a lower one - only different. These describe your natural style, not your ability.",M,W-2*M,8.2,MUTE);
 
  section("02","Part 2 \u00B7 What Drives You","Where your energy at work comes from",SAFF);
  D.forEach(dimRow);
+ radarBlock(D,SAFF,"YOUR MOTIVATION SHAPE","Each corner is a reason you work - interest, value, duty, reward and drift. A fuller shape toward the top points means more self-driven energy.");
  meaningList(D,DIMS.drv);
  reflectBox(["On a hard day, which of these reasons actually keeps you going?","Is your current role feeding your strongest driver - or slowly starving it?"],SAFF);
  y+=2;para("Most people work for several reasons at once; one is not better than another. The aim is to protect the drivers that keep you energised.",M,W-2*M,8.2,MUTE);
 
  section("03","Part 3 \u00B7 How You Decide","Your default route to a choice",SAGE);
  C.forEach(dimRow);
+ radarBlock(C,SAGE,"YOUR DECISION SHAPE","Each corner is a way of deciding - rational, intuitive, dependent, avoidant and spontaneous. The longest point is the style you reach for by default.");
  meaningList(C,DIMS.dec);
  reflectBox(["Think of a recent big decision - did you use your default style, or borrow a different one?","Which kinds of decisions do you tend to put off or sidestep?"],SAGE);
  y+=2;para("Your style shifts with how much is at stake; the score shows your most common default when you are not thinking about it.",M,W-2*M,8.2,MUTE);
 
  section("04","Part 4 \u00B7 Handling Disagreement","When interests collide",TERRA);
  H_.forEach(dimRow);
+ radarBlock(H_,TERRA,"YOUR CONFLICT SHAPE","Each corner is a way of handling disagreement - collaborating, competing, compromising, accommodating and avoiding. The longest point is your first move.");
  meaningList(H_,DIMS.hdg);
  reflectBox(["In your last disagreement at work, which move did you reach for first?","Is there a relationship where a different approach would serve you better?"],TERRA);
  y+=2;para("Your approach changes with the relationship and the stakes; this is simply the move you reach for first.",M,W-2*M,8.2,MUTE);
 
  section("05","Part 5 \u00B7 Reading and Managing Emotion","Working with feeling at work",INK);
  E.forEach(dimRow);
+ radarBlock(E,[78,121,167],"YOUR EMOTION SHAPE","Each corner is an emotional skill - noticing, using, understanding and managing feeling. Longer points are your current strengths; shorter ones show where growth is available.");
  meaningList(E,DIMS.emo);
  reflectBox(["Which branch - noticing, using, understanding, or managing emotion - is easiest for you, and which is hardest?","When you are under pressure, what actually helps you steady yourself?"],[78,121,167]);
  y+=2;para("Lower scores are not weaknesses - they simply point to where the most growth is available, and every one of these skills can be learned.",M,W-2*M,8.2,MUTE);
@@ -4165,7 +4177,7 @@ function saBuildPdfDoc(){
  });
 
  /* Your strengths & growth areas */
- doc.addPage();paint();y=TOP+1;
+ if(y+58>H-BOT){doc.addPage();paint();y=TOP+1;}else{y+=12;}
  fill(SAGE);doc.roundedRect(M,y-5.6,8.5,8.5,1.8,1.8,"F");
  lineText("+",M+4.25,y+1,10,[255,255,255],"helvetica","bold",{align:"center"});
  doc.setFont("times","bold");doc.setFontSize(17);rgb(NAVY);doc.text(safe("Your Strengths & Growth Areas"),M+13,y);
@@ -4187,8 +4199,8 @@ function saBuildPdfDoc(){
  pGrowth.forEach(function(s){var lines=doc.splitTextToSize(safe(s),pcolW-9);fill(GOLD);doc.circle(prX+3,pryy-1.3,1,"F");rgb(INK_SOFT);doc.setFont("helvetica","normal");doc.setFontSize(8.9);lines.forEach(function(l,i){doc.text(l,prX+6,pryy+i*4.5);});pryy+=lines.length*4.5+3.4;});
  y=Math.max(plyy,pryy)+5;
 
- /* Counsellor's note — own closing page */
- doc.addPage();paint();y=TOP+1;
+ /* Counsellor's note */
+ if(y+64>H-BOT){doc.addPage();paint();y=TOP+1;}else{y+=12;}
  var firstName=(S.name||"").trim().split(/\s+/)[0]||"there";
  var cnPara=[
   "Hi "+firstName+", thank you for completing Lume Lens. A working profile like this earns its value in conversation - when we connect these patterns to the real decisions in front of you: a role change, a difficult relationship at work, or simply protecting the conditions that keep you doing your best work.",
