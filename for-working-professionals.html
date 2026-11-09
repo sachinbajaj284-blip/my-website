@@ -4026,8 +4026,7 @@ function saBuildPdfDoc(){
   ["04","Handling Disagreement","What you do when interests collide"],
   ["05","Reading & Managing Emotion","Working with feeling at work"],
   ["06","Reading the Mosaic","How your patterns intersect"],
-  ["F","Where You'll Do Your Best Work","Environments and roles that fit you"],
-  ["07","Your Next 30 Days","A short, concrete action plan"]];
+  ["F","Where You'll Do Your Best Work","Environments and roles that fit you"]];
  ptoc.forEach(function(t){
   ensure(13.5);
   fill(CARD);stroke(LINE);doc.setLineWidth(.25);doc.roundedRect(M,y,W-2*M,11.5,2.2,2.2,"FD");
@@ -4144,28 +4143,6 @@ function saBuildPdfDoc(){
  rgb(INK);doc.setFont("helvetica","normal");doc.setFontSize(9.2);rlines.forEach(function(l,i){doc.text(l,M+6,y+12+i*4.6);});
  y+=rh+4;
 
- /* Your next 30 days — action plan */
- section("07","Your Next 30 Days","A short, concrete action plan",SAGE);
- para("Small, specific moves turn a profile into real change. Work through these over the next month.",M,W-2*M,9.6,INK_SOFT,5);
- var actions=[
-  "Share two dimensions that surprised you with someone who knows you well, and ask whether they recognise the pattern in you.",
-  "Pick one dimension at an extreme (very high or very low). Note one moment this month it helped you, and one where it cost you.",
-  "Choose your lowest emotional-intelligence branch and practise it once this week in a real situation.",
-  "Protect one condition that feeds your strongest driver - block focus time, or take on a problem you find genuinely interesting.",
-  "Book a 1:1 debrief to turn this profile into two or three specific career moves."
- ];
- actions.forEach(function(a){
-  doc.setFont("helvetica","normal");doc.setFontSize(9.4);
-  var lines=doc.splitTextToSize(safe(a),W-2*M-24);
-  var h=Math.max(15,8+lines.length*4.8);
-  ensure(h+4);
-  fill(CARD);stroke(LINE);doc.setLineWidth(.25);doc.roundedRect(M,y,W-2*M,h,2.4,2.4,"FD");
-  stroke(SAGE);doc.setLineWidth(.6);doc.roundedRect(M+6,y+h/2-3,6,6,1,1,"S");
-  rgb(INK_SOFT);doc.setFont("helvetica","normal");doc.setFontSize(9.4);
-  lines.forEach(function(l,li){doc.text(l,M+18,y+7+li*4.8);});
-  y+=h+4;
- });
-
  /* Your strengths & growth areas */
  if(y+58>H-BOT){doc.addPage();paint();y=TOP+1;}else{y+=12;}
  fill(SAGE);doc.roundedRect(M,y-5.6,8.5,8.5,1.8,1.8,"F");
@@ -4201,8 +4178,10 @@ function saBuildPdfDoc(){
  var cnLines=doc.splitTextToSize(safe(cnPara),W-2*M-34);
  var cnH=Math.max(48,27+(cnLines.length*4.7));
  ensure(cnH+6);fill(NAVY);doc.roundedRect(M,y,W-2*M,cnH,2.8,2.8,"F");
- fill([26,48,96]);doc.circle(M+13,y+15,8.5,"F");stroke(GOLD);doc.setLineWidth(.6);doc.circle(M+13,y+15,8.5,"S");
- lineText("SB",M+13,y+18,12,GOLD_LT,"times","bold",{align:"center"});
+ if(saCounsImg&&saCounsImg.complete&&saCounsImg.naturalWidth){
+  try{doc.addImage(saCounsImg,"PNG",M+13-8.5,y+15-8.5,17,17,"counsphoto","FAST");}catch(e){}
+ }else{fill([26,48,96]);doc.circle(M+13,y+15,8.5,"F");lineText("SB",M+13,y+18,12,GOLD_LT,"times","bold",{align:"center"});}
+ stroke(GOLD);doc.setLineWidth(.6);doc.circle(M+13,y+15,8.5,"S");
  lineText("A NOTE FROM YOUR COUNSELLOR",M+26,y+8,6.6,GOLD_LT,"helvetica","bold");
  cnLines.forEach(function(l,li){lineText(l,M+26,y+14+(li*4.7),9,[222,230,242],"helvetica","normal");});
  var sigY=y+14+(cnLines.length*4.7)+2;
@@ -4211,16 +4190,6 @@ function saBuildPdfDoc(){
  y+=cnH+6;
 
  /* Method & Limitations */
- section("M","Method & Limitations","How this profile was built",MUTE);
- para("Lume Lens uses 119 self-report statements across five short scales. Each scale is built on an established public-domain framework in psychology:",M,W-2*M,10.4,INK_SOFT,5);
- para("- Personality: the Five Factor Model, measured with markers from the International Personality Item Pool (IPIP).",M,W-2*M,9.8,INK_SOFT,3);
- para("- Motivation: Self-Determination Theory (Deci & Ryan), distinguishing intrinsic, identified, introjected, and external regulation, plus amotivation.",M,W-2*M,9.8,INK_SOFT,3);
- para("- Decision-Making: the five-style framework in the general decision-making literature.",M,W-2*M,9.8,INK_SOFT,3);
- para("- Conflict: dual-concern theory, mapping concern-for-self against concern-for-others into five styles.",M,W-2*M,9.8,INK_SOFT,3);
- para("- Emotional Intelligence: the four-branch ability model (perceiving, using, understanding, managing emotion).",M,W-2*M,9.8,INK_SOFT,5);
- para("Scores are on a 0-100 scale, calculated as the mean of items in each dimension (with reverse-keyed items inverted), then linearly rescaled. They are NOT percentiles against a norm group; comparison to a representative population would require a normed sample, which Lume Live is actively building. Treat scores as descriptive, not diagnostic.",M,W-2*M,10,INK_SOFT,6);
- para("Lume Lens is not a substitute for clinical assessment, hiring decisions, performance evaluation, or medical diagnosis. It is intended for private reflection, coaching discussion, and professional development planning.",M,W-2*M,10,INK_SOFT,4);
-
  /* Footer on every page */
  var pages=doc.internal.getNumberOfPages();
  for(var p=1;p<=pages;p++){
@@ -4228,7 +4197,7 @@ function saBuildPdfDoc(){
   /* Subtle centred brand watermark on every page (embedded once via alias) */
   if(saWMImg&&saWMImg.complete&&saWMImg.naturalWidth){
    var wmW=90,wmH=wmW*(saWMImg.naturalHeight/saWMImg.naturalWidth);
-   if(doc.setGState)doc.setGState(new doc.GState({opacity:0.05}));
+   if(doc.setGState)doc.setGState(new doc.GState({opacity:0.035}));
    try{doc.addImage(saWMImg,"PNG",(W-wmW)/2,(H-wmH)/2-4,wmW,wmH,"lumewm","FAST");}catch(e){}
    if(doc.setGState)doc.setGState(new doc.GState({opacity:1}));
   }
@@ -4285,6 +4254,7 @@ window.saShowSampleReport=function(){
 
 /* ─── Init ─── */
 var saWMImg=new Image();saWMImg.src="lume-report-watermark.png";
+var saCounsImg=new Image();saCounsImg.src="counsellor-photo-bw.png";
 renderToolList();
 ["saName","saPhone","saAge","saStage","saCity","saCourse","saConcern","saGuardian"].forEach(function(id){
  var e=el(id);if(!e)return;
