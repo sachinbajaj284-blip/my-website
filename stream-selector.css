@@ -1,6 +1,6 @@
 /* Lume Live — Stream Selector quiz. Shared by stream-selector.html (EN)
    and stream-selector-hi.html (HI). */
-:root{--navy:#0D1B40;--navy2:#1A2E5E;--teal:#0A6E6E;--gold:#C9933A;--gold2:#E8B95A;--paper:#F7FAF9;--ink:#1A2C2C;--muted:#4A6060;--line:#DDE7E5}
+:root{--navy:#0D1B40;--navy2:#1A2E5E;--teal:#0A8585;--gold:#D89A14;--gold2:#FFCE5A;--paper:#F7FAF9;--ink:#1A2C2C;--muted:#4A6060;--line:#DDE7E5}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:'Inter','Segoe UI',system-ui,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.6;-webkit-font-smoothing:antialiased}
@@ -25,7 +25,7 @@ a{color:var(--teal);text-decoration:none}
 .hero h1 .hl::after{content:'';position:absolute;left:-2px;right:-2px;bottom:.04em;height:.34em;z-index:-1;border-radius:6px;background:linear-gradient(90deg,rgba(10,110,110,.20),rgba(201,147,58,.32));transform:rotate(-1deg)}
 .hero p{color:var(--muted);max-width:600px;margin:0 auto;font-size:1rem}
 .card{position:relative;background:linear-gradient(180deg,#ffffff,#fbfdfd);border:1px solid var(--line);border-radius:24px;padding:30px 28px;margin:26px 0;box-shadow:0 1px 0 rgba(255,255,255,.7) inset,0 26px 60px -22px rgba(13,27,64,.22),0 10px 24px -18px rgba(10,110,110,.14);scroll-margin-top:76px;overflow:hidden}
-.card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--teal),#0E8C8C 30%,var(--gold) 72%,var(--gold2));background-size:200% 100%;animation:flow 6s linear infinite}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--teal),#17C4BA 30%,var(--gold) 72%,var(--gold2));background-size:200% 100%;animation:flow 6s linear infinite}
 .progress{height:10px;background:var(--line);border-radius:999px;overflow:hidden;margin-bottom:8px;box-shadow:inset 0 1px 3px rgba(13,27,64,.10)}
 .progress i{display:block;position:relative;height:100%;overflow:hidden;border-radius:999px;background:linear-gradient(90deg,var(--navy2),var(--teal) 40%,var(--gold) 70%,var(--teal));background-size:220% 100%;animation:flow 5s linear infinite;width:0;transition:width .5s cubic-bezier(.25,.46,.45,.94);box-shadow:0 0 12px rgba(201,147,58,.5)}
 .progress i::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.65),transparent);animation:sheen 2.4s linear infinite}
@@ -38,7 +38,7 @@ a{color:var(--teal);text-decoration:none}
 .opt::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--teal),var(--gold));transform:scaleY(0);transition:transform .28s cubic-bezier(.25,.46,.45,.94)}
 .opt:hover::before,.opt[aria-checked="true"]::before,.opt.confirm::before{transform:scaleY(1)}
 /* A check badge that pops in on the right as the answer registers. */
-.opt::after{content:'✓';position:absolute;right:14px;top:50%;transform:translateY(-50%) scale(.3);width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--teal),#0E8C8C);color:#fff;font-size:.8rem;font-weight:900;line-height:24px;text-align:center;box-shadow:0 4px 10px rgba(10,110,110,.32);opacity:0;transition:opacity .22s,transform .32s cubic-bezier(.34,1.56,.64,1)}
+.opt::after{content:'✓';position:absolute;right:14px;top:50%;transform:translateY(-50%) scale(.3);width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--teal),#17C4BA);color:#fff;font-size:.8rem;font-weight:900;line-height:24px;text-align:center;box-shadow:0 4px 10px rgba(10,110,110,.32);opacity:0;transition:opacity .22s,transform .32s cubic-bezier(.34,1.56,.64,1)}
 .opt[aria-checked="true"]::after,.opt.confirm::after{opacity:1;transform:translateY(-50%) scale(1)}
 .opt:hover{border-color:var(--teal);background:linear-gradient(135deg,#FCFEFE,#F3FBFB);transform:translateY(-2px);box-shadow:0 8px 22px rgba(13,27,64,.08)}
 .opt:active{transform:translateY(0) scale(.99)}
@@ -46,7 +46,7 @@ a{color:var(--teal);text-decoration:none}
 .opt[aria-checked="true"]{border-color:var(--teal);background:linear-gradient(135deg,#ECF8F7,#F7FCFB);box-shadow:inset 0 0 0 1.5px var(--teal),0 12px 28px -12px rgba(10,110,110,.38)}
 .opt .key{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:7px;background:var(--paper);border:1px solid var(--line);font-size:.74rem;font-weight:800;color:var(--muted);margin-top:1px;transition:background .2s,border-color .2s,color .2s,transform .2s cubic-bezier(.34,1.56,.64,1)}
 .opt:hover .key{border-color:var(--teal);color:var(--teal);background:#fff}
-.opt[aria-checked="true"] .key,.opt.confirm .key{background:linear-gradient(135deg,var(--teal),#0E8C8C);border-color:var(--teal);color:#fff;transform:scale(1.14);box-shadow:0 4px 10px rgba(10,110,110,.3)}
+.opt[aria-checked="true"] .key,.opt.confirm .key{background:linear-gradient(135deg,var(--teal),#17C4BA);border-color:var(--teal);color:#fff;transform:scale(1.14);box-shadow:0 4px 10px rgba(10,110,110,.3)}
 /* The brief beat between tapping an option and the next question arriving —
    without it the answer you chose is gone before you see it register. */
 .opt.confirm{border-color:var(--teal);background:#F2FAFA;box-shadow:inset 0 0 0 1.5px var(--teal),0 8px 22px rgba(10,110,110,.12)}

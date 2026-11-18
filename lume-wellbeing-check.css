@@ -6,7 +6,7 @@
    The rules below read the site's brand variables. Pages that don't define them
    (standalone screener landing pages) inherit the fallbacks declared here. */
 :root{
-  --ll-navy:#0D1B40; --ll-teal:#0A6E6E; --ll-gold:#C9933A;
+  --ll-navy:#0D1B40; --ll-teal:#0A8585; --ll-gold:#D89A14;
   --ll-dark:#1A2C2C; --ll-mid:#4A6060;
 }
 .ll-check-btn{margin-top:14px;border:1px solid rgba(10,110,110,.2);background:#F7FBFA;color:var(--teal,var(--ll-teal));border-radius:8px;padding:9px 12px;font-size:.74rem;font-weight:800;cursor:pointer;transition:all .22s;display:inline-flex;align-items:center;justify-content:center;gap:6px;line-height:1.2;}

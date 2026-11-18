@@ -82,7 +82,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,600..900;1,9..144,600..900&family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@600;700&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#0D1B40;--ink:#172525;--muted:#5c6f70;--teal:#0A6E6E;--teal2:#0E8C8C;--gold:#C9933A;--gold2:#E8B95A;--paper:#F6FAF8;--line:#DDE8E5;--card:#fff;--green:#1f9d5a;--red:#b45353;--shadow:0 18px 50px rgba(13,27,64,.09);--safe:env(safe-area-inset-bottom,0px);}
+:root{--navy:#0D1B40;--ink:#172525;--muted:#5c6f70;--teal:#0A8585;--teal2:#17C4BA;--gold:#D89A14;--gold2:#FFCE5A;--paper:#F6FAF8;--line:#DDE8E5;--card:#fff;--green:#1f9d5a;--red:#b45353;--shadow:0 18px 50px rgba(13,27,64,.09);--safe:env(safe-area-inset-bottom,0px);}
 :root{--glass-bg:linear-gradient(135deg,rgba(255,255,255,.74),rgba(247,252,251,.58));--glass-bg-dark:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.05));--glass-border:1px solid rgba(255,255,255,.62);--glass-border-dark:1px solid rgba(255,255,255,.16);--glass-blur:blur(22px) saturate(1.3);--glass-highlight:inset 0 1px 0 rgba(255,255,255,.7);--elev-1:0 2px 8px rgba(13,27,64,.06);--elev-2:0 10px 28px rgba(13,27,64,.10);--elev-3:0 22px 56px rgba(13,27,64,.16);--elev-4:0 32px 80px rgba(13,27,64,.22);--ease:cubic-bezier(.22,.61,.36,1);--dur-fast:.18s;--dur:.32s;--dur-slow:.5s;--radius:20px;--radius-lg:28px;}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:auto}
@@ -141,7 +141,7 @@ button,input,select{font:inherit}
 .cig-stat span{display:block;margin-top:7px;font-size:.72rem;color:rgba(255,255,255,.72);font-weight:700;letter-spacing:.2px}
 .cig-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .cig-step{display:grid;grid-template-columns:34px 1fr;gap:11px;align-items:start;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:15px}
-.cig-step i{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-style:normal;font-weight:800;color:#0D1B40;background:linear-gradient(135deg,#E8B95A,#C9933A)}
+.cig-step i{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-style:normal;font-weight:800;color:#0D1B40;background:linear-gradient(135deg,#FFCE5A,#D89A14)}
 .cig-step strong{display:block;font-size:.84rem;color:#fff;margin-bottom:3px}
 .cig-step span{display:block;font-size:.74rem;color:rgba(255,255,255,.66);line-height:1.5}
 .cig-gov{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;background:rgba(10,110,110,.18);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:14px 16px}
@@ -149,7 +149,7 @@ button,input,select{font:inherit}
 .cig-chips{display:flex;flex-wrap:wrap;gap:8px}
 .cig-chips span{font-size:.74rem;font-weight:700;color:#fff;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:6px 12px}
 @media(max-width:780px){.cig-stats{grid-template-columns:repeat(2,1fr)}.cig-steps{grid-template-columns:1fr}}
-.ca-hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#07182F 0%,#0D1B40 48%,#0A6E6E 118%);color:#fff}
+.ca-hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#07182F 0%,#0D1B40 48%,#0A8585 118%);color:#fff}
 .ca-hero::before{content:'';position:absolute;inset:0;background:
   linear-gradient(110deg,transparent 0%,rgba(232,185,90,.12) 45%,transparent 74%),
   linear-gradient(rgba(255,255,255,.055) 1px,transparent 1px),
@@ -340,7 +340,7 @@ button,input,select{font:inherit}
 @media(max-width:520px){.ca-trust{grid-template-columns:1fr}.related-grid{grid-template-columns:1fr}}
 /* ── v3: fit ranking, roadmap timeline, social proof, gov save ── */
 .fit{border-radius:999px;padding:5px 9px;font-size:.58rem;font-weight:900;text-transform:uppercase;letter-spacing:.04em;border:1px solid transparent}
-.fit.strong{background:linear-gradient(135deg,#0A6E6E,#0E8C8C);color:#fff}
+.fit.strong{background:linear-gradient(135deg,#0A8585,#17C4BA);color:#fff}
 .fit.good{background:#EAF7EF;color:#1f9d5a;border-color:#CDEAD7}
 .personal-banner{display:none;align-items:center;gap:12px;flex-wrap:wrap;background:linear-gradient(120deg,#07182F,#0D1B40);color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px 16px;margin-bottom:14px;box-shadow:var(--elev-2)}
 .personal-banner.show{display:flex}
@@ -1017,7 +1017,7 @@ function roadmapHtml(c){
 function printDoc(title,inner){
   const w=window.open("","_blank");
   if(!w){alert("Please allow pop-ups to download the plan, then tap the button again.");return;}
-  const css="*{box-sizing:border-box}body{font:14px/1.6 Arial,Helvetica,sans-serif;color:#172525;max-width:820px;margin:0 auto;padding:28px}h1{font-size:24px;color:#0D1B40;margin:2px 0}h2{font-size:15px;color:#0A6E6E;margin:20px 0 8px;border-bottom:1px solid #DDE8E5;padding-bottom:5px}.br{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#0A6E6E}.sec{color:#5c6f70;font-size:12px;margin-top:2px}.hd{border-bottom:2px solid #C9933A;padding-bottom:12px;margin-bottom:14px}.row{margin:8px 0}.k{font-weight:800;color:#0D1B40;font-size:12px}.s{margin:8px 0;padding-left:12px;border-left:3px solid #0A6E6E}.s b{color:#0D1B40}.s span{color:#5c6f70;font-size:13px}.item{border:1px solid #DDE8E5;border-radius:8px;padding:12px;margin:10px 0}.item h3{margin:0 0 4px;color:#0D1B40;font-size:15px}.ft{margin-top:22px;padding-top:12px;border-top:1px solid #DDE8E5;color:#5c6f70;font-size:11px}@media print{body{padding:0}}";
+  const css="*{box-sizing:border-box}body{font:14px/1.6 Arial,Helvetica,sans-serif;color:#172525;max-width:820px;margin:0 auto;padding:28px}h1{font-size:24px;color:#0D1B40;margin:2px 0}h2{font-size:15px;color:#0A8585;margin:20px 0 8px;border-bottom:1px solid #DDE8E5;padding-bottom:5px}.br{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#0A8585}.sec{color:#5c6f70;font-size:12px;margin-top:2px}.hd{border-bottom:2px solid #D89A14;padding-bottom:12px;margin-bottom:14px}.row{margin:8px 0}.k{font-weight:800;color:#0D1B40;font-size:12px}.s{margin:8px 0;padding-left:12px;border-left:3px solid #0A8585}.s b{color:#0D1B40}.s span{color:#5c6f70;font-size:13px}.item{border:1px solid #DDE8E5;border-radius:8px;padding:12px;margin:10px 0}.item h3{margin:0 0 4px;color:#0D1B40;font-size:15px}.ft{margin-top:22px;padding-top:12px;border-top:1px solid #DDE8E5;color:#5c6f70;font-size:11px}@media print{body{padding:0}}";
   w.document.write("<!doctype html><html><head><meta charset='utf-8'><title>"+title+"</title><style>"+css+"</style></head><body>"+inner+"<scr"+"ipt>window.onload=function(){setTimeout(function(){window.print();},250);}</scr"+"ipt></body></html>");
   w.document.close();
 }
@@ -1473,10 +1473,10 @@ if(atlasUnlocked){[80,320,760].forEach(t=>setTimeout(scrollToHashTarget,t));}
 </script>
 <footer style="padding:28px 20px;text-align:center;background:#08142F;color:rgba(255,255,255,.72);font:500 .82rem Montserrat,Arial,sans-serif;line-height:1.8">
   Lume Live · Career Intelligence across India · +91 7015671280 · hello@lumelive.co.in<br>
-  <a href="services-pricing.html" style="color:#E8B95A;font-weight:800;text-decoration:none">Services & Pricing</a> ·
-  <a href="privacy-policy.html" style="color:#E8B95A;font-weight:800;text-decoration:none">Privacy Policy</a> · <a href="terms.html" style="color:#E8B95A;font-weight:800;text-decoration:none">Terms of Service</a> ·
-  <a href="refund-policy.html" style="color:#E8B95A;font-weight:800;text-decoration:none">Refund Policy</a> ·
-  <a href="index.html#contact" style="color:#E8B95A;font-weight:800;text-decoration:none">Contact</a>
+  <a href="services-pricing.html" style="color:#FFCE5A;font-weight:800;text-decoration:none">Services & Pricing</a> ·
+  <a href="privacy-policy.html" style="color:#FFCE5A;font-weight:800;text-decoration:none">Privacy Policy</a> · <a href="terms.html" style="color:#FFCE5A;font-weight:800;text-decoration:none">Terms of Service</a> ·
+  <a href="refund-policy.html" style="color:#FFCE5A;font-weight:800;text-decoration:none">Refund Policy</a> ·
+  <a href="index.html#contact" style="color:#FFCE5A;font-weight:800;text-decoration:none">Contact</a>
 </footer>
 <!-- Minimal Firebase Auth detection (no sign-in UI on this page) — picks
      up a session already signed in on assessment.html/for-working-
