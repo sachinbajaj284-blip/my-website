@@ -19,7 +19,7 @@
 <link rel="dns-prefetch" href="https://calendar.app.google">
 <style>
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at 18% 12%,rgba(232,185,90,.24),transparent 28%),radial-gradient(circle at 86% 20%,rgba(255,255,255,.18),transparent 30%),linear-gradient(135deg,#0D1B40,#0A8585);font-family:Arial,sans-serif;color:#102033;padding:18px}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at 18% 12%,rgba(255,206,90,.24),transparent 28%),radial-gradient(circle at 86% 20%,rgba(255,255,255,.18),transparent 30%),linear-gradient(135deg,#0D1B40,#0A8585);font-family:Arial,sans-serif;color:#102033;padding:18px}
 .card{width:min(520px,100%);background:linear-gradient(145deg,rgba(255,255,255,.86),rgba(247,252,251,.72));border:1px solid rgba(255,255,255,.78);border-radius:28px;padding:30px;box-shadow:0 28px 90px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.82);text-align:center;-webkit-backdrop-filter:blur(24px) saturate(1.16);backdrop-filter:blur(24px) saturate(1.16);}
 img{width:74px;height:74px;object-fit:contain;margin-bottom:10px}
 h1{font-family:Georgia,serif;color:#0D1B40;margin:0 0 10px;font-size:2rem}
@@ -31,13 +31,13 @@ p{color:#55706D;line-height:1.6;margin:0 0 18px}
 .actions{display:grid;gap:10px}
 a{display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;border-radius:999px;text-decoration:none;font-weight:900;transition:box-shadow .18s,filter .18s,transform .12s}
 a:active{transform:scale(.985)}
-.primary{background:linear-gradient(135deg,#D89A14,#FFCE5A);color:#0D1B40;box-shadow:0 10px 26px rgba(201,147,58,.3)}
-.primary:hover{filter:brightness(1.04);box-shadow:0 14px 32px rgba(201,147,58,.42)}
+.primary{background:linear-gradient(135deg,#D89A14,#FFCE5A);color:#0D1B40;box-shadow:0 10px 26px rgba(216,154,20,.3)}
+.primary:hover{filter:brightness(1.04);box-shadow:0 14px 32px rgba(216,154,20,.42)}
 .ghost{background:#EEF7F5;color:#0A8585;border:1px solid #D6EAE7}
 .ghost:hover{background:#E2F2EF}
 /* The booking button is the whole point of this screen — let it breathe. */
 .primary.book{min-height:54px;font-size:1.02rem;animation:breathe 2.8s ease-in-out 1s infinite}
-@keyframes breathe{0%,100%{box-shadow:0 10px 26px rgba(201,147,58,.3)}50%{box-shadow:0 13px 36px rgba(201,147,58,.58)}}
+@keyframes breathe{0%,100%{box-shadow:0 10px 26px rgba(216,154,20,.3)}50%{box-shadow:0 13px 36px rgba(216,154,20,.58)}}
 /* Affirmation — a human note between the receipt and the next step. */
 .lcf-affirm{position:relative;text-align:left;margin:0 0 18px;padding:15px 17px 15px 21px;border-radius:16px;background:linear-gradient(135deg,#FFFAF0 0%,#F4FBF9 100%);border:1px solid #F1E4C9;overflow:hidden;animation:rise .5s .1s both}
 .lcf-affirm::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#FFCE5A,#0A8585)}

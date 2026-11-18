@@ -135,7 +135,7 @@
     if(document.getElementById("lcp-styles")) return;
     var css = [
 /* ---------- hero badge ---------- */
-".lcp-badge{display:flex;align-items:center;gap:12px;flex-wrap:wrap;width:100%;max-width:520px;margin:0 0 18px;padding:12px 14px;border-radius:16px;background:linear-gradient(120deg,rgba(201,147,58,.20),rgba(10,110,110,.18));border:1px solid rgba(232,185,90,.42);color:#fff;box-shadow:0 10px 30px rgba(8,16,38,.22);font-family:inherit;box-sizing:border-box}",
+".lcp-badge{display:flex;align-items:center;gap:12px;flex-wrap:wrap;width:100%;max-width:520px;margin:0 0 18px;padding:12px 14px;border-radius:16px;background:linear-gradient(120deg,rgba(216,154,20,.20),rgba(10,133,133,.18));border:1px solid rgba(255,206,90,.42);color:#fff;box-shadow:0 10px 30px rgba(8,16,38,.22);font-family:inherit;box-sizing:border-box}",
 ".lcp-badge-body{flex:1 1 190px;min-width:0}",
 ".lcp-badge-eyebrow{display:flex;align-items:center;gap:6px;font-size:.6rem;font-weight:900;letter-spacing:1.3px;text-transform:uppercase;color:#FFCE5A;margin-bottom:3px}",
 ".lcp-badge-dot{width:6px;height:6px;border-radius:50%;background:#4ADE80;box-shadow:0 0 0 0 rgba(74,222,128,.7);animation:lcp-pulse 2s infinite}",
@@ -146,7 +146,7 @@
 ".lcp-badge-was{text-decoration:line-through;opacity:.6;margin-right:5px}",
 ".lcp-badge-now{color:#4ADE80;font-weight:800}",
 /* the code itself — looks like a torn-off ticket stub, and is the tap target */
-".lcp-code{position:relative;display:inline-flex;align-items:center;gap:8px;flex:0 0 auto;border:1.5px dashed rgba(232,185,90,.75);background:rgba(8,16,38,.34);color:#fff;border-radius:11px;padding:9px 13px;font:inherit;font-size:.86rem;font-weight:900;letter-spacing:1.2px;cursor:pointer;transition:background .18s,border-color .18s,transform .12s}",
+".lcp-code{position:relative;display:inline-flex;align-items:center;gap:8px;flex:0 0 auto;border:1.5px dashed rgba(255,206,90,.75);background:rgba(8,16,38,.34);color:#fff;border-radius:11px;padding:9px 13px;font:inherit;font-size:.86rem;font-weight:900;letter-spacing:1.2px;cursor:pointer;transition:background .18s,border-color .18s,transform .12s}",
 ".lcp-code:hover{background:rgba(8,16,38,.5);border-color:#FFCE5A}",
 ".lcp-code:active{transform:scale(.97)}",
 ".lcp-code:focus-visible{outline:2px solid #FFCE5A;outline-offset:2px}",

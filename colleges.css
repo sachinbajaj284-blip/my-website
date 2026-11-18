@@ -68,7 +68,7 @@ tbody tr:hover{background:#FCFEFE}
 caption{caption-side:top;text-align:left;padding:14px 16px 4px;font-weight:800;color:var(--navy);font-size:.95rem}
 caption small{display:block;font-weight:600;color:var(--muted);font-size:.78rem;margin-top:2px}
 
-.note{background:linear-gradient(135deg,#FFF8EC,#F4FAFA);border:1px solid rgba(201,147,58,.24);border-radius:14px;padding:16px 18px;margin:18px 0;font-size:.9rem;color:var(--ink)}
+.note{background:linear-gradient(135deg,#FFF8EC,#F4FAFA);border:1px solid rgba(216,154,20,.24);border-radius:14px;padding:16px 18px;margin:18px 0;font-size:.9rem;color:var(--ink)}
 .note b{color:var(--gold);display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
 
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;border-radius:999px;padding:13px 26px;font-weight:800;font-size:.95rem;border:0;cursor:pointer;font-family:inherit}

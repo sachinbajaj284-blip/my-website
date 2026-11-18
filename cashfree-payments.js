@@ -561,15 +561,15 @@
 ".lcf-steps li::before{counter-increment:lcf;content:counter(lcf);position:absolute;left:12px;top:11px;width:23px;height:23px;border-radius:50%;background:linear-gradient(135deg,#0D1B40,#22417f);color:#fff;font-size:.74rem;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(13,27,64,.24)}",
 /* The one step the client has to act on right now. */
 ".lcf-steps li.lcf-now{background:linear-gradient(135deg,#FFF8EA,#FFFDF8);border-color:#EFDDB8;color:#26364f;font-weight:600}",
-".lcf-steps li.lcf-now::before{background:linear-gradient(135deg,#D89A14,#FFCE5A);color:#0D1B40;box-shadow:0 2px 8px rgba(201,147,58,.45)}",
+".lcf-steps li.lcf-now::before{background:linear-gradient(135deg,#D89A14,#FFCE5A);color:#0D1B40;box-shadow:0 2px 8px rgba(216,154,20,.45)}",
 ".lcf-steps{counter-reset:lcf}",
 ".lcf-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;border:0;border-radius:999px;font-size:.94rem;font-weight:800;cursor:pointer;text-decoration:none;margin-bottom:10px;transition:transform .12s,box-shadow .18s,filter .18s}",
 ".lcf-btn:active{transform:scale(.98)}",
-".lcf-btn.gold{background:linear-gradient(135deg,#D89A14,#FFCE5A);color:#0D1B40;box-shadow:0 10px 26px rgba(201,147,58,.32)}",
-".lcf-btn.gold:hover{filter:brightness(1.04);box-shadow:0 14px 32px rgba(201,147,58,.42)}",
+".lcf-btn.gold{background:linear-gradient(135deg,#D89A14,#FFCE5A);color:#0D1B40;box-shadow:0 10px 26px rgba(216,154,20,.32)}",
+".lcf-btn.gold:hover{filter:brightness(1.04);box-shadow:0 14px 32px rgba(216,154,20,.42)}",
 /* The booking button is the whole point of this screen — let it breathe. */
 ".lcf-btn.book{min-height:54px;font-size:1rem;letter-spacing:.2px;animation:lcf-breathe 2.8s ease-in-out 1s infinite}",
-"@keyframes lcf-breathe{0%,100%{box-shadow:0 10px 26px rgba(201,147,58,.30)}50%{box-shadow:0 13px 36px rgba(201,147,58,.58)}}",
+"@keyframes lcf-breathe{0%,100%{box-shadow:0 10px 26px rgba(216,154,20,.30)}50%{box-shadow:0 13px 36px rgba(216,154,20,.58)}}",
 ".lcf-btn.wa{background:#25D366;color:#fff}",
 /* On a booking screen WhatsApp is only the fallback — it must not compete
    with the gold "Pick Your Slot" button for attention. */

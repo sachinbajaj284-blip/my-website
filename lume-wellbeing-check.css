@@ -9,8 +9,8 @@
   --ll-navy:#0D1B40; --ll-teal:#0A8585; --ll-gold:#D89A14;
   --ll-dark:#1A2C2C; --ll-mid:#4A6060;
 }
-.ll-check-btn{margin-top:14px;border:1px solid rgba(10,110,110,.2);background:#F7FBFA;color:var(--teal,var(--ll-teal));border-radius:8px;padding:9px 12px;font-size:.74rem;font-weight:800;cursor:pointer;transition:all .22s;display:inline-flex;align-items:center;justify-content:center;gap:6px;line-height:1.2;}
-.ll-check-btn:hover,.ll-check-btn:focus{background:var(--teal,var(--ll-teal));color:#fff;box-shadow:0 8px 22px rgba(10,110,110,.18);transform:translateY(-1px);outline:none;}
+.ll-check-btn{margin-top:14px;border:1px solid rgba(10,133,133,.2);background:#F7FBFA;color:var(--teal,var(--ll-teal));border-radius:8px;padding:9px 12px;font-size:.74rem;font-weight:800;cursor:pointer;transition:all .22s;display:inline-flex;align-items:center;justify-content:center;gap:6px;line-height:1.2;}
+.ll-check-btn:hover,.ll-check-btn:focus{background:var(--teal,var(--ll-teal));color:#fff;box-shadow:0 8px 22px rgba(10,133,133,.18);transform:translateY(-1px);outline:none;}
 .ll-check-row,.svc-check-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
 .ll-check-note{margin:10px 0 0;font-size:.72rem;line-height:1.55;opacity:.75;max-width:60ch;}
 .svc-check-row .ll-check-btn{background:#fff;margin-top:0;}
@@ -29,7 +29,7 @@
 .ll-question{font-size:1rem;font-weight:800;color:var(--dark,var(--ll-dark));line-height:1.45;margin-bottom:14px;}
 .ll-options{display:grid;gap:8px;}
 .ll-option{border:1px solid #DDE7E5;background:#fff;border-radius:8px;padding:11px 13px;text-align:left;cursor:pointer;color:var(--dark,var(--ll-dark));font-size:.84rem;line-height:1.35;transition:all .2s;}
-.ll-option.selected{border-color:var(--teal,var(--ll-teal));background:#ECF7F6;box-shadow:0 0 0 3px rgba(10,110,110,.08);}
+.ll-option.selected{border-color:var(--teal,var(--ll-teal));background:#ECF7F6;box-shadow:0 0 0 3px rgba(10,133,133,.08);}
 .ll-nav{display:flex;justify-content:space-between;gap:10px;margin-top:18px;}
 .ll-nav button,.ll-result-actions button,.ll-result-actions a{border:none;border-radius:8px;padding:11px 15px;font-size:.78rem;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;}
 .ll-secondary{background:#EEF3F2;color:var(--dark,var(--ll-dark));}
