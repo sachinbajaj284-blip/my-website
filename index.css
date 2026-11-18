@@ -445,10 +445,10 @@ section{padding:80px 20px;}
 .svc-card:hover .svc-thumb img{transform:scale(1.025);}
 .svc-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:10px;transition:transform .4s;}
 .svc-card:hover .svc-icon{transform:scale(1.15) rotate(-5deg);}
-.svc-card.hs .svc-icon{background:var(--teal);}
-.svc-card.cc .svc-icon{background:var(--gold);}
-.svc-card.ew .svc-icon{background:var(--navy);}
-.svc-card.wp .svc-icon{background:linear-gradient(135deg,#0D1B40,#0A8585);}
+.svc-card.hs .svc-icon{background:rgba(10,133,133,.12);color:#0A8585;}
+.svc-card.cc .svc-icon{background:rgba(216,154,20,.15);color:#B5831A;}
+.svc-card.ew .svc-icon{background:rgba(30,174,92,.13);color:#17964E;}
+.svc-card.wp .svc-icon{background:rgba(37,99,235,.11);color:#2563EB;}
 .svc-for{font-size:.7rem;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.7px;}
 .svc-name{font-size:.98rem;font-weight:800;color:var(--dark);margin-top:3px;line-height:1.28;}
 .svc-body{padding:16px 20px 18px;transition:transform .3s;}
