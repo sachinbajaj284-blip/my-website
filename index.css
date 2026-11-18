@@ -1,7 +1,7 @@
 
 :root{
-  --navy:#0D1B40;--navy2:#1A2E5E;--teal:#0A6E6E;--teal2:#0E8C8C;
-  --gold:#C9933A;--gold2:#E8B95A;
+  --navy:#0D1B40;--navy2:#1A2E5E;--teal:#0A7D7D;--teal2:#11A0A0;
+  --gold:#D29C3C;--gold2:#EEBF5F;
   --gray:#F4F6F5;--grayM:#D1D9D9;
   --dark:#1A2C2C;--mid:#4A6060;--white:#fff;
   --green:#22c55e;--green2:#4ade80;
@@ -13,7 +13,7 @@
   --header-stack-h:calc(var(--top-bars-h) + var(--nav-h));
   /* ── UNIFIED DESIGN SYSTEM (2026 polish) ── */
   /* One liquid-glass material, applied consistently */
-  --glass-bg:linear-gradient(135deg,rgba(255,255,255,.74),rgba(247,252,251,.58));
+  --glass-bg:linear-gradient(135deg,rgba(255,255,255,.64),rgba(247,252,251,.48));
   --glass-bg-dark:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.05));
   --glass-border:1px solid rgba(255,255,255,.62);
   --glass-border-dark:1px solid rgba(255,255,255,.16);
