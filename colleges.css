@@ -1,7 +1,7 @@
 /* Shared styles for the JoSAA college browse pages (colleges.html and the generated
    per-institute / per-branch pages under colleges/). Kept in one file rather than inlined
    because it is loaded by ~150 generated pages. */
-:root{--navy:#0D1B40;--navy2:#1A2E5E;--teal:#0A6E6E;--gold:#C9933A;--gold2:#E8B95A;--paper:#F7FAF9;--ink:#1A2C2C;--muted:#4A6060;--line:#DDE7E5}
+:root{--navy:#0D1B40;--navy2:#1A2E5E;--teal:#0A8585;--gold:#D89A14;--gold2:#FFCE5A;--paper:#F7FAF9;--ink:#1A2C2C;--muted:#4A6060;--line:#DDE7E5}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:'Inter','Segoe UI',system-ui,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.6;-webkit-font-smoothing:antialiased}
@@ -68,12 +68,12 @@ tbody tr:hover{background:#FCFEFE}
 caption{caption-side:top;text-align:left;padding:14px 16px 4px;font-weight:800;color:var(--navy);font-size:.95rem}
 caption small{display:block;font-weight:600;color:var(--muted);font-size:.78rem;margin-top:2px}
 
-.note{background:linear-gradient(135deg,#FFF8EC,#F4FAFA);border:1px solid rgba(201,147,58,.24);border-radius:14px;padding:16px 18px;margin:18px 0;font-size:.9rem;color:var(--ink)}
+.note{background:linear-gradient(135deg,#FFF8EC,#F4FAFA);border:1px solid rgba(216,154,20,.24);border-radius:14px;padding:16px 18px;margin:18px 0;font-size:.9rem;color:var(--ink)}
 .note b{color:var(--gold);display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
 
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;border-radius:999px;padding:13px 26px;font-weight:800;font-size:.95rem;border:0;cursor:pointer;font-family:inherit}
 .btn:hover{text-decoration:none}
-.btn.gold{background:var(--gold);color:#fff}
+.btn.gold{background:var(--gold);color:var(--navy)}
 .btn.gold:hover{background:#b5832e}
 .btn.wa{background:#1EAE5C;color:#fff}
 .btn.wa:hover{background:#178f4a}

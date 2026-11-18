@@ -524,7 +524,7 @@
 ".lcf-hd{position:relative;background:linear-gradient(135deg,#0D1B40,#13306b);color:#fff;padding:20px 22px 18px;border-radius:22px 22px 0 0;text-align:center}",
 ".lcf-hd img{width:46px;height:46px;object-fit:contain;margin-bottom:6px}",
 ".lcf-hd h3{margin:0;font-size:1.12rem;font-weight:800}",
-".lcf-hd .lcf-amt{margin-top:4px;font-size:.86rem;color:#E8B95A;font-weight:700;letter-spacing:.3px}",
+".lcf-hd .lcf-amt{margin-top:4px;font-size:.86rem;color:#FFCE5A;font-weight:700;letter-spacing:.3px}",
 /* Discounted orders: the price it was, the price it is, and the code. */
 ".lcf-hd .lcf-was{color:rgba(255,255,255,.55);text-decoration:line-through;margin-right:7px;font-weight:600}",
 ".lcf-hd .lcf-off{display:block;margin-top:3px;font-size:.68rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#4ADE80}",
@@ -550,9 +550,9 @@
 ".lcf-p{margin:0 0 16px;font-size:.92rem;line-height:1.55;color:#56657d}",
 /* Affirmation — a short human note between the receipt and the next step. */
 ".lcf-affirm{position:relative;text-align:left;margin:2px 0 18px;padding:15px 17px 15px 21px;border-radius:16px;background:linear-gradient(135deg,#FFFAF0 0%,#F4FBF9 100%);border:1px solid #F1E4C9;overflow:hidden;animation:lcf-rise .5s .34s both}",
-".lcf-affirm::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#E8B95A,#0A6E6E)}",
-".lcf-affirm::after{content:'\\201C';position:absolute;right:13px;top:8px;font-family:Georgia,serif;font-size:3rem;line-height:1;color:#E8B95A;opacity:.26;pointer-events:none}",
-".lcf-affirm-eyebrow{display:block;font-size:.62rem;font-weight:900;letter-spacing:1.1px;text-transform:uppercase;color:#0A6E6E;margin-bottom:7px}",
+".lcf-affirm::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#FFCE5A,#0A8585)}",
+".lcf-affirm::after{content:'\\201C';position:absolute;right:13px;top:8px;font-family:Georgia,serif;font-size:3rem;line-height:1;color:#FFCE5A;opacity:.26;pointer-events:none}",
+".lcf-affirm-eyebrow{display:block;font-size:.62rem;font-weight:900;letter-spacing:1.1px;text-transform:uppercase;color:#0A8585;margin-bottom:7px}",
 ".lcf-affirm-q{margin:0;font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:.95rem;line-height:1.6;color:#16264d;position:relative;z-index:1;padding-right:14px}",
 ".lcf-affirm-sign{display:block;margin-top:9px;font-family:'Segoe UI',system-ui,Arial,sans-serif;font-style:normal;font-size:.71rem;font-weight:800;letter-spacing:.2px;color:#8493ab}",
 "@keyframes lcf-rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}",
@@ -561,15 +561,15 @@
 ".lcf-steps li::before{counter-increment:lcf;content:counter(lcf);position:absolute;left:12px;top:11px;width:23px;height:23px;border-radius:50%;background:linear-gradient(135deg,#0D1B40,#22417f);color:#fff;font-size:.74rem;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(13,27,64,.24)}",
 /* The one step the client has to act on right now. */
 ".lcf-steps li.lcf-now{background:linear-gradient(135deg,#FFF8EA,#FFFDF8);border-color:#EFDDB8;color:#26364f;font-weight:600}",
-".lcf-steps li.lcf-now::before{background:linear-gradient(135deg,#C9933A,#E8B95A);color:#0D1B40;box-shadow:0 2px 8px rgba(201,147,58,.45)}",
+".lcf-steps li.lcf-now::before{background:linear-gradient(135deg,#D89A14,#FFCE5A);color:#0D1B40;box-shadow:0 2px 8px rgba(216,154,20,.45)}",
 ".lcf-steps{counter-reset:lcf}",
 ".lcf-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;border:0;border-radius:999px;font-size:.94rem;font-weight:800;cursor:pointer;text-decoration:none;margin-bottom:10px;transition:transform .12s,box-shadow .18s,filter .18s}",
 ".lcf-btn:active{transform:scale(.98)}",
-".lcf-btn.gold{background:linear-gradient(135deg,#C9933A,#E8B95A);color:#0D1B40;box-shadow:0 10px 26px rgba(201,147,58,.32)}",
-".lcf-btn.gold:hover{filter:brightness(1.04);box-shadow:0 14px 32px rgba(201,147,58,.42)}",
+".lcf-btn.gold{background:linear-gradient(135deg,#D89A14,#FFCE5A);color:#0D1B40;box-shadow:0 10px 26px rgba(216,154,20,.32)}",
+".lcf-btn.gold:hover{filter:brightness(1.04);box-shadow:0 14px 32px rgba(216,154,20,.42)}",
 /* The booking button is the whole point of this screen — let it breathe. */
 ".lcf-btn.book{min-height:54px;font-size:1rem;letter-spacing:.2px;animation:lcf-breathe 2.8s ease-in-out 1s infinite}",
-"@keyframes lcf-breathe{0%,100%{box-shadow:0 10px 26px rgba(201,147,58,.30)}50%{box-shadow:0 13px 36px rgba(201,147,58,.58)}}",
+"@keyframes lcf-breathe{0%,100%{box-shadow:0 10px 26px rgba(216,154,20,.30)}50%{box-shadow:0 13px 36px rgba(216,154,20,.58)}}",
 ".lcf-btn.wa{background:#25D366;color:#fff}",
 /* On a booking screen WhatsApp is only the fallback — it must not compete
    with the gold "Pick Your Slot" button for attention. */
@@ -581,11 +581,11 @@
 /* The line the client pastes into Google's booking notes — it is the only
    way their chosen mode reaches the calendar event the counsellor reads. */
 ".lcf-paste{text-align:left;margin:0 0 14px;padding:13px 15px;border-radius:14px;background:#F4FBF9;border:1px solid #CFE9DF}",
-".lcf-paste-h{display:block;font-size:.62rem;font-weight:900;letter-spacing:1.1px;text-transform:uppercase;color:#0A6E6E;margin-bottom:6px}",
+".lcf-paste-h{display:block;font-size:.62rem;font-weight:900;letter-spacing:1.1px;text-transform:uppercase;color:#0A8585;margin-bottom:6px}",
 ".lcf-paste p{margin:0 0 9px;font-size:.78rem;line-height:1.5;color:#4a6060}",
 ".lcf-paste-row{display:flex;align-items:stretch;gap:8px}",
 ".lcf-paste code{flex:1;min-width:0;background:#fff;border:1px solid #DCEDE7;border-radius:9px;padding:8px 10px;font-size:.76rem;line-height:1.4;color:#16264d;word-break:break-word}",
-".lcf-paste button{flex:0 0 auto;border:0;border-radius:9px;padding:0 14px;background:#0A6E6E;color:#fff;font-size:.76rem;font-weight:800;cursor:pointer}",
+".lcf-paste button{flex:0 0 auto;border:0;border-radius:9px;padding:0 14px;background:#0A8585;color:#fff;font-size:.76rem;font-weight:800;cursor:pointer}",
 ".lcf-paste button:hover{background:#085757}",
 ".lcf-paste button.done{background:#0E8A6B}",
 ".lcf-trust{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;font-size:.74rem;color:#8493ab}",

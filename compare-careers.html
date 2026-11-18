@@ -23,7 +23,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Lume Live Compare Careers Tool","applicationCategory":"EducationalApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"},"description":"A free tool to compare Indian careers side by side — stream, exams, degree, salary and interest-fit.","url":"https://lumelive.co.in/compare-careers.html","publisher":{"@type":"Organization","name":"Lume Live","url":"https://lumelive.co.in/"}}</script>
 <style>
-:root{--navy:#0D1B40;--navy2:#1A2E5E;--teal:#0A6E6E;--gold:#C9933A;--gold2:#E8B95A;--paper:#F7FAF9;--ink:#1A2C2C;--muted:#4A6060;--line:#DDE7E5}
+:root{--navy:#0D1B40;--navy2:#1A2E5E;--teal:#0A8585;--gold:#D89A14;--gold2:#FFCE5A;--paper:#F7FAF9;--ink:#1A2C2C;--muted:#4A6060;--line:#DDE7E5}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:'Inter','Segoe UI',system-ui,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.6}
@@ -75,14 +75,14 @@ tr:last-child td,tr:last-child th{border-bottom:0}
 .disclaimer{font-size:.76rem;color:var(--muted);text-align:center;margin:4px 0 0}
 @media(max-width:620px){tbody th{width:110px;font-size:.66rem}th,td{padding:11px 12px;font-size:.84rem}}
 /* ---- colour-coded columns, picker card, stacked phone table, dark CTA ---- */
-.c0{--c:#0A6E6E;--soft:#E6F4F3}.c1{--c:#5B4FC9;--soft:#EEEBFF}.c2{--c:#A8741F;--soft:#FFF4E0}
+.c0{--c:#0A8585;--soft:#E6F4F3}.c1{--c:#5B4FC9;--soft:#EEEBFF}.c2{--c:#A8741F;--soft:#FFF4E0}
 .hero{padding-top:48px}
 .pickers{position:relative;align-items:flex-end;max-width:760px;margin:28px auto 8px;padding:20px 22px;background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 18px 44px rgba(13,27,64,.07)}
 .pick label{display:flex;align-items:center;gap:6px;color:var(--c)}
 .pick label::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--c)}
 .pick select{border-color:var(--soft);border-width:2px;background:linear-gradient(var(--soft),var(--soft)) left/5px 100% no-repeat,#fff;padding-left:18px}
 .pick select:focus{outline-color:var(--c);border-color:var(--c)}
-.vs{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;padding:0;margin-bottom:3px;font-size:.9rem;color:#fff;background:linear-gradient(135deg,var(--gold),var(--gold2));box-shadow:0 6px 14px rgba(201,147,58,.35)}
+.vs{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;padding:0;margin-bottom:3px;font-size:.9rem;color:#fff;background:linear-gradient(135deg,var(--gold),var(--gold2));box-shadow:0 6px 14px rgba(216,154,20,.35)}
 .addbtn{margin-top:0;border-color:#E8D6AE;color:#A8741F;background:#FFFBF2;transition:background .2s,border-color .2s}
 .addbtn:hover{background:#FFF4E0;border-color:#A8741F}
 .chip{transition:border-color .2s,color .2s,transform .2s}
@@ -95,18 +95,18 @@ td.c0,td.c1,td.c2{box-shadow:inset 3px 0 0 var(--soft)}
 tbody tr:hover td{background:#FBFCFC}
 .rowlink a{display:inline-flex;padding:6px 13px;border-radius:999px;background:var(--soft);color:var(--c)}
 .rowlink a:hover{background:var(--c);color:#fff}
-.cta-box{position:relative;overflow:hidden;border:0;color:#fff;background:radial-gradient(70% 90% at 0% 0%,rgba(10,110,110,.7),transparent 60%),radial-gradient(60% 90% at 100% 100%,rgba(201,147,58,.3),transparent 60%),var(--navy);box-shadow:0 26px 56px rgba(13,27,64,.22)}
+.cta-box{position:relative;overflow:hidden;border:0;color:#fff;background:radial-gradient(70% 90% at 0% 0%,rgba(10,133,133,.7),transparent 60%),radial-gradient(60% 90% at 100% 100%,rgba(216,154,20,.3),transparent 60%),var(--navy);box-shadow:0 26px 56px rgba(13,27,64,.22)}
 .cta-box::before{content:"";position:absolute;inset:0;background:radial-gradient(rgba(255,255,255,.12) 1px,transparent 1.5px) 0 0/22px 22px;-webkit-mask-image:radial-gradient(60% 90% at 50% 50%,transparent 40%,#000);mask-image:radial-gradient(60% 90% at 50% 50%,transparent 40%,#000);pointer-events:none}
 .cta-box>*{position:relative}
 .cta-box h3{color:#fff}
 .cta-box p{color:rgba(255,255,255,.78)}
 .cta-box p em{color:var(--gold2)}
-.btn.gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);box-shadow:0 10px 24px rgba(201,147,58,.35)}
+.btn.gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);box-shadow:0 10px 24px rgba(216,154,20,.35)}
 .btn.gold:hover{background:linear-gradient(135deg,var(--gold),var(--gold2));filter:brightness(1.05)}
 .related{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;border-top:0}
 .related h2{grid-column:1/-1;margin-bottom:2px}
 .related a{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px;border:1px solid var(--line);border-radius:16px;background:#fff;transition:transform .2s,box-shadow .2s,border-color .2s}
-.related a::after{content:"";flex:none;width:28px;height:28px;border-radius:50%;background:#E6F4F3 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230A6E6E' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/15px no-repeat;transition:transform .2s}
+.related a::after{content:"";flex:none;width:28px;height:28px;border-radius:50%;background:#E6F4F3 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230A8585' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/15px no-repeat;transition:transform .2s}
 .related a:hover{transform:translateY(-3px);border-color:transparent;box-shadow:0 14px 30px rgba(13,27,64,.08)}
 .related a:hover::after{transform:translateX(4px)}
 @media(max-width:620px){
