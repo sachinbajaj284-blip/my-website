@@ -66,7 +66,7 @@ table.cmp th{background:var(--paper);color:var(--navy);font-weight:800}
 .cta-box h3{font-family:Georgia,serif;color:var(--navy);font-size:1.4rem;margin-bottom:10px}
 .cta-box p{color:var(--muted);max-width:540px;margin:0 auto 22px;font-size:.96rem}
 .btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;border-radius:999px;padding:13px 26px;font-weight:800;font-size:.9rem}
-.btn.gold{background:var(--gold);color:#fff;box-shadow:none;transition:background .2s}
+.btn.gold{background:var(--gold);color:var(--navy);box-shadow:none;transition:background .2s}
 .btn.gold:hover{background:#b5832e;color:#fff}
 a.btn:focus-visible,.acard:focus-visible,.nlinks a:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
 .btn.ghost{border:1px solid rgba(255,255,255,.3);color:#fff;margin-left:8px}

@@ -73,7 +73,7 @@ caption small{display:block;font-weight:600;color:var(--muted);font-size:.78rem;
 
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;border-radius:999px;padding:13px 26px;font-weight:800;font-size:.95rem;border:0;cursor:pointer;font-family:inherit}
 .btn:hover{text-decoration:none}
-.btn.gold{background:var(--gold);color:#fff}
+.btn.gold{background:var(--gold);color:var(--navy)}
 .btn.gold:hover{background:#b5832e}
 .btn.wa{background:#1EAE5C;color:#fff}
 .btn.wa:hover{background:#178f4a}
