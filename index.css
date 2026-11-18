@@ -2242,3 +2242,41 @@ a, button, [role="button"] { -webkit-tap-highlight-color: rgba(0,0,0,.06); }
   background:linear-gradient(90deg,transparent,var(--teal2),var(--gold2),transparent);
   opacity:.55;pointer-events:none;z-index:2;
 }
+
+/* ── TRUST STATS STRIP (colourful duotone icons) ── */
+#trust-stats.trust-strip{
+  position:relative;overflow:hidden;padding:30px 20px;
+  background:
+    radial-gradient(42% 70% at 6% 0%,rgba(10,133,133,.07),transparent 60%),
+    radial-gradient(42% 70% at 95% 100%,rgba(216,154,20,.07),transparent 60%),
+    linear-gradient(180deg,#FFFFFF 0%,#F4FBFA 100%);
+  border-bottom:1px solid rgba(13,27,64,.05);
+}
+#trust-stats.trust-strip::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,transparent,var(--teal2),var(--gold2),transparent);
+  opacity:.6;pointer-events:none;
+}
+.trust-inner{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:center;}
+.trust-item{display:flex;align-items:center;justify-content:center;gap:13px;padding:6px 6px;}
+.trust-ic{flex:none;width:52px;height:52px;border-radius:15px;display:flex;align-items:center;justify-content:center;transition:transform var(--dur) var(--ease);}
+.trust-item:hover .trust-ic{transform:translateY(-3px) scale(1.06);}
+.trust-ic svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.ic-teal{background:rgba(10,133,133,.12);color:#0A8585;}
+.ic-gold{background:rgba(216,154,20,.15);color:#B5831A;}
+.ic-gold svg{fill:currentColor;stroke:none;}
+.ic-blue{background:rgba(37,99,235,.11);color:#2563EB;}
+.ic-green{background:rgba(30,174,92,.13);color:#17964E;}
+.trust-meta{display:flex;flex-direction:column;line-height:1.12;}
+.trust-num{font-size:1.5rem;font-weight:900;color:var(--navy);letter-spacing:-.5px;}
+.trust-num-s{font-size:.95rem;font-weight:800;color:var(--mid);letter-spacing:0;}
+.trust-lbl{font-size:.73rem;font-weight:800;color:var(--mid);text-transform:uppercase;letter-spacing:.7px;margin-top:3px;}
+@media(max-width:860px){
+  .trust-inner{grid-template-columns:repeat(2,1fr);gap:18px 10px;}
+  #trust-stats.trust-strip{padding:26px 16px;}
+}
+@media(max-width:380px){
+  .trust-num{font-size:1.32rem;}
+  .trust-ic{width:46px;height:46px;border-radius:13px;}
+  .trust-ic svg{width:23px;height:23px;}
+}
