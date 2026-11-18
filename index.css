@@ -1,7 +1,7 @@
 
 :root{
-  --navy:#0D1B40;--navy2:#1A2E5E;--teal:#0A7D7D;--teal2:#11A0A0;
-  --gold:#D29C3C;--gold2:#EEBF5F;
+  --navy:#0D1B40;--navy2:#1A2E5E;--teal:#0AADA4;--teal2:#15CBC0;
+  --gold:#F2A81B;--gold2:#FFCE5A;
   --gray:#F4F6F5;--grayM:#D1D9D9;
   --dark:#1A2C2C;--mid:#4A6060;--white:#fff;
   --green:#22c55e;--green2:#4ade80;
@@ -13,7 +13,7 @@
   --header-stack-h:calc(var(--top-bars-h) + var(--nav-h));
   /* ── UNIFIED DESIGN SYSTEM (2026 polish) ── */
   /* One liquid-glass material, applied consistently */
-  --glass-bg:linear-gradient(135deg,rgba(255,255,255,.64),rgba(247,252,251,.48));
+  --glass-bg:linear-gradient(135deg,rgba(255,255,255,.56),rgba(247,252,251,.40));
   --glass-bg-dark:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.05));
   --glass-border:1px solid rgba(255,255,255,.62);
   --glass-border-dark:1px solid rgba(255,255,255,.16);
@@ -158,7 +158,7 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .side-icon:hover .tip{opacity:1;}
 
 /* ── HERO ── */
-#hero{min-height:100vh;background:linear-gradient(135deg,#07162E 0%,var(--navy) 42%,#0A5E66 115%);background-size:200% 200%;animation:heroGradient 15s ease infinite;position:relative;display:flex;align-items:center;overflow:hidden;padding-top:var(--header-stack-h);isolation:isolate;}
+#hero{min-height:100vh;background:linear-gradient(135deg,#07162E 0%,#123A78 36%,#0E8A8C 88%,#16B8AC 122%);background-size:200% 200%;animation:heroGradient 15s ease infinite;position:relative;display:flex;align-items:center;overflow:hidden;padding-top:var(--header-stack-h);isolation:isolate;}
 #hero::before{content:'';position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:72px 72px;mask-image:linear-gradient(180deg,rgba(0,0,0,.85),rgba(0,0,0,.18));pointer-events:none;z-index:0;}
 .hero-particles{position:absolute;inset:0;pointer-events:none;}
 .particle{position:absolute;border-radius:50%;animation:float var(--d,6s) ease-in-out infinite var(--delay,0s);}
