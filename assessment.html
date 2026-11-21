@@ -471,6 +471,7 @@
 
           <div class="ft-upsell">
             <div class="ft-upsell-tag">🎯 Recommended Next Step</div>
+            <div class="ft-upsell-urgency" id="ftUpsellUrgency" hidden></div>
             <h3 class="ft-upsell-h">Unlock the <em>full picture</em> — for less than one month of tuition.</h3>
             <p class="ft-upsell-p">One wrong stream choice can cost two years and lakhs in fees. The full report + expert counsellor session gives your family clarity for life — at the price of a single textbook.</p>
             <ul class="ft-upsell-bullets">
@@ -549,6 +550,22 @@ window.ftFillLocked=function(d,c){
   var th=document.getElementById("ftLockedTheme");
   if(th)th.textContent=theme+" profile";
 };
+</script>
+
+<!-- Seasonal urgency inside the ₹999 upsell (mirrors the site's seasonal banner logic) -->
+<script>
+(function(){
+  var el=document.getElementById("ftUpsellUrgency");
+  if(!el)return;
+  var q=new URLSearchParams(location.search).get("season");
+  var m=Number(window.lumeSeasonMonth||(new Date).getMonth()+1);
+  var s=null;
+  if(q==="results"||(m>=3&&m<=5)){s={tag:"Board-results season",msg:"Stream forms open right after results — decide with clarity, not under pressure."};}
+  else if(q==="admissions"||(m>=6&&m<=7)){s={tag:"Stream-selection season",msg:"Admissions are moving fast in Delhi-NCR — get the full report before the deadline decides."};}
+  if(!s)return;
+  el.innerHTML='<span class="ft-urg-dot" aria-hidden="true"></span><span><b>'+s.tag+' ·</b> '+s.msg+'</span>';
+  el.hidden=false;
+})();
 </script>
 
 <script src="lume-leaderboard.js" defer></script>
