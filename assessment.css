@@ -1873,6 +1873,8 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
 .ft-intro{padding:34px 30px 30px;text-align:center;}
 .ft-intro-h{font-family:'Fraunces',serif;font-size:1.45rem;font-weight:700;color:#0D1B40;margin-bottom:8px;}
 .ft-intro-p{font-size:.92rem;color:#4A6060;line-height:1.6;margin-bottom:22px;}
+.ft-intro-cred{font-size:.76rem;color:#6A7D7D;line-height:1.5;margin:-12px 0 20px;}
+.ft-intro-cred a{color:#0A6E6E;font-weight:700;text-decoration:underline;text-underline-offset:2px;}
 .ft-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:520px;margin:0 auto 24px;}
 .ft-stat{background:linear-gradient(180deg,#FAFCFC,#F4F8F8);border:1px solid rgba(10,110,110,.10);border-radius:12px;padding:14px 8px;text-align:center;transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease;}
 .ft-stat:hover{transform:translateY(-2px);border-color:rgba(10,110,110,.22);box-shadow:0 10px 24px rgba(10,27,64,.08);}
