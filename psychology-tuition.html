@@ -680,7 +680,7 @@ body{background:#fff}
       <select id="enBoard"><option>CBSE</option><option>ISC / ICSE</option><option>State board</option><option>University</option><option>Other</option></select>
       <label>Format</label>
       <div class="seg"><input type="radio" name="enMode" id="enM1" value="1:1" checked><label for="enM1">One-to-one</label><input type="radio" name="enMode" id="enM2" value="Small batch"><label for="enM2">Small batch</label></div>
-      <div class="em-sum"><span>1 month of tuition</span><b>&#8377;7,999</b></div>
+      <div class="em-sum"><span>1 month of tuition</span><b id="enPrice">&#8377;7,999</b></div>
       <p class="em-err" id="enrolError" role="alert"></p>
       <button type="submit" class="btn pay">Continue to secure payment</button>
       <p class="fine">You'll sign in with Google so your enrolment is saved to your account. By paying you agree to our <a href="terms.html">terms</a> and <a href="refund-policy.html">refund policy</a>.</p>
@@ -707,13 +707,28 @@ body{background:#fff}
   var err = document.getElementById("enrolError");
   var lastFocus = null;
 
+  /* Class 11/12 and BA/BSc are two products at two prices. The browser only
+     ever sends a SKU — the charged amount comes from the server catalogue
+     (api/_lib/catalog.js) — so this just picks the right SKU and the matching
+     display amount for the summary line and the analytics events. */
+  function priceFor(cls){
+    return (cls.indexOf("BA") === 0 || cls.indexOf("BSc") === 0)
+      ? { sku: "psychology-tuition-college-monthly", amount: 9999 }
+      : { sku: "psychology-tuition-monthly", amount: 7999 };
+  }
+  function syncPrice(){
+    var el = document.getElementById("enPrice");
+    if(el){ el.innerHTML = "₹" + priceFor(picked("enClass")).amount.toLocaleString("en-IN"); }
+  }
+
   function open(){
     lastFocus = document.activeElement;
     modal.classList.add("open");
     modal.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
+    syncPrice();
     setTimeout(function(){ document.getElementById("enName").focus(); }, 30);
-    if(typeof gtag === "function"){ gtag("event", "begin_checkout", { item_id: "psychology-tuition-monthly", value: 7999, currency: "INR" }); }
+    if(typeof gtag === "function"){ var p = priceFor(picked("enClass")); gtag("event", "begin_checkout", { item_id: p.sku, value: p.amount, currency: "INR" }); }
   }
   function close(){
     modal.classList.remove("open");
@@ -722,6 +737,7 @@ body{background:#fff}
     if(lastFocus && lastFocus.focus){ lastFocus.focus(); }
   }
   document.querySelectorAll("[data-enrol]").forEach(function(b){ b.addEventListener("click", open); });
+  form.querySelectorAll('input[name="enClass"]').forEach(function(r){ r.addEventListener("change", syncPrice); });
   document.getElementById("enrolClose").addEventListener("click", close);
   modal.addEventListener("click", function(e){ if(e.target === modal){ close(); } });
   document.addEventListener("keydown", function(e){ if(e.key === "Escape" && modal.classList.contains("open")){ close(); } });
@@ -750,10 +766,12 @@ body{background:#fff}
     err.textContent = "";
     /* The label carries class, board and format so they reach the
        WhatsApp confirmation and the payment log; the price itself comes
-       from the server catalogue, not from this page. */
+       from the server catalogue, not from this page. BA/BSc and Class 11/12
+       are separate SKUs, chosen here from the selected class. */
+    var p = priceFor(cls);
     window.lumeCashfreePay({
-      sku: "psychology-tuition-monthly",
-      amount: 7999,
+      sku: p.sku,
+      amount: p.amount,
       label: "Psychology Tuition - " + cls + " (" + board + ", " + mode + ") - 1 month",
       customerName: name,
       customerPhone: phone,
