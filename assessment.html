@@ -527,13 +527,13 @@
 window.ftFillLocked=function(d,c){
   var wrap=document.getElementById("ftLockedRows");
   if(!wrap||!d)return;
-  var theme=d.name||"your",full=(d.full||"your profile").replace(/^The\s+/i,"");
+  var theme=d.name||"your";
   var rows=[
-    {icon:"🧬",label:"How your personality shapes those 3 careers",val:theme+"-driven · steady under pressure · leads quietly"},
-    {icon:"🎓",label:"Your best-fit stream (Science / Commerce / Arts)",val:"Top match 84% · plus 2 safe alternates mapped"},
-    {icon:"⚡",label:"What energises you vs what drains you at work",val:"Thrives on "+full.toLowerCase()+" work · drains on routine"},
-    {icon:"📚",label:"How you actually learn and retain best",val:"Visual-practical learner · needs real examples first"},
-    {icon:"🏛️",label:"Courses, colleges & entrance roadmap for you",val:"6 matched pathways · step-by-step 12-month plan"}
+    {icon:"🧬",label:"How your personality shapes those 3 careers",w:["62%","38%"]},
+    {icon:"🎓",label:"Your best-fit stream (Science / Commerce / Arts)",w:["48%","30%"]},
+    {icon:"⚡",label:"What energises you vs what drains you at work",w:["70%","44%"]},
+    {icon:"📚",label:"How you actually learn and retain best",w:["55%","34%"]},
+    {icon:"🏛️",label:"Courses, colleges & entrance roadmap for you",w:["64%","40%"]}
   ];
   wrap.innerHTML="";
   rows.forEach(function(r,i){
@@ -542,7 +542,7 @@ window.ftFillLocked=function(d,c){
     el.style.animationDelay=(i*0.07)+"s";
     el.innerHTML='<span class="ft-lock-ico">'+r.icon+'</span>'
       +'<span class="ft-lock-main"><span class="ft-lock-label">'+r.label+'</span>'
-      +'<span class="ft-lock-val">'+r.val+'</span></span>'
+      +'<span class="ft-lock-bars" aria-hidden="true"><i style="width:'+r.w[0]+'"></i><i style="width:'+r.w[1]+'"></i></span></span>'
       +'<span class="ft-lock-badge" aria-label="Locked">🔒</span>';
     wrap.appendChild(el);
   });

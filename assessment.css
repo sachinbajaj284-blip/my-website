@@ -1990,7 +1990,8 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
 .ft-lock-ico{font-size:1.15rem;flex-shrink:0;line-height:1;}
 .ft-lock-main{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1;}
 .ft-lock-label{font-size:.82rem;font-weight:700;color:#1A2C2C;line-height:1.35;}
-.ft-lock-val{font-size:.76rem;color:#4A6060;filter:blur(4.5px);user-select:none;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ft-lock-bars{display:flex;gap:6px;align-items:center;margin-top:7px;}
+.ft-lock-bars i{display:block;height:8px;border-radius:999px;background:linear-gradient(90deg,#DCE6E6,#EDF2F2);}
 .ft-lock-badge{flex-shrink:0;font-size:.9rem;opacity:.7;}
 .ft-locked-note{font-size:.74rem;color:#4A6060;line-height:1.5;text-align:center;}
 .ft-locked-note strong{color:#0D1B40;font-weight:800;}
