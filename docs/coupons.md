@@ -21,13 +21,15 @@ and why the price is safe.
 **One offer is advertised: `FIRST50`.** `FRIEND100` is live but never
 advertised — it is gated on `requires_referral`, so promoting it would
 mostly generate refusals from people who never had a friend's link. See
-`docs/referrals.md` for how that gate is answered. `CLARITY100` and `LUMEDEMO` ship
-parked and are issued to named accounts from Firestore — see below. Every
-other SKU sells at list price.
+`docs/referrals.md` for how that gate is answered. `CLARITY100`, `FAMILY101`,
+`LUME50` and `LUMEDEMO` ship parked and are issued to named accounts from
+Firestore — see below. Every other SKU sells at list price.
 
 | Code | Discount | Applies to | Limits | Live | Shown on site |
 |---|---|---|---|---|---|
 | `FIRST50` | 50% | 1:1 Counselling Session (₹499 → ₹249) | **1 per customer, first session only** | **yes** | yes |
+| `FAMILY101` | 100% | Full Clarity Report / student assessment (₹999 → **₹1**) | **1 per customer, issued to named accounts** | issued in Firestore | **no** |
+| `LUME50` | 50% | Full Clarity Report / student assessment (₹999 → ₹499) | **1 per customer, issued to named accounts** | issued in Firestore | **no** |
 | `CLARITY100` | 100% | Full Clarity Report (₹999 → **₹1**) | **1 use ever, locked to one account** | issued in Firestore | **no** |
 | `LUMEDEMO` | 100% | **every SKU** (all → **₹1**) | **unlimited, locked to one account** | issued in Firestore | **no** |
 | `MIND50` | 50% | 1:1 Counselling Session | 200 uses | no | no |
@@ -36,6 +38,57 @@ other SKU sells at list price.
 | `FRIEND100` | ₹100 flat | Full Clarity Report, Stream Clarity, Career Direction, Career Roadmap | **1 per customer, first purchase only, and only for a referred account** | **yes** | no |
 | `REFER200` | ₹200 flat | Full Clarity Report | — | no (superseded by `FRIEND100`) | no |
 | `INTERN500` | ₹500 flat | All three internship tracks | 50 uses | no | no |
+
+### `FAMILY101` and `LUME50` — private codes for the student assessment
+
+Two codes for the owner to hand out personally, never shown on the site:
+`FAMILY101` gives the ₹999 Full Clarity Report (the student assessment) for
+free, and `LUME50` gives it at 50% off (₹499). "Don't show them publicly, I
+choose who gets them" is implemented the same way `CLARITY100` and `LUMEDEMO`
+are — they ship **parked** and are issued to named accounts from Firestore.
+
+- **`FAMILY101` charges ₹1, not ₹0**, for the same reason `CLARITY100` does:
+  Cashfree will not create a zero-value order, so `discountFor()` caps the
+  discount at `base - MIN_CHARGE`. The recipient sees ₹999 struck through and
+  ₹1 payable.
+- **`LUME50` takes ₹999 to ₹499** (50% rounds to ₹500 off).
+- **Both are unadvertised** (`promote: false`) and must stay that way. On the
+  report checkout the coupon box is on screen for everyone (`data-always-show`),
+  so an *active* code with an empty recipient list would be a free/half-price
+  report for whoever types the string. That is why they ship parked.
+- **Both are "one per person"** (`per_customer_limit: 1`) with no global cap
+  (`usage_limit: null`), so you can issue either to as many people as you like
+  and nobody can claim it twice. Neither is `first_time_only` — they are gifts,
+  not acquisition offers.
+
+Issue them to the exact email each recipient **signs in** with (add more with
+`--add`, or you will replace the list — see `CLARITY100` below):
+
+```bash
+# free report for chosen people
+node tools/issue-coupon.mjs --code FAMILY101 --email someone@example.com --dry-run
+node tools/issue-coupon.mjs --code FAMILY101 --email someone@example.com
+node tools/issue-coupon.mjs --code FAMILY101 --email another@example.com --add
+
+# 50% off for chosen people
+node tools/issue-coupon.mjs --code LUME50 --email someone@example.com
+
+# stop a code
+node tools/issue-coupon.mjs --code FAMILY101 --revoke
+```
+
+Each recipient then opens the assessment with the code pre-filled and taps
+**Apply**:
+
+```
+https://lumelive.co.in/assessment.html?coupon=FAMILY101#self-assessments
+https://lumelive.co.in/assessment.html?coupon=LUME50#self-assessments
+```
+
+Everything the `CLARITY100` section says about the fail-safe (parked default,
+issued-from-Firestore, matching the verified token's email, re-seeding not
+revoking an issued code) applies to these two unchanged. The only differences
+are that they are not single-use and `LUME50` is 50% rather than 100%.
 
 ### `CLARITY100` — the free Full Clarity Report
 

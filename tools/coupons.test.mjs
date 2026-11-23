@@ -583,6 +583,116 @@ await test("an issued code can be revoked", async () => {
 });
 
 /*
+  FAMILY101 and LUME50 — the owner's private invitation codes for the
+  student assessment (student-full-report). Both ship parked and are
+  issued to named accounts exactly like CLARITY100, so these exercise the
+  same real issuing path rather than hand-seeding a document.
+*/
+const FAMILY = DEFAULT_COUPONS.find(c => c.code === "FAMILY101");
+const LUME50C = DEFAULT_COUPONS.find(c => c.code === "LUME50");
+
+await test("FAMILY101 and LUME50 ship parked, carrying no address in the repo", () => {
+  for(const c of [FAMILY, LUME50C]){
+    assert.ok(c, "coupon is defined");
+    assert.equal(c.is_active, false, c.code + " must ship inactive");
+    assert.deepEqual(c.restricted_to_emails, [],
+      c.code + ": recipients are issued from Firestore, never committed to a public repo");
+    assert.equal(c.promote, false, c.code + " must never be advertised");
+    assert.deepEqual(c.applicable_packs, ["student-full-report"],
+      c.code + " is the student-assessment code");
+  }
+});
+
+await test("FAMILY101 cannot go live without the accounts it was issued to", () => {
+  // Same guard as CLARITY100: an active 100%-off code with no named
+  // recipient is a free report for whoever types the string, and the
+  // report checkout shows its coupon box to every visitor.
+  const restricted = Array.isArray(FAMILY.restricted_to_emails) && FAMILY.restricted_to_emails.length > 0;
+  assert.ok(FAMILY.is_active === false || restricted,
+    "FAMILY101 is active with an empty restricted_to_emails — it would be free to whoever guesses the code");
+});
+
+await test("FAMILY101, once issued, takes the ₹999 report down to the ₹1 the gateway needs", async () => {
+  store.clear();
+  const r = await issueCoupon({ code: "FAMILY101", emails: [INVITED.email] });
+  assert.equal(r.ok, true, "issuing FAMILY101 should succeed: " + r.message);
+  const q = await quote({ code: "FAMILY101", packId: "student-full-report", customer: INVITED });
+  assert.equal(q.ok, true);
+  assert.equal(q.reason, "applied");
+  assert.equal(q.base_amount, 999);
+  // Not ₹0: Cashfree refuses a zero-value order, so MIN_CHARGE stays payable.
+  assert.equal(q.final_amount, 1);
+  assert.equal(q.discount_amount, 998);
+});
+
+await test("FAMILY101 is refused for anyone it was not issued to, and when signed out", async () => {
+  store.clear();
+  await issueCoupon({ code: "FAMILY101", emails: [INVITED.email] });
+  const other = await quote({ code: "FAMILY101", packId: "student-full-report", customer: UNINVITED });
+  assert.equal(other.ok, false);
+  assert.equal(other.reason, "not_invited");
+  assert.equal(other.final_amount, 999, "they are quoted the full price");
+  const anon = await quote({ code: "FAMILY101", packId: "student-full-report" });
+  assert.equal(anon.ok, false);
+  assert.equal(anon.reason, "not_invited");
+});
+
+await test("FAMILY101 can be issued to several people, each good for one free report", async () => {
+  // Unlike CLARITY100 it is not single-use: it is meant for a chosen few.
+  store.clear();
+  await issueCoupon({ code: "FAMILY101", emails: ["a@example.com"] });
+  const r = await issueCoupon({ code: "FAMILY101", emails: ["b@example.com"], add: true });
+  assert.equal(r.ok, true, r.message);
+  assert.deepEqual(r.effective.restricted_to_emails.slice().sort(), ["a@example.com", "b@example.com"]);
+  for(const email of ["a@example.com", "b@example.com"]){
+    const q = await quote({ code: "FAMILY101", packId: "student-full-report", customer: { phone: "9844444444", email } });
+    assert.equal(q.ok, true, email + ": " + q.message);
+    assert.equal(q.final_amount, 1);
+  }
+});
+
+await test("an unissued FAMILY101 is refused, at full price", async () => {
+  store.clear();
+  const q = await quote({ code: "FAMILY101", packId: "student-full-report", customer: INVITED });
+  assert.equal(q.ok, false);
+  assert.equal(q.reason, "inactive");
+  assert.equal(q.final_amount, 999);
+});
+
+await test("LUME50, once issued, takes the ₹999 report to ₹499", async () => {
+  store.clear();
+  const r = await issueCoupon({ code: "LUME50", emails: [INVITED.email] });
+  assert.equal(r.ok, true, "issuing LUME50 should succeed: " + r.message);
+  const q = await quote({ code: "LUME50", packId: "student-full-report", customer: INVITED });
+  assert.equal(q.ok, true);
+  assert.equal(q.reason, "applied");
+  assert.equal(q.base_amount, 999);
+  // 50% of ₹999 is ₹499.50, which rounds to ₹500 off — ₹499 payable.
+  assert.equal(q.discount_amount, 500);
+  assert.equal(q.final_amount, 499);
+});
+
+await test("LUME50 is refused for anyone it was not issued to, and when signed out", async () => {
+  store.clear();
+  await issueCoupon({ code: "LUME50", emails: [INVITED.email] });
+  const other = await quote({ code: "LUME50", packId: "student-full-report", customer: UNINVITED });
+  assert.equal(other.ok, false);
+  assert.equal(other.reason, "not_invited");
+  assert.equal(other.final_amount, 999);
+  const anon = await quote({ code: "LUME50", packId: "student-full-report" });
+  assert.equal(anon.ok, false);
+  assert.equal(anon.reason, "not_invited");
+});
+
+await test("an unissued LUME50 is refused, at full price", async () => {
+  store.clear();
+  const q = await quote({ code: "LUME50", packId: "student-full-report", customer: INVITED });
+  assert.equal(q.ok, false);
+  assert.equal(q.reason, "inactive");
+  assert.equal(q.final_amount, 999);
+});
+
+/*
   These are about --add itself, so they use a code with no recipient cap.
   LUMEDEMO is capped at one account and has its own tests below.
 */
