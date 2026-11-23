@@ -18,19 +18,20 @@ and why the price is safe.
 
 ## Live offers
 
-**Three offers are advertised: `FIRST50`, `RESULTS300` and `SEATS100`.**
-`FRIEND100` is live but never advertised — it is gated on `requires_referral`,
-so promoting it would mostly generate refusals from people who never had a
-friend's link. See `docs/referrals.md` for how that gate is answered.
-`CLARITY100`, `FAMILY101`, `LUME50` and `LUMEDEMO` ship parked and are issued
-to named accounts from Firestore — see below. Every other SKU sells at list
-price.
+**Only `FIRST50` is advertised.** `RESULTS300`, `SEATS100` and `FRIEND100` are
+live but never shown on the site — `RESULTS300` and `SEATS100` are handed out
+directly (the code string or a `?coupon=` link), and `FRIEND100` is gated on
+`requires_referral`, so promoting it would mostly generate refusals from people
+who never had a friend's link. See `docs/referrals.md` for how that gate is
+answered. `CLARITY100`, `FAMILY101`, `LUME50` and `LUMEDEMO` ship parked and are
+issued to named accounts from Firestore — see below. Every other SKU sells at
+list price.
 
 | Code | Discount | Applies to | Limits | Live | Shown on site |
 |---|---|---|---|---|---|
 | `FIRST50` | 50% | 1:1 Counselling Session (₹499 → ₹249) | **1 per customer, first session only** | **yes** | yes |
-| `RESULTS300` | ₹300 flat | Stream Clarity Session (₹999 → ₹699) | **expires 2027-08-01 (board-results season)** | **yes** | yes |
-| `SEATS100` | 40% | Full Clarity Report / student assessment (₹999 → ₹599) | **first 100 uses, globally** | **yes** | yes |
+| `RESULTS300` | ₹300 flat | Stream Clarity Session (₹999 → ₹699) | **expires 2027-08-01 (board-results season)** | **yes** | **no** (handed out directly) |
+| `SEATS100` | 40% | Full Clarity Report / student assessment (₹999 → ₹599) | **first 100 uses, globally** | **yes** | **no** (handed out directly) |
 | `FAMILY101` | 100% | Full Clarity Report / student assessment (₹999 → **₹1**) | **1 per customer, issued to named accounts** | issued in Firestore | **no** |
 | `LUME50` | 50% | Full Clarity Report / student assessment (₹999 → ₹499) | **1 per customer, issued to named accounts** | issued in Firestore | **no** |
 | `CLARITY100` | 100% | Full Clarity Report (₹999 → **₹1**) | **1 use ever, locked to one account** | issued in Firestore | **no** |
@@ -42,11 +43,20 @@ price.
 | `REFER200` | ₹200 flat | Full Clarity Report | — | no (superseded by `FRIEND100`) | no |
 | `INTERN500` | ₹500 flat | All three internship tracks | 50 uses | no | no |
 
-### `RESULTS300` and `SEATS100` — the public offers
+### `RESULTS300` and `SEATS100` — live, handed out directly
 
-Two advertised offers (`promote: true`), so their SKU appears in
-`/api/coupons/active` and the "Have a coupon code?" box reveals itself on the
-relevant checkout.
+Two working codes that are **not shown on the site** (`promote: false`), so
+they never appear on a badge or in `/api/coupons/active`. They are live and
+usable — the owner hands them out directly: the code string, or a `?coupon=`
+link that pre-fills the field at checkout.
+
+```
+https://lumelive.co.in/assessment.html?coupon=SEATS100#self-assessments
+```
+
+Unlike the invitation codes below, these are **not** locked to named accounts —
+anyone who has the code (or the link) can use it. The difference from an
+advertised offer is only that the site never displays them.
 
 **`RESULTS300` — ₹300 off a Stream Clarity Session (₹999 → ₹699).** A flat
 code tied to `stream-clarity-session` only, for the board-results season when
@@ -60,19 +70,21 @@ no start date, so it ships live now and **retires itself on `expiration_date`
 **`SEATS100` — 40% off the Full Clarity Report (₹999 → ₹599).** The `100` is
 the seat count, not the discount. `usage_limit: 100` is a **global** cap counted
 in Firestore only on confirmed payment, so "first 100 students" stays honest:
-the badge drops out of `/api/coupons/active` the moment the 100th report is paid
-for, and the code is then refused at checkout (`limit_reached`) rather than
-over-selling. No per-customer limit — the cap is global and is the whole point.
+the code is refused at checkout (`limit_reached`) the moment the 100th report is
+paid for, rather than over-selling. No per-customer limit — the cap is global
+and is the whole point. The report checkout carries `data-always-show`, so its
+coupon box is on screen for everyone; recipients just type `SEATS100` (or use
+the `?coupon=` link).
 
 Both name their SKU on purpose: a flat code could otherwise wander onto a
 dearer session, and a *percentage* code with an empty `applicable_packs` would
 take 40% off the ₹11,999 University Credit Track.
 
-**They are live at checkout but not yet on a hero badge.** `promote: true`
-reveals the coupon field on the right checkout and lists the offer in the API;
-it does **not** draw a banner on its own — a badge is page markup. To show one,
-add a `data-lume-coupon-badge` element (see the front-end section) with matching
-fallback attributes so it is right on first paint.
+**If you ever want one shown on the site**, set `promote: true` on it — that
+lists the offer in `/api/coupons/active` and reveals the coupon field on its
+checkout. A visible banner is separate: add a `data-lume-coupon-badge` element
+(see the front-end section) with matching fallback attributes so it is right on
+first paint.
 
 ### `FAMILY101` and `LUME50` — private codes for the student assessment
 

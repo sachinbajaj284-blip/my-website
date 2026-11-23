@@ -274,6 +274,17 @@ await test("SEATS100 is a percentage code that names its pack", async () => {
   assert.ok(seats.applicable_packs.length > 0, "a percentage code must name its packs");
 });
 
+await test("RESULTS300 and SEATS100 are live but never shown on the site", () => {
+  // The owner hands these out directly (code string or ?coupon= link).
+  // They work at checkout but must not be advertised on a badge or listed
+  // in /api/coupons/active.
+  for(const code of ["RESULTS300", "SEATS100"]){
+    const c = DEFAULT_COUPONS.find(x => x.code === code);
+    assert.equal(c.is_active, true, code + " stays usable");
+    assert.equal(c.promote, false, code + " must not be advertised");
+  }
+});
+
 console.log("\nFRIEND100 — the friend's half of the referral programme");
 
 const ATTRIBUTIONS = "referralAttributions";
@@ -389,14 +400,15 @@ await test("FRIEND100 never undercuts FIRST50 on the session it applies to", () 
   assert.equal(friend.applicable_packs.includes("wellness-session"), false);
 });
 
-await test("only the public offers are advertised", () => {
+await test("FIRST50 is the only offer advertised on the site", () => {
   // `promote` is what puts a code on a badge / in /api/coupons/active.
-  // FIRST50, RESULTS300 and SEATS100 are deliberately public offers.
-  // The invitation codes (FAMILY101, LUME50, CLARITY100, LUMEDEMO) must
-  // never be here: advertising a 100%-off or private code would mean the
-  // first stranger to read a badge claims it.
+  // Every other code is handed out directly, not displayed: RESULTS300 and
+  // SEATS100 are live but unadvertised, and the invitation codes
+  // (FAMILY101, LUME50, CLARITY100, LUMEDEMO) must never be advertised at
+  // all — a promoted 100%-off or private code would be claimed by the
+  // first stranger to read a badge.
   const promoted = DEFAULT_COUPONS.filter(c => c.promote).map(c => c.code);
-  assert.deepEqual(promoted, ["FIRST50", "RESULTS300", "SEATS100"]);
+  assert.deepEqual(promoted, ["FIRST50"]);
 });
 
 await test("a switched-off code leaves every other SKU at full price", async () => {

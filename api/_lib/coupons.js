@@ -105,12 +105,16 @@ const DEFAULT_COUPONS = [
       RESULTS300 — board-results season offer: ₹300 off the Stream Clarity
       Session (₹999 → ₹699), for parents choosing a stream after results.
 
-      An advertised, seasonal offer. The catalogue has an end date but no
-      start date, so a seasonal code is switched on by hand when its
-      season opens and retires itself on expiration_date. Pausing or
-      re-opening it next year is a single is_active flag in the Firebase
-      console — no deploy. A flat code (not a percentage) so it can never
-      scale onto a more expensive SKU by accident.
+      Live but NOT advertised (promote:false): it never appears on a badge
+      or in /api/coupons/active. The owner hands it out directly — the code
+      string, or a ?coupon=RESULTS300 link that pre-fills it at checkout.
+      Anyone who has it can use it; it is simply not displayed on the site.
+
+      Seasonal: the catalogue has an end date but no start date, so a
+      seasonal code is switched on by hand when its season opens and
+      retires itself on expiration_date. Pausing or re-opening it next year
+      is a single is_active flag in the Firebase console — no deploy. A flat
+      code (not a percentage) so it can never scale onto a dearer SKU.
     */
     code: "RESULTS300",
     discount_type: "flat",
@@ -122,19 +126,22 @@ const DEFAULT_COUPONS = [
     times_used: 0,
     headline: "₹300 off a Stream Clarity Session",
     description: "Board results are out — book a Stream Clarity Session and take ₹300 off.",
-    promote: true,
+    promote: false,
     first_time_only: false
   },
   {
     /*
-      SEATS100 — a capped, advertised offer: 40% off the Full Clarity
-      Report (₹999 → ₹599) for the first 100 students. The "100" is the
-      seat count, not the discount.
+      SEATS100 — a capped offer: 40% off the Full Clarity Report
+      (₹999 → ₹599) for the first 100 students. The "100" is the seat
+      count, not the discount.
+
+      Live but NOT advertised (promote:false): it never appears on a badge
+      or in /api/coupons/active. The owner hands it out directly — the code
+      string, or a ?coupon=SEATS100 link that pre-fills it at checkout.
 
       usage_limit is a GLOBAL cap, counted in Firestore only on confirmed
-      payment, so the "first 100 students" line stays honest: the badge
-      removes itself from /api/coupons/active the moment the 100th report
-      is paid for, and the code is refused at checkout (limit_reached)
+      payment, so "first 100 students" stays honest: the code is refused at
+      checkout (limit_reached) the moment the 100th report is paid for,
       rather than quietly over-selling.
 
       No per_customer_limit and not first_time_only: the cap is the whole
@@ -152,7 +159,7 @@ const DEFAULT_COUPONS = [
     times_used: 0,
     headline: "40% off the Full Clarity Report — first 100 students",
     description: "Limited to the first 100 students: 40% off the ₹999 Full Clarity Report.",
-    promote: true,
+    promote: false,
     first_time_only: false
   },
   {
