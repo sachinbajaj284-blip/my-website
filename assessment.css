@@ -2010,6 +2010,10 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
 @media(max-width:520px){.ft-upsell-bullets{grid-template-columns:1fr;}}
 .ft-upsell-bullets li{list-style:none;font-size:.8rem;color:#fff;display:flex;align-items:flex-start;gap:7px;font-weight:500;}
 .ft-upsell-bullets li::before{content:'✓';color:#86efac;font-weight:900;}
+.ft-proof{display:flex;gap:10px;max-width:420px;margin:0 auto 18px;position:relative;z-index:1;}
+.ft-proof div{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:10px 6px;text-align:center;}
+.ft-proof b{display:block;font-family:'Fraunces',serif;font-size:1.15rem;font-weight:800;color:#E8B95A;line-height:1.15;}
+.ft-proof span{font-size:.6rem;color:rgba(255,255,255,.72);text-transform:uppercase;letter-spacing:.4px;font-weight:700;}
 .ft-price-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px;position:relative;z-index:1;}
 .ft-price-now{font-family:'Fraunces',serif;font-size:2.2rem;font-weight:800;color:#E8B95A;line-height:1;}
 .ft-price-was{font-size:1rem;color:rgba(255,255,255,.45);text-decoration:line-through;font-weight:600;}
