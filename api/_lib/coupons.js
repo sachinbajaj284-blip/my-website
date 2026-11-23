@@ -101,6 +101,61 @@ const DEFAULT_COUPONS = [
     promote: true
   },
   {
+    /*
+      RESULTS300 — board-results season offer: ₹300 off the Stream Clarity
+      Session (₹999 → ₹699), for parents choosing a stream after results.
+
+      An advertised, seasonal offer. The catalogue has an end date but no
+      start date, so a seasonal code is switched on by hand when its
+      season opens and retires itself on expiration_date. Pausing or
+      re-opening it next year is a single is_active flag in the Firebase
+      console — no deploy. A flat code (not a percentage) so it can never
+      scale onto a more expensive SKU by accident.
+    */
+    code: "RESULTS300",
+    discount_type: "flat",
+    discount_value: 300,
+    applicable_packs: ["stream-clarity-session"],
+    is_active: true,
+    expiration_date: "2027-08-01",
+    usage_limit: null,
+    times_used: 0,
+    headline: "₹300 off a Stream Clarity Session",
+    description: "Board results are out — book a Stream Clarity Session and take ₹300 off.",
+    promote: true,
+    first_time_only: false
+  },
+  {
+    /*
+      SEATS100 — a capped, advertised offer: 40% off the Full Clarity
+      Report (₹999 → ₹599) for the first 100 students. The "100" is the
+      seat count, not the discount.
+
+      usage_limit is a GLOBAL cap, counted in Firestore only on confirmed
+      payment, so the "first 100 students" line stays honest: the badge
+      removes itself from /api/coupons/active the moment the 100th report
+      is paid for, and the code is refused at checkout (limit_reached)
+      rather than quietly over-selling.
+
+      No per_customer_limit and not first_time_only: the cap is the whole
+      mechanism and it is global, so there is nothing per-person to add.
+      It names its pack, because a percentage code with an empty
+      applicable_packs would also take 40% off the ₹11,999 track.
+    */
+    code: "SEATS100",
+    discount_type: "percentage",
+    discount_value: 40,
+    applicable_packs: ["student-full-report"],
+    is_active: true,
+    expiration_date: null,
+    usage_limit: 100,
+    times_used: 0,
+    headline: "40% off the Full Clarity Report — first 100 students",
+    description: "Limited to the first 100 students: 40% off the ₹999 Full Clarity Report.",
+    promote: true,
+    first_time_only: false
+  },
+  {
     code: "MIND50",
     discount_type: "percentage",
     discount_value: 50,

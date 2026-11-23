@@ -18,16 +18,19 @@ and why the price is safe.
 
 ## Live offers
 
-**One offer is advertised: `FIRST50`.** `FRIEND100` is live but never
-advertised — it is gated on `requires_referral`, so promoting it would
-mostly generate refusals from people who never had a friend's link. See
-`docs/referrals.md` for how that gate is answered. `CLARITY100`, `FAMILY101`,
-`LUME50` and `LUMEDEMO` ship parked and are issued to named accounts from
-Firestore — see below. Every other SKU sells at list price.
+**Three offers are advertised: `FIRST50`, `RESULTS300` and `SEATS100`.**
+`FRIEND100` is live but never advertised — it is gated on `requires_referral`,
+so promoting it would mostly generate refusals from people who never had a
+friend's link. See `docs/referrals.md` for how that gate is answered.
+`CLARITY100`, `FAMILY101`, `LUME50` and `LUMEDEMO` ship parked and are issued
+to named accounts from Firestore — see below. Every other SKU sells at list
+price.
 
 | Code | Discount | Applies to | Limits | Live | Shown on site |
 |---|---|---|---|---|---|
 | `FIRST50` | 50% | 1:1 Counselling Session (₹499 → ₹249) | **1 per customer, first session only** | **yes** | yes |
+| `RESULTS300` | ₹300 flat | Stream Clarity Session (₹999 → ₹699) | **expires 2027-08-01 (board-results season)** | **yes** | yes |
+| `SEATS100` | 40% | Full Clarity Report / student assessment (₹999 → ₹599) | **first 100 uses, globally** | **yes** | yes |
 | `FAMILY101` | 100% | Full Clarity Report / student assessment (₹999 → **₹1**) | **1 per customer, issued to named accounts** | issued in Firestore | **no** |
 | `LUME50` | 50% | Full Clarity Report / student assessment (₹999 → ₹499) | **1 per customer, issued to named accounts** | issued in Firestore | **no** |
 | `CLARITY100` | 100% | Full Clarity Report (₹999 → **₹1**) | **1 use ever, locked to one account** | issued in Firestore | **no** |
@@ -38,6 +41,38 @@ Firestore — see below. Every other SKU sells at list price.
 | `FRIEND100` | ₹100 flat | Full Clarity Report, Stream Clarity, Career Direction, Career Roadmap | **1 per customer, first purchase only, and only for a referred account** | **yes** | no |
 | `REFER200` | ₹200 flat | Full Clarity Report | — | no (superseded by `FRIEND100`) | no |
 | `INTERN500` | ₹500 flat | All three internship tracks | 50 uses | no | no |
+
+### `RESULTS300` and `SEATS100` — the public offers
+
+Two advertised offers (`promote: true`), so their SKU appears in
+`/api/coupons/active` and the "Have a coupon code?" box reveals itself on the
+relevant checkout.
+
+**`RESULTS300` — ₹300 off a Stream Clarity Session (₹999 → ₹699).** A flat
+code tied to `stream-clarity-session` only, for the board-results season when
+parents are choosing a stream. Entered in the session modal when the Stream
+Clarity plan is selected. It is **seasonal**: the catalogue has an end date but
+no start date, so it ships live now and **retires itself on `expiration_date`
+(2027-08-01)**. To re-run it next year, set a new `expiration_date` and flip
+`is_active` in the Firebase console — no deploy. To pause it early, set
+`is_active: false`.
+
+**`SEATS100` — 40% off the Full Clarity Report (₹999 → ₹599).** The `100` is
+the seat count, not the discount. `usage_limit: 100` is a **global** cap counted
+in Firestore only on confirmed payment, so "first 100 students" stays honest:
+the badge drops out of `/api/coupons/active` the moment the 100th report is paid
+for, and the code is then refused at checkout (`limit_reached`) rather than
+over-selling. No per-customer limit — the cap is global and is the whole point.
+
+Both name their SKU on purpose: a flat code could otherwise wander onto a
+dearer session, and a *percentage* code with an empty `applicable_packs` would
+take 40% off the ₹11,999 University Credit Track.
+
+**They are live at checkout but not yet on a hero badge.** `promote: true`
+reveals the coupon field on the right checkout and lists the offer in the API;
+it does **not** draw a banner on its own — a badge is page markup. To show one,
+add a `data-lume-coupon-badge` element (see the front-end section) with matching
+fallback attributes so it is right on first paint.
 
 ### `FAMILY101` and `LUME50` — private codes for the student assessment
 

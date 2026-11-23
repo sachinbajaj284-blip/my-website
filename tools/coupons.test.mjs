@@ -197,7 +197,9 @@ await test("only the intended codes are live", () => {
   // address never enters this public repo. See issueCoupon().
   // FRIEND100 is live but gated on requires_referral, so it is only usable
   // by someone the referral ledger says a friend actually referred.
-  assert.deepEqual(live, ["FIRST50", "FRIEND100"]);
+  // RESULTS300 is a seasonal advertised offer (retires on expiration_date);
+  // SEATS100 is an advertised offer capped at 100 uses.
+  assert.deepEqual(live, ["FIRST50", "RESULTS300", "SEATS100", "FRIEND100"]);
 });
 
 await test("CLARITY100 cannot go live without the account it was issued to", () => {
@@ -208,6 +210,68 @@ await test("CLARITY100 cannot go live without the account it was issued to", () 
   // the string first. One of the two has to be true.
   assert.ok(clarity.is_active === false || restricted,
     "CLARITY100 is active with an empty restricted_to_emails — it would be free to whoever guesses the code");
+});
+
+console.log("\nRESULTS300 and SEATS100 — the public offers");
+
+await test("RESULTS300 takes a ₹999 Stream Clarity Session to ₹699", async () => {
+  const q = await quote({ code: "RESULTS300", packId: "stream-clarity-session" });
+  assert.equal(q.ok, true);
+  assert.equal(q.reason, "applied");
+  assert.equal(q.base_amount, 999);
+  assert.equal(q.discount_amount, 300);
+  assert.equal(q.final_amount, 699);
+});
+
+await test("RESULTS300 is a flat code tied to one SKU, not every pack", async () => {
+  // A flat ₹300 must not wander onto other sessions or the report.
+  const results = DEFAULT_COUPONS.find(c => c.code === "RESULTS300");
+  assert.deepEqual(results.applicable_packs, ["stream-clarity-session"]);
+  assert.equal(results.discount_type, "flat");
+  const q = await quote({ code: "RESULTS300", packId: "student-full-report" });
+  assert.equal(q.ok, false);
+  assert.equal(q.reason, "not_applicable");
+  assert.equal(q.final_amount, 999);
+});
+
+await test("RESULTS300 retires itself on its expiration date", async () => {
+  const results = DEFAULT_COUPONS.find(c => c.code === "RESULTS300");
+  assert.ok(results.expiration_date, "a seasonal offer must carry an end date");
+  const after = new Date(new Date(results.expiration_date).getTime() + 24 * 3600 * 1000);
+  const q = await quote({ code: "RESULTS300", packId: "stream-clarity-session", now: after });
+  assert.equal(q.ok, false);
+  assert.equal(q.reason, "expired");
+  assert.equal(q.final_amount, 999);
+});
+
+await test("SEATS100 takes a ₹999 Full Clarity Report to ₹599 (40% off)", async () => {
+  const q = await quote({ code: "SEATS100", packId: "student-full-report" });
+  assert.equal(q.ok, true);
+  assert.equal(q.reason, "applied");
+  assert.equal(q.base_amount, 999);
+  assert.equal(q.discount_amount, 400);
+  assert.equal(q.final_amount, 599);
+});
+
+await test("SEATS100 is capped at 100 uses, globally", async () => {
+  const seats = DEFAULT_COUPONS.find(c => c.code === "SEATS100");
+  assert.equal(seats.usage_limit, 100);
+  // The cap is what makes "first 100 students" honest: once the counter
+  // reaches it the code is refused rather than quietly over-selling.
+  // checkCoupon reads times_used, so a code at the cap is limit_reached.
+  const atCap = { ...seats, times_used: 100 };
+  const v = checkCoupon(atCap, { label: "Full Clarity Report", amount: 999 }, "student-full-report");
+  assert.equal(v.ok, false);
+  assert.equal(v.reason, "limit_reached");
+});
+
+await test("SEATS100 is a percentage code that names its pack", async () => {
+  // A percentage with an empty applicable_packs would also take 40% off
+  // the ₹11,999 University Credit Track.
+  const seats = DEFAULT_COUPONS.find(c => c.code === "SEATS100");
+  assert.equal(seats.discount_type, "percentage");
+  assert.deepEqual(seats.applicable_packs, ["student-full-report"]);
+  assert.ok(seats.applicable_packs.length > 0, "a percentage code must name its packs");
 });
 
 console.log("\nFRIEND100 — the friend's half of the referral programme");
@@ -325,12 +389,14 @@ await test("FRIEND100 never undercuts FIRST50 on the session it applies to", () 
   assert.equal(friend.applicable_packs.includes("wellness-session"), false);
 });
 
-await test("FIRST50 is the only offer advertised on the site", () => {
-  // `promote` is what puts a code on the page. CLARITY100 is a one-use
-  // 100%-off code handed to one person: advertising it would mean the
-  // first stranger to read a badge claims the free report.
+await test("only the public offers are advertised", () => {
+  // `promote` is what puts a code on a badge / in /api/coupons/active.
+  // FIRST50, RESULTS300 and SEATS100 are deliberately public offers.
+  // The invitation codes (FAMILY101, LUME50, CLARITY100, LUMEDEMO) must
+  // never be here: advertising a 100%-off or private code would mean the
+  // first stranger to read a badge claims it.
   const promoted = DEFAULT_COUPONS.filter(c => c.promote).map(c => c.code);
-  assert.deepEqual(promoted, ["FIRST50"]);
+  assert.deepEqual(promoted, ["FIRST50", "RESULTS300", "SEATS100"]);
 });
 
 await test("a switched-off code leaves every other SKU at full price", async () => {
@@ -942,8 +1008,9 @@ await test("seeding reports which codes are live at checkout", async () => {
   const r = await coupons.seedCoupons({});
   // Live means usable at checkout, which is not the same as advertised:
   // CLARITY100 is a one-use invitation code and is never promoted, and
-  // FRIEND100 is gated on having been referred.
-  assert.deepEqual(r.live, ["FIRST50", "FRIEND100"]);
+  // FRIEND100 is gated on having been referred. RESULTS300 and SEATS100
+  // are the public offers.
+  assert.deepEqual(r.live, ["FIRST50", "RESULTS300", "SEATS100", "FRIEND100"]);
 });
 
 console.log("\nthe demo account");
