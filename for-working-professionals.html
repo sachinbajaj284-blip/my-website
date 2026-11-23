@@ -1735,6 +1735,12 @@ section::after{content:'';position:absolute;bottom:0;left:50%;transform:translat
 .sa-cashfree-mark{width:52px;height:52px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(145deg,rgba(255,255,255,.94),rgba(10,110,110,.12));color:var(--teal);font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:900;border:1px solid rgba(255,255,255,.82);box-shadow:0 14px 30px rgba(10,110,110,.14),inset 0 1px 0 rgba(255,255,255,.9);}
 .sa-cashfree-top b{display:block;color:var(--navy);font-size:clamp(1rem,2.4vw,1.18rem);line-height:1.2;margin-bottom:4px;}
 .sa-cashfree-top span{display:block;color:var(--mid);font-size:.84rem;line-height:1.45;}
+.sa-step-badge{display:inline-flex;align-items:center;gap:6px;font-size:.63rem;font-weight:900;text-transform:uppercase;letter-spacing:.8px;color:var(--gold);background:rgba(201,147,58,.12);border:1px solid rgba(201,147,58,.32);border-radius:999px;padding:4px 10px;margin:0 0 9px;}
+.sa-begin-block{margin-top:14px;padding-top:15px;border-top:1px dashed #E1DAC9;transition:opacity .3s;}
+.sa-begin-block.sa-locked{opacity:.6;}
+.sa-begin-block.sa-locked .sa-step-badge{color:var(--mid);background:rgba(99,112,131,.1);border-color:rgba(99,112,131,.22);}
+.sa-begin-block.sa-unlocked .sa-step-badge{color:#0B8F62;background:rgba(11,143,98,.12);border-color:rgba(11,143,98,.32);}
+.sa-begin-hint{font-size:.72rem;color:var(--mid);line-height:1.5;margin-top:9px;}
 .sa-upi-fallback{margin:12px 0 12px;border:1px solid rgba(255,255,255,.72);border-radius:18px;background:rgba(255,255,255,.66);overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 12px 28px rgba(13,27,64,.05);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);}
 .sa-upi-fallback summary{cursor:pointer;list-style:none;padding:12px 14px;color:var(--teal);font-size:.78rem;font-weight:900;display:flex;justify-content:space-between;gap:12px;align-items:center;}
 .sa-upi-fallback summary::-webkit-details-marker{display:none;}
@@ -2860,6 +2866,7 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
             <span class="wp-pay-ribbon">Most chosen</span>
             <span class="sa-pay-label">Lume Lens &middot; For Working Professionals</span>
             <div class="sa-pay-price"><strong>&#8377;1999</strong><s>&#8377;2999</s><span>one-time fee</span><em class="wp-pay-save">Save &#8377;1000</em></div>
+            <div data-lume-coupon-checkout data-always-show data-sku="lume-lens-working-profile" data-amount="1999" data-label="Lume Lens Working Profile" data-price-el=".sa-pay-price strong" data-phone="#saPhone"></div>
             <p style="font-size:.78rem;color:var(--mid);line-height:1.55;">Covers all five parts and your premium working profile report.</p>
             <div class="sa-pay-trust" aria-label="Why professionals trust Lume Live">
               <div><b data-wp-count="500" data-wp-suffix="+">0</b><span>Guided</span></div>
@@ -2867,11 +2874,26 @@ body.sa-report-visible .side-icons,body.sa-report-visible .float-cta,body.sa-rep
               <div><b data-wp-count="100" data-wp-suffix="%">0</b><span>Confidential</span></div>
             </div>
             <div class="sa-pay-assure">
+              <span><i>&#128274;</i> Secure Cashfree checkout &mdash; pay by UPI, card, net-banking or wallet.</span>
               <span><i>&#129309;</i> A premium PDF profile you keep &mdash; built for coaching and career decisions.</span>
               <span><i>&#9989;</i> All five parts in one guided sitting &mdash; around 30&ndash;40 minutes end to end.</span>
             </div>
-            <button class="sa-btn primary" type="button" onclick="saBegin()">Begin Lume Lens &rarr;</button>
-            <p class="sa-pay-note">Create your account or sign in, then begin. <a class="sa-help-link" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20need%20help%20with%20the%20Lume%20Lens%20assessment." target="_blank" rel="noopener">Need help? Message Lume Live.</a></p>
+            <div class="sa-cashfree-panel">
+              <div class="sa-cashfree-top">
+                <div class="sa-cashfree-mark" aria-hidden="true">&#8377;</div>
+                <div><b>Secure Cashfree Checkout</b><span>Pay by UPI, card, netbanking or wallet and come back to begin.</span></div>
+              </div>
+              <span class="sa-step-badge">Step 1 &middot; Pay</span>
+              <button class="sa-btn primary" type="button" onclick="saStartCashfreePayment()">Pay &#8377;1999 Securely with Cashfree</button>
+              <p class="sa-pay-note">Checkout opens securely and returns you here after payment.</p>
+            </div>
+            <div class="sa-begin-block sa-locked" id="saBeginBlock">
+              <span class="sa-step-badge" id="saStep2Badge">Step 2 &middot; after payment</span>
+              <button class="sa-btn primary" type="button" id="saBeginBtn" onclick="saBegin()">Begin Lume Lens &rarr;</button>
+              <p class="sa-begin-hint" id="saBeginHint">This unlocks automatically once your &#8377;1999 payment is confirmed. Already paid? Just tap it &mdash; access verifies in a few seconds.</p>
+            </div>
+            <p class="sa-pay-note">Create your account or sign in, then pay to begin. <a class="sa-help-link" href="https://wa.me/917015671280?text=Hello%20Lume%20Live!%20I%20need%20help%20with%20the%20Lume%20Lens%20assessment." target="_blank" rel="noopener">Need help? Message Lume Live.</a></p>
+            <p class="sa-pay-note"><a href="#" onclick="if(typeof lumeCashfreeRestoreAccessPrompt==='function')lumeCashfreeRestoreAccessPrompt();return false;">Paid on your phone and now on another device? Restore access</a></p>
           </aside>
         </div>
       </div>
@@ -3306,15 +3328,42 @@ window.saBegin=function(){
  var err=el("saGateError");
  if(!requireAssessmentSignin())return;
  if(!validateGate())return;
- err.textContent="";
- S.paid=true;persistAssessmentProgress();
- show("saTest");renderPart();el("saTest").scrollIntoView({behavior:"smooth",block:"start"});
- toast("You are in. One honest answer at a time.");
+ err.textContent="Checking your payment status…";
+ applyVerifiedCashfreeAccess().then(function(verified){
+  if(verified){
+   err.textContent="";
+   S.paid=true;persistAssessmentProgress();
+   show("saTest");renderPart();el("saTest").scrollIntoView({behavior:"smooth",block:"start"});
+   toast("You are in. One honest answer at a time.");
+  }else{
+   err.textContent="Please complete the ₹1999 Cashfree payment before starting. If you have just paid, wait a few seconds for it to verify and tap Begin again — or message us on WhatsApp to confirm your access.";
+  }
+ });
 };
 
 /* ─── Stepper ─── */
+function saReflectPayState(){
+ var block=el("saBeginBlock");
+ if(!block)return;
+ var badge=el("saStep2Badge"),hint=el("saBeginHint");
+ if(typeof window.lumeCashfreeVerifyAccess!=="function"){
+  block.classList.remove("sa-unlocked");block.classList.add("sa-locked");return;
+ }
+ window.lumeCashfreeVerifyAccess("lume-lens-working-profile").then(function(verified){
+  if(verified){
+   if(block.classList.contains("sa-unlocked"))return;
+   block.classList.remove("sa-locked");block.classList.add("sa-unlocked");
+   if(badge)badge.textContent="✅ Payment received";
+   if(hint)hint.textContent="You're all set — tap below to begin your Lume Lens.";
+  }else{
+   block.classList.remove("sa-unlocked");block.classList.add("sa-locked");
+  }
+ });
+}
+window.saReflectPayState=saReflectPayState;
 function scheduleVerifiedCashfreeAccess(){
  [0,300,1200].forEach(function(ms){setTimeout(applyVerifiedCashfreeAccess,ms);});
+ saReflectPayState();[400,1400,3000].forEach(function(ms){setTimeout(saReflectPayState,ms);});
 }
 window.addEventListener("lume:cashfree-ready",scheduleVerifiedCashfreeAccess);
 window.addEventListener("lume:access-restored",scheduleVerifiedCashfreeAccess);
