@@ -33,6 +33,29 @@ const THERAPY_FOR = {
   'understanding-ptsd.html': ['therapy-for-ptsd.html', 'Online counselling for PTSD &amp; trauma'],
   'understanding-bipolar-disorder.html': ['therapy-for-bipolar-disorder.html', 'Counselling support for bipolar disorder'],
 };
+
+// A condition-specific free self-check, prepended to the "Explore next" list on the
+// matching condition explainer and therapy landing. Only the conditions with a
+// dedicated screener page appear here; anxiety and depression are omitted because
+// their generic screener (GAD-7 / PHQ-4) already IS the condition-specific check.
+const SELF_CHECK = {
+  'understanding-ocd.html': ['ocd-test.html', 'Free OCD self-check (OCI-R)'],
+  'therapy-for-ocd.html': ['ocd-test.html', 'Free OCD self-check (OCI-R)'],
+  'understanding-panic-attacks.html': ['panic-attack-test.html', 'Free panic self-check (PDSS)'],
+  'therapy-for-panic-attacks.html': ['panic-attack-test.html', 'Free panic self-check (PDSS)'],
+  'understanding-social-anxiety.html': ['social-anxiety-test.html', 'Free social anxiety self-check (SPIN)'],
+  'therapy-for-social-anxiety.html': ['social-anxiety-test.html', 'Free social anxiety self-check (SPIN)'],
+  'understanding-stress-and-burnout.html': ['perceived-stress-test.html', 'Free stress self-check (PSS-10)'],
+  'therapy-for-stress.html': ['perceived-stress-test.html', 'Free stress self-check (PSS-10)'],
+  'understanding-adhd.html': ['adhd-test.html', 'Free adult ADHD self-check (ASRS)'],
+  'therapy-for-adhd.html': ['adhd-test.html', 'Free adult ADHD self-check (ASRS)'],
+  'understanding-insomnia.html': ['insomnia-test.html', 'Free insomnia self-check (ISI)'],
+  'therapy-for-insomnia.html': ['insomnia-test.html', 'Free insomnia self-check (ISI)'],
+  'understanding-ptsd.html': ['ptsd-test.html', 'Free PTSD self-check (PC-PTSD-5)'],
+  'therapy-for-ptsd.html': ['ptsd-test.html', 'Free PTSD self-check (PC-PTSD-5)'],
+  'understanding-bipolar-disorder.html': ['bipolar-test.html', 'Free bipolar / mood self-check (MDQ)'],
+  'therapy-for-bipolar-disorder.html': ['bipolar-test.html', 'Free bipolar / mood self-check (MDQ)'],
+};
 const CHECK = process.argv.includes('--check');
 
 /* ── screener pages ────────────────────────────────────────────────────── */
@@ -258,6 +281,7 @@ function buildCondition(c) {
     .join('\n');
 
   const related = [
+    ...(SELF_CHECK[c.slug] ? [SELF_CHECK[c.slug]] : []),
     ...(THERAPY_FOR[c.slug] ? [THERAPY_FOR[c.slug]] : []),
     c.screener,
     ['wellbeing-check.html', 'All seven free self-checks'],
@@ -456,7 +480,7 @@ ${l.steps.map(([n, b, p]) => `      <div class="concern"><div class="ic">${n}</d
       `        <a class="btn secondary" href="#book">Book a &#8377;249 first session</a>`,
     ],
     crumb: `<a href="index.html">Home</a> &rsaquo; <a href="${HUB}">Mental Health Counselling</a> &rsaquo; Online Therapy &amp; Counselling`,
-    body, faq: l.faq, related: l.related,
+    body, faq: l.faq, related: SELF_CHECK[l.slug] ? [SELF_CHECK[l.slug], ...l.related] : l.related,
     stickyCheck: l.check,
   });
 }
