@@ -101,6 +101,68 @@ const DEFAULT_COUPONS = [
     promote: true
   },
   {
+    /*
+      RESULTS300 — board-results season offer: ₹300 off the Stream Clarity
+      Session (₹999 → ₹699), for parents choosing a stream after results.
+
+      Live but NOT advertised (promote:false): it never appears on a badge
+      or in /api/coupons/active. The owner hands it out directly — the code
+      string, or a ?coupon=RESULTS300 link that pre-fills it at checkout.
+      Anyone who has it can use it; it is simply not displayed on the site.
+
+      Seasonal: the catalogue has an end date but no start date, so a
+      seasonal code is switched on by hand when its season opens and
+      retires itself on expiration_date. Pausing or re-opening it next year
+      is a single is_active flag in the Firebase console — no deploy. A flat
+      code (not a percentage) so it can never scale onto a dearer SKU.
+    */
+    code: "RESULTS300",
+    discount_type: "flat",
+    discount_value: 300,
+    applicable_packs: ["stream-clarity-session"],
+    is_active: true,
+    expiration_date: "2027-08-01",
+    usage_limit: null,
+    times_used: 0,
+    headline: "₹300 off a Stream Clarity Session",
+    description: "Board results are out — book a Stream Clarity Session and take ₹300 off.",
+    promote: false,
+    first_time_only: false
+  },
+  {
+    /*
+      SEATS100 — a capped offer: 40% off the Full Clarity Report
+      (₹999 → ₹599) for the first 100 students. The "100" is the seat
+      count, not the discount.
+
+      Live but NOT advertised (promote:false): it never appears on a badge
+      or in /api/coupons/active. The owner hands it out directly — the code
+      string, or a ?coupon=SEATS100 link that pre-fills it at checkout.
+
+      usage_limit is a GLOBAL cap, counted in Firestore only on confirmed
+      payment, so "first 100 students" stays honest: the code is refused at
+      checkout (limit_reached) the moment the 100th report is paid for,
+      rather than quietly over-selling.
+
+      No per_customer_limit and not first_time_only: the cap is the whole
+      mechanism and it is global, so there is nothing per-person to add.
+      It names its pack, because a percentage code with an empty
+      applicable_packs would also take 40% off the ₹11,999 track.
+    */
+    code: "SEATS100",
+    discount_type: "percentage",
+    discount_value: 40,
+    applicable_packs: ["student-full-report"],
+    is_active: true,
+    expiration_date: null,
+    usage_limit: 100,
+    times_used: 0,
+    headline: "40% off the Full Clarity Report — first 100 students",
+    description: "Limited to the first 100 students: 40% off the ₹999 Full Clarity Report.",
+    promote: false,
+    first_time_only: false
+  },
+  {
     code: "MIND50",
     discount_type: "percentage",
     discount_value: 50,
@@ -261,6 +323,96 @@ const DEFAULT_COUPONS = [
     per_customer_limit: 1,
     headline: "Full Clarity Report on us",
     description: "A one-time invitation code for the ₹999 Full Clarity Report.",
+    promote: false,
+    first_time_only: false
+  },
+  {
+    /*
+      FAMILY101 — a free Full Clarity Report, for people the owner chooses.
+
+      This is the student assessment on us. It behaves exactly like
+      CLARITY100: 100% off `student-full-report`, which discountFor() caps
+      at base - MIN_CHARGE, so the recipient sees ₹999 struck through and
+      pays ₹1. Cashfree will not create a ₹0 order, so ₹1 is "as free as
+      the gateway allows"; raising discount_value above 100 changes
+      nothing, the cap decides.
+
+      "Don't show it publicly, I'll choose who gets it" is implemented the
+      only way that is actually safe for a 100%-off code on this site:
+
+      - promote:false keeps it out of /api/coupons/active, so it never
+        appears on a badge. But that alone is not enough — the report
+        checkout carries data-always-show, so its coupon box is on screen
+        for every visitor, and an ACTIVE 100%-off code with an empty
+        recipient list would be a free report for whoever types the string.
+
+      - So it ships PARKED, is_active:false with an empty
+        restricted_to_emails, and is issued to named accounts from
+        Firestore with `npm run coupons:issue` (see issueCoupon + docs).
+        loadCoupon layers that document over this default; issueCoupon
+        refuses to activate a code with no named recipient, and refuses to
+        report success if the read-back comes back active-but-open. The
+        recipients' email addresses are personal data and this repo is
+        public, so they are never committed here.
+
+      - The parked default is the fail-safe: with no document, or Firestore
+        unreachable, it reads back inactive — off for everybody — rather
+        than a live 100%-off code belonging to whoever typed "FAMILY101".
+        Do not set is_active true or promote here; issue it instead.
+
+      Unlike CLARITY100 it is NOT a single-use code: it is meant to be
+      handed to several chosen people, so usage_limit and max_recipients
+      are both null. per_customer_limit:1 still stops any one recipient
+      from taking more than one free report.
+    */
+    code: "FAMILY101",
+    discount_type: "percentage",
+    discount_value: 100,
+    applicable_packs: ["student-full-report"],
+    is_active: false,
+    restricted_to_emails: [],
+    expiration_date: null,
+    usage_limit: null,
+    times_used: 0,
+    per_customer_limit: 1,
+    headline: "Full Clarity Report, on us",
+    description: "A private invitation for a free Lume Live Full Clarity Report — the ₹999 student assessment.",
+    promote: false,
+    first_time_only: false
+  },
+  {
+    /*
+      LUME50 — a private 50%-off code for the Full Clarity Report.
+
+      Takes the ₹999 student assessment to ₹499 (50% rounds to the rupee:
+      ₹500 off). Given only to people the owner chooses.
+
+      It is unadvertised (promote:false), so it never reaches a badge or
+      /api/coupons/active. And, like FAMILY101 and the other invitation
+      codes, it ships PARKED (is_active:false, empty restricted_to_emails)
+      and is issued to named accounts from Firestore with
+      `npm run coupons:issue`. That is what makes "I choose who gets it"
+      enforced rather than merely "not shown": a code that is only
+      unadvertised can still be used by anyone who learns the string.
+      The recipients' addresses are personal data and this repo is public,
+      so they are not committed here.
+
+      per_customer_limit:1 keeps one recipient from reusing it; usage_limit
+      is null (no global cap). Not first_time_only — it is a chosen gift,
+      not an acquisition offer like FIRST50.
+    */
+    code: "LUME50",
+    discount_type: "percentage",
+    discount_value: 50,
+    applicable_packs: ["student-full-report"],
+    is_active: false,
+    restricted_to_emails: [],
+    expiration_date: null,
+    usage_limit: null,
+    times_used: 0,
+    per_customer_limit: 1,
+    headline: "50% off the Full Clarity Report",
+    description: "A private invitation for 50% off the Lume Live Full Clarity Report — the ₹999 student assessment.",
     promote: false,
     first_time_only: false
   },

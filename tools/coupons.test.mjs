@@ -197,7 +197,9 @@ await test("only the intended codes are live", () => {
   // address never enters this public repo. See issueCoupon().
   // FRIEND100 is live but gated on requires_referral, so it is only usable
   // by someone the referral ledger says a friend actually referred.
-  assert.deepEqual(live, ["FIRST50", "FRIEND100"]);
+  // RESULTS300 is a seasonal advertised offer (retires on expiration_date);
+  // SEATS100 is an advertised offer capped at 100 uses.
+  assert.deepEqual(live, ["FIRST50", "RESULTS300", "SEATS100", "FRIEND100"]);
 });
 
 await test("CLARITY100 cannot go live without the account it was issued to", () => {
@@ -208,6 +210,79 @@ await test("CLARITY100 cannot go live without the account it was issued to", () 
   // the string first. One of the two has to be true.
   assert.ok(clarity.is_active === false || restricted,
     "CLARITY100 is active with an empty restricted_to_emails — it would be free to whoever guesses the code");
+});
+
+console.log("\nRESULTS300 and SEATS100 — the public offers");
+
+await test("RESULTS300 takes a ₹999 Stream Clarity Session to ₹699", async () => {
+  const q = await quote({ code: "RESULTS300", packId: "stream-clarity-session" });
+  assert.equal(q.ok, true);
+  assert.equal(q.reason, "applied");
+  assert.equal(q.base_amount, 999);
+  assert.equal(q.discount_amount, 300);
+  assert.equal(q.final_amount, 699);
+});
+
+await test("RESULTS300 is a flat code tied to one SKU, not every pack", async () => {
+  // A flat ₹300 must not wander onto other sessions or the report.
+  const results = DEFAULT_COUPONS.find(c => c.code === "RESULTS300");
+  assert.deepEqual(results.applicable_packs, ["stream-clarity-session"]);
+  assert.equal(results.discount_type, "flat");
+  const q = await quote({ code: "RESULTS300", packId: "student-full-report" });
+  assert.equal(q.ok, false);
+  assert.equal(q.reason, "not_applicable");
+  assert.equal(q.final_amount, 999);
+});
+
+await test("RESULTS300 retires itself on its expiration date", async () => {
+  const results = DEFAULT_COUPONS.find(c => c.code === "RESULTS300");
+  assert.ok(results.expiration_date, "a seasonal offer must carry an end date");
+  const after = new Date(new Date(results.expiration_date).getTime() + 24 * 3600 * 1000);
+  const q = await quote({ code: "RESULTS300", packId: "stream-clarity-session", now: after });
+  assert.equal(q.ok, false);
+  assert.equal(q.reason, "expired");
+  assert.equal(q.final_amount, 999);
+});
+
+await test("SEATS100 takes a ₹999 Full Clarity Report to ₹599 (40% off)", async () => {
+  const q = await quote({ code: "SEATS100", packId: "student-full-report" });
+  assert.equal(q.ok, true);
+  assert.equal(q.reason, "applied");
+  assert.equal(q.base_amount, 999);
+  assert.equal(q.discount_amount, 400);
+  assert.equal(q.final_amount, 599);
+});
+
+await test("SEATS100 is capped at 100 uses, globally", async () => {
+  const seats = DEFAULT_COUPONS.find(c => c.code === "SEATS100");
+  assert.equal(seats.usage_limit, 100);
+  // The cap is what makes "first 100 students" honest: once the counter
+  // reaches it the code is refused rather than quietly over-selling.
+  // checkCoupon reads times_used, so a code at the cap is limit_reached.
+  const atCap = { ...seats, times_used: 100 };
+  const v = checkCoupon(atCap, { label: "Full Clarity Report", amount: 999 }, "student-full-report");
+  assert.equal(v.ok, false);
+  assert.equal(v.reason, "limit_reached");
+});
+
+await test("SEATS100 is a percentage code that names its pack", async () => {
+  // A percentage with an empty applicable_packs would also take 40% off
+  // the ₹11,999 University Credit Track.
+  const seats = DEFAULT_COUPONS.find(c => c.code === "SEATS100");
+  assert.equal(seats.discount_type, "percentage");
+  assert.deepEqual(seats.applicable_packs, ["student-full-report"]);
+  assert.ok(seats.applicable_packs.length > 0, "a percentage code must name its packs");
+});
+
+await test("RESULTS300 and SEATS100 are live but never shown on the site", () => {
+  // The owner hands these out directly (code string or ?coupon= link).
+  // They work at checkout but must not be advertised on a badge or listed
+  // in /api/coupons/active.
+  for(const code of ["RESULTS300", "SEATS100"]){
+    const c = DEFAULT_COUPONS.find(x => x.code === code);
+    assert.equal(c.is_active, true, code + " stays usable");
+    assert.equal(c.promote, false, code + " must not be advertised");
+  }
 });
 
 console.log("\nFRIEND100 — the friend's half of the referral programme");
@@ -326,9 +401,12 @@ await test("FRIEND100 never undercuts FIRST50 on the session it applies to", () 
 });
 
 await test("FIRST50 is the only offer advertised on the site", () => {
-  // `promote` is what puts a code on the page. CLARITY100 is a one-use
-  // 100%-off code handed to one person: advertising it would mean the
-  // first stranger to read a badge claims the free report.
+  // `promote` is what puts a code on a badge / in /api/coupons/active.
+  // Every other code is handed out directly, not displayed: RESULTS300 and
+  // SEATS100 are live but unadvertised, and the invitation codes
+  // (FAMILY101, LUME50, CLARITY100, LUMEDEMO) must never be advertised at
+  // all — a promoted 100%-off or private code would be claimed by the
+  // first stranger to read a badge.
   const promoted = DEFAULT_COUPONS.filter(c => c.promote).map(c => c.code);
   assert.deepEqual(promoted, ["FIRST50"]);
 });
@@ -583,6 +661,116 @@ await test("an issued code can be revoked", async () => {
 });
 
 /*
+  FAMILY101 and LUME50 — the owner's private invitation codes for the
+  student assessment (student-full-report). Both ship parked and are
+  issued to named accounts exactly like CLARITY100, so these exercise the
+  same real issuing path rather than hand-seeding a document.
+*/
+const FAMILY = DEFAULT_COUPONS.find(c => c.code === "FAMILY101");
+const LUME50C = DEFAULT_COUPONS.find(c => c.code === "LUME50");
+
+await test("FAMILY101 and LUME50 ship parked, carrying no address in the repo", () => {
+  for(const c of [FAMILY, LUME50C]){
+    assert.ok(c, "coupon is defined");
+    assert.equal(c.is_active, false, c.code + " must ship inactive");
+    assert.deepEqual(c.restricted_to_emails, [],
+      c.code + ": recipients are issued from Firestore, never committed to a public repo");
+    assert.equal(c.promote, false, c.code + " must never be advertised");
+    assert.deepEqual(c.applicable_packs, ["student-full-report"],
+      c.code + " is the student-assessment code");
+  }
+});
+
+await test("FAMILY101 cannot go live without the accounts it was issued to", () => {
+  // Same guard as CLARITY100: an active 100%-off code with no named
+  // recipient is a free report for whoever types the string, and the
+  // report checkout shows its coupon box to every visitor.
+  const restricted = Array.isArray(FAMILY.restricted_to_emails) && FAMILY.restricted_to_emails.length > 0;
+  assert.ok(FAMILY.is_active === false || restricted,
+    "FAMILY101 is active with an empty restricted_to_emails — it would be free to whoever guesses the code");
+});
+
+await test("FAMILY101, once issued, takes the ₹999 report down to the ₹1 the gateway needs", async () => {
+  store.clear();
+  const r = await issueCoupon({ code: "FAMILY101", emails: [INVITED.email] });
+  assert.equal(r.ok, true, "issuing FAMILY101 should succeed: " + r.message);
+  const q = await quote({ code: "FAMILY101", packId: "student-full-report", customer: INVITED });
+  assert.equal(q.ok, true);
+  assert.equal(q.reason, "applied");
+  assert.equal(q.base_amount, 999);
+  // Not ₹0: Cashfree refuses a zero-value order, so MIN_CHARGE stays payable.
+  assert.equal(q.final_amount, 1);
+  assert.equal(q.discount_amount, 998);
+});
+
+await test("FAMILY101 is refused for anyone it was not issued to, and when signed out", async () => {
+  store.clear();
+  await issueCoupon({ code: "FAMILY101", emails: [INVITED.email] });
+  const other = await quote({ code: "FAMILY101", packId: "student-full-report", customer: UNINVITED });
+  assert.equal(other.ok, false);
+  assert.equal(other.reason, "not_invited");
+  assert.equal(other.final_amount, 999, "they are quoted the full price");
+  const anon = await quote({ code: "FAMILY101", packId: "student-full-report" });
+  assert.equal(anon.ok, false);
+  assert.equal(anon.reason, "not_invited");
+});
+
+await test("FAMILY101 can be issued to several people, each good for one free report", async () => {
+  // Unlike CLARITY100 it is not single-use: it is meant for a chosen few.
+  store.clear();
+  await issueCoupon({ code: "FAMILY101", emails: ["a@example.com"] });
+  const r = await issueCoupon({ code: "FAMILY101", emails: ["b@example.com"], add: true });
+  assert.equal(r.ok, true, r.message);
+  assert.deepEqual(r.effective.restricted_to_emails.slice().sort(), ["a@example.com", "b@example.com"]);
+  for(const email of ["a@example.com", "b@example.com"]){
+    const q = await quote({ code: "FAMILY101", packId: "student-full-report", customer: { phone: "9844444444", email } });
+    assert.equal(q.ok, true, email + ": " + q.message);
+    assert.equal(q.final_amount, 1);
+  }
+});
+
+await test("an unissued FAMILY101 is refused, at full price", async () => {
+  store.clear();
+  const q = await quote({ code: "FAMILY101", packId: "student-full-report", customer: INVITED });
+  assert.equal(q.ok, false);
+  assert.equal(q.reason, "inactive");
+  assert.equal(q.final_amount, 999);
+});
+
+await test("LUME50, once issued, takes the ₹999 report to ₹499", async () => {
+  store.clear();
+  const r = await issueCoupon({ code: "LUME50", emails: [INVITED.email] });
+  assert.equal(r.ok, true, "issuing LUME50 should succeed: " + r.message);
+  const q = await quote({ code: "LUME50", packId: "student-full-report", customer: INVITED });
+  assert.equal(q.ok, true);
+  assert.equal(q.reason, "applied");
+  assert.equal(q.base_amount, 999);
+  // 50% of ₹999 is ₹499.50, which rounds to ₹500 off — ₹499 payable.
+  assert.equal(q.discount_amount, 500);
+  assert.equal(q.final_amount, 499);
+});
+
+await test("LUME50 is refused for anyone it was not issued to, and when signed out", async () => {
+  store.clear();
+  await issueCoupon({ code: "LUME50", emails: [INVITED.email] });
+  const other = await quote({ code: "LUME50", packId: "student-full-report", customer: UNINVITED });
+  assert.equal(other.ok, false);
+  assert.equal(other.reason, "not_invited");
+  assert.equal(other.final_amount, 999);
+  const anon = await quote({ code: "LUME50", packId: "student-full-report" });
+  assert.equal(anon.ok, false);
+  assert.equal(anon.reason, "not_invited");
+});
+
+await test("an unissued LUME50 is refused, at full price", async () => {
+  store.clear();
+  const q = await quote({ code: "LUME50", packId: "student-full-report", customer: INVITED });
+  assert.equal(q.ok, false);
+  assert.equal(q.reason, "inactive");
+  assert.equal(q.final_amount, 999);
+});
+
+/*
   These are about --add itself, so they use a code with no recipient cap.
   LUMEDEMO is capped at one account and has its own tests below.
 */
@@ -832,8 +1020,9 @@ await test("seeding reports which codes are live at checkout", async () => {
   const r = await coupons.seedCoupons({});
   // Live means usable at checkout, which is not the same as advertised:
   // CLARITY100 is a one-use invitation code and is never promoted, and
-  // FRIEND100 is gated on having been referred.
-  assert.deepEqual(r.live, ["FIRST50", "FRIEND100"]);
+  // FRIEND100 is gated on having been referred. RESULTS300 and SEATS100
+  // are the public offers.
+  assert.deepEqual(r.live, ["FIRST50", "RESULTS300", "SEATS100", "FRIEND100"]);
 });
 
 console.log("\nthe demo account");
