@@ -168,6 +168,7 @@ ${c.why.split('\n').map(l => '    ' + l.trim()).join('\n')}
 
   return page({
     slug: c.slug,
+    bodyClass: 'city-vibe', extraCss: ['mh-city.css'],
     title: `Mental Health Counselling in ${c.city} | Lume Live`,
     desc: `Confidential online mental health counselling in ${c.city} by an M.Sc Clinical Psychologist. Anxiety, stress, low mood, burnout. Free self-check, first session ₹249.`,
     keywords: `mental health counselling ${c.city}, counsellor in ${c.city}, psychologist ${c.city}, online therapy ${c.city}, anxiety counselling ${c.city}, student counselling ${c.city}, affordable counselling ${c.city}`,
@@ -618,6 +619,7 @@ ${siblings}
 
   return page({
     slug,
+    bodyClass: 'city-vibe', extraCss: ['mh-city.css'],
     title: `${f.label} in ${c.city} | Lume Live`,
     desc: f.desc(c),
     keywords: f.kw(c),
