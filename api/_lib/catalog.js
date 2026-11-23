@@ -73,7 +73,15 @@ const SKU_PRICES = {
     the student pays again to continue. Class timings are fixed with the
     tutor after payment, so this is not a calendar-booking SKU.
   */
-  "psychology-tuition-monthly": { amount: 7999, label: "Psychology Tuition - 1 Month (Class 11/12)", alias: "psytuition7999" }
+  "psychology-tuition-monthly": { amount: 7999, label: "Psychology Tuition - 1 Month (Class 11/12)", alias: "psytuition7999" },
+  /*
+    College-level psychology tuition (BA / BSc) — one month, priced above
+    the Class 11/12 tuition because it covers university semester papers,
+    research methods, statistics and practicals. Same one-time-per-month
+    model as psychology-tuition-monthly; timings fixed with the tutor after
+    payment, so not a calendar-booking SKU.
+  */
+  "psychology-tuition-college-monthly": { amount: 9999, label: "Psychology Tuition - 1 Month (BA/BSc)", alias: "psytuitioncollege9999" }
 };
 
 function getProduct(sku){
