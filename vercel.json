@@ -30,11 +30,6 @@
   ],
   "redirects": [
     {
-      "source": "/career-counselling-in-ahmedabad.html",
-      "destination": "/online-career-counselling-india.html",
-      "permanent": true
-    },
-    {
       "source": "/career-counselling-in-bangalore.html",
       "destination": "/online-career-counselling-india.html",
       "permanent": true
@@ -76,11 +71,6 @@
     },
     {
       "source": "/career-counselling-in-kochi.html",
-      "destination": "/online-career-counselling-india.html",
-      "permanent": true
-    },
-    {
-      "source": "/career-counselling-in-kolkata.html",
       "destination": "/online-career-counselling-india.html",
       "permanent": true
     },

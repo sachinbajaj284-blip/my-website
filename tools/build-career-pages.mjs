@@ -253,7 +253,14 @@ function careerPage(c) {
   const keywords = `career counselling in ${c.city}, career counsellor ${c.city}, career counselling near me ${c.city}, psychometric test ${c.city}, stream selection ${c.city}, online career counselling ${c.state}`;
   const ogTitle = `Career Counselling in ${c.city} ${YEAR} — Lume Live`;
   const ogDesc = `Online 1:1 career counselling for ${c.city} students and families by an M.Sc Clinical Psychologist. Real psychometric tests, ₹499 first session.`;
-  const mh = `mental-health-counselling-${c.key}.html`;
+  // Prefer a city-specific mental-health page when one exists; otherwise fall
+  // back to the national page so the cross-link is never broken.
+  const mhCity = `mental-health-counselling-${c.key}.html`;
+  const mhExists = fs.existsSync(path.join(ROOT, mhCity));
+  const mh = mhExists ? mhCity : 'mental-health-counselling.html';
+  const mhText = mhExists
+    ? `Mental health counselling in ${c.city}`
+    : 'Mental health &amp; student counselling (online, India)';
 
   const relatedExtra = c.key === 'jaipur'
     ? '      <a href="career-counselling-for-neet-jee-droppers.html">Career counselling for NEET/JEE droppers</a>\n'
@@ -385,7 +392,7 @@ ${otherCities(c)}
     <div class="related">
       <h2>Explore next</h2>
       <a href="${NATIONAL}">Online career counselling across India</a>
-      <a href="${mh}">Mental health counselling in ${c.city}</a>
+      <a href="${mh}">${mhText}</a>
 ${relatedExtra}      <a href="career-explorer.html">Career Explorer — how to become a doctor, engineer, CA &amp; more</a>
       <a href="compare-careers.html">Compare careers side by side</a>
       <a href="assessment.html#free-test">Free 60-second Career Snapshot</a>
