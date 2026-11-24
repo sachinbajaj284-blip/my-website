@@ -24,10 +24,10 @@
 
 /* ─── Tokens ─── */
 :root{
-  --navy:#0D1B40;
+  --navy:#20205A;
   --navy-mid:#13306b;
-  --gold:#D89A14;
-  --gold-lt:#FFCE5A;
+  --gold:#E0A838;
+  --gold-lt:#F6C85A;
   --cream:#FFFEF9;
   --ink:#1A2C3D;
   --ink-soft:#4A5568;
@@ -41,7 +41,7 @@
   --a-color:#EA580C; --a-bg:#FFF7ED;
   --s-color:#DC2626; --s-bg:#FEF2F2;
   --e-color:#7C3AED; --e-bg:#F5F3FF;
-  --c-color:#0D9488; --c-bg:#F0FDFA;
+  --c-color:#4B4FC4; --c-bg:#F0FDFA;
 
   /* VARK colours */
   --v-color:#0284C7; --v-bg:#E0F2FE;
@@ -100,7 +100,7 @@ body{
 }
 .lrt-cover::before{
   content:"";position:absolute;inset:0;
-  background:radial-gradient(ellipse 70% 60% at 80% 20%,rgba(255,206,90,.15),transparent 55%),
+  background:radial-gradient(ellipse 70% 60% at 80% 20%,rgba(246,200,90,.15),transparent 55%),
              radial-gradient(ellipse 50% 80% at 10% 90%,rgba(255,255,255,.05),transparent 50%);
 }
 .lrt-cover-top{
@@ -561,7 +561,7 @@ window.LUME_REPORT_DATA = {
   "use strict";
 
   // ── RIASEC colours ──
-  var RIASEC_COLOR = { R:"#2563EB",I:"#16A34A",A:"#EA580C",S:"#DC2626",E:"#7C3AED",C:"#0D9488" };
+  var RIASEC_COLOR = { R:"#2563EB",I:"#16A34A",A:"#EA580C",S:"#DC2626",E:"#7C3AED",C:"#4B4FC4" };
   var RIASEC_BG    = { R:"#EEF4FF",I:"#F0FDF4",A:"#FFF7ED",S:"#FEF2F2",E:"#F5F3FF",C:"#F0FDFA" };
 
   // ── VARK colours ──
@@ -653,7 +653,7 @@ window.LUME_REPORT_DATA = {
       '<h2 class="lrt-section-title">Insight Map</h2>'+
       '<p class="lrt-section-sub">Four tools, one picture of you.</p>'+
       '<div class="lrt-map-grid">'+
-        card("Career Interests", code, top3[0] ? top3[0].name+" led" : "", top3[0]?top3[0].score:0, 7, "#D89A14")+
+        card("Career Interests", code, top3[0] ? top3[0].name+" led" : "", top3[0]?top3[0].score:0, 7, "#E0A838")+
         card("Personality", D.personality?D.personality.name:"—", D.personality?D.personality.word+" band":"", D.personality?D.personality.score:0, 40, "#0284C7")+
         card("Work Driver", topAnchor.short||"—", "Primary value", topAnchor.score||0, 42, "#B45309")+
         card("Learning Style", learnLabel||"—", topVark.name||"", topVark.score||0, 16, "#7C3AED")+
@@ -674,7 +674,7 @@ window.LUME_REPORT_DATA = {
   // ─── Section 02: Holland RIASEC ───
   function riasecThemeCard(r){
     if(!r.meaning){ return ''; } // skip low-detail themes
-    var color = RIASEC_COLOR[r.key] || "#0D1B40";
+    var color = RIASEC_COLOR[r.key] || "#20205A";
     var bg    = RIASEC_BG[r.key]    || "#F8FAFC";
     var fillW = pct(r.score, r.max||7);
     var examples = (r.realLife||[]).map(function(ex){ return '<li style="margin-bottom:6px;">'+esc(ex)+'</li>'; }).join("");
@@ -705,7 +705,7 @@ window.LUME_REPORT_DATA = {
 
   function section02Html(){
     var allBars = topR.map(function(r){
-      var color = RIASEC_COLOR[r.key]||"#0D1B40";
+      var color = RIASEC_COLOR[r.key]||"#20205A";
       var bg    = RIASEC_BG[r.key]||"#F8FAFC";
       var fillW = pct(r.score, r.max||7);
       var isTop = top3.some(function(t){ return t.key===r.key; });
@@ -760,7 +760,7 @@ window.LUME_REPORT_DATA = {
   function section04Html(){
     var total = (D.vark||[]).reduce(function(s,r){ return s+(+r.score||0); }, 0)||1;
     var rows = (D.vark||[]).map(function(r,i){
-      var color = VARK_COLOR[r.key]||"#0D1B40";
+      var color = VARK_COLOR[r.key]||"#20205A";
       var bg    = VARK_BG[r.key]||"#F8FAFC";
       var pc    = Math.round(r.score/total*100);
       var fillW = pct(r.score, r.max||16);
@@ -774,7 +774,7 @@ window.LUME_REPORT_DATA = {
     }).join("");
 
     var tipCards = (D.vark||[]).slice(0,2).filter(function(r){ return r.nextStep; }).map(function(r){
-      var color = VARK_COLOR[r.key]||"#0D1B40";
+      var color = VARK_COLOR[r.key]||"#20205A";
       return '<div style="background:'+VARK_BG[r.key]||"#F8FAFC"+';border-radius:12px;padding:14px 16px;margin-bottom:12px;">'+
         '<b style="display:block;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;color:'+color+'">'+esc(r.name)+'</b>'+
         '<p style="font-size:.84rem;line-height:1.6;color:var(--ink);margin:0;">'+esc(r.nextStep)+'</p>'+

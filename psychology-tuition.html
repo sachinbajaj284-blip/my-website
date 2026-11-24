@@ -41,7 +41,7 @@ body{background:#fff}
 .tint{background:linear-gradient(180deg,#F7FAF9,#fff)}
 
 /* ---------- hero ---------- */
-.ph{position:relative;overflow:hidden;background:radial-gradient(70% 90% at 15% 0%,rgba(10,133,133,.55),transparent 60%),radial-gradient(50% 70% at 100% 100%,rgba(91,79,201,.35),transparent 60%),var(--navy);color:#fff;padding:70px 18px 84px}
+.ph{position:relative;overflow:hidden;background:radial-gradient(70% 90% at 15% 0%,rgba(75,79,196,.55),transparent 60%),radial-gradient(50% 70% at 100% 100%,rgba(91,79,201,.35),transparent 60%),var(--navy);color:#fff;padding:70px 18px 84px}
 .ph-net{position:absolute;inset:0;width:100%;height:100%;opacity:.16;pointer-events:none}
 .ph-in{position:relative;max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1.15fr .85fr;gap:44px;align-items:center}
 .ph .eyebrow{margin-bottom:14px}
@@ -53,7 +53,7 @@ body{background:#fff}
 .ph-price span{font-size:.85rem;color:rgba(255,255,255,.72)}
 .ph-cta{display:flex;flex-wrap:wrap;gap:12px}
 .ph-cta .btn{margin:0}
-.btn.pay{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border:0;cursor:pointer;font-family:inherit;box-shadow:0 10px 24px rgba(216,154,20,.35)}
+.btn.pay{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border:0;cursor:pointer;font-family:inherit;box-shadow:0 10px 24px rgba(224,168,56,.35)}
 .btn.pay:hover{filter:brightness(1.05);color:var(--navy)}
 .btn.line{border:1px solid rgba(255,255,255,.35);color:#fff}
 .btn.line:hover{background:rgba(255,255,255,.08);color:#fff}
@@ -95,7 +95,7 @@ body{background:#fff}
 /* ---------- teacher ---------- */
 .teach{display:grid;grid-template-columns:.95fr 1.05fr;gap:44px;align-items:center}
 .prof{position:relative;border-radius:26px;overflow:hidden;background:#fff;border:1px solid var(--line);box-shadow:0 30px 60px rgba(13,27,64,.12)}
-.prof-top{position:relative;height:150px;background:radial-gradient(80% 120% at 0% 0%,rgba(10,133,133,.9),transparent 60%),radial-gradient(70% 120% at 100% 100%,rgba(91,79,201,.85),transparent 60%),var(--navy);overflow:hidden}
+.prof-top{position:relative;height:150px;background:radial-gradient(80% 120% at 0% 0%,rgba(75,79,196,.9),transparent 60%),radial-gradient(70% 120% at 100% 100%,rgba(91,79,201,.85),transparent 60%),var(--navy);overflow:hidden}
 .prof-top svg{position:absolute;inset:0;width:100%;height:100%;opacity:.22}
 .prof-top .yr{position:absolute;right:22px;top:18px;color:#fff;text-align:right}
 .prof-top .yr b{display:block;font-family:Georgia,serif;font-size:2.6rem;line-height:1}
@@ -112,7 +112,7 @@ body{background:#fff}
 .creds svg{width:14px;height:14px}
 .teach .quote{position:relative;margin:0;padding:18px 20px 18px 22px;border-radius:16px;background:linear-gradient(135deg,#F4F2FF,#EEF8F7);border-left:4px solid var(--gold)}
 .teach .quote p{font-family:Georgia,serif;font-size:1.06rem;line-height:1.55;color:var(--navy);margin:0;font-style:italic}
-.teach .quote::before{content:"\201C";position:absolute;right:14px;top:-18px;font-family:Georgia,serif;font-size:5rem;line-height:1;color:rgba(216,154,20,.35)}
+.teach .quote::before{content:"\201C";position:absolute;right:14px;top:-18px;font-family:Georgia,serif;font-size:5rem;line-height:1;color:rgba(224,168,56,.35)}
 .teach h2{font-family:Georgia,serif;color:var(--navy);font-size:clamp(1.5rem,3vw,2.1rem);line-height:1.2;margin:10px 0 14px}
 .teach .lede{color:var(--ink);margin-bottom:20px}
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -166,14 +166,14 @@ body{background:#fff}
 .syl-note{text-align:center;color:var(--muted);font-size:.9rem;margin-top:18px}
 
 /* ---------- pricing ---------- */
-#fees{position:relative;overflow:hidden;background:radial-gradient(40% 50% at 0% 20%,rgba(10,133,133,.08),transparent 70%),radial-gradient(40% 50% at 100% 80%,rgba(91,79,201,.09),transparent 70%)}
+#fees{position:relative;overflow:hidden;background:radial-gradient(40% 50% at 0% 20%,rgba(75,79,196,.08),transparent 70%),radial-gradient(40% 50% at 100% 80%,rgba(91,79,201,.09),transparent 70%)}
 #fees::before{content:"Ψ";position:absolute;right:-40px;top:40px;font-family:Georgia,serif;font-size:26rem;line-height:1;color:rgba(13,27,64,.03);pointer-events:none}
 .price-wrap{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:32px;align-items:stretch}
-.pframe{position:relative;border-radius:28px;padding:3px;background:conic-gradient(from var(--ang,0deg),#D89A14,#FFCE5A,#0A8585,#5B4FC9,#D89A14);box-shadow:0 30px 70px rgba(13,27,64,.28)}
+.pframe{position:relative;border-radius:28px;padding:3px;background:conic-gradient(from var(--ang,0deg),#E0A838,#F6C85A,#4B4FC4,#5B4FC9,#E0A838);box-shadow:0 30px 70px rgba(13,27,64,.28)}
 @property --ang{syntax:"<angle>";initial-value:0deg;inherits:false}
 @media(prefers-reduced-motion:no-preference){.pframe{animation:spin 8s linear infinite}@keyframes spin{to{--ang:360deg}}}
 .pcard{position:relative;border-radius:25px;padding:32px 30px 26px;background:linear-gradient(165deg,#132A5E,var(--navy) 60%);color:#fff;overflow:hidden;height:100%}
-.pcard::after{content:"";position:absolute;right:-90px;top:-90px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(255,206,90,.32),transparent 70%);pointer-events:none}
+.pcard::after{content:"";position:absolute;right:-90px;top:-90px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(246,200,90,.32),transparent 70%);pointer-events:none}
 .ptop{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .pcard .badge{display:inline-flex;align-items:center;gap:6px;background:var(--gold2);color:var(--navy);font-size:.7rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;border-radius:999px;padding:6px 12px}
 .pcard .live{display:inline-flex;align-items:center;gap:6px;font-size:.74rem;font-weight:700;color:rgba(255,255,255,.8)}
@@ -183,7 +183,7 @@ body{background:#fff}
 .amt sup{font-family:Georgia,serif;font-size:1.6rem;margin-top:8px;color:var(--gold2)}
 .amt b{font-family:Georgia,serif;font-size:4rem;line-height:1;letter-spacing:-1px;background:linear-gradient(180deg,#fff,#E9E4FF);-webkit-background-clip:text;background-clip:text;color:transparent}
 .amt span{align-self:flex-end;margin:0 0 8px 6px;color:rgba(255,255,255,.7);font-size:.95rem}
-.perday{display:inline-block;font-size:.8rem;font-weight:700;color:var(--gold2);background:rgba(255,206,90,.12);border:1px dashed rgba(255,206,90,.45);border-radius:8px;padding:4px 10px;margin:6px 0 10px}
+.perday{display:inline-block;font-size:.8rem;font-weight:700;color:var(--gold2);background:rgba(246,200,90,.12);border:1px dashed rgba(246,200,90,.45);border-radius:8px;padding:4px 10px;margin:6px 0 10px}
 .pcard .fine{color:rgba(255,255,255,.62);font-size:.84rem;margin-bottom:18px}
 .incl{font-size:.7rem;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:8px;display:flex;align-items:center;gap:10px}
 .incl::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.14)}
@@ -235,7 +235,7 @@ body{background:#fff}
 .who b{display:block;color:var(--navy);margin-bottom:4px;font-size:1.02rem}
 .who .em{width:50px;height:50px;border-radius:15px;display:grid;place-items:center;font-size:1.5rem;margin-bottom:14px;background:var(--soft);box-shadow:inset 0 0 0 1px rgba(13,27,64,.04)}
 .faq-wrap{display:grid;grid-template-columns:.8fr 1.6fr;gap:28px;align-items:start}
-.faq-side{position:sticky;top:90px;border-radius:22px;padding:28px 24px;color:#fff;overflow:hidden;background:radial-gradient(90% 70% at 0% 0%,rgba(10,133,133,.75),transparent 60%),radial-gradient(80% 70% at 100% 100%,rgba(91,79,201,.6),transparent 60%),var(--navy);box-shadow:0 24px 50px rgba(13,27,64,.18)}
+.faq-side{position:sticky;top:90px;border-radius:22px;padding:28px 24px;color:#fff;overflow:hidden;background:radial-gradient(90% 70% at 0% 0%,rgba(75,79,196,.75),transparent 60%),radial-gradient(80% 70% at 100% 100%,rgba(91,79,201,.6),transparent 60%),var(--navy);box-shadow:0 24px 50px rgba(13,27,64,.18)}
 .faq-side::after{content:"?";position:absolute;right:-6px;bottom:-40px;font-family:Georgia,serif;font-size:11rem;line-height:1;color:rgba(255,255,255,.07);pointer-events:none}
 .faq-side h3{font-family:Georgia,serif;font-size:1.35rem;line-height:1.25;margin:0 0 8px}
 .faq-side p{color:rgba(255,255,255,.78);font-size:.92rem;margin:0 0 18px}
@@ -264,7 +264,7 @@ body{background:#fff}
 .final::before{content:"";position:absolute;inset:0;background:radial-gradient(rgba(255,255,255,.14) 1px,transparent 1.5px) 0 0/22px 22px;-webkit-mask-image:radial-gradient(60% 90% at 50% 50%,transparent 40%,#000);mask-image:radial-gradient(60% 90% at 50% 50%,transparent 40%,#000);pointer-events:none}
 .final::after{content:"Ψ";position:absolute;left:-20px;bottom:-70px;font-family:Georgia,serif;font-size:16rem;line-height:1;color:rgba(255,255,255,.06);pointer-events:none}
 .final>*{position:relative;z-index:1}
-.final .glow{position:absolute;z-index:0;right:-80px;top:-80px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(255,206,90,.35),transparent 65%);pointer-events:none}
+.final .glow{position:absolute;z-index:0;right:-80px;top:-80px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(246,200,90,.35),transparent 65%);pointer-events:none}
 .final h2{font-family:Georgia,serif;font-size:clamp(1.6rem,3.4vw,2.3rem);margin-bottom:10px}
 .final h2 em{font-style:italic;color:var(--gold2)}
 .final p{color:rgba(255,255,255,.82);max-width:560px;margin:0 auto 24px}
@@ -296,7 +296,7 @@ body{background:#fff}
 .em-x{position:absolute;right:14px;top:12px;width:36px;height:36px;border:0;border-radius:50%;background:var(--paper);font-size:1.3rem;cursor:pointer;color:var(--navy)}
 .em-box label{display:block;font-size:.8rem;font-weight:800;color:var(--navy);margin:12px 0 5px}
 .em-box input,.em-box select{width:100%;font:inherit;font-size:.95rem;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
-.em-box input:focus,.em-box select:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(10,133,133,.15)}
+.em-box input:focus,.em-box select:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(75,79,196,.15)}
 .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .seg input{position:absolute;opacity:0;width:1px;height:1px}
 .seg label{margin:0;border:1.5px solid var(--line);border-radius:10px;padding:10px;text-align:center;cursor:pointer;font-size:.88rem;color:var(--muted)}
@@ -474,9 +474,9 @@ body{background:#fff}
         <div class="yr"><b>6</b><span>years in CBSE classrooms</span></div>
       </div>
       <div class="avatar" aria-hidden="true">
-        <svg viewBox="0 0 120 120"><defs><linearGradient id="avg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0A8585"/><stop offset="1" stop-color="#5B4FC9"/></linearGradient></defs>
+        <svg viewBox="0 0 120 120"><defs><linearGradient id="avg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4B4FC4"/><stop offset="1" stop-color="#5B4FC9"/></linearGradient></defs>
           <circle cx="60" cy="60" r="57" fill="url(#avg)"/>
-          <circle cx="60" cy="60" r="57" fill="none" stroke="#FFCE5A" stroke-width="4" stroke-dasharray="358" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+          <circle cx="60" cy="60" r="57" fill="none" stroke="#F6C85A" stroke-width="4" stroke-dasharray="358" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 60 60)"/>
           <text x="60" y="78" text-anchor="middle" font-family="Georgia,serif" font-size="56" fill="#fff">&#936;</text>
         </svg>
       </div>

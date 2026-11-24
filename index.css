@@ -238,7 +238,7 @@ nav{position:fixed;top:var(--top-bars-h);left:0;right:0;z-index:1000;background:
 .hero-track-cta{display:flex;flex-direction:column;align-items:center;gap:2px;width:100%;min-height:46px;padding:9px 12px;border:none;border-radius:12px;background:linear-gradient(135deg,#E0A838,#e8b84e);color:#102650;font-family:inherit;text-align:center;cursor:pointer;box-shadow:0 10px 24px rgba(224,168,56,.34);transition:transform var(--dur-fast) var(--ease),background var(--dur-fast) var(--ease);}
 .htp-mind .hero-track-cta{background:linear-gradient(135deg,var(--teal),var(--teal2));color:#fff;box-shadow:0 10px 24px rgba(75,79,196,.38);}
 .hero-track-cta:hover{transform:translateY(-2px);background:linear-gradient(135deg,#d4a044,#f0c860);}
-.htp-mind .hero-track-cta:hover{background:linear-gradient(135deg,#0c7f7f,#12a0a0);}
+.htp-mind .hero-track-cta:hover{background:linear-gradient(135deg,#3B3FA3,#5B5FD0);}
 .hero-track-cta .htc-main{font-size:.78rem;font-weight:900;line-height:1.2;}
 .hero-track-cta .htc-sub{font-size:.63rem;font-weight:700;opacity:.82;line-height:1.25;}
 .hero-assurance{display:flex;flex-wrap:wrap;gap:9px;margin:0 0 16px;animation:fadeUp .8s ease .8s both;}
@@ -740,8 +740,8 @@ footer::before{content:'';position:absolute;top:-50px;left:50%;transform:transla
 .consent-check input{margin-top:2px;width:16px;height:16px;flex:none;accent-color:var(--teal);cursor:pointer;}
 .consent-check a{color:var(--teal);font-weight:700;text-decoration:underline;}
 .m-wa-btn:hover{background:#1ebe5a;transform:translateY(-2px);box-shadow:0 6px 20px rgba(37,211,102,.3);}
-.cashfree-pay-btn{background:linear-gradient(135deg,#123A7A,#0A8D87)!important;color:#fff!important;}
-.cashfree-pay-btn:hover{background:linear-gradient(135deg,#0A2C60,#08746F)!important;box-shadow:0 8px 24px rgba(10,141,135,.28)!important;}
+.cashfree-pay-btn{background:linear-gradient(135deg,#123A7A,#4B4FC4)!important;color:#fff!important;}
+.cashfree-pay-btn:hover{background:linear-gradient(135deg,#0A2C60,#3A3EA8)!important;box-shadow:0 8px 24px rgba(10,141,135,.28)!important;}
 .m-confirm{background:var(--navy);color:#fff;padding:11px 16px;border-radius:8px;font-weight:700;font-size:.86rem;border:none;cursor:pointer;width:100%;margin-top:10px;transition:all .25s;position:relative;overflow:hidden;}
 .m-confirm:hover{background:var(--navy2);transform:translateY(-2px);box-shadow:0 6px 20px rgba(13,27,64,.25);}
 

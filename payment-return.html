@@ -19,30 +19,30 @@
 <link rel="dns-prefetch" href="https://calendar.app.google">
 <style>
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at 18% 12%,rgba(255,206,90,.24),transparent 28%),radial-gradient(circle at 86% 20%,rgba(255,255,255,.18),transparent 30%),linear-gradient(135deg,#0D1B40,#0A8585);font-family:Arial,sans-serif;color:#102033;padding:18px}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at 18% 12%,rgba(246,200,90,.24),transparent 28%),radial-gradient(circle at 86% 20%,rgba(255,255,255,.18),transparent 30%),linear-gradient(135deg,#20205A,#4B4FC4);font-family:Arial,sans-serif;color:#102033;padding:18px}
 .card{width:min(520px,100%);background:linear-gradient(145deg,rgba(255,255,255,.86),rgba(247,252,251,.72));border:1px solid rgba(255,255,255,.78);border-radius:28px;padding:30px;box-shadow:0 28px 90px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.82);text-align:center;-webkit-backdrop-filter:blur(24px) saturate(1.16);backdrop-filter:blur(24px) saturate(1.16);}
 img{width:74px;height:74px;object-fit:contain;margin-bottom:10px}
-h1{font-family:Georgia,serif;color:#0D1B40;margin:0 0 10px;font-size:2rem}
+h1{font-family:Georgia,serif;color:#20205A;margin:0 0 10px;font-size:2rem}
 p{color:#55706D;line-height:1.6;margin:0 0 18px}
-.status{margin:0 0 18px;padding:12px 14px;border-radius:14px;background:#EEF7F5;color:#0A8585;font-weight:800;font-size:.92rem}
+.status{margin:0 0 18px;padding:12px 14px;border-radius:14px;background:#EEF7F5;color:#4B4FC4;font-weight:800;font-size:.92rem}
 .status.wait{background:#FFF7E8;color:#9A6414}
 .status.fail{background:#FFF1F1;color:#A63737}
 .status.ok{background:#E9F7F0;color:#0F7A4C}
 .actions{display:grid;gap:10px}
 a{display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;border-radius:999px;text-decoration:none;font-weight:900;transition:box-shadow .18s,filter .18s,transform .12s}
 a:active{transform:scale(.985)}
-.primary{background:linear-gradient(135deg,#D89A14,#FFCE5A);color:#0D1B40;box-shadow:0 10px 26px rgba(216,154,20,.3)}
-.primary:hover{filter:brightness(1.04);box-shadow:0 14px 32px rgba(216,154,20,.42)}
-.ghost{background:#EEF7F5;color:#0A8585;border:1px solid #D6EAE7}
+.primary{background:linear-gradient(135deg,#E0A838,#F6C85A);color:#20205A;box-shadow:0 10px 26px rgba(224,168,56,.3)}
+.primary:hover{filter:brightness(1.04);box-shadow:0 14px 32px rgba(224,168,56,.42)}
+.ghost{background:#EEF7F5;color:#4B4FC4;border:1px solid #D6EAE7}
 .ghost:hover{background:#E2F2EF}
 /* The booking button is the whole point of this screen — let it breathe. */
 .primary.book{min-height:54px;font-size:1.02rem;animation:breathe 2.8s ease-in-out 1s infinite}
-@keyframes breathe{0%,100%{box-shadow:0 10px 26px rgba(216,154,20,.3)}50%{box-shadow:0 13px 36px rgba(216,154,20,.58)}}
+@keyframes breathe{0%,100%{box-shadow:0 10px 26px rgba(224,168,56,.3)}50%{box-shadow:0 13px 36px rgba(224,168,56,.58)}}
 /* Affirmation — a human note between the receipt and the next step. */
 .lcf-affirm{position:relative;text-align:left;margin:0 0 18px;padding:15px 17px 15px 21px;border-radius:16px;background:linear-gradient(135deg,#FFFAF0 0%,#F4FBF9 100%);border:1px solid #F1E4C9;overflow:hidden;animation:rise .5s .1s both}
-.lcf-affirm::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#FFCE5A,#0A8585)}
-.lcf-affirm::after{content:'\201C';position:absolute;right:13px;top:8px;font-family:Georgia,serif;font-size:3rem;line-height:1;color:#FFCE5A;opacity:.26;pointer-events:none}
-.lcf-affirm-eyebrow{display:block;font-size:.62rem;font-weight:900;letter-spacing:1.1px;text-transform:uppercase;color:#0A8585;margin-bottom:7px}
+.lcf-affirm::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#F6C85A,#4B4FC4)}
+.lcf-affirm::after{content:'\201C';position:absolute;right:13px;top:8px;font-family:Georgia,serif;font-size:3rem;line-height:1;color:#F6C85A;opacity:.26;pointer-events:none}
+.lcf-affirm-eyebrow{display:block;font-size:.62rem;font-weight:900;letter-spacing:1.1px;text-transform:uppercase;color:#4B4FC4;margin-bottom:7px}
 .lcf-affirm-q{margin:0;font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:.95rem;line-height:1.6;color:#16264d;position:relative;z-index:1;padding-right:14px}
 .lcf-affirm-sign{display:block;margin-top:9px;font-family:Arial,sans-serif;font-style:normal;font-size:.71rem;font-weight:800;color:#8493ab}
 @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -50,11 +50,11 @@ a:active{transform:scale(.985)}
 /* The line the client pastes into Google's booking notes — it is the only
    way their chosen mode reaches the calendar event the counsellor reads. */
 .paste{text-align:left;margin:0 0 16px;padding:13px 15px;border-radius:16px;background:#F4FBF9;border:1px solid #CFE9DF}
-.paste-h{display:block;font-size:.62rem;font-weight:900;letter-spacing:1.1px;text-transform:uppercase;color:#0A8585;margin-bottom:6px}
+.paste-h{display:block;font-size:.62rem;font-weight:900;letter-spacing:1.1px;text-transform:uppercase;color:#4B4FC4;margin-bottom:6px}
 .paste p{margin:0 0 9px;font-size:.8rem;line-height:1.5;color:#4a6060}
 .paste-row{display:flex;align-items:stretch;gap:8px}
 .paste code{flex:1;min-width:0;background:#fff;border:1px solid #DCEDE7;border-radius:9px;padding:9px 10px;font-size:.78rem;line-height:1.4;color:#16264d;word-break:break-word}
-.paste button{flex:0 0 auto;border:0;border-radius:9px;padding:0 15px;background:#0A8585;color:#fff;font-size:.78rem;font-weight:800;cursor:pointer;font-family:inherit}
+.paste button{flex:0 0 auto;border:0;border-radius:9px;padding:0 15px;background:#4B4FC4;color:#fff;font-size:.78rem;font-weight:800;cursor:pointer;font-family:inherit}
 .paste button:hover{background:#085757}
 .paste button.done{background:#0E8A6B}
 </style>
@@ -97,16 +97,16 @@ a:active{transform:scale(.985)}
   </section>
   <style>
   .lume-ref{width:min(520px,100%);margin:20px auto 0;background:#fff;border:1px solid #E2E9E8;border-radius:24px;padding:26px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.22);font-family:'Inter',Arial,Helvetica,sans-serif}
-  .lume-ref-eyebrow{font-size:.7rem;font-weight:900;letter-spacing:.6px;text-transform:uppercase;color:#0A8585;margin-bottom:8px}
-  .lume-ref-h{font-family:Georgia,'Times New Roman',serif;font-size:1.2rem;color:#0D1B40;margin:0 0 8px;line-height:1.25}
+  .lume-ref-eyebrow{font-size:.7rem;font-weight:900;letter-spacing:.6px;text-transform:uppercase;color:#4B4FC4;margin-bottom:8px}
+  .lume-ref-h{font-family:Georgia,'Times New Roman',serif;font-size:1.2rem;color:#20205A;margin:0 0 8px;line-height:1.25}
   .lume-ref-p{font-size:.9rem;color:#4A6060;max-width:440px;margin:0 auto 16px;line-height:1.6}
   .lume-ref-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
   .lume-ref-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:12px 22px;font-size:.85rem;font-weight:800;cursor:pointer;text-decoration:none;transition:all .2s;font-family:inherit}
   .lume-ref-btn.primary{background:#25D366;color:#fff;box-shadow:0 8px 22px rgba(37,211,102,.28)}
   .lume-ref-btn.primary:hover{background:#1ebe57;transform:translateY(-1px)}
-  .lume-ref-btn.ghost{background:#fff;border:1.5px solid #DDEBE9;color:#0D1B40}
-  .lume-ref-btn.ghost:hover{border-color:#0A8585;color:#0A8585}
-  .lume-ref-note{font-size:.75rem;font-weight:800;color:#0A8585;margin-top:12px;min-height:16px;opacity:0;transition:opacity .2s}
+  .lume-ref-btn.ghost{background:#fff;border:1.5px solid #DDEBE9;color:#20205A}
+  .lume-ref-btn.ghost:hover{border-color:#4B4FC4;color:#4B4FC4}
+  .lume-ref-note{font-size:.75rem;font-weight:800;color:#4B4FC4;margin-top:12px;min-height:16px;opacity:0;transition:opacity .2s}
   </style>
   <script>
   (function(){

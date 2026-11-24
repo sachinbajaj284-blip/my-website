@@ -1,4 +1,4 @@
-:root{--navy:#0D1B40;--navy2:#1A2E5E;--teal:#0A8585;--gold:#D89A14;--gold2:#FFCE5A;--paper:#F7FAF9;--ink:#1A2C2C;--muted:#4A6060;--line:#DDE7E5}
+:root{--navy:#20205A;--navy2:#2E3192;--teal:#4B4FC4;--gold:#E0A838;--gold2:#F6C85A;--paper:#F7FAF9;--ink:#1A2C2C;--muted:#4A6060;--line:#DDE7E5}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:'Inter','Segoe UI',system-ui,Arial,sans-serif;color:var(--ink);background:#fff;line-height:1.75;overflow-x:hidden}
@@ -16,7 +16,7 @@ a:hover{color:var(--navy)}
 .crumb{font-size:.78rem;color:var(--muted);padding:22px 0 0}
 .crumb a{color:var(--teal)}
 .lib-hero{background:var(--navy);color:#fff;padding:84px 18px 76px;position:relative;overflow:hidden}
-.lib-hero::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 80% at 50% -10%,rgba(10,133,133,.45),transparent 60%),radial-gradient(40% 60% at 88% 120%,rgba(216,154,20,.18),transparent 60%);pointer-events:none}
+.lib-hero::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 80% at 50% -10%,rgba(75,79,196,.45),transparent 60%),radial-gradient(40% 60% at 88% 120%,rgba(224,168,56,.18),transparent 60%);pointer-events:none}
 .lib-hero .wrap-wide{text-align:center;position:relative;max-width:760px}
 .eyebrow{display:inline-block;color:var(--gold2);font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:2.5px;margin-bottom:18px}
 .lib-hero h1{font-family:Georgia,'Times New Roman',serif;font-weight:700;font-size:clamp(2rem,4.6vw,3rem);line-height:1.12;letter-spacing:-.5px;margin-bottom:16px}
@@ -41,7 +41,7 @@ article ul,article ol{margin:0 0 16px 22px}
 article li{margin:0 0 8px;color:var(--ink)}
 article strong{color:var(--navy)}
 .lead{font-size:1.1rem;color:var(--muted);line-height:1.7}
-.takeaway{background:linear-gradient(135deg,#FFF8EC,#F4FAFA);border:1px solid rgba(216,154,20,.24);border-radius:16px;padding:20px 22px;margin:24px 0}
+.takeaway{background:linear-gradient(135deg,#FFF8EC,#F4FAFA);border:1px solid rgba(224,168,56,.24);border-radius:16px;padding:20px 22px;margin:24px 0}
 .takeaway b{display:block;color:var(--gold);font-size:.74rem;font-weight:900;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
 .takeaway ul{margin:0 0 0 20px}
 .note{background:var(--paper);border-left:4px solid var(--teal);border-radius:0 12px 12px 0;padding:14px 18px;margin:20px 0;font-size:.92rem;color:var(--muted)}
@@ -83,7 +83,7 @@ footer.foot a{color:var(--gold2)}
    here is scoped to new .ar-* / hero-* / sal-* / vs-* / sec-ic classes, so the
    plain hand-authored articles that don't use them render exactly as before. */
 .ar-hero{background:var(--navy);color:#fff;position:relative;overflow:hidden;padding:4px 0 38px}
-.ar-hero::before{content:"";position:absolute;inset:0;background:radial-gradient(55% 80% at 8% -12%,rgba(10,133,133,.5),transparent 60%),radial-gradient(48% 72% at 100% 116%,rgba(216,154,20,.22),transparent 60%);pointer-events:none}
+.ar-hero::before{content:"";position:absolute;inset:0;background:radial-gradient(55% 80% at 8% -12%,rgba(75,79,196,.5),transparent 60%),radial-gradient(48% 72% at 100% 116%,rgba(224,168,56,.22),transparent 60%);pointer-events:none}
 .ar-hero .wrap{position:relative;z-index:2}
 .ar-hero .crumb{color:rgba(255,255,255,.58);padding:20px 0 0}
 .ar-hero .crumb a{color:var(--gold2)}
@@ -104,7 +104,7 @@ footer.foot a{color:var(--gold2)}
 
 .vs-head{display:flex;align-items:stretch;justify-content:center;gap:12px;margin-top:28px;max-width:600px}
 .vs-side{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:16px 12px;font-weight:800;color:#fff;font-size:1rem;line-height:1.25;display:flex;align-items:center;justify-content:center;text-align:center}
-.vs-badge{align-self:center;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.85rem;flex:none;box-shadow:0 8px 20px rgba(216,154,20,.45)}
+.vs-badge{align-self:center;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.85rem;flex:none;box-shadow:0 8px 20px rgba(224,168,56,.45)}
 
 article h2 .sec-ic{display:inline-block;margin-right:9px;font-size:1.02em;vertical-align:-1px}
 
