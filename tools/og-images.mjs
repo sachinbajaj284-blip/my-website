@@ -64,6 +64,7 @@ const PAGES = {
   colleges:                         { eyebrow: 'JoSAA Tools',        title: 'Every College In JoSAA Counselling' },
   'services-pricing':               { eyebrow: 'Services & Pricing', title: 'Affordable Counselling, Priced In The Open' },
   start:                            { eyebrow: 'Start Here',         title: "Not Sure Where To Begin? Two Taps." },
+  'results-next-step':              { eyebrow: 'After Your Results',  title: "Got Your Result? Find Your Next Step" },
   'story-careers-beyond-doctor-engineer': { eyebrow: 'Career Stories', title: '5 Careers Beyond Doctor & Engineer' },
   'story-exam-burnout':             { eyebrow: 'Career Stories',     title: '5 Quiet Signs Of Exam Burnout' },
   'internship-ethics':              { eyebrow: 'Internships',        title: 'How We Protect Clients And Interns' },
