@@ -33,7 +33,7 @@
   </url>
   <url>
     <loc>https://lumelive.co.in/board-results-help.html</loc>
-    <lastmod>2026-10-02</lastmod>
+    <lastmod>2026-11-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
   </url>
@@ -207,7 +207,7 @@
   </url>
   <url>
     <loc>https://lumelive.co.in/career-counselling-after-12th.html</loc>
-    <lastmod>2026-11-23</lastmod>
+    <lastmod>2026-11-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
@@ -486,7 +486,7 @@
   </url>
   <url>
     <loc>https://lumelive.co.in/</loc>
-    <lastmod>2026-11-23</lastmod>
+    <lastmod>2026-11-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en-in" href="https://lumelive.co.in/"/>
@@ -951,7 +951,7 @@
   </url>
   <url>
     <loc>https://lumelive.co.in/stream-selection-after-10th.html</loc>
-    <lastmod>2026-10-08</lastmod>
+    <lastmod>2026-11-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
   </url>
@@ -1161,19 +1161,25 @@
   </url>
   <url>
     <loc>https://lumelive.co.in/what-to-do-after-board-results.html</loc>
-    <lastmod>2026-10-08</lastmod>
+    <lastmod>2026-11-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://lumelive.co.in/what-to-do-after-jee.html</loc>
-    <lastmod>2026-10-08</lastmod>
+    <lastmod>2026-11-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://lumelive.co.in/what-to-do-after-neet.html</loc>
-    <lastmod>2026-10-08</lastmod>
+    <lastmod>2026-11-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://lumelive.co.in/which-career-are-you.html</loc>
+    <lastmod>2026-11-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
   </url>

@@ -246,5 +246,23 @@
 <script src="stream-selector.js"></script>
 <script src="site-anim.js" defer></script>
 <script src="lume-capture.js" defer></script>
+<script>
+/* Make the share unmissable: pulse the story-card button once, the first time
+   it scrolls into view after a result. Additive, reduced-motion-aware. */
+(function(){
+  if(window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  if(!('IntersectionObserver' in window)) return;
+  var btn=document.getElementById('storyBtn'); if(!btn) return;
+  var s=document.createElement('style');
+  s.textContent='@keyframes llShareNudge{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}.ll-share-nudge{animation:llShareNudge .9s ease-in-out 4}';
+  document.head.appendChild(s);
+  var done=false;
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){
+    if(e.isIntersecting && !done){ done=true; btn.classList.add('ll-share-nudge'); io.disconnect();
+      setTimeout(function(){ btn.classList.remove('ll-share-nudge'); }, 4000); }
+  });},{threshold:.6});
+  io.observe(btn);
+})();
+</script>
 </body>
 </html>

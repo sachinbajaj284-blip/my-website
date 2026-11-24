@@ -65,6 +65,7 @@ const PAGES = {
   'services-pricing':               { eyebrow: 'Services & Pricing', title: 'Affordable Counselling, Priced In The Open' },
   start:                            { eyebrow: 'Start Here',         title: "Not Sure Where To Begin? Two Taps." },
   'results-next-step':              { eyebrow: 'After Your Results',  title: "Got Your Result? Find Your Next Step" },
+  'which-career-are-you':           { eyebrow: 'Free 2-Min Quiz',     title: "Which Career Are You?" },
   'story-careers-beyond-doctor-engineer': { eyebrow: 'Career Stories', title: '5 Careers Beyond Doctor & Engineer' },
   'story-exam-burnout':             { eyebrow: 'Career Stories',     title: '5 Quiet Signs Of Exam Burnout' },
   'internship-ethics':              { eyebrow: 'Internships',        title: 'How We Protect Clients And Interns' },
