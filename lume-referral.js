@@ -432,7 +432,7 @@
       css.textContent = [
         ".lro{position:fixed;left:50%;bottom:16px;transform:translate(-50%,12px);z-index:9999;",
         "width:min(460px,calc(100vw - 24px));display:flex;gap:12px;align-items:flex-start;",
-        "background:#0D1B40;color:#fff;border-radius:16px;padding:14px 16px;",
+        "background:#20205A;color:#fff;border-radius:16px;padding:14px 16px;",
         "box-shadow:0 18px 50px rgba(8,16,38,.4);font:600 .86rem/1.45 'Inter',system-ui,Arial,sans-serif;",
         "opacity:0;transition:opacity .25s,transform .25s}",
         ".lro.on{opacity:1;transform:translate(-50%,0)}",
