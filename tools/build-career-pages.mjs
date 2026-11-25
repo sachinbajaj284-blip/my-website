@@ -298,8 +298,9 @@ ${jsonLd(c, slug)}
 <style>${CSS}
 </style>
 <link rel="stylesheet" href="site-anim.css">
+<link rel="stylesheet" href="career-city.css">
 </head>
-<body>
+<body class="city-vibe">
 <nav class="nav"><div class="nav-inner">
   <a class="brand" href="index.html"><img src="logo.png" alt="Lume Live logo" decoding="async"><span>LUME LIVE</span></a>
   <div class="nav-links">

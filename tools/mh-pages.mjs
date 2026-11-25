@@ -84,9 +84,9 @@ ${graph}
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-1CZ93P4P3V"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1CZ93P4P3V');</script>
 <link rel="stylesheet" href="mh-page.css">
-<link rel="stylesheet" href="lume-wellbeing-check.css">
+<link rel="stylesheet" href="lume-wellbeing-check.css">${o.extraCss?.length ? '\n' + o.extraCss.map(h => `<link rel="stylesheet" href="${h}">`).join('\n') : ''}
 </head>
-<body>
+<body${o.bodyClass ? ` class="${o.bodyClass}"` : ''}>
 <nav class="nav"><div class="nav-inner">
   <a class="brand" href="index.html"><img src="logo.png" alt="Lume Live logo" decoding="async"><span>LUME LIVE</span></a>
   <div class="nav-links">
