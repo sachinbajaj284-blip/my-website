@@ -25,14 +25,23 @@ const SKU_PRICES = {
     priced once; the framing that suits a given visitor lives in the page
     copy, not in a second SKU.
 
-    This replaced the ₹49 "intro-session", which was retired when FIRST50
-    became the first-session offer (₹499 → ₹249). The old SKU is gone
+    This replaced the ₹49 "intro-session". Sessions are now charged in full
+    before booking — there is no discounted "first session" any more (the
+    old FIRST50 ₹499 → ₹249 offer has been retired). The old ₹49 SKU is gone
     from this catalogue so no new order can be created at ₹49, but it is
     deliberately still recognised by order-status.js, the payment-return
     page and the SKU_FLOW map — clients who bought one still have an
     entitlement, and those paths must keep resolving it.
   */
-  "wellness-session": { amount: 499, label: "1:1 Counselling Session", alias: "session499" },
+  "wellness-session": { amount: 499, label: "1:1 Mental Health Session", alias: "session499" },
+  /*
+    The base career 1:1. Same 45 minutes and the same self-booked-slot flow
+    as wellness-session, but a distinct product priced at ₹699 — career
+    guidance (stream, course and career direction) is charged above the
+    ₹499 mental-health session. Clients pay first, then pick their own slot,
+    exactly like every other booking SKU.
+  */
+  "career-session": { amount: 699, label: "Career Counselling Session", alias: "career699" },
   /*
     Optional senior-clinician 1:1 — the same 45 minutes as wellness-session
     but with a senior counsellor, priced higher so visitors who read price
