@@ -422,4 +422,85 @@ export const CITIES = [
     ],
   },
 
+  {
+    slug: 'mental-health-counselling-chennai.html',
+    heroCard: 'Your marks are not the same thing as your worth &mdash; even in a city that often acts as if they are.',
+    city: 'Chennai', region: 'IN-TN', state: 'Tamil Nadu',
+    careerPage: 'career-counselling-in-chennai.html',
+    lede: 'Entrance coaching that starts young, hostels full of students a long way from home, and an IT corridor that runs on long hours. Private 1:1 support for students, parents and professionals in Chennai. Online, in English or Hindi.',
+    hindi: 'Marks are not your worth. Reaching out is strength, not weakness. &#128155;',
+    pressure: `<h3>What the pressure looks like here</h3>
+    <p>Chennai starts the race early and runs it hard. NEET and the engineering entrance sit at the centre of most families’ plans, the big corporate colleges drill for rank from Class 11, and a long-standing belief that medicine or engineering are the only respectable outcomes narrows the field before a teenager has really looked up. For the students that suits, the system works. For the many simply routed into it, the strain builds quietly.</p>
+    <p>Two patterns come up again and again in sessions. One is the student who moved from a smaller town in Tamil Nadu for a college seat and knows almost no one &mdash; the loneliness of a shared hostel room does more damage than the syllabus ever does. The other is the young professional on the OMR IT corridor, a few years into a job, running on deadlines and a commute, who can’t work out when exhaustion became the baseline.</p>`,
+    why: `<p>Chennai is better served than most cities. The Institute of Mental Health at Kilpauk is one of the oldest and largest government psychiatric hospitals in the country, and SCARF India has decades of serious clinical and research work behind it. If you need a psychiatric assessment, or things are severe, those are the right places to go.</p>
+    <p>What neither is built for is the much larger group who aren’t ill but are struggling anyway &mdash; the student who can’t make themselves open the book, the aspirant on a second NEET attempt, the twenty-six-year-old who has stopped enjoying anything and can’t say why. Public psychiatry comes with waiting lists and a clinical threshold you have to cross first. Private therapy here runs &#8377;1,500 to &#8377;3,000 a session, which for a student usually means asking a parent, which for many means not going at all.</p>
+    <p>Sessions here happen online, so nobody sees you arrive, and a session is &#8377;499.</p>`,
+    concerns: [
+      ['&#127891;', 'Entrance-exam and rank pressure', 'NEET, the engineering entrance and corporate-college drilling &mdash; including the weight of a second attempt.'],
+      ['&#127968;', 'Away from home for a seat', 'Hostel and PG rooms for students who came to Chennai from across Tamil Nadu, where a bad month has nobody in it.'],
+      ['&#128187;', 'Burnout on the IT corridor', 'Long hours, a long commute and exhaustion that sleep stopped fixing, out along OMR and beyond.'],
+      ['&#128149;', 'Family expectation and guilt', 'Struggling in a household that counts only medicine or engineering, and reading that as a reason to stay quiet.'],
+    ],
+    faq: [
+      ['Do I have to travel anywhere in Chennai for a session?', 'No. Sessions are online by video, voice or chat, so there’s no clinic to reach across the city and no waiting room to sit in. For most people in Chennai the traffic alone is a real barrier, and so is the worry of being seen.'],
+      ['Is this available in Tamil or Hindi?', 'Sessions run in English or Hindi, whichever you think in more easily. Many people in Chennai are most comfortable moving between English and their mother tongue, and you’re welcome to do that &mdash; what matters is that you can say what’s going on without translating it first.'],
+      ['My child is in a corporate college and always stressed. Is one session useful?', 'Yes, and one is a reasonable amount to start with. Forty-five minutes, online, at a slot you pick. A great deal of the distress in Chennai’s rank-driven colleges is about isolation and self-worth tied to marks rather than the syllabus itself, and that is workable in a single conversation.'],
+      ['Will my parents find out?', 'No. Nothing is reported to your parents, and you can book using a first name only. This is one of the most common questions we are asked in Chennai, and the answer has no caveats beyond the standard limit where there is serious risk to life.'],
+    ],
+  },
+
+  {
+    slug: 'mental-health-counselling-kolkata.html',
+    heroCard: 'A city that loves to talk can still be very quiet about this. It doesn’t have to be.',
+    city: 'Kolkata', region: 'IN-WB', state: 'West Bengal',
+    careerPage: 'career-counselling-in-kolkata.html',
+    lede: 'Fierce academic expectation, families that moved mountains for an education, and a lot of young people quietly weighing whether to leave the city for work. Private 1:1 support in Kolkata. Online, in Hindi, English or Bengali-friendly conversation.',
+    hindi: 'Mon kharap hole bola jaay &mdash; it’s okay to say it out loud. &#128155;',
+    pressure: `<h3>What the pressure looks like here</h3>
+    <p>Kolkata takes education seriously in a way few cities do, and that is a genuine strength &mdash; but it has a flip side. When marks, a university place and a respectable profession are treated as the measure of a family’s effort, a student who is struggling reads their own difficulty as a kind of betrayal. The pressure is rarely loud. It sits under the surface, in a household that values achievement and doesn’t quite have the vocabulary for distress.</p>
+    <p>There is a second, very Kolkata strain too: the young person deciding whether to leave. Many of the best opportunities are in other cities, and the choice to go &mdash; or to stay and feel left behind &mdash; carries guilt, about ageing parents, about a city they love, about expectations they didn’t set. It is a heavy thing to carry at twenty-two, and most carry it alone.</p>`,
+    why: `<p>Kolkata has real psychiatric depth. The Institute of Psychiatry, attached to the SSKM/IPGMER campus, is one of the oldest psychiatry teaching institutions in the country, and the state hospital at Gobra provides public care. If you need a psychiatric assessment, or things are severe, those are the right places to go.</p>
+    <p>What is much harder to find is an unhurried, private conversation for someone who isn’t ill but is struggling &mdash; the student who can’t concentrate, the graduate agonising over whether to leave, the person who has gone flat and can’t explain it. Public psychiatry has waiting lists and a clinical threshold to cross first; private therapy in the city runs &#8377;1,500 to &#8377;3,000 a session, which for a student often means not going.</p>
+    <p>Sessions here happen online, nothing reaches your family or anyone else, and a session is &#8377;499.</p>`,
+    concerns: [
+      ['&#128218;', 'Academic expectation', 'Marks and a university place treated as the measure of a family’s effort &mdash; and the guilt of struggling anyway.'],
+      ['&#9992;&#65039;', 'Whether to leave Kolkata', 'Weighing opportunities in other cities against ageing parents and a place you don’t want to leave.'],
+      ['&#128106;', 'Quiet households', 'A family that values achievement but has little vocabulary for distress, so it goes unsaid.'],
+      ['&#128566;', 'Going flat', 'Losing interest in things you used to enjoy, with no obvious reason you can point to.'],
+    ],
+    faq: [
+      ['Do I have to travel anywhere in Kolkata for a session?', 'No. Sessions are online by video, voice or chat, so there’s no clinic to reach and no waiting room to sit in. For many people in Kolkata, not being seen walking into one is exactly the point.'],
+      ['Can I speak in Bengali?', 'Sessions run in Hindi and English, and you’re welcome to slip in the Bengali words that carry the feeling &mdash; most people don’t describe their inner life in textbook language anyway. What matters is that you can say what’s going on without first translating it.'],
+      ['I’m torn about leaving the city for a job and feel guilty. Is that worth a session?', 'Yes &mdash; it’s exactly the kind of thing worth talking through. The decision to leave or stay is rarely just practical; it carries guilt about family and place that’s hard to weigh alone. A single conversation with someone outside it often brings real clarity.'],
+      ['Will my family find out?', 'No. Nothing is reported to your family, and you can book using a first name only. The one limit, which every counsellor works under, is where there is serious risk to life &mdash; and even then it’s a conversation with you, not behind your back.'],
+    ],
+  },
+
+  {
+    slug: 'mental-health-counselling-ahmedabad.html',
+    heroCard: 'In a city that prizes getting on with it, stopping to talk can feel indulgent. It isn’t.',
+    city: 'Ahmedabad', region: 'IN-GJ', state: 'Gujarat',
+    careerPage: 'career-counselling-in-ahmedabad.html',
+    lede: 'Family businesses with expectations attached, joint households where privacy is scarce, and a culture that admires relentless effort. Private 1:1 support in Ahmedabad. Online, in Hindi, English or Gujarati-friendly conversation.',
+    hindi: 'Himmat haarvani jarur nathi &mdash; talking is part of staying strong. &#128155;',
+    pressure: `<h3>What the pressure looks like here</h3>
+    <p>Ahmedabad runs on enterprise, and that shapes the pressure here in a particular way. For a lot of young people the family business is the assumed path, and with it comes an assumption that they will be capable, driven and untroubled &mdash; a hard script to admit you’re struggling against. The city admires people who simply get on with things, which is a strength right up until the point where quietly getting on with it becomes the reason no one knows you’re not okay.</p>
+    <p>Two situations recur in sessions. One is the student or young adult in a close joint family, where there is love and support but very little private space, and where a worry you don’t want to broadcast has nowhere to go. The other is the person carrying the weight of the family name or business &mdash; expected to succeed, afraid of letting people down, and treating their own stress as a problem to be hidden rather than one to be looked at.</p>`,
+    why: `<p>Ahmedabad has established mental health care. The government Hospital for Mental Health in Shahibaug provides public treatment, and the B. M. Institute of Mental Health has a long history in the city. If you need a psychiatric assessment, or things are severe, those are the right places to go.</p>
+    <p>What is far harder to find is a private, unhurried conversation for someone who isn’t ill but is struggling &mdash; the student under quiet pressure to join the business, the young professional who can’t switch off, the person who has gone flat and can’t say why. Public psychiatry has waiting lists and a clinical threshold first; private therapy in the city runs &#8377;1,500 to &#8377;3,000 a session.</p>
+    <p>Sessions here happen online, so there’s privacy a joint household can’t always give, nothing reaches your family, and a session is &#8377;499.</p>`,
+    concerns: [
+      ['&#128188;', 'Weight of the family business', 'An assumed path and an assumption you’ll be driven and untroubled &mdash; hard to admit you’re struggling against.'],
+      ['&#128106;', 'Little privacy at home', 'Love and support in a close joint family, but nowhere private to take a worry you don’t want broadcast.'],
+      ['&#128170;', 'Getting on with it, always', 'A culture that admires relentless effort, where quietly coping becomes the reason no one knows you’re not okay.'],
+      ['&#128566;', 'Switching off', 'Carrying the family name or a business and being unable to put the pressure down, even at home.'],
+    ],
+    faq: [
+      ['Do I have to travel anywhere in Ahmedabad for a session?', 'No. Sessions are online by video, voice or chat, so there’s no clinic to reach and no waiting room to sit in. In a city where people may recognise you, not being seen is often a large part of why online works.'],
+      ['I live in a joint family with no privacy. How does this stay private?', 'Sessions are online and you choose the slot, so you can take one when it suits &mdash; headphones, a closed room, video off if you prefer. Nothing is reported to anyone in your family, and you can book using a first name only.'],
+      ['Can I speak in Gujarati?', 'Sessions run in Hindi and English, and you’re welcome to use the Gujarati words that carry what you mean &mdash; most people don’t describe their feelings in formal language. What matters is that you can say what’s going on without translating it first.'],
+      ['I’m expected to join the family business and it’s a lot. Is that worth a session?', 'Yes. The pressure of an assumed path, and the fear of letting people down by questioning it, is one of the most common things people in Ahmedabad bring. Talking it through with someone outside the family often makes both the feeling and the options a good deal clearer.'],
+    ],
+  },
+
 ];
