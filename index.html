@@ -533,21 +533,8 @@ body>section{overflow-x:clip}
 <!-- MOUSE GLOW -->
 <div class="mouse-glow" id="mouseGlow"></div>
 
-<!-- FIRST-SESSION OFFER COUNTDOWN -->
-<div class="countdown-bar offer-countdown" id="offerCountdownBar" hidden>
-  <span class="offer-burst">🔥 Save ₹250</span>
-  <div class="cd-label"><span class="pulse-dot"></span><span>Mental-health first session 50% off — code FIRST50 ✨</span></div>
-  <div class="countdown-timer" aria-live="polite">
-    <div class="cd-unit"><span class="cd-num" data-offer-days>07</span><span class="cd-lbl">Days</span></div>
-    <span class="cd-sep">:</span>
-    <div class="cd-unit"><span class="cd-num" data-offer-hours>00</span><span class="cd-lbl">Hrs</span></div>
-    <span class="cd-sep">:</span>
-    <div class="cd-unit"><span class="cd-num" data-offer-mins>00</span><span class="cd-lbl">Min</span></div>
-    <span class="cd-sep">:</span>
-    <div class="cd-unit"><span class="cd-num" data-offer-secs>00</span><span class="cd-lbl">Sec</span></div>
-  </div>
-  <a href="#" class="cd-cta" onclick="openModal('session');return false;">🎯 Book ₹499 Now</a>
-</div>
+<!-- The retired FIRST50 "first session ₹249" countdown bar was removed:
+     sessions are now paid in full before booking, with no first-session discount. -->
 
 <!-- GLOWING SIDE ICONS (desktop) -->
 <div class="side-icons">
@@ -773,7 +760,7 @@ body>section{overflow-x:clip}
         catalogue and removes it entirely if the offer has been paused.
         Tapping the code copies it and pre-fills the checkout field.
       -->
-      <!-- first-session coupon badge removed: the ₹249 FIRST50 offer is mental-health only -->
+      <!-- no first-session coupon badge: sessions are paid in full (mental health ₹499, career ₹699); the old ₹249 FIRST50 offer is retired -->
       <div class="hero-trust-chip">✓ Transparent pricing &middot; No compulsory packages &middot; Qualified counsellors</div>
       <div class="hero-btns">
         <a href="#" class="btn-book-secondary" onclick="openModal('session');return false;">
@@ -1087,7 +1074,7 @@ body>section{overflow-x:clip}
     <div style="text-align:center;max-width:640px;margin:0 auto">
       <span class="cl-eyebrow">Plans &amp; Pricing</span>
       <h2 class="cl-title">The Clarity Ladder</h2>
-      <p class="cl-lead">Start free, book a first mental-health session for ₹249, or save with a career bundle. Every price is published and nothing is compulsory. <strong>Buy any Clarity Pack and your psychometric assessment unlocks instantly.</strong></p>
+      <p class="cl-lead">Start free, book a mental-health session for ₹499 or a career counselling session for ₹699, or save with a career bundle. Every price is published and nothing is compulsory. <strong>Buy any Clarity Pack and your psychometric assessment unlocks instantly.</strong></p>
     </div>
     <div class="cl-grid">
       <article class="cl-plan">
@@ -1141,9 +1128,9 @@ body>section{overflow-x:clip}
         <article class="cl-plan">
           <span class="cl-tag">Single</span>
           <h3 class="cl-name">1:1 Session</h3>
-          <div class="cl-price"><span class="cl-was">₹499</span><span class="cl-now">₹249</span></div>
-          <div><span class="cl-save">First session with code FIRST50</span></div>
-          <p class="cl-perse">45 minutes · regular ₹499 after the first.</p>
+          <div class="cl-price"><span class="cl-now">₹499</span></div>
+          <div><span class="cl-save">Paid before you book your slot</span></div>
+          <p class="cl-perse">45 minutes · one confidential conversation at a time.</p>
           <ul>
             <li>Exam stress, anxiety, low mood, burnout, relationships</li>
             <li>Completely confidential — book with a first name only</li>
@@ -2093,7 +2080,7 @@ body>section{overflow-x:clip}
     </div>
     <p style="text-align:center;color:rgba(255,255,255,.62);font-size:.82rem;line-height:1.6;max-width:640px;margin:26px auto 0;">In a crisis, don't wait for a questionnaire &mdash; call <b style="color:#F6C85A;">Tele-MANAS 14416</b>, free and 24&times;7. None of these tools store your answers or make a diagnosis.</p>
     <div style="text-align:center;margin-top:24px">
-      <a href="mental-health-counselling.html" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#E0A838,#F6C85A);color:#20205A;font-weight:800;font-size:.98rem;padding:15px 30px;border-radius:999px;text-decoration:none;box-shadow:0 10px 30px rgba(224,168,56,.3)">💬 Talk to someone — ₹249 first session &rarr;</a>
+      <a href="mental-health-counselling.html" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#E0A838,#F6C85A);color:#20205A;font-weight:800;font-size:.98rem;padding:15px 30px;border-radius:999px;text-decoration:none;box-shadow:0 10px 30px rgba(224,168,56,.3)">💬 Talk to someone — ₹499 session &rarr;</a>
     </div>
   </div>
 </section>
@@ -2626,15 +2613,6 @@ body>section{overflow-x:clip}
       <p id="sessSub">For parents, students & families · Online across India</p>
     </div>
     <div class="modal-body">
-      <div class="modal-countdown offer-countdown" hidden>
-        <div class="mcd-label"><span class="pulse-dot"></span><span>50% off your first session ✨</span></div>
-        <div class="mcd-timer" aria-live="polite">
-          <div class="mcd-unit"><span class="mcd-num" data-offer-days>07</span><span class="mcd-lbl">Days</span></div>
-          <div class="mcd-unit"><span class="mcd-num" data-offer-hours>00</span><span class="mcd-lbl">Hrs</span></div>
-          <div class="mcd-unit"><span class="mcd-num" data-offer-mins>00</span><span class="mcd-lbl">Min</span></div>
-          <div class="mcd-unit"><span class="mcd-num" data-offer-secs>00</span><span class="mcd-lbl">Sec</span></div>
-        </div>
-      </div>
       <div class="sess-reassure">
         <div class="sr-top"><span class="sr-emoji">🌱</span><b>Not sure which service fits your child? Start with one calm clarity session.</b></div>
         <p>This first conversation helps understand career confusion, family expectations, emotional pressure, and the right next step. You do not need to prepare anything — we listen, structure the concern, and guide you forward.</p>
@@ -2907,13 +2885,13 @@ body>section{overflow-x:clip}
 </div>
 
 <script>document.body.classList.add("js-ready");const lumeWhatsAppNumber="917015671280";function waMessage(e){return e.filter(Boolean).join("\n")}function waLink(e){return"https://wa.me/917015671280?text="+encodeURIComponent(e)}function waUrl(e){return waLink(waMessage(e))}function waLine(e,t){return t?e+": "+t:null}function applyStaticWhatsAppMessages(){const e=["Hello Lume Live!","","• I would like to know more about your counselling programmes","• Please share the next steps and available options"],t=new Map([["Hello Lume Live! I would like to know more about Lume Live.",e],["Hello Lume Live! I would like to know more about Lume Live counselling.",["Hello Lume Live!","","• I would like to know more about your counselling","• Please guide me on the right support option"]],["Hello Lume Live! I would like to know more about Emotional Wellness Counselling at Lume Live.",["Hello Lume Live!","","• I would like to know more about your Emotional Wellness Counselling","• Please guide me on the right support option"]],["Hello Lume Live! I am a parent and would like guidance for my child.",["Hello Lume Live!","","• I am a parent and would like guidance for my child","• Please share the next steps for parent counselling"]],["Hello Lume Live! I would like to discuss Lume Live support options.",["Hello Lume Live!","","• I would like to discuss the right support option for me","• Please help me choose the most suitable next step"]],["Hello Lume Live! I would like to book a session with Lume Live.",["Hello Lume Live!","","• I would like to book a session","• Please share available slots and next steps"]],["Hello Lume Live! I would like to book my first wellness session with Lume Live.",["Hello Lume Live!","","• I would like to book my first session (₹499)","• Please share available slots and next steps"]],["Hello Lume Live! I have paid Rs.199 for the Parents Career Handbook PDF. Please send it to me.",["Hello Lume Live!","","• I have paid ₹199 for the Parents Career Handbook PDF","• I will attach my payment screenshot here","• Please send the PDF to me"]]]);document.querySelectorAll('a[href^="https://wa.me/917015671280"]').forEach(o=>{if("https://wa.me/917015671280"!==(o.getAttribute("href")||""))try{const e=new URL(o.href).searchParams.get("text")||"",n=t.get(e);n&&(o.href=waUrl(n))}catch(e){}else o.href=waUrl(e)})}applyStaticWhatsAppMessages(),"loading"===document.readyState&&document.addEventListener("DOMContentLoaded",applyStaticWhatsAppMessages);const offerDeadlineIso="2026-08-15T23:59:59+05:30";function padOffer(e){return String(Math.max(0,e)).padStart(2,"0")}function updateOfferCountdown(){const e=new Date(offerDeadlineIso).getTime()-Date.now(),t=document.querySelectorAll(".offer-countdown");if(e<=0)return document.documentElement.style.setProperty("--countdown-h","0px"),void t.forEach(e=>{e.hidden=!0});const o=Math.floor(e/864e5),n=Math.floor(e%864e5/36e5),s=Math.floor(e%36e5/6e4),a=Math.floor(e%6e4/1e3);document.documentElement.style.setProperty("--countdown-h",window.innerWidth<=640?"34px":"38px");var i=void 0!==currentSessionPlan&&currentSessionPlan&&currentSessionPlan.offer;t.forEach(e=>{!e.closest("#modal-session")||i?e.hidden=!1:e.hidden=!0}),document.querySelectorAll("[data-offer-days]").forEach(e=>{e.textContent=padOffer(o)}),document.querySelectorAll("[data-offer-hours]").forEach(e=>{e.textContent=padOffer(n)}),document.querySelectorAll("[data-offer-mins]").forEach(e=>{e.textContent=padOffer(s)}),document.querySelectorAll("[data-offer-secs]").forEach(e=>{e.textContent=padOffer(a)})}function toggleMenu(){document.getElementById("ham").classList.toggle("open"),document.getElementById("mobMenu").classList.toggle("open")}function closeMob(){document.getElementById("ham").classList.remove("open"),document.getElementById("mobMenu").classList.remove("open")}updateOfferCountdown(),setInterval(updateOfferCountdown,1e3),window.addEventListener("resize",updateOfferCountdown);let authView="signin";function openAuth(e){window.currentFirebaseUser||setAuthMode(e||"signin"),openModal("auth")}function setAuthMode(e){authView="signup"===e?"signup":"signin";const t="signup"===authView;document.getElementById("authForm").classList.toggle("signup",t),document.getElementById("authSignInTab").classList.toggle("active",!t),document.getElementById("authSignUpTab").classList.toggle("active",t),document.getElementById("authSignInTab").setAttribute("aria-selected",String(!t)),document.getElementById("authSignUpTab").setAttribute("aria-selected",String(t)),document.getElementById("authName").required=t,document.getElementById("authConfirm").required=t,document.getElementById("authPassword").autocomplete=t?"new-password":"current-password",document.getElementById("authSubmit").textContent=t?"Create Account":"Sign In",document.getElementById("authReset").hidden=t,setAuthFeedback("","info")}function setAuthFeedback(e,t){const o=document.getElementById("authFeedback");o.textContent=e||"",o.className="auth-feedback"+(e?" show "+(t||"info"):"")}function setAuthBusy(e){const t=document.getElementById("authSubmit");t.disabled=e,t.textContent=e?"Please wait...":"signup"===authView?"Create Account":"Sign In"}async function handleAuthSubmit(e){if(e.preventDefault(),!window.lumeAuth)return void setAuthFeedback("Account service is still loading. Please try again in a moment.","error");const t=document.getElementById("authName").value.trim(),o=document.getElementById("authEmail").value.trim(),n=document.getElementById("authPassword").value,s=document.getElementById("authConfirm").value;if(o&&n)if(n.length<6)setAuthFeedback("Your password must be at least 6 characters.","error");else if("signup"!==authView||t&&n===s){if("signup"===authView){const e=document.getElementById("authConsent");if(e&&!e.checked)return void setAuthFeedback("Please agree to the Privacy Policy and Terms of Service, and confirm parental consent if under 18, to create your account.","error")}setAuthFeedback("","info"),setAuthBusy(!0);try{if("signup"===authView){const r=await window.lumeAuth.signUp(t,o,n);closeModal("auth");window.lumeAccount&&"function"==typeof window.lumeAccount.verifyHelp?window.lumeAccount.verifyHelp({email:o,sent:r.verificationSent}):showToast(r.verificationSent?"Account made. Now check your email — look in Spam too.":"Account made. You are signed in.")}else await window.lumeAuth.signIn(o,n),closeModal("auth"),showToast("Welcome back. You are signed in.");document.getElementById("authPassword").value="",document.getElementById("authConfirm").value=""}catch(e){setAuthFeedback(e.message||"Unable to complete your request. Please try again.","error")}finally{setAuthBusy(!1)}}else setAuthFeedback(t?"The passwords do not match.":"Please enter your full name.","error");else setAuthFeedback("Please enter your email and password.","error")}async function requestPasswordReset(){const e=document.getElementById("authEmail").value.trim();if(e)if(window.lumeAuth)try{await window.lumeAuth.resetPassword(e),setAuthFeedback("If an account exists for that email, a password reset message has been sent.","info")}catch(e){setAuthFeedback(e.message||"Unable to send a reset email right now.","error")}else setAuthFeedback("Account service is still loading. Please try again in a moment.","error");else setAuthFeedback("Enter your email address first, then choose Forgot password.","error")}function renderAuthUser(e){window.currentFirebaseUser=e||null,window.authStateReady=!0;const t=Boolean(e);document.querySelectorAll(".auth-signed-out").forEach(e=>{e.hidden=t}),document.querySelectorAll(".auth-signed-in").forEach(e=>{e.hidden=!t}),document.getElementById("navAccountLink").textContent=t?(((e.displayName||"").trim().split(/\s+/)[0]||"").slice(0,16)||"Account"):"Login";const o=document.getElementById("mobileAccountLink");o&&(o.textContent=t?"👤 "+(((e.displayName||"").trim().split(/\s+/)[0]||"").slice(0,16)||"My Account"):"🔐 Login"),document.getElementById("authSignedOut").hidden=t,document.getElementById("authSignedIn").hidden=!t,t?(document.getElementById("authUserEmail").textContent=e.email||"Signed-in client",document.getElementById("authUserStatus").textContent=e.emailVerified?"Your email address is verified.":"Please open the verification email sent to you to confirm your address.",document.getElementById("authResendVerify").hidden=e.emailVerified):setAuthMode("signin"),"function"==typeof window.saUseAccountProgress&&window.saUseAccountProgress(e),t?closeScrollEndPopup():checkScrollEndPrompt()}async function resendVerificationEmail(){if(window.lumeAuth)try{await window.lumeAuth.resendVerification(),showToast("Email sent. Check your inbox — and your Spam folder.")}catch(e){showToast(e.message||"Could not send the verification email right now.")}else showToast("Account service is still loading. Please try again in a moment.")}async function signOutUser(){if(window.lumeAuth)try{await window.lumeAuth.signOut(),closeModal("auth"),showToast("You have been signed out.")}catch(e){showToast("Unable to sign out right now. Please try again.")}}function downloadUPIQR(){const e=document.querySelector("#modal-session .upi-qr img");if(e&&e.src){const t=document.createElement("a");t.href=e.src,t.download="Lume-Live-UPI-QR-49.png",document.body.appendChild(t),t.click(),document.body.removeChild(t),showToast("QR Code downloaded!")}else showToast("Could not download QR. Please screenshot instead.")}var /*
-  The two entry plans are the same ₹499 session sold to different
-  people — a career-guidance framing and a mental-health framing — so
-  they share one SKU and differ only in the words on the modal. The
-  ₹49 "intro-session" they used to point at is retired; FIRST50 is the
-  first-session offer now, and it applies to both.
+  Session plans. The mental-health framings (intro, wellness) use the
+  ₹499 wellness-session SKU; the career framing (career-intro) uses the
+  separate ₹699 career-session SKU. Every session is paid in full before
+  a slot is booked — the old ₹49 "intro-session" and the FIRST50
+  first-session discount are both retired, so no plan suggests a coupon.
 */
-SESSION_PLANS={"career-intro":{sku:"wellness-session",amount:499,regular:null,title:"Book Your Career Counselling Session",sub:"Stream, course and career direction · Online across India",detail:"1:1 counselling session · 45 minutes",label:"1:1 Counselling Session",offer:!1,suggestCoupon:""},intro:{sku:"wellness-session",amount:499,regular:null,title:"Book Your First 1:1 Session",sub:"For parents, students & families · Online across India",detail:"1:1 counselling session · 45 minutes",label:"1:1 Counselling Session",offer:!1,suggestCoupon:""},wellness:{sku:"wellness-session",amount:499,regular:null,title:"Book Your Emotional Wellness Session",sub:"1:1 confidential support · Online across India",detail:"1:1 counselling session · 45 minutes",label:"1:1 Counselling Session",offer:!1,suggestCoupon:"FIRST50"},"stream-clarity":{sku:"stream-clarity-session",amount:999,regular:null,returnUrl:"https://lumelive.co.in/payment-return.html?order_id={order_id}&sku=stream-clarity-session&continue=%2Fassessment.html%23self-assessments",continueUrl:"assessment.html#self-assessments",title:"Book Your Stream Clarity Session",sub:"For parents of Grade 9–12 students · Online across India",detail:"Career Confusion & Stream Clarity session",label:"Career Confusion & Stream Clarity Session",offer:!1},"career-direction":{sku:"career-direction-session",amount:1499,regular:null,title:"Book Your Career Direction Session",sub:"For older students & young adults · Online across India",detail:"Career Direction & First-Job Readiness session",label:"Career Direction & First-Job Readiness Session",offer:!1}},currentSessionPlan=SESSION_PLANS.intro;function fmtINR(e){return"₹"+Number(e||0).toLocaleString("en-IN")}/*
+SESSION_PLANS={"career-intro":{sku:"career-session",amount:699,regular:null,title:"Book Your Career Counselling Session",sub:"Stream, course and career direction · Online across India",detail:"Career counselling session · 45 minutes",label:"Career Counselling Session",offer:!1,suggestCoupon:""},intro:{sku:"wellness-session",amount:499,regular:null,title:"Book Your 1:1 Session",sub:"For parents, students & families · Online across India",detail:"1:1 counselling session · 45 minutes",label:"1:1 Mental Health Session",offer:!1,suggestCoupon:""},wellness:{sku:"wellness-session",amount:499,regular:null,title:"Book Your Emotional Wellness Session",sub:"1:1 confidential support · Online across India",detail:"1:1 counselling session · 45 minutes",label:"1:1 Mental Health Session",offer:!1,suggestCoupon:""},"stream-clarity":{sku:"stream-clarity-session",amount:999,regular:null,returnUrl:"https://lumelive.co.in/payment-return.html?order_id={order_id}&sku=stream-clarity-session&continue=%2Fassessment.html%23self-assessments",continueUrl:"assessment.html#self-assessments",title:"Book Your Stream Clarity Session",sub:"For parents of Grade 9–12 students · Online across India",detail:"Career Confusion & Stream Clarity session",label:"Career Confusion & Stream Clarity Session",offer:!1},"career-direction":{sku:"career-direction-session",amount:1499,regular:null,title:"Book Your Career Direction Session",sub:"For older students & young adults · Online across India",detail:"Career Direction & First-Job Readiness session",label:"Career Direction & First-Job Readiness Session",offer:!1}},currentSessionPlan=SESSION_PLANS.intro;function fmtINR(e){return"₹"+Number(e||0).toLocaleString("en-IN")}/*
   Coupons on the session modal.
 
   sessionCoupon holds the widget mounted into #sessCoupon by
@@ -2957,12 +2935,13 @@ function setupSessionCoupon(){
   }
   var mounted=window.LumeCoupons.mountCheckout(host,{
     getPack:function(){var p=currentSessionPlan||SESSION_PLANS.intro;return{sku:p.sku,amount:p.amount,label:p.label}},
-    // The plan's advertised offer. The hero, the countdown bar and the
-    // landing pages all quote ₹499, so the modal applies FIRST50 on open
-    // instead of asking the client to type the code they were promised.
+    // A plan can carry a suggestCoupon to auto-apply a promised code on
+    // open. No session plan currently does (the FIRST50 first-session
+    // discount is retired and sessions are paid in full), so this returns
+    // "" unless a future promotion sets suggestCoupon on a plan.
     getSuggestedCode:function(){var p=currentSessionPlan||SESSION_PLANS.intro;return p.suggestCoupon||""},
-    // FIRST50 is one-per-customer and first-session-only, which the server
-    // can only judge once it knows who is booking.
+    // Any first-time / per-customer coupon rule is judged by the server
+    // once it knows who is booking, so pass along the phone when we have it.
     getCustomer:function(){
       var phone=(document.getElementById("sessionPhone")||{}).value||"";
       return{phone:phone.replace(/\D/g,"").slice(-10),email:""}

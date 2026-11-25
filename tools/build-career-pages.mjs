@@ -7,7 +7,7 @@
  *
  * Content lives in career-cities.mjs. These pages mirror the shell of the existing
  * hand-authored career-counselling-in-<town>.html pages (same inline CSS, same booking
- * flow, same ₹499 pricing, same DMIT stance), but are generated from data so the metro
+ * flow, same ₹699 pricing, same DMIT stance), but are generated from data so the metro
  * cluster can't drift into the near-duplicates the hand-made Haryana cluster did. The
  * existing Haryana pages are intentionally left untouched.
  *
@@ -249,10 +249,10 @@ function careerPage(c) {
   const placename = c.state && c.state !== c.city ? `${c.city}, ${c.state}` : c.city;
   const kicker = `📍 Serving ${placename} · Online 1:1 · Qualified Counsellors`;
   const title = `Career Counselling in ${c.city} ${YEAR} | Lume Live`;
-  const metaDesc = `Career counselling in ${c.city}${c.alt ? ` (${c.alt})` : ''} by M.Sc Clinical Psychology counsellors — online 1:1 sessions and real psychometric tests. First session ₹499.`;
+  const metaDesc = `Career counselling in ${c.city}${c.alt ? ` (${c.alt})` : ''} by M.Sc Clinical Psychology counsellors — online 1:1 sessions and real psychometric tests. ₹699 session.`;
   const keywords = `career counselling in ${c.city}, career counsellor ${c.city}, career counselling near me ${c.city}, psychometric test ${c.city}, stream selection ${c.city}, online career counselling ${c.state}`;
   const ogTitle = `Career Counselling in ${c.city} ${YEAR} — Lume Live`;
-  const ogDesc = `Online 1:1 career counselling for ${c.city} students and families by an M.Sc Clinical Psychologist. Real psychometric tests, ₹499 first session.`;
+  const ogDesc = `Online 1:1 career counselling for ${c.city} students and families by an M.Sc Clinical Psychologist. Real psychometric tests, ₹699 session.`;
   const mh = `mental-health-counselling-${c.key}.html`;
 
   const relatedExtra = c.key === 'jaipur'
@@ -318,14 +318,14 @@ ${jsonLd(c, slug)}
       <p class="lede">${c.lede}</p>
       <p class="hindi-line">${c.hindi}</p>
       <div class="hero-actions">
-        <a class="btn" href="#book">Book ₹499 Session</a>
+        <a class="btn" href="#book">Book ₹699 Session</a>
         <a class="btn secondary" href="assessment.html#free-test">Take Free Career Snapshot</a>
       </div>
       <div class="stats">
         <div class="stat"><b>500+</b><span>Students Guided</span></div>
         <div class="stat"><b>M.Sc</b><span>Clinical Psychology</span></div>
         <div class="stat"><b>AILET '26</b><span>Laureate Award</span></div>
-        <div class="stat"><b>₹499</b><span>First Session</span></div>
+        <div class="stat"><b>₹699</b><span>Per Session</span></div>
       </div>
     </div>
     <div class="photo-frame"><img src="sachin.jpeg" alt="Lume Live career counsellor for ${c.city} families, M.Sc Clinical Psychology" decoding="async" loading="lazy"></div>
@@ -347,10 +347,10 @@ ${c.covers.map(li => `      <li>${li}</li>`).join('\n')}
     <p><span class="hi">Format seedha hai:</span> pehle validated psychometric assessment, phir 45 minute ki 1:1 baat-cheet, aur end mein likha hua roadmap.</p>
 
     <div class="cta-box" id="book">
-      <h3>Book your ₹499 first session from ${c.city}</h3>
+      <h3>Book your ₹699 session from ${c.city}</h3>
       <p>45 minutes, 1:1 with your Lume Live counsellor over video call — both parents welcome to join from home.</p>
       <div class="cta-row">
-        <a class="btn wa" href="${waUrl(`Hello Lume Live! I am from ${c.city} and want to book the ₹499 session.`)}" target="_blank">💬 Book on WhatsApp — ₹499</a>
+        <a class="btn wa" href="${waUrl(`Hello Lume Live! I am from ${c.city} and want to pay for and book the ₹699 session.`)}" target="_blank">💬 Pay &amp; book on WhatsApp — ₹699</a>
         <a class="btn secondary" href="tel:+917015671280">Call +91 70156 71280</a>
       </div>
     </div>
@@ -399,7 +399,7 @@ ${relatedExtra}      <a href="career-explorer.html">Career Explorer — how to b
 </footer>
 
 <div class="sticky-cta">
-  <a class="btn" href="#book">Book ₹499 Session</a>
+  <a class="btn" href="#book">Book ₹699 Session</a>
   <a class="btn wa" href="https://wa.me/${WA}" target="_blank">💬 WhatsApp</a>
 </div>
 

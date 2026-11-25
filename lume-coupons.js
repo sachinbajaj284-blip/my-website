@@ -381,13 +381,15 @@
     /*
       The code this pack is advertised at, if any.
 
-      The site promises "first session ₹249" in the hero, the countdown
-      bar and 50-odd landing pages. Making the client find and type
-      FIRST50 to reach the price they were shown is a bait-and-switch,
-      so a suggested code is applied for them on open. It still goes
-      through the same server validation as a typed one — if the offer
-      has been paused, the price simply stays ₹499 and no promise is
-      made that checkout won't honour.
+      When a page advertises a pack at a coupon price, making the client
+      find and type the code to reach the price they were shown would be a
+      bait-and-switch, so a suggested code is applied for them on open. It
+      still goes through the same server validation as a typed one — if the
+      offer has been paused, the price simply stays at the catalogue amount
+      and no promise is made that checkout won't honour. No pack currently
+      advertises a session discount (the old FIRST50 "first session ₹249"
+      offer is retired and sessions are paid in full), so getSuggestedCode
+      returns "" unless a future promotion sets one.
     */
     var getSuggestedCode = typeof options.getSuggestedCode === "function"
       ? options.getSuggestedCode

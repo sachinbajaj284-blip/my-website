@@ -80,11 +80,20 @@ const MIN_CHARGE = 1;
    ============================================================ */
 const DEFAULT_COUPONS = [
   {
+    /*
+      RETIRED. FIRST50 used to take the first counselling session from ₹499
+      to ₹249. It is switched off because sessions are now paid in full
+      before a slot is booked — there is no discounted "first session" any
+      more. The definition is kept (is_active:false, promote:false) so any
+      historical order that still carries the code resolves cleanly; no new
+      order can discount with it. Do not set is_active true again without
+      re-introducing a first-session offer deliberately.
+    */
     code: "FIRST50",
     discount_type: "percentage",
     discount_value: 50,
     applicable_packs: ["wellness-session"],
-    is_active: true,
+    is_active: false,
     expiration_date: null,
     usage_limit: null,
     times_used: 0,
@@ -98,7 +107,7 @@ const DEFAULT_COUPONS = [
     // No prices in here — the badge renders base/final from the catalogue
     // right beside the headline, so repeating them reads as a stutter.
     description: "A 45-minute 1:1 with a qualified counsellor (M.Sc Clinical Psychology). Tap the code, use it at checkout.",
-    promote: true
+    promote: false
   },
   {
     /*
@@ -167,7 +176,7 @@ const DEFAULT_COUPONS = [
     discount_type: "percentage",
     discount_value: 50,
     applicable_packs: ["wellness-session"],
-    is_active: false,   // switched off — FIRST50 is the only live offer
+    is_active: false,   // switched off — no promotional session discounts are live
     expiration_date: null,
     usage_limit: 200,
     times_used: 0,
@@ -181,7 +190,7 @@ const DEFAULT_COUPONS = [
     discount_type: "percentage",
     discount_value: 30,
     applicable_packs: ["student-full-report", "career-intelligence-roadmap"],
-    is_active: false,   // switched off — FIRST50 is the only live offer
+    is_active: false,   // switched off — no promotional session discounts are live
     expiration_date: null,
     usage_limit: null,
     times_used: 0,
@@ -195,7 +204,7 @@ const DEFAULT_COUPONS = [
     discount_type: "flat",
     discount_value: 200,
     applicable_packs: ["student-full-report", "stream-clarity-session"],
-    is_active: false,   // switched off — FIRST50 is the only live offer
+    is_active: false,   // switched off — no promotional session discounts are live
     expiration_date: null,
     usage_limit: null,
     times_used: 0,
@@ -208,10 +217,10 @@ const DEFAULT_COUPONS = [
     /*
       The friend's half of the referral programme.
 
-      Deliberately NOT on wellness-session: FIRST50 already takes that
-      from ₹499 to ₹249, and codes do not stack, so offering ₹100 there
-      would be offering a referred student a worse deal than an
-      unreferred one.
+      Scoped to the reports and the premium career sessions rather than the
+      base ₹499 mental-health session: the referral reward is meant to pull
+      people toward the fuller products, and the base session is already
+      priced as low as it goes.
 
       promote:false keeps it out of the hero badge. It is gated on
       requires_referral, so advertising it to everybody would mostly
@@ -249,7 +258,7 @@ const DEFAULT_COUPONS = [
     discount_type: "flat",
     discount_value: 200,
     applicable_packs: ["student-full-report"],
-    is_active: false,   // switched off — FIRST50 is the only live offer
+    is_active: false,   // switched off — no promotional session discounts are live
     expiration_date: null,
     usage_limit: null,
     times_used: 0,
@@ -263,7 +272,7 @@ const DEFAULT_COUPONS = [
     discount_type: "flat",
     discount_value: 500,
     applicable_packs: ["internship-1-month", "internship-2-month", "internship-240-hour"],
-    is_active: false,   // switched off — FIRST50 is the only live offer
+    is_active: false,   // switched off — no promotional session discounts are live
     expiration_date: null,
     usage_limit: 50,
     times_used: 0,

@@ -52,6 +52,14 @@ function coupon(overrides){
 
 const wellness = getProduct("wellness-session");
 
+// FIRST50 is retired in the live catalogue (is_active:false): sessions are now
+// paid in full, with no first-session discount. The first-time / per-customer
+// ENGINE it used still needs coverage, so the engine tests below re-activate it
+// via Firestore — which layers over the default — to exercise that machinery
+// without shipping the offer. Production behaviour (FIRST50 inactive, not
+// advertised) is asserted separately.
+function activateFirst50(){ store.seed("coupons", "FIRST50", { code: "FIRST50", is_active: true }); }
+
 console.log("\ncode normalisation");
 
 await test("uppercases and strips punctuation", () => {
@@ -168,25 +176,44 @@ await test("no coupon means no discount", () => {
 
 console.log("\nend-to-end quotes (built-in catalogue, no Firestore)");
 
-await test("FIRST50 on the wellness session: ₹499 → ₹249", async () => {
+await test("FIRST50 is retired — the wellness session stays ₹499", async () => {
+  // The ₹249 first-session offer was removed: a session is now ₹499, paid in
+  // full. The code still resolves (so an old campaign link does not 404) but
+  // it applies no discount.
+  const q = await quote({ code: "FIRST50", packId: "wellness-session" });
+  assert.equal(q.ok, false);
+  assert.equal(q.reason, "inactive");
+  assert.equal(q.base_amount, 499);
+  assert.equal(q.discount_amount, 0);
+  assert.equal(q.final_amount, 499);
+  assert.equal(q.coupon, null);
+});
+
+await test("the retired FIRST50 is inactive even typed sloppily", async () => {
+  const q = await quote({ code: " first50 ", packId: "wellness-session" });
+  assert.equal(q.reason, "inactive");
+  assert.equal(q.final_amount, 499);
+});
+
+await test("the engine still gives 50% off a session when a code is active", async () => {
+  // Coverage for the discount machinery itself, decoupled from whether any
+  // offer is live: re-activate FIRST50 in Firestore and confirm ₹499 → ₹249.
+  store.clear();
+  activateFirst50();
   const q = await quote({ code: "FIRST50", packId: "wellness-session" });
   assert.equal(q.ok, true);
   assert.equal(q.reason, "applied");
-  assert.equal(q.base_amount, 499);
   assert.equal(q.discount_amount, 250);
   assert.equal(q.final_amount, 249);
   assert.equal(q.coupon.code, "FIRST50");
-});
-
-await test("FIRST50 typed sloppily still works", async () => {
-  const q = await quote({ code: " first50 ", packId: "wellness-session" });
-  assert.equal(q.final_amount, 249);
+  store.clear();
 });
 
 await test("FIRST50 on the ₹999 report is refused, price unchanged", async () => {
   const q = await quote({ code: "FIRST50", packId: "student-full-report" });
   assert.equal(q.ok, false);
-  assert.equal(q.reason, "not_applicable");
+  // Inactive is checked before pack-applicability, so a retired code reads as
+  // inactive here rather than not_applicable. Either way the price is untouched.
   assert.equal(q.final_amount, 999);
   assert.equal(q.discount_amount, 0);
 });
@@ -199,7 +226,8 @@ await test("only the intended codes are live", () => {
   // by someone the referral ledger says a friend actually referred.
   // RESULTS300 is a seasonal advertised offer (retires on expiration_date);
   // SEATS100 is an advertised offer capped at 100 uses.
-  assert.deepEqual(live, ["FIRST50", "RESULTS300", "SEATS100", "FRIEND100"]);
+  // FIRST50 is NOT here: the ₹249 first-session offer is retired (is_active:false).
+  assert.deepEqual(live, ["RESULTS300", "SEATS100", "FRIEND100"]);
 });
 
 await test("CLARITY100 cannot go live without the account it was issued to", () => {
@@ -341,7 +369,7 @@ await test("it works on the sessions it covers too", async () => {
   assert.equal(q.final_amount, 899);
 });
 
-await test("it is refused on the ₹499 session, where FIRST50 is better", async () => {
+await test("it is refused on the ₹499 session — the base session stays cheapest", async () => {
   store.clear();
   seedReferral("friend");
   const q = await quote({
@@ -350,7 +378,7 @@ await test("it is refused on the ₹499 session, where FIRST50 is better", async
   });
   assert.equal(q.ok, false);
   assert.equal(q.reason, "not_applicable");
-  assert.equal(q.final_amount, 499, "and FIRST50 is still there to take it to 249");
+  assert.equal(q.final_amount, 499, "the base mental-health session is already the lowest-priced product");
 });
 
 await test("a referred student who has already bought is refused", async () => {
@@ -392,23 +420,23 @@ await test("FRIEND100 cannot go live without the referral gate", () => {
     "FRIEND100 is active without requires_referral — it would be a public discount");
 });
 
-await test("FRIEND100 never undercuts FIRST50 on the session it applies to", () => {
-  // ₹100 off a ₹499 session is worse than FIRST50's 50%, and codes do not
-  // stack. Offering it there would give a referred student a worse deal
-  // than an unreferred one.
+await test("FRIEND100 is scoped off the base session", () => {
+  // The base mental-health session (₹499) is already the lowest-priced
+  // product, so the referral reward is pointed at the reports and the
+  // premium career sessions rather than discounting the cheapest item.
   const friend = DEFAULT_COUPONS.find(c => c.code === "FRIEND100");
   assert.equal(friend.applicable_packs.includes("wellness-session"), false);
 });
 
-await test("FIRST50 is the only offer advertised on the site", () => {
+await test("no coupon is advertised on the site now", () => {
   // `promote` is what puts a code on a badge / in /api/coupons/active.
-  // Every other code is handed out directly, not displayed: RESULTS300 and
-  // SEATS100 are live but unadvertised, and the invitation codes
-  // (FAMILY101, LUME50, CLARITY100, LUMEDEMO) must never be advertised at
-  // all — a promoted 100%-off or private code would be claimed by the
-  // first stranger to read a badge.
+  // FIRST50 was the only promoted offer and it is retired, so nothing is
+  // advertised: RESULTS300 and SEATS100 are live but unadvertised, and the
+  // invitation codes (FAMILY101, LUME50, CLARITY100, LUMEDEMO) must never be
+  // advertised at all — a promoted 100%-off or private code would be claimed
+  // by the first stranger to read a badge.
   const promoted = DEFAULT_COUPONS.filter(c => c.promote).map(c => c.code);
-  assert.deepEqual(promoted, ["FIRST50"]);
+  assert.deepEqual(promoted, []);
 });
 
 await test("a switched-off code leaves every other SKU at full price", async () => {
@@ -478,6 +506,7 @@ await test("the guest placeholder phone is not a person", () => {
 
 await test("a first-time customer gets FIRST50", async () => {
   store.clear();
+  activateFirst50();
   const q = await quote({ code: "FIRST50", packId: "wellness-session", customer: ALICE });
   assert.equal(q.ok, true);
   assert.equal(q.final_amount, 249);
@@ -487,6 +516,7 @@ await test("the price is shown before contact details are known", async () => {
   // The checkout draws a price before it asks for a phone number, so the
   // per-person rules cannot run yet. create-order is the real gate.
   store.clear();
+  activateFirst50();
   const q = await quote({ code: "FIRST50", packId: "wellness-session", customer: {} });
   assert.equal(q.ok, true);
   assert.equal(q.final_amount, 249);
@@ -494,6 +524,7 @@ await test("the price is shown before contact details are known", async () => {
 
 await test("the same person cannot use FIRST50 twice", async () => {
   store.clear();
+  activateFirst50();
   await recordRedemption({ code: "FIRST50", orderId: "lume_a1", sku: "wellness-session",
                            amount: 249, discount: 250, customer: ALICE });
   const q = await quote({ code: "FIRST50", packId: "wellness-session", customer: ALICE });
@@ -532,6 +563,7 @@ await test("redemption is counted once per order, however often it is polled", a
 
 await test("someone who already paid full price for a session is not a first-timer", async () => {
   store.clear();
+  activateFirst50();
   // No coupon was ever used — only an entitlement exists. per_customer_limit
   // alone would happily hand them a "first session" discount.
   store.seed("entitlements", "lume_old", {
@@ -547,6 +579,7 @@ await test("someone who already paid full price for a session is not a first-tim
 
 await test("someone who took the retired ₹49 intro session is not a first-timer", async () => {
   store.clear();
+  activateFirst50();
   // Matched on email alone, and stored lowercased the way
   // recordPaidEntitlement writes it.
   store.seed("entitlements", "lume_legacy", {
@@ -559,6 +592,7 @@ await test("someone who took the retired ₹49 intro session is not a first-time
 
 await test("an unrelated past purchase does not disqualify anyone", async () => {
   store.clear();
+  activateFirst50();
   store.seed("entitlements", "lume_pdf", {
     orderId: "lume_pdf", sku: "parents-handbook", status: "PAID",
     phone: ALICE.phone, email: null, updatedAt: "2026-01-01T00:00:00Z"
@@ -570,6 +604,7 @@ await test("an unrelated past purchase does not disqualify anyone", async () => 
 
 await test("an unpaid past order does not disqualify anyone", async () => {
   store.clear();
+  activateFirst50();
   store.seed("entitlements", "lume_pending", {
     orderId: "lume_pending", sku: "wellness-session", status: "PENDING",
     phone: ALICE.phone, email: null, updatedAt: "2026-01-01T00:00:00Z"
@@ -1021,8 +1056,9 @@ await test("seeding reports which codes are live at checkout", async () => {
   // Live means usable at checkout, which is not the same as advertised:
   // CLARITY100 is a one-use invitation code and is never promoted, and
   // FRIEND100 is gated on having been referred. RESULTS300 and SEATS100
-  // are the public offers.
-  assert.deepEqual(r.live, ["FIRST50", "RESULTS300", "SEATS100", "FRIEND100"]);
+  // are the public offers. FIRST50 is retired (is_active:false), so it is
+  // not live.
+  assert.deepEqual(r.live, ["RESULTS300", "SEATS100", "FRIEND100"]);
 });
 
 console.log("\nthe demo account");
@@ -1146,6 +1182,7 @@ await test("quote() tells create-order whether the code is a demo code", async (
   // of code names of its own — one place where "which codes are demo
   // codes" is written down.
   store.clear();
+  activateFirst50();
   const q = await quote({
     code: "TEST_DEMO_NOT_IN_CATALOGUE",
     packId: "student-full-report",
